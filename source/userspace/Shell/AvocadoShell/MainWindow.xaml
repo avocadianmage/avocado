@@ -1,0 +1,16 @@
+﻿<avocadoFramework:GlassPane 
+    x:Class="AvocadoShell.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avocadoShell="clr-namespace:AvocadoShell.Engine"
+    xmlns:avocadoFramework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
+    SizeToContent="WidthAndHeight">
+    
+    <Grid>
+        <avocadoShell:TerminalControl 
+            Width="625" 
+            Height="458" 
+            InputBrush="LightSkyBlue" />
+    </Grid>
+    
+</avocadoFramework:GlassPane>
