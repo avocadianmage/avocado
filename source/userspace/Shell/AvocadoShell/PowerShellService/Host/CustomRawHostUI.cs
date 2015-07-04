@@ -127,6 +127,7 @@
         /// </summary>
         public override void FlushInputBuffer()
         {
+            return;
         }
 
         /// <summary>

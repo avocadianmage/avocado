@@ -8,7 +8,7 @@ namespace ShellBootstrap
     [Cmdlet(VerbsCommon.Open, "Shell")]
     public class ShellCmdlet : PSCmdlet
     {
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, Position = 0)]
         public string Cmds { get; set; }
 
         protected override void ProcessRecord()
