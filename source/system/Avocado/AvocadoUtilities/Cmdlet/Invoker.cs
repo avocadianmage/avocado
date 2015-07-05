@@ -17,7 +17,6 @@ namespace AvocadoUtilities.Cmdlet
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
             proc.Start();
-            proc.WaitForExit();
             return proc.StandardOutput.ReadToEnd();
         }
 

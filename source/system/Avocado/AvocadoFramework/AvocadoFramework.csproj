@@ -116,7 +116,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y $(TargetFileName) C:\Users\clayton\avocado\sys\AvocadoLib</PostBuildEvent>
+    <PostBuildEvent>xcopy /y $(TargetFileName) %25UserProfile%25\avocado\sys\AvocadoLib
+Powershell.exe -ExecutionPolicy RemoteSigned -File %25UserProfile%25\avocado\sys\installer\install-libs.ps1</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
