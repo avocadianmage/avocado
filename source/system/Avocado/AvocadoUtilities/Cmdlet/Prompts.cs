@@ -34,7 +34,7 @@ namespace AvocadoUtilities.Cmdlet
                 options.Length,
                 out selection))
             {
-                cmdlet.WriteErrorLine("Invalid input.");
+                cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                 return OptionPrompt(cmdlet, options);
             }
             selection--;
@@ -56,7 +56,7 @@ namespace AvocadoUtilities.Cmdlet
                 StringSplitOptions.RemoveEmptyEntries);
             if (!rangeList.Any())
             {
-                cmdlet.WriteErrorLine("Invalid input.");
+                cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                 return MultiOptionPrompt(cmdlet, options);
             }
 
@@ -69,7 +69,7 @@ namespace AvocadoUtilities.Cmdlet
                     StringSplitOptions.RemoveEmptyEntries);
                 if (bounds.Length < 1 || bounds.Length > 2)
                 {
-                    cmdlet.WriteErrorLine("Invalid input.");
+                    cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);
                 }
 
@@ -79,7 +79,7 @@ namespace AvocadoUtilities.Cmdlet
                     options.Length,
                     out lowerBound))
                 {
-                    cmdlet.WriteErrorLine("Invalid input.");
+                    cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);
                 }
                 lowerBound--;
@@ -96,14 +96,14 @@ namespace AvocadoUtilities.Cmdlet
                     options.Length,
                     out upperBound))
                 {
-                    cmdlet.WriteErrorLine("Invalid input.");
+                    cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);
                 }
                 upperBound--;
 
                 if (lowerBound > upperBound)
                 {
-                    cmdlet.WriteErrorLine("Invalid input.");
+                    cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);
                 }
 

@@ -6,16 +6,6 @@ namespace AvocadoUtilities.Cmdlet
 {
     public static class Extensions
     {
-        public static void WriteErrorLine(this PSCmdlet cmdlet, string msg)
-        {
-            cmdlet.Host.UI.WriteErrorLine(msg);
-        }
-
-        public static void WriteNoNewLine(this PSCmdlet cmdlet, string msg)
-        {
-            cmdlet.Host.UI.Write(msg);
-        }
-
         public static void Terminate(this PSCmdlet cmdlet, string msg)
         {
             var error = new ErrorRecord(
