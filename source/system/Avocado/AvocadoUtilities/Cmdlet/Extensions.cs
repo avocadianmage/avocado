@@ -10,6 +10,11 @@ namespace AvocadoUtilities.Cmdlet
             cmdlet.Host.UI.WriteErrorLine(msg);
         }
 
+        public static void WriteNoNewLine(this PSCmdlet cmdlet, string msg)
+        {
+            cmdlet.Host.UI.Write(msg);
+        }
+
         public static void Terminate(this PSCmdlet cmdlet, string msg)
         {
             var error = new ErrorRecord(
@@ -25,7 +30,7 @@ namespace AvocadoUtilities.Cmdlet
             string msg, 
             Func<string> op)
         {
-            writeNoNewLine(cmdlet, string.Format("{0}...", msg));
+            cmdlet.WriteNoNewLine(string.Format("{0}...", msg));
             try
             {
                 return op();
@@ -34,11 +39,6 @@ namespace AvocadoUtilities.Cmdlet
             {
                 cmdlet.WriteObject("done.");
             }
-        }
-
-        static void writeNoNewLine(PSCmdlet cmdlet, string msg)
-        {
-            cmdlet.Host.UI.Write(msg);
         }
     }
 }

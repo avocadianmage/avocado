@@ -65,8 +65,12 @@
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
             {
-                var input = shellUI.DisplayPrompt(desc.Name + ": ");
+                var promptStr = string.Format("{0}: ", desc.Name);
+                shellUI.WriteCustom(promptStr, Config.SystemFontBrush, false);
+
+                var input = shellUI.ReadLine();
                 if (input == null) return null;
+
                 results[desc.Name] = PSObject.AsPSObject(input);
             }
             return results;
@@ -111,14 +115,16 @@
             // chosen, or the loop is interrupted with ctrl-C.
             while (true)
             {
-                var input = shellUI.DisplayPrompt(sb.ToString());
-                input = input.Trim().ToUpper();
+                var promptStr = sb.ToString();
+                shellUI.WriteCustom(promptStr, Config.SystemFontBrush, false);
+                var input = shellUI.ReadLine();
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
 
                 // See if the selection matched and return the corresponding
                 // index if it did.
+                input = input.Trim().ToUpper();
                 for (var i = 0; i < choices.Count; i++)
                 {
                     if (promptData[0, i] == input) return i;
@@ -180,7 +186,7 @@
         /// <returns>The characters that are entered by the user.</returns>
         public override string ReadLine()
         {
-            return Console.ReadLine();
+            return shellUI.ReadLine();
         }
 
         /// <summary>

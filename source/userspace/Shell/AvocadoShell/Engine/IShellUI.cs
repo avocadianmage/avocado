@@ -11,6 +11,6 @@ namespace AvocadoShell.Engine
         void WriteCustom(string data, Brush foreground, bool newline);
 
         void DisplayShellPrompt(string path);
-        string DisplayPrompt(string str);
+        string ReadLine();
     }
 }

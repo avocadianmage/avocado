@@ -5,8 +5,8 @@ using System.Management.Automation;
 
 namespace ShellBootstrap
 {
-    [Cmdlet(VerbsCommon.Open, "Shell")]
-    public class ShellCmdlet : PSCmdlet
+    [Cmdlet(VerbsLifecycle.Start, "Shell")]
+    public sealed class ShellCmdlet : PSCmdlet
     {
         [Parameter(Mandatory = false, Position = 0)]
         public string Cmds { get; set; }

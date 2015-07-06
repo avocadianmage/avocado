@@ -43,9 +43,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\CSharp\Libraries\Custom\UtilityLibraries\UtilityLib\bin\Release\UtilityLib.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />

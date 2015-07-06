@@ -170,7 +170,7 @@ namespace AvocadoShell.Engine
         {
             get 
             {
-                var promptLen = currentPrompt.Text.Length;
+                var promptLen = currentPrompt.LinePos;
                 return TextContent.CaretX <= Math.Sign(promptLen); 
             }
         }
@@ -188,43 +188,40 @@ namespace AvocadoShell.Engine
 
         public void DisplayShellPrompt(string path)
         {
-            safeDisplayPrompt(Prompt.CreateShellPrompt(path));
+            var action = new Action<string>(displayShellPrompt);
+            Dispatcher.BeginInvoke(action, path);
         }
 
-        public string DisplayPrompt(string str)
+        public string ReadLine()
         {
-            safeDisplayPrompt(Prompt.CreateOtherPrompt(str));
+            var action = new Action<bool>(displayPrompt);
+            Dispatcher.BeginInvoke(action, false);
             return resetEvent.Block();
         }
 
-        void safeDisplayPrompt(Prompt prompt)
+        void displayShellPrompt(string path)
         {
-            var action = new Action<Prompt>(displayPrompt);
-            Dispatcher.BeginInvoke(action, prompt);
-        }
-
-        void displayPrompt(Prompt prompt)
-        {
-            // Do not allow any user input if the window is closing.
+            // Do not display a new prompt if the window is closing.
             if (IsWindowClosing) return;
 
-            // Set the current prompt object to the new prompt.
-            currentPrompt = prompt;
-
-            // If there is text on this line, go to a new line.
+            // Update text and window title displays.
+            var shellPromptStr = Prompt.GetShellPromptStr(path);
             if (!string.IsNullOrEmpty(TextContent.GetCurrentLineText()))
             {
+                // If there is text on this line, go to a new line.
                 TextContent.InsertLineBreak();
             }
+            TextContent.InsertText(shellPromptStr, Config.PromptBrush);
+            SetWindowTitle(shellPromptStr);
 
-            // Write prompt text.
-            var foreground = prompt.FromShell 
-                ? Config.PromptBrush : Config.SystemFontBrush;
-            TextContent.InsertText(prompt.Text, foreground);
+            displayPrompt(true);
+        }
 
-            // If we are displaying the shell prompt, also update the window
-            // with the working directory.
-            if (prompt.FromShell) SetWindowTitle(prompt.Text);
+        void displayPrompt(bool fromShell)
+        {
+            // Update the current prompt object.
+            var len = TextContent.GetCurrentLineText().Length;
+            currentPrompt = new Prompt(fromShell, len);
 
             // Enable user input.
             InputEnabled = true;
@@ -256,7 +253,7 @@ namespace AvocadoShell.Engine
         string getInput()
         {
             var lineText = TextContent.GetCurrentLineText();
-            return lineText.Substring(currentPrompt.Text.Length);
+            return lineText.Substring(currentPrompt.LinePos);
         }
 
         void inputHistoryLookup(bool forward)

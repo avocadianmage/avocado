@@ -6,29 +6,18 @@ namespace AvocadoShell.Engine
     sealed class Prompt
     {
         public bool FromShell { get { return fromShell; } }
-        public string Text { get { return text; } }
+        public int LinePos { get { return linePos; } }
 
         readonly bool fromShell;
-        readonly string text;
+        readonly int linePos;
 
-        public static Prompt CreateShellPrompt(string path)
-        {
-            var str = getShellPrompt(path);
-            return new Prompt(true, str);
-        }
-
-        public static Prompt CreateOtherPrompt(string text)
-        {
-            return new Prompt(false, text);
-        }
-
-        Prompt(bool fromShell, string text)
+        public Prompt(bool fromShell, int linePos)
         {
             this.fromShell = fromShell;
-            this.text = text;
+            this.linePos = linePos;
         }
 
-        static string getShellPrompt(string path)
+        public static string GetShellPromptStr(string path)
         {
             // Replace the root directory string with the tilde alias.
             if (path.StartsWith(RootDir.Val))
