@@ -12,7 +12,7 @@ namespace AvocadoShell.Engine
 {
     sealed class TerminalControl : InputControl, IShellUI
     {
-        readonly ShellEnvironment shellEnv;
+        readonly PSEngine psEngine;
         readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
@@ -21,13 +21,13 @@ namespace AvocadoShell.Engine
 
         public TerminalControl()
         {
-            shellEnv = new ShellEnvironment(this);
+            psEngine = new PSEngine(this);
         }
 
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);
-            shellEnv.Init();
+            psEngine.InitEnvironment();
         }
 
         void terminateExec()
@@ -36,7 +36,7 @@ namespace AvocadoShell.Engine
             resetEvent.Signal(null);
 
             // Terminate the powershell process.
-            shellEnv.StopExecution();
+            psEngine.Stop();
         }
 
         protected override void OnUnload(RoutedEventArgs e)
@@ -113,7 +113,7 @@ namespace AvocadoShell.Engine
         void execute(string input)
         {
             inputHistory.Add(input);
-            shellEnv.Execute(input);
+            psEngine.ExecuteCommand(input);
         }
 
         void prepareForOutput()
@@ -160,7 +160,7 @@ namespace AvocadoShell.Engine
             Action<string> callback)
         {
             Task.Run<string>(
-                () => shellEnv.GetCompletion(input, index, forward))
+                () => psEngine.GetCompletion(input, index, forward))
             .ContinueWith(
                 (task) => callback(task.Result), 
                 TaskScheduler.FromCurrentSynchronizationContext());

@@ -5,13 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService
 {
     sealed class PSEngine
     {
-        public Autocomplete Autocompleter { get { return autocomplete; } }
-
         readonly PowerShell ps;
         readonly IShellUI shellUI;
         readonly Autocomplete autocomplete;
@@ -31,12 +30,46 @@ namespace AvocadoShell.PowerShellService
             initStandardError();
         }
 
-        public void AddScript(string input)
+        static string getIncludeScript(string dir, string script)
         {
-            ps.AddScript(input);
+            const string FMT = ". {0}";
+            var path = Path.Combine(dir, script);
+            return string.Format(FMT, path);
         }
 
-        public void Execute()
+        void addProfileScriptToExec()
+        {
+            var dir = RootDir.Avocado.Apps.MyAppPath;
+            var script = getIncludeScript(dir, "profile.ps1");
+            ps.AddScript(script);
+        }
+
+        void addUserCmdsToExec()
+        {
+            var cmdArg = AvocadoUtilities.Command.GetArg(1);
+            if (cmdArg != null) ps.AddScript(cmdArg);
+        }
+
+        public void InitEnvironment()
+        {
+            // Run user profile script.
+            addProfileScriptToExec();
+
+            // Execute any commands provided via commandline arguments to
+            // this process.
+            addUserCmdsToExec();
+
+            // Perform the execution all at once.
+            execute();
+        }
+
+        public void ExecuteCommand(string cmd)
+        {
+            ps.AddScript(cmd);
+            execute();
+        }
+
+        void execute()
         {
             invocationStateSubscribe();
             ps.BeginInvoke<PSObject, PSObject>(null, stdOut);
@@ -45,6 +78,17 @@ namespace AvocadoShell.PowerShellService
         public void Stop()
         {
             ps.BeginStop(null, null);
+        }
+
+        public async Task<string> GetCompletion(
+            string input,
+            int index,
+            bool forward)
+        {
+            return await autocomplete.GetCompletion(
+                input,
+                index,
+                forward);
         }
 
         void preparePowershell()
