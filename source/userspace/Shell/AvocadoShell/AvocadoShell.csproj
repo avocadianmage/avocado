@@ -110,6 +110,7 @@
     </ApplicationDefinition>
     <Compile Include="Engine\Prompt.cs" />
     <Compile Include="Engine\IShellUI.cs" />
+    <Compile Include="PowerShellService\ExecDoneEventArgs.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
     <Compile Include="PowerShellService\Host\CustomRawHostUI.cs" />

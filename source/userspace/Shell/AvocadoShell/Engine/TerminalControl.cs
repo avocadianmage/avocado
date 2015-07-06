@@ -1,6 +1,5 @@
 ﻿using AvocadoFramework.Controls.Text.Input;
 using AvocadoShell.PowerShellService;
-using AvocadoUtilities;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +21,20 @@ namespace AvocadoShell.Engine
         public TerminalControl()
         {
             psEngine = new PSEngine(this);
+            psEngine.ExecDone += onExecDone;
+        }
+
+        void onExecDone(object sender, ExecDoneEventArgs e)
+        {
+            Action action = () =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Error))
+                {
+                    WriteLine(e.Error, Config.ErrorFontBrush);
+                }
+                displayShellPrompt(e.Path);
+            };
+            Dispatcher.BeginInvoke(action);
         }
 
         protected override void OnLoad(RoutedEventArgs e)
@@ -32,11 +45,11 @@ namespace AvocadoShell.Engine
 
         void terminateExec()
         {
-            // Ensure the powershell thread is unblocked.
-            resetEvent.Signal(null);
-
             // Terminate the powershell process.
             psEngine.Stop();
+
+            // Ensure the powershell thread is unblocked.
+            resetEvent.Signal(null);
         }
 
         protected override void OnUnload(RoutedEventArgs e)
@@ -177,19 +190,12 @@ namespace AvocadoShell.Engine
 
         public void Exit()
         {
-            Dispatcher.BeginInvoke(new Action(exit));
-        }
-
-        void exit()
-        {
-            InputEnabled = false;
-            CloseWindow();
-        }
-
-        public void DisplayShellPrompt(string path)
-        {
-            var action = new Action<string>(displayShellPrompt);
-            Dispatcher.BeginInvoke(action, path);
+            Action action = () =>
+            {
+                InputEnabled = false;
+                CloseWindow();
+            };
+            Dispatcher.BeginInvoke(action);
         }
 
         public string ReadLine()

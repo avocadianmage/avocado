@@ -1,6 +1,7 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Host;
 using AvocadoUtilities;
+using System;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -11,13 +12,13 @@ namespace AvocadoShell.PowerShellService
 {
     sealed class PSEngine
     {
+        public event EventHandler<ExecDoneEventArgs> ExecDone;
+
         readonly PowerShell ps;
         readonly IShellUI shellUI;
         readonly Autocomplete autocomplete;
         readonly PSDataCollection<PSObject> stdOut
             = new PSDataCollection<PSObject>();
-
-        bool aborted = false;
 
         public PSEngine(IShellUI shellUI)
         {
@@ -125,43 +126,32 @@ namespace AvocadoShell.PowerShellService
             object sender,
             PSInvocationStateChangedEventArgs e)
         {
+            string error;
             switch (e.InvocationStateInfo.State)
             {
-                case PSInvocationState.Stopping:
-                    aborted = true;
-                    break;
                 case PSInvocationState.Failed:
-                    var reason = e.InvocationStateInfo.Reason.Message;
-                    executionFail(reason);
+                    error = e.InvocationStateInfo.Reason.Message;
                     break;
                 case PSInvocationState.Completed:
-                case PSInvocationState.Stopped:
-                    finishExecution();
+                    error = null;
                     break;
+                case PSInvocationState.Stopped:
+                    error = "Execution aborted.";
+                    break;
+                default: return;
             }
+            finishExecution(error);
         }
 
-        void executionFail(string reason)
-        {
-            shellUI.WriteErrorLine(reason);
-            finishExecution();
-        }
-
-        void finishExecution()
+        void finishExecution(string error)
         {
             invocationStateUnsubscribe();
             ps.Commands.Clear();
 
-            // If the execution was aborted, inform the user.
-            if (aborted)
-            {
-                aborted = false;
-                shellUI.WriteErrorLine("Execution aborted.");
-            }
-
+            // Fire event indicating the current execution has finished.
             var path = ps.Runspace.SessionStateProxy
                 .Path.CurrentLocation.Path;
-            shellUI.DisplayShellPrompt(path);
+            ExecDone(this, new ExecDoneEventArgs(path, error));
         }
 
         void initStandardError()

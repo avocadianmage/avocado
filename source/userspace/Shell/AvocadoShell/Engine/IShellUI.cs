@@ -10,7 +10,6 @@ namespace AvocadoShell.Engine
         void WriteErrorLine(string data);
         void WriteCustom(string data, Brush foreground, bool newline);
 
-        void DisplayShellPrompt(string path);
         string ReadLine();
     }
 }
