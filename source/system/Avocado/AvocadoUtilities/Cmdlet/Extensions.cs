@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management.Automation;
+using System.Threading.Tasks;
 
 namespace AvocadoUtilities.Cmdlet
 {
@@ -25,20 +26,27 @@ namespace AvocadoUtilities.Cmdlet
             cmdlet.ThrowTerminatingError(error);
         }
 
-        public static string DoOperation(
-            this PSCmdlet cmdlet, 
-            string msg, 
-            Func<string> op)
+        public static void Terminate(this PSCmdlet cmdlet)
         {
-            cmdlet.WriteNoNewLine(string.Format("{0}...", msg));
-            try
+            cmdlet.Terminate(string.Empty);
+        }
+
+        public static string DoOperation(
+            this PSCmdlet cmdlet,  
+            string msg, 
+            Func<string> work)
+        {
+            cmdlet.Host.UI.Write(string.Format("{0}...", msg));
+
+            var task = Task.Run(work);
+            while (!task.IsCompleted)
             {
-                return op();
+                if (cmdlet.Stopping) cmdlet.Terminate();
             }
-            finally
-            {
-                cmdlet.WriteObject("done.");
-            }
+
+            cmdlet.WriteObject("done.");
+
+            return task.Result;
         }
     }
 }

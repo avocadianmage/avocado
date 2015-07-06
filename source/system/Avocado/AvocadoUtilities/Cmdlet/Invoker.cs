@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Management.Automation;
 
 namespace AvocadoUtilities.Cmdlet
@@ -7,8 +6,8 @@ namespace AvocadoUtilities.Cmdlet
     public static class Invoker
     {
         public static string RunProcess(
-            this PSCmdlet cmdlet, 
-            string fileName, 
+            this PSCmdlet cmdlet,
+            string fileName,
             params string[] args)
         {
             var proc = cmdlet.getProc(fileName, args);

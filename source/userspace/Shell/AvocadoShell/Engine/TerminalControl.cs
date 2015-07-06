@@ -175,7 +175,7 @@ namespace AvocadoShell.Engine
             Task.Run<string>(
                 () => psEngine.GetCompletion(input, index, forward))
             .ContinueWith(
-                (task) => callback(task.Result), 
+                task => callback(task.Result), 
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
