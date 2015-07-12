@@ -6,8 +6,9 @@ namespace AvocadoUtilities
     {
         public static string GetArg(int index)
         {
+            index++;
             var args = Environment.GetCommandLineArgs();
-            return (args.Length >= index + 1) ? args[index] : null;
+            return (index < args.Length) ? args[index] : null;
         }
     }
 }
