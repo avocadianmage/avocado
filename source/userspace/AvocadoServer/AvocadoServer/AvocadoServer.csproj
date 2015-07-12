@@ -39,10 +39,15 @@
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="ServerConfig.cs" />
+    <Compile Include="ServerCore\Logger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

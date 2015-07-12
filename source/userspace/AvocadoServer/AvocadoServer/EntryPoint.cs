@@ -1,7 +1,9 @@
 ﻿using AvocadoServer.ServerAPI;
+using AvocadoServer.ServerCore;
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using UtilityLib.MiscTools;
 
 namespace AvocadoServer
 {
@@ -9,18 +11,20 @@ namespace AvocadoServer
     {
         static void Main(string[] args)
         {
-            var host = createHost();
-
-            try { host.Open(); }
-            catch (AddressAccessDeniedException)
+            // The server must be run as an administrator.
+            if (!Tools.IsAdmin)
             {
                 Console.Error.WriteLine(
-                    "AvocadoServer must be run with elevated privileges.");
+                    "AvocadoServer must be run with administrative privileges.");
                 Environment.Exit(0);
             }
 
-            Console.WriteLine("Server is running...");
-            Console.ReadLine();
+            var host = createHost();
+
+            host.Open();
+
+            Logger.WriteServerStarted();
+            Console.ReadKey();
 
             host.Close();
         }
