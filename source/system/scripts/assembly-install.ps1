@@ -6,7 +6,7 @@ param
 )
 
 # Get the app's installation path.
-$installPath = Join-Path "~/avocado/apps" $appName
+$installPath = Join-Path ~/avocado/apps $appName
 
 # Create app directory if it does not exist.
 if (!(Test-Path -PathType Container $installPath))
@@ -14,18 +14,22 @@ if (!(Test-Path -PathType Container $installPath))
     New-Item $installPath -Type Directory > $null
 }
 
-# Copy over project executable and all DLLs to the Avocado app folder.
 $proj = (Get-ChildItem ../.. -Filter *.csproj).BaseName
-Get-ChildItem -Filter *.exe |
-    where { $_.BaseName -eq $proj } |
+$exe = Get-ChildItem -Filter *.exe | where { $_.BaseName -eq $proj }
+
+# Copy over the project executable and any associated config files.
+Get-ChildItem * -Include *.exe, *.config |
+    where { ($_.Name -eq $exe) -Or ($_.BaseName -eq $exe) } |
     Copy-Item -Destination $installPath
+
+# Copy over DLLs.
 Get-ChildItem -Filter *.dll | Copy-Item -Destination $installPath
 
 # Rename the executable if an alias was specified.
 if ($alias)
 {
-    Join-Path $installPath "$proj.exe" |
-        Move-Item -Destination (Join-Path $installPath "$alias.exe") -Force
+    "param ([string[]]`$exeArgs);$exe `$exeArgs" |
+        Out-File -Encoding UTF8 (Join-Path $installPath "$alias.ps1")
 }
 
 # Add app path to the environment path if it hasn't been yet.
