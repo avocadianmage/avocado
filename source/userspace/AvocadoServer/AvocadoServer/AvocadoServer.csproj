@@ -33,6 +33,16 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Service References\AvocadoServerService\AvocadoServer.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\AvocadoServer1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\AvocadoServer2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\ServerAPIService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ServerAPI\IServerAPI.cs" />
@@ -40,14 +50,46 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="ServerConfig.cs" />
     <Compile Include="ServerCore\Logger.cs" />
+    <Compile Include="Service References\AvocadoServerService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AvocadoUtilities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32080caa3309d9ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\AvocadoUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml" />
     <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\AvocadoServerService\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\AvocadoServerService\AvocadoServer.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\AvocadoServerService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\AvocadoServerService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\AvocadoServerService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

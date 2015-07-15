@@ -1,6 +1,7 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Host;
 using AvocadoUtilities;
+using AvocadoUtilities.CommandLine;
 using System;
 using System.IO;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace AvocadoShell.PowerShellService
 
         void addUserCmdsToExec()
         {
-            var cmdArg = AvocadoUtilities.Command.GetArg(0);
+            var cmdArg = EnvironmentMgr.GetArg(0);
             if (cmdArg != null) ps.AddScript(cmdArg);
         }
 

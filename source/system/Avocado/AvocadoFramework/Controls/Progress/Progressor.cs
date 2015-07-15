@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using UtilityLib.MiscTools;
+using UtilityLib.WPF;
 
 namespace AvocadoFramework.Controls.Progress
 {

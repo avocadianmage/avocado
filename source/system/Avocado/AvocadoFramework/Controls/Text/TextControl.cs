@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Media;
-using UtilityLib.MiscTools;
+using UtilityLib.WPF;
 
 namespace AvocadoFramework.Controls.Text
 {

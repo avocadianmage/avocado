@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="021621bd-c0df-4499-8509-de30a9bb4ad3" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8000/AvocadoServer" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="AvocadoServer.xsd" MetadataType="Schema" ID="64d07735-3119-4299-a235-a9194ca60c43" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd0" />
+    <MetadataFile FileName="ServerAPIService.wsdl" MetadataType="Wsdl" ID="b842746c-86cc-41c3-9221-d3433ec2fe32" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?wsdl" />
+    <MetadataFile FileName="AvocadoServer1.xsd" MetadataType="Schema" ID="1622bd4a-39c9-44a9-ba96-4ef9471fac2d" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd1" />
+    <MetadataFile FileName="AvocadoServer.disco" MetadataType="Disco" ID="c93f89e3-16fe-487d-a8e6-9e5310cc90b7" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?disco" />
+    <MetadataFile FileName="AvocadoServer2.xsd" MetadataType="Schema" ID="a2de6493-ff92-4a85-a6c0-91e20ba0f633" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

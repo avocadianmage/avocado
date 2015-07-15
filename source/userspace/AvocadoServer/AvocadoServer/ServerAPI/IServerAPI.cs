@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Collections.Generic;
+using System.ServiceModel;
 
 namespace AvocadoServer.ServerAPI
 {
@@ -6,6 +7,15 @@ namespace AvocadoServer.ServerAPI
     public interface IServerAPI
     {
         [OperationContract]
-        void RunJob(string app, string name);
+        bool Ping();
+
+        [OperationContract]
+        IEnumerable<string> GetJobs();
+
+        [OperationContract]
+        void RunJob(string app, string name, params string[] args);
+
+        [OperationContract]
+        void KillJob(int id);
     }
 }

@@ -39,7 +39,9 @@
     <Compile Include="Cmdlet\Invoker.cs" />
     <Compile Include="Cmdlet\Extensions.cs" />
     <Compile Include="Cmdlet\Prompts.cs" />
-    <Compile Include="Command.cs" />
+    <Compile Include="CommandLine\EnvironmentMgr.cs" />
+    <Compile Include="CommandLine\Subcommand.cs" />
+    <Compile Include="CommandLine\SubcommandAttribute.cs" />
     <Compile Include="RootDir.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
