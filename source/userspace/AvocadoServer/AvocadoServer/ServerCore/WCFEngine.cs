@@ -26,6 +26,14 @@ namespace AvocadoServer.ServerCore
             var smb = new ServiceMetadataBehavior { HttpGetEnabled = true };
             host.Description.Behaviors.Add(smb);
 
+            // Include debugging information behavior.
+            host.Description.Behaviors.Remove(typeof(ServiceDebugBehavior)); 
+            var debug = new ServiceDebugBehavior 
+            { 
+                IncludeExceptionDetailInFaults = true 
+            };
+            host.Description.Behaviors.Add(debug);
+
             // Start the host.
             runCriticalCode(host.Open);
 

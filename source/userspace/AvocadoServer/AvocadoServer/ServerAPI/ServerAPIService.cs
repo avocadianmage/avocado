@@ -10,14 +10,14 @@ namespace AvocadoServer.ServerAPI
             return true;
         }
 
-        public IEnumerable<string> GetJobs()
+        public IEnumerable<Job> GetJobs()
         {
-            return new List<string> { "Hello world!" };
+            return null;
         }
 
-        public void RunJob(string app, string name, params string[] args)
+        public void RunJob(string app, string name, string[] args)
         {
-            Logger.WriteLogItem("Job {0}.{1} was started.", app, name);
+            Job.Start(app, name, args);
         }
 
         public void KillJob(int id)

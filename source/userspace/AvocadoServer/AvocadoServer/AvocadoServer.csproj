@@ -33,6 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Service References\AvocadoServerService\AvocadoServer.AvocadoServerService.Job.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\AvocadoServerService\AvocadoServer.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -42,6 +45,9 @@
     <None Include="Service References\AvocadoServerService\AvocadoServer2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\AvocadoServerService\AvocadoServer3.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\AvocadoServerService\ServerAPIService.wsdl" />
   </ItemGroup>
   <ItemGroup>
@@ -49,7 +55,9 @@
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="ServerConfig.cs" />
+    <Compile Include="ServerCore\Job.cs" />
     <Compile Include="ServerCore\Logger.cs" />
+    <Compile Include="ServerCore\Subcommands.cs" />
     <Compile Include="ServerCore\WCFEngine.cs" />
     <Compile Include="Service References\AvocadoServerService\Reference.cs">
       <AutoGen>True</AutoGen>

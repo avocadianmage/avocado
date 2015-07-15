@@ -9,7 +9,38 @@
 //------------------------------------------------------------------------------
 
 namespace AvocadoServer.AvocadoServerService {
+    using System.Runtime.Serialization;
+    using System;
     
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Job", Namespace="http://schemas.datacontract.org/2004/07/AvocadoServer.ServerCore")]
+    [System.SerializableAttribute()]
+    public partial class Job : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="AvocadoServerService.IServerAPI")]
@@ -22,10 +53,10 @@ namespace AvocadoServer.AvocadoServerService {
         System.Threading.Tasks.Task<bool> PingAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/GetJobs", ReplyAction="http://tempuri.org/IServerAPI/GetJobsResponse")]
-        string[] GetJobs();
+        AvocadoServer.AvocadoServerService.Job[] GetJobs();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/GetJobs", ReplyAction="http://tempuri.org/IServerAPI/GetJobsResponse")]
-        System.Threading.Tasks.Task<string[]> GetJobsAsync();
+        System.Threading.Tasks.Task<AvocadoServer.AvocadoServerService.Job[]> GetJobsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/RunJob", ReplyAction="http://tempuri.org/IServerAPI/RunJobResponse")]
         void RunJob(string app, string name, string[] args);
@@ -75,11 +106,11 @@ namespace AvocadoServer.AvocadoServerService {
             return base.Channel.PingAsync();
         }
         
-        public string[] GetJobs() {
+        public AvocadoServer.AvocadoServerService.Job[] GetJobs() {
             return base.Channel.GetJobs();
         }
         
-        public System.Threading.Tasks.Task<string[]> GetJobsAsync() {
+        public System.Threading.Tasks.Task<AvocadoServer.AvocadoServerService.Job[]> GetJobsAsync() {
             return base.Channel.GetJobsAsync();
         }
         

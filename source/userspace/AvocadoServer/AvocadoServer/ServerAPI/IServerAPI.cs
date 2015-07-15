@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AvocadoServer.ServerCore;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace AvocadoServer.ServerAPI
@@ -10,10 +11,10 @@ namespace AvocadoServer.ServerAPI
         bool Ping();
 
         [OperationContract]
-        IEnumerable<string> GetJobs();
+        IEnumerable<Job> GetJobs();
 
         [OperationContract]
-        void RunJob(string app, string name, params string[] args);
+        void RunJob(string app, string name, string[] args);
 
         [OperationContract]
         void KillJob(int id);

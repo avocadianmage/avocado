@@ -7,7 +7,7 @@ namespace AvocadoServer.ServerCore
         public static void WriteServerStarted()
         {
             Console.WriteLine(
-                "AvocadoServer is now operational at {0}...",
+                "AvocadoServer ({0}) is now running...",
                 ServerConfig.BaseAddress);
         }
 
@@ -15,7 +15,7 @@ namespace AvocadoServer.ServerCore
         {
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.ff");
             var message = string.Format(msgFmt, args);
-            Console.Write("[{0}] {1}", timestamp, message);
+            Console.WriteLine("[{0}] {1}", timestamp, message);
         }
     }
 }
