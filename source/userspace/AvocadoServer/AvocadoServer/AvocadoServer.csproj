@@ -50,6 +50,7 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="ServerConfig.cs" />
     <Compile Include="ServerCore\Logger.cs" />
+    <Compile Include="ServerCore\WCFEngine.cs" />
     <Compile Include="Service References\AvocadoServerService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
