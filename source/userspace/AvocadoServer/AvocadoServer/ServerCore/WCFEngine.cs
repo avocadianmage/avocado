@@ -11,32 +11,11 @@ namespace AvocadoServer.ServerCore
     {
         public static ServiceHost CreateHost()
         {
-            // Initialize ServiceHost.
-            var host = new ServiceHost(
-                typeof(ServerAPIService),
-                new Uri(ServerConfig.BaseAddress));
-
-            // Add endpoint.
-            host.AddServiceEndpoint(
-                typeof(AvocadoServer.ServerAPI.IServerAPI),
-                new WSHttpBinding(),
-                ServerConfig.APIServiceName);
-
-            // Enable metadata exchange.
-            var smb = new ServiceMetadataBehavior { HttpGetEnabled = true };
-            host.Description.Behaviors.Add(smb);
-
-            // Include debugging information behavior.
-            host.Description.Behaviors.Remove(typeof(ServiceDebugBehavior)); 
-            var debug = new ServiceDebugBehavior 
-            { 
-                IncludeExceptionDetailInFaults = true 
-            };
-            host.Description.Behaviors.Add(debug);
-
-            // Start the host.
+            var host = createHostBase();
+            host.addEndpoint();
+            host.enableMetadataExchange();
+            host.showDebuggingInfo();
             runCriticalCode(host.Open);
-
             return host;
         }
 
@@ -45,6 +24,37 @@ namespace AvocadoServer.ServerCore
             var client = new ServerAPIClient();
             runCriticalCode(() => client.Ping());
             return client;
+        }
+
+        static ServiceHost createHostBase()
+        {
+            return new ServiceHost(
+                typeof(ServerAPIService),
+                new Uri(ServerConfig.BaseAddress));
+        }
+
+        static void addEndpoint(this ServiceHost host)
+        {
+            host.AddServiceEndpoint(
+                typeof(AvocadoServer.ServerAPI.IServerAPI),
+                new WSHttpBinding(),
+                ServerConfig.APIServiceName);
+        }
+
+        static void enableMetadataExchange(this ServiceHost host)
+        {
+            var smb = new ServiceMetadataBehavior { HttpGetEnabled = true };
+            host.Description.Behaviors.Add(smb);
+        }
+
+        static void showDebuggingInfo(this ServiceHost host)
+        {
+            host.Description.Behaviors.Remove(typeof(ServiceDebugBehavior));
+            var debug = new ServiceDebugBehavior
+            {
+                IncludeExceptionDetailInFaults = true
+            };
+            host.Description.Behaviors.Add(debug);
         }
 
         static void runCriticalCode(Action action)
