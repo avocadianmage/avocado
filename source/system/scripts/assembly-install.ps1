@@ -28,7 +28,7 @@ Get-ChildItem -Filter *.dll | Copy-Item -Destination $installPath
 # Rename the executable if an alias was specified.
 if ($alias)
 {
-    "$exe `$args | Out-String" |
+    "$exe `$args" |
         Out-File -Encoding UTF8 (Join-Path $installPath "$alias.ps1")
 }
 
