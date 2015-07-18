@@ -12,7 +12,7 @@ namespace AvocadoServer.ServerCore
         public static void Host(string[] args)
         {
             // The server cannot be hosted if the session is not elevated.
-            if (!Tools.IsAdmin)
+            if (!EnvUtils.IsAdmin)
             {
                 EnvironmentMgr.TerminatingError(
                     "AvocadoServer must be run with administrative privileges.");

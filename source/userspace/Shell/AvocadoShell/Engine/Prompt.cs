@@ -26,7 +26,7 @@ namespace AvocadoShell.Engine
             }
 
             // Indicate if this shell has administrative permissions.
-            var adminStr = Tools.IsAdmin ? "[admin] " : string.Empty;
+            var adminStr = EnvUtils.IsAdmin ? "[admin] " : string.Empty;
 
             // Return the formatted prompt string.
             return string.Format("{0}{1} ", adminStr, path);

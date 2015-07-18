@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UtilityLib.MiscTools;
 
 namespace AvocadoUtilities.CommandLine
 {
@@ -16,7 +17,7 @@ namespace AvocadoUtilities.CommandLine
             var subcommands = getSubcommands();
 
             // Retrieve the sub-command from the command line input.
-            var arg = EnvironmentMgr.GetArg(0);
+            var arg = EnvUtils.GetArg(0);
 
             // Check for case of no input.
             if (arg == null)
@@ -35,7 +36,7 @@ namespace AvocadoUtilities.CommandLine
             }
 
             // Invoke the sub-command.
-            var subcommandArgs = EnvironmentMgr.GetArgs(1).ToArray();
+            var subcommandArgs = EnvUtils.GetArgs(1).ToArray();
             method.Invoke(null, new object[] { subcommandArgs });
             return null;
         }
