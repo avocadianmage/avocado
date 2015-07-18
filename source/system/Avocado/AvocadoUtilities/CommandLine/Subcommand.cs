@@ -9,7 +9,7 @@ namespace AvocadoUtilities.CommandLine
     {
         const string SUB_CMD_REQ = "Sub-command required.";
         const string SUB_CMD_INVALID_FMT = "Sub-command {0} is invalid.";
-        const string SUB_CMD_ERR_FMT = "{0} Expected: [{1}]";
+        const string SUB_CMD_ERR_FMT = "{0} Expected: Server [{1}]";
 
         public static string Invoke()
         {

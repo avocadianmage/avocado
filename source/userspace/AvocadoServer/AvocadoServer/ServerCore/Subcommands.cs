@@ -1,6 +1,7 @@
 ﻿using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using UtilityLib.MiscTools;
 
 namespace AvocadoServer.ServerCore
@@ -43,7 +44,17 @@ namespace AvocadoServer.ServerCore
         [Subcommand]
         public static void RunJob(string[] args)
         {
-            WCFEngine.CreateClient().RunJob("test", "job", null);
+            // Retrieve and verify the correct number of arguments are given.
+            var appName = args.ElementAtOrDefault(0);
+            var progName = args.ElementAtOrDefault(1);
+            if (appName == null || progName == null)
+            {
+                EnvironmentMgr.TerminatingError(
+                    "Expected: Server RunJob <app> <name>");
+            }
+
+            var jobArgs = args.Skip(2).ToArray();
+            WCFEngine.CreateClient().RunJob(appName, progName, jobArgs);
         }
     }
 }
