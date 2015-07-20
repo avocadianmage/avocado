@@ -21,10 +21,10 @@ namespace AvocadoUtilities.Cmdlet
             cmdlet.Terminate(string.Empty);
         }
 
-        public static string DoOperation(
+        public static T DoOperation<T>(
             this PSCmdlet cmdlet,  
             string msg, 
-            Func<string> work)
+            Func<T> work)
         {
             cmdlet.Host.UI.Write(string.Format("{0}...", msg));
 

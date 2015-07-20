@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Management.Automation;
+using UtilityLib.MiscTools;
 
 namespace AvocadoUtilities.Cmdlet
 {
@@ -35,17 +36,11 @@ namespace AvocadoUtilities.Cmdlet
             var startInfo = new ProcessStartInfo
             {
                 FileName = fileName,
-                Arguments = getArgStr(args),
+                Arguments = EnvUtils.BuildArgStr(args),
                 WorkingDirectory 
                     = cmdlet.SessionState.Path.CurrentFileSystemLocation.Path,
             };
             return new Process { StartInfo = startInfo, };
-        }
-
-        static string getArgStr(params string[] args)
-        {
-            // Escape each argument with quotes.
-            return string.Format("\"{0}\"", string.Join("\" \"", args));
         }
     }
 }
