@@ -11,17 +11,24 @@ namespace AvocadoShell.Engine
 {
     sealed class TerminalControl : InputControl, IShellUI
     {
-        readonly PSEngine psEngine;
         readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
 
+        PSEngine psEngine;
         Prompt currentPrompt;
+        
+        protected override void OnLoad(RoutedEventArgs e)
+        {
+            base.OnLoad(e);
+            initPSEngine();
+        }
 
-        public TerminalControl()
+        void initPSEngine()
         {
             psEngine = new PSEngine(this);
             psEngine.ExecDone += onExecDone;
+            psEngine.InitEnvironment();
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)
@@ -35,12 +42,6 @@ namespace AvocadoShell.Engine
                 displayShellPrompt(e.Path);
             };
             Dispatcher.BeginInvoke(action);
-        }
-
-        protected override void OnLoad(RoutedEventArgs e)
-        {
-            base.OnLoad(e);
-            psEngine.InitEnvironment();
         }
 
         void terminateExec()

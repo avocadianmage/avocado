@@ -18,7 +18,7 @@
 
                         <!--This element stores all text content.-->
                         <text:TextContainer 
-                            Name="textContent"
+                            x:Name="textContent"
                             Orientation="Vertical"
                             HorizontalAlignment="Stretch" />
 

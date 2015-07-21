@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using UtilityLib.MiscTools;
 
 namespace AvocadoFramework.Animation
 {
@@ -63,7 +62,7 @@ namespace AvocadoFramework.Animation
             clock.Completed += (sender, e) =>
             {
                 var handler = forward ? EndReached : StartReached;
-                handler.SafeInvoke(sender, e);
+                handler?.Invoke(sender, e);
             };
 
             // Run animation.

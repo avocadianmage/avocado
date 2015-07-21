@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using UtilityLib.Legacy;
-using UtilityLib.MiscTools;
 
 namespace AvocadoFramework.Controls.Text
 {
@@ -61,7 +60,7 @@ namespace AvocadoFramework.Controls.Text
             base.InvalidateVisual();
 
             // Fire RenderFinished event.
-            RenderFinished.SafeInvoke(this, EventArgs.Empty);
+            RenderFinished?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnRender(DrawingContext drawingContext)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UtilityLib.MiscTools;
 
 namespace AvocadoFramework.Controls.Text
 {
@@ -120,7 +119,7 @@ namespace AvocadoFramework.Controls.Text
         {
             var currentLine = listBinding[GridY];
             var args = new CaretMovedEventArgs(currentLine, GridX);
-            Translated.SafeInvoke(this, args);
+            Translated?.Invoke(this, args);
         }
 
         private void recursiveTranslate(int offset)

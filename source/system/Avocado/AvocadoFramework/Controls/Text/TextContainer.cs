@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using UtilityLib.MiscTools;
 
 namespace AvocadoFramework.Controls.Text
 {
@@ -362,7 +361,7 @@ namespace AvocadoFramework.Controls.Text
             // Fire caret moved event.
             var currentLine = lines[caret.GridY];
             var args = new CaretMovedEventArgs(currentLine, caret.GridX);
-            CaretMoved.SafeInvoke(this, args);
+            CaretMoved?.Invoke(this, args);
         }
     }
 }

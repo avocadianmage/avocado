@@ -261,10 +261,10 @@
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message)
         {
-            this.WriteLine(
-                           ConsoleColor.DarkYellow,
-                           ConsoleColor.Black,
-                           String.Format(CultureInfo.CurrentCulture, "DEBUG: {0}", message));
+            WriteLine(
+                ConsoleColor.DarkYellow,
+                ConsoleColor.Black,
+                string.Format("DEBUG: {0}", message));
         }
 
         /// <summary>
@@ -311,8 +311,7 @@
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
         {
-            message = string.Format("VERBOSE: {0}", message);
-            shellUI.WriteCustom(message, Brushes.Yellow, true);
+            shellUI.WriteCustom($"VERBOSE: {message}", Brushes.Magenta, true);
         }
 
         /// <summary>
@@ -321,10 +320,7 @@
         /// <param name="message">The warning message that is displayed.</param>
         public override void WriteWarningLine(string message)
         {
-            this.WriteLine(
-                           ConsoleColor.Yellow,
-                           ConsoleColor.Black,
-                           String.Format(CultureInfo.CurrentCulture, "WARNING: {0}", message));
+            shellUI.WriteCustom($"WARNING: {message}", Brushes.Yellow, true);
         }
 
         /// <summary>
