@@ -9,12 +9,20 @@ namespace AvocadoServer.ServerCore
         static readonly Dictionary<int, Job> jobLookup 
             = new Dictionary<int, Job>();
 
-        public static void Start(string app, string name, string[] args)
+        readonly int id;
+        readonly string app;
+        readonly string name;
+        readonly IEnumerable<string> args;
+
+        public Job(string app, string name, IEnumerable<string> args)
         {
-            createJob(app, name).Start(args);
+            id = reserveId();
+            this.app = app;
+            this.name = name;
+            this.args = args;
         }
 
-        static Job createJob(string app, string name)
+        int reserveId()
         {
             lock (jobLookup)
             {
@@ -22,32 +30,18 @@ namespace AvocadoServer.ServerCore
                 var id = 1;
                 while (jobLookup.ContainsKey(id)) id++;
 
-                // Create the new job and add it to the lookup list.
-                var job = new Job(id, app, name);
-                jobLookup.Add(id, job);
-                return job;
+                // Create a new entry in the lookup list.
+                jobLookup.Add(id, this);
+
+                return id;
             }
         }
 
-        readonly int id;
-        readonly string app;
-        readonly string name;
+        public override string ToString() => $"{app}.{name}:{id}";
 
-        Job(int id, string app, string name)
+        public void Start()
         {
-            this.id = id;
-            this.app = app;
-            this.name = name;
-        }
-
-        public override string ToString()
-        {
-            return string.Format("{0}.{1} (id:{2}) ", app, name, id);
-        }
-
-        public void Start(string[] arg)
-        {
-            Logger.WriteLogItem("Job started: {0}", ToString());
+            Logger.WriteLine($"Job {ToString()} started.");
         }
     }
 }
