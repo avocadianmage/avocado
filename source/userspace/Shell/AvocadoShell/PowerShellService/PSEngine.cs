@@ -3,7 +3,6 @@ using AvocadoShell.PowerShellService.Host;
 using AvocadoUtilities;
 using System;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
@@ -96,21 +95,9 @@ namespace AvocadoShell.PowerShellService
         void preparePowershell()
         {
             var host = new CustomHost(shellUI);
-            var session = createSession();
-            var runspace = RunspaceFactory.CreateRunspace(host, session);
+            var runspace = RunspaceFactory.CreateRunspace(host);
             runspace.Open();
             ps.Runspace = runspace;
-        }
-
-        InitialSessionState createSession()
-        {
-            var cmdlets = Directory.EnumerateFiles(
-                RootDir.Avocado.Apps.Val, 
-                "*.dll", 
-                SearchOption.AllDirectories);
-            var state = InitialSessionState.CreateDefault();
-            state.ImportPSModule(cmdlets.ToArray());
-            return state;
         }
 
         void invocationStateSubscribe()
