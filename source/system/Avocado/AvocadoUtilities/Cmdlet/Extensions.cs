@@ -38,5 +38,10 @@ namespace AvocadoUtilities.Cmdlet
 
             return task.Result;
         }
+
+        public static string GetModulePath(this PSCmdlet cmdlet)
+        {
+            return cmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
+        }
     }
 }

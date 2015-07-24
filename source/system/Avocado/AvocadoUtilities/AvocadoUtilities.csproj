@@ -37,7 +37,6 @@
     <AssemblyOriginatorKeyFile>AvocadoUtilities.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Cmdlet\Invoker.cs" />
     <Compile Include="Cmdlet\Extensions.cs" />
     <Compile Include="Cmdlet\Prompts.cs" />
     <Compile Include="CommandLine\EnvironmentMgr.cs" />
