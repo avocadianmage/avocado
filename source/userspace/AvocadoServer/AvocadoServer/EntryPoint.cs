@@ -1,7 +1,6 @@
 ﻿using AvocadoServer.ServerCore;
-using AvocadoUtilities.CommandLine;
 using System;
-using UtilityLib.Processes;
+using System.Linq;
 
 namespace AvocadoServer
 {
@@ -9,16 +8,10 @@ namespace AvocadoServer
     {
         static void Main(string[] args)
         {
-            // The server cannot be hosted if the session is not elevated.
-            if (!EnvUtils.IsAdmin)
-            {
-                EnvironmentMgr.TerminatingError(
-                    "AvocadoServer must be run with administrative privileges.");
-            }
-
             var host = WCF.CreateHost();
 
-            Logger.WriteServerStarted();
+            var endpointStr = host.BaseAddresses.First().ToString();
+            Logger.WriteServerStarted(endpointStr);
             Console.ReadKey();
 
             host.Close();

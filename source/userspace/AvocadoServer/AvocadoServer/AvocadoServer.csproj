@@ -39,7 +39,6 @@
     <Compile Include="ServerAPI\IServerAPI.cs" />
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
-    <Compile Include="ServerConfig.cs" />
     <Compile Include="ServerCore\Job.cs" />
     <Compile Include="ServerCore\Logger.cs" />
     <Compile Include="ServerCore\WCF.cs" />

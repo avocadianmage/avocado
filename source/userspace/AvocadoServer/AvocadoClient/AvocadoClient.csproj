@@ -37,19 +37,19 @@
     <None Include="Service References\AvocadoServerService\AvocadoClient.AvocadoServerService.Job.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\AvocadoServerService\AvocadoServer.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AvocadoServerService\AvocadoServer1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AvocadoServerService\AvocadoServer2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AvocadoServerService\AvocadoServer3.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Service References\AvocadoServerService\ServerAPIService.wsdl" />
+    <None Include="Service References\AvocadoServerService\ServerAPIService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\ServerAPIService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\ServerAPIService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\AvocadoServerService\ServerAPIService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
@@ -82,7 +82,7 @@
     <WCFMetadataStorage Include="Service References\AvocadoServerService\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AvocadoServerService\AvocadoServer.disco" />
+    <None Include="Service References\AvocadoServerService\ServerAPIService.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\AvocadoServerService\configuration91.svcinfo" />

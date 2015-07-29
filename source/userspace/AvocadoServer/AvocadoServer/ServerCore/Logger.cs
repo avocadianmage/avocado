@@ -4,9 +4,9 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
-        public static void WriteServerStarted()
+        public static void WriteServerStarted(string endpoint)
             => Console.WriteLine(
-                $"AvocadoServer is now running at {ServerConfig.BaseAddress}...");
+                $"AvocadoServer is now running at {endpoint}...");
 
         public static void WriteLine(string msg) => WriteLine("sys", msg);
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="784edbfb-4975-4c92-934a-220dacde449d" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="dee30de6-4e3f-4059-b9bb-f714fa14b95e" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -19,15 +19,15 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8000/AvocadoServer" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:8000/AvocadoServer/ServerAPIService" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="AvocadoServer.xsd" MetadataType="Schema" ID="3de2d131-9dfd-4caf-b69c-4f8771f7951e" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd0" />
-    <MetadataFile FileName="AvocadoServer.disco" MetadataType="Disco" ID="ebcbec8c-447a-46e5-8898-3117a5283b35" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?disco" />
-    <MetadataFile FileName="ServerAPIService.wsdl" MetadataType="Wsdl" ID="e726be1b-fb75-4697-ab96-f0243ad1e0a1" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?wsdl" />
-    <MetadataFile FileName="AvocadoServer1.xsd" MetadataType="Schema" ID="915f53d3-dc31-49f7-8c7b-e6a03e487cab" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd3" />
-    <MetadataFile FileName="AvocadoServer2.xsd" MetadataType="Schema" ID="cd0c33a7-4fd2-4ca1-a93d-39a2c0dbf1d6" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd1" />
-    <MetadataFile FileName="AvocadoServer3.xsd" MetadataType="Schema" ID="802b5d59-4eda-450b-b7f9-6ae79c602145" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer?xsd=xsd2" />
+    <MetadataFile FileName="ServerAPIService.disco" MetadataType="Disco" ID="6b37d7d0-8643-4770-a7e0-a65e697188ac" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?disco" />
+    <MetadataFile FileName="ServerAPIService.xsd" MetadataType="Schema" ID="d49f37aa-d1c5-465b-9cd8-a62dae6487e9" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd2" />
+    <MetadataFile FileName="ServerAPIService1.xsd" MetadataType="Schema" ID="ff629d24-c405-4dca-bf9c-8624255e963e" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd3" />
+    <MetadataFile FileName="ServerAPIService2.xsd" MetadataType="Schema" ID="eaa2f617-9e34-46b6-bd81-6f2fdf9a859e" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd0" />
+    <MetadataFile FileName="ServerAPIService3.xsd" MetadataType="Schema" ID="7446a3f4-67df-4688-a369-7d6b9e7ae881" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd1" />
+    <MetadataFile FileName="ServerAPIService.wsdl" MetadataType="Wsdl" ID="c75789e1-0ca7-4fdd-8626-97db198a832e" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
