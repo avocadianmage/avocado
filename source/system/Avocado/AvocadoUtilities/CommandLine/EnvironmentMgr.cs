@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AvocadoUtilities.CommandLine
 {
@@ -10,6 +8,12 @@ namespace AvocadoUtilities.CommandLine
         {
             Console.Error.WriteLine(msg, args);
             Environment.Exit(0);
+        }
+
+        public static void RunCriticalCode(Action action)
+        {
+            try { action.Invoke(); }
+            catch (Exception e){TerminatingError(e.Message); }
         }
     }
 }

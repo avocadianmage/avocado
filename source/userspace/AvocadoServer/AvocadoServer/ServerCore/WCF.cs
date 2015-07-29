@@ -1,5 +1,4 @@
-﻿using AvocadoServer.AvocadoServerService;
-using AvocadoServer.ServerAPI;
+﻿using AvocadoServer.ServerAPI;
 using AvocadoUtilities.CommandLine;
 using System;
 using System.ServiceModel;
@@ -7,7 +6,7 @@ using System.ServiceModel.Description;
 
 namespace AvocadoServer.ServerCore
 {
-    static class WCFEngine
+    static class WCF
     {
         public static ServiceHost CreateHost()
         {
@@ -15,15 +14,8 @@ namespace AvocadoServer.ServerCore
             host.addEndpoint();
             host.enableMetadataExchange();
             host.showDebuggingInfo();
-            runCriticalCode(host.Open);
+            EnvironmentMgr.RunCriticalCode(host.Open);
             return host;
-        }
-
-        public static ServerAPIClient CreateClient()
-        {
-            var client = new ServerAPIClient();
-            runCriticalCode(() => client.Ping());
-            return client;
         }
 
         static ServiceHost createHostBase()
@@ -36,9 +28,9 @@ namespace AvocadoServer.ServerCore
         static void addEndpoint(this ServiceHost host)
         {
             host.AddServiceEndpoint(
-                typeof(AvocadoServer.ServerAPI.IServerAPI),
+                typeof(IServerAPI),
                 new WSHttpBinding(),
-                ServerConfig.APIServiceName);
+                nameof(ServerAPIService));
         }
 
         static void enableMetadataExchange(this ServiceHost host)
@@ -55,15 +47,6 @@ namespace AvocadoServer.ServerCore
                 IncludeExceptionDetailInFaults = true
             };
             host.Description.Behaviors.Add(debug);
-        }
-
-        static void runCriticalCode(Action action)
-        {
-            try { action.Invoke(); }
-            catch (Exception e)
-            {
-                EnvironmentMgr.TerminatingError(e.Message);
-            }
         }
     }
 }

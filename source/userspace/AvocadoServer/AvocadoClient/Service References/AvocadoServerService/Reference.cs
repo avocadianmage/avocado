@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AvocadoServer.AvocadoServerService {
+namespace AvocadoClient.AvocadoServerService {
     using System.Runtime.Serialization;
     using System;
     
@@ -53,10 +53,10 @@ namespace AvocadoServer.AvocadoServerService {
         System.Threading.Tasks.Task<bool> PingAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/GetJobs", ReplyAction="http://tempuri.org/IServerAPI/GetJobsResponse")]
-        AvocadoServer.AvocadoServerService.Job[] GetJobs();
+        AvocadoClient.AvocadoServerService.Job[] GetJobs();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/GetJobs", ReplyAction="http://tempuri.org/IServerAPI/GetJobsResponse")]
-        System.Threading.Tasks.Task<AvocadoServer.AvocadoServerService.Job[]> GetJobsAsync();
+        System.Threading.Tasks.Task<AvocadoClient.AvocadoServerService.Job[]> GetJobsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/RunJob", ReplyAction="http://tempuri.org/IServerAPI/RunJobResponse")]
         void RunJob(string app, string name, string[] args);
@@ -72,12 +72,12 @@ namespace AvocadoServer.AvocadoServerService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IServerAPIChannel : AvocadoServer.AvocadoServerService.IServerAPI, System.ServiceModel.IClientChannel {
+    public interface IServerAPIChannel : AvocadoClient.AvocadoServerService.IServerAPI, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ServerAPIClient : System.ServiceModel.ClientBase<AvocadoServer.AvocadoServerService.IServerAPI>, AvocadoServer.AvocadoServerService.IServerAPI {
+    public partial class ServerAPIClient : System.ServiceModel.ClientBase<AvocadoClient.AvocadoServerService.IServerAPI>, AvocadoClient.AvocadoServerService.IServerAPI {
         
         public ServerAPIClient() {
         }
@@ -106,11 +106,11 @@ namespace AvocadoServer.AvocadoServerService {
             return base.Channel.PingAsync();
         }
         
-        public AvocadoServer.AvocadoServerService.Job[] GetJobs() {
+        public AvocadoClient.AvocadoServerService.Job[] GetJobs() {
             return base.Channel.GetJobs();
         }
         
-        public System.Threading.Tasks.Task<AvocadoServer.AvocadoServerService.Job[]> GetJobsAsync() {
+        public System.Threading.Tasks.Task<AvocadoClient.AvocadoServerService.Job[]> GetJobsAsync() {
             return base.Channel.GetJobsAsync();
         }
         

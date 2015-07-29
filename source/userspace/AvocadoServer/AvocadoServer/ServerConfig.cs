@@ -12,10 +12,5 @@
                 return string.Format(URI_FORMAT, PORT, SUBDOMAIN);
             }
         }
-
-        public static string APIServiceName
-        {
-            get { return "ServerAPIService"; }
-        }
     }
 }
