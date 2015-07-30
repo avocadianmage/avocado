@@ -1,5 +1,5 @@
 ﻿using AvocadoClient.AvocadoServerService;
-using AvocadoUtilities.CommandLine;
+using UtilityLib.Processes;
 
 namespace AvocadoClient
 {
@@ -8,7 +8,7 @@ namespace AvocadoClient
         public static ServerAPIClient CreateClient()
         {
             var client = new ServerAPIClient();
-            EnvironmentMgr.RunCriticalCode(() => client.Ping());
+            ConsoleProc.RunCriticalCode(() => client.Ping());
             return client;
         }
     }

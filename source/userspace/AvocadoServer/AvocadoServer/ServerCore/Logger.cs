@@ -6,7 +6,7 @@ namespace AvocadoServer.ServerCore
     {
         public static void WriteServerStarted(string endpoint)
             => Console.WriteLine(
-                $"AvocadoServer is now running at {endpoint}...");
+                $"AvocadoServer is now running at [{endpoint}]...");
 
         public static void WriteLine(string msg) => WriteLine("sys", msg);
 

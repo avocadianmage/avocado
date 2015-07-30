@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using UtilityLib.MiscTools;
+using UtilityLib.Processes;
 
 namespace AvocadoClient
 {
@@ -31,7 +32,7 @@ namespace AvocadoClient
             var progName = args.ElementAtOrDefault(1);
             if (appName == null || progName == null)
             {
-                EnvironmentMgr.TerminatingError(
+                ConsoleProc.TerminatingError(
                     "Expected: Server RunJob <app> <name>");
             }
 

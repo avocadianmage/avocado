@@ -1,6 +1,6 @@
 ﻿using AvocadoServer.ServerAPI;
-using AvocadoUtilities.CommandLine;
 using System.ServiceModel;
+using UtilityLib.Processes;
 
 namespace AvocadoServer.ServerCore
 {
@@ -9,7 +9,7 @@ namespace AvocadoServer.ServerCore
         public static ServiceHost CreateHost()
         {
             var host = new ServiceHost(typeof(ServerAPIService));
-            EnvironmentMgr.RunCriticalCode(host.Open);
+            ConsoleProc.RunCriticalCode(host.Open);
             return host;
         }
     }
