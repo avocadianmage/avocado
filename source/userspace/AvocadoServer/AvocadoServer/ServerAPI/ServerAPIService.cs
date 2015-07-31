@@ -15,9 +15,13 @@ namespace AvocadoServer.ServerAPI
             return null;
         }
 
-        public void RunJob(string app, string name, string[] args)
+        public void RunJob(
+            string app, 
+            string name, 
+            int secInterval, 
+            string[] args)
         {
-            new Job(app, name, args).Start();
+            new Job(app, name, secInterval, args).Start();
         }
 
         public void KillJob(int id)

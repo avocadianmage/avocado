@@ -31,6 +31,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" name="app" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="secInterval" type="xs:int" />
         <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="args" nillable="true" type="q2:ArrayOfstring" />
       </xs:sequence>
     </xs:complexType>

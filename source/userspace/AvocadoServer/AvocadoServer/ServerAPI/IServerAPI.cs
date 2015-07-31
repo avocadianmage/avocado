@@ -14,7 +14,7 @@ namespace AvocadoServer.ServerAPI
         IEnumerable<Job> GetJobs();
 
         [OperationContract]
-        void RunJob(string app, string name, string[] args);
+        void RunJob(string app, string name, int secInterval, string[] args);
 
         [OperationContract]
         void KillJob(int id);

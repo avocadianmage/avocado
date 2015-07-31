@@ -27,17 +27,28 @@ namespace AvocadoClient
         [Subcommand]
         public static void RunJob(string[] args)
         {
+            var i = 0;
+
             // Retrieve and verify the correct number of arguments are given.
-            var appName = args.ElementAtOrDefault(0);
-            var progName = args.ElementAtOrDefault(1);
-            if (appName == null || progName == null)
+            var appName = args.ElementAtOrDefault(i++);
+            var progName = args.ElementAtOrDefault(i++);
+            var secIntervalStr = args.ElementAtOrDefault(i++);
+            if (appName == null || progName == null || secIntervalStr == null)
             {
                 ConsoleProc.TerminatingError(
-                    "Expected: Server RunJob <app> <name>");
+                    "Expected: Server RunJob <app> <name> <interval> [args]");
             }
 
-            var jobArgs = args.Skip(2).ToArray();
-            WCF.CreateClient().RunJob(appName, progName, jobArgs);
+            // Convert secInterval to an integer.
+            int secInterval;
+            if (!int.TryParse(secIntervalStr, out secInterval))
+            {
+                ConsoleProc.TerminatingError(
+                    "Argument <interval> must be an integer.");
+            }
+
+            var jobArgs = args.Skip(i).ToArray();
+            WCF.CreateClient().RunJob(appName, progName, secInterval, jobArgs);
         }
     }
 }

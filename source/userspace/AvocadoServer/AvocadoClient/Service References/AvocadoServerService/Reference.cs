@@ -59,10 +59,10 @@ namespace AvocadoClient.AvocadoServerService {
         System.Threading.Tasks.Task<AvocadoClient.AvocadoServerService.Job[]> GetJobsAsync();
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/RunJob", ReplyAction="http://tempuri.org/IServerAPI/RunJobResponse")]
-        void RunJob(string app, string name, string[] args);
+        void RunJob(string app, string name, int secInterval, string[] args);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/RunJob", ReplyAction="http://tempuri.org/IServerAPI/RunJobResponse")]
-        System.Threading.Tasks.Task RunJobAsync(string app, string name, string[] args);
+        System.Threading.Tasks.Task RunJobAsync(string app, string name, int secInterval, string[] args);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/KillJob", ReplyAction="http://tempuri.org/IServerAPI/KillJobResponse")]
         void KillJob(int id);
@@ -114,12 +114,12 @@ namespace AvocadoClient.AvocadoServerService {
             return base.Channel.GetJobsAsync();
         }
         
-        public void RunJob(string app, string name, string[] args) {
-            base.Channel.RunJob(app, name, args);
+        public void RunJob(string app, string name, int secInterval, string[] args) {
+            base.Channel.RunJob(app, name, secInterval, args);
         }
         
-        public System.Threading.Tasks.Task RunJobAsync(string app, string name, string[] args) {
-            return base.Channel.RunJobAsync(app, name, args);
+        public System.Threading.Tasks.Task RunJobAsync(string app, string name, int secInterval, string[] args) {
+            return base.Channel.RunJobAsync(app, name, secInterval, args);
         }
         
         public void KillJob(int id) {
