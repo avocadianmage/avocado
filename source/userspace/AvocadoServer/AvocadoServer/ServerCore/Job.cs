@@ -65,7 +65,7 @@ namespace AvocadoServer.ServerCore
             while (true) //TODO - listen for killing
             {
                 // Dispatch an execution of the job.
-                Task.Run(dispatchedThread).RunAsync();
+                dispatchedThread().RunAsync();
                 
                 // Wait for the specified interval between dispatches.
                 const int MsInSec = 1000;
