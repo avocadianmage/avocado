@@ -66,7 +66,7 @@ namespace AvocadoServer.ServerCore
             {
                 // Dispatch an execution of the job.
                 Task.Run(dispatchedThread).RunAsync();
-
+                
                 // Wait for the specified interval between dispatches.
                 const int MsInSec = 1000;
                 await Task.Delay(secInterval * MsInSec);
@@ -75,11 +75,10 @@ namespace AvocadoServer.ServerCore
 
         async Task dispatchedThread()
         {
-            // Start a new instance of the process.
             var proc = new ManagedProcess(exePath, args.ToArray());
-            //TODO - live output as proc is running
-            var output = await Task.Run(() => proc.RunBackground());
-            Logger.WriteLine(this, output);
+            proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
+            proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
+            await proc.RunBackgroundLive();
         }
     }
 }

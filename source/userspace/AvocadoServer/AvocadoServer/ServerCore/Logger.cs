@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace AvocadoServer.ServerCore
 {
@@ -12,8 +13,19 @@ namespace AvocadoServer.ServerCore
 
         public static void WriteLine(Job job, string msg)
         {
+            writeLine(Console.Out, job, msg);
+        }
+
+        public static void WriteErrorLine(Job job, string msg)
+        {
+            writeLine(Console.Error, job, msg);
+        }
+
+        static void writeLine(TextWriter writer, Job job, string msg)
+        {
+            if (msg == null) return;
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.ff");
-            Console.WriteLine(
+            writer.WriteLine(
                 $"{timestamp} [{job?.ToString() ?? "sys"}] {msg}");
         }
     }
