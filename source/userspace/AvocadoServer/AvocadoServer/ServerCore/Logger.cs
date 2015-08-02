@@ -11,15 +11,14 @@ namespace AvocadoServer.ServerCore
 
         public static void WriteLine(string msg) => WriteLine(null, msg);
 
+        public static void WriteErrorLine(string msg)
+            => WriteErrorLine(null, msg);
+
         public static void WriteLine(Job job, string msg)
-        {
-            writeLine(Console.Out, job, msg);
-        }
+            => writeLine(Console.Out, job, msg);
 
         public static void WriteErrorLine(Job job, string msg)
-        {
-            writeLine(Console.Error, job, msg);
-        }
+            => writeLine(Console.Error, job, msg);
 
         static void writeLine(TextWriter writer, Job job, string msg)
         {

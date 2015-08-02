@@ -39,6 +39,8 @@ namespace AvocadoClient
                     "Expected: Server RunJob <app> <name> <interval> [args]");
             }
 
+            var jobArgs = args.Skip(i).ToArray();
+
             // Convert secInterval to an integer.
             int secInterval;
             if (!int.TryParse(secIntervalStr, out secInterval))
@@ -47,8 +49,13 @@ namespace AvocadoClient
                     "Argument <interval> must be an integer.");
             }
 
-            var jobArgs = args.Skip(i).ToArray();
-            WCF.CreateClient().RunJob(appName, progName, secInterval, jobArgs);
+            // Call to server.
+            var client = WCF.CreateClient();
+            var result = client.RunJob(appName, progName, secInterval, jobArgs);
+
+            // Output result.
+            var stream = result.Success ? Console.Out : Console.Error;
+            stream.WriteLine(result.Message);
         }
     }
 }

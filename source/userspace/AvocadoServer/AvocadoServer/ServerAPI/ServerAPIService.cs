@@ -1,5 +1,6 @@
 ﻿using AvocadoServer.ServerCore;
 using System.Collections.Generic;
+using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
 {
@@ -15,18 +16,26 @@ namespace AvocadoServer.ServerAPI
             return null;
         }
 
-        public void RunJob(
+        public WCFMessage RunJob(
             string app, 
             string name, 
             int secInterval, 
             string[] args)
         {
-            new Job(app, name, secInterval, args).Start();
+            // Create new job.
+            var job = new Job(app, name, secInterval, args);
+
+            // Start job.
+            string output;
+            var success = job.Start(out output);
+
+            // Return result message.
+            return new WCFMessage(success, output);
         }
 
         public void KillJob(int id)
         {
-
+            
         }
     }
 }

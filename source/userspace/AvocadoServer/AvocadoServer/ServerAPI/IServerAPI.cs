@@ -1,6 +1,7 @@
 ﻿using AvocadoServer.ServerCore;
 using System.Collections.Generic;
 using System.ServiceModel;
+using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
 {
@@ -14,7 +15,7 @@ namespace AvocadoServer.ServerAPI
         IEnumerable<Job> GetJobs();
 
         [OperationContract]
-        void RunJob(string app, string name, int secInterval, string[] args);
+        WCFMessage RunJob(string app, string name, int secInterval, string[] args);
 
         [OperationContract]
         void KillJob(int id);

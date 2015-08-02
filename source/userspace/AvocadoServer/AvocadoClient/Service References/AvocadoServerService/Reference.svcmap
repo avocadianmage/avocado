@@ -22,6 +22,7 @@
     <MetadataSource Address="http://localhost:8000/AvocadoServer/ServerAPIService" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
+    <MetadataFile FileName="ServerAPIService4.xsd" MetadataType="Schema" ID="7dc2a760-6215-48c0-8c77-455a7035e8e2" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd4" />
     <MetadataFile FileName="ServerAPIService.disco" MetadataType="Disco" ID="6b37d7d0-8643-4770-a7e0-a65e697188ac" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?disco" />
     <MetadataFile FileName="ServerAPIService.xsd" MetadataType="Schema" ID="d49f37aa-d1c5-465b-9cd8-a62dae6487e9" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd2" />
     <MetadataFile FileName="ServerAPIService1.xsd" MetadataType="Schema" ID="ff629d24-c405-4dca-bf9c-8624255e963e" SourceId="1" SourceUrl="http://localhost:8000/AvocadoServer/ServerAPIService?xsd=xsd3" />

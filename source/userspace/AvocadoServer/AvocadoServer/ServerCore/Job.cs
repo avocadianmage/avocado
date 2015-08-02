@@ -15,11 +15,12 @@ namespace AvocadoServer.ServerCore
         static readonly Dictionary<int, Job> jobLookup 
             = new Dictionary<int, Job>();
 
-        readonly int id;
         readonly string app;
         readonly string name;
         readonly int secInterval;
         readonly IEnumerable<string> args;
+
+        int id;
 
         public Job(
             string app, 
@@ -27,14 +28,13 @@ namespace AvocadoServer.ServerCore
             int secInterval, 
             IEnumerable<string> args)
         {
-            id = reserveId();
             this.app = app;
             this.name = name;
             this.secInterval = secInterval;
             this.args = args;
         }
 
-        int reserveId()
+        int getNewId()
         {
             lock (jobLookup)
             {
@@ -51,10 +51,21 @@ namespace AvocadoServer.ServerCore
 
         public override string ToString() => $"{app}.{name}:{id}";
 
-        public void Start()
+        public bool Start(out string output)
         {
-            Logger.WriteLine($"Job {ToString()} started.");
+            // Verify file exists.
+            if (!File.Exists(exePath))
+            {
+                output = $"Failure starting job: server file [{exePath}] does not exist.";
+                Logger.WriteErrorLine(output);
+                return false;
+            }
+
+            id = getNewId();
+            output = $"Job {ToString()} started.";
+            Logger.WriteLine(output);
             Task.Run(schedulerThread);
+            return true;
         }
 
         string exePath
