@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
 namespace AvocadoServer.ServerCore
 {
-    [DataContract]
     public sealed class Job
     {
+        public static IEnumerable<Job> JobList => jobLookup.Values;
+
         static readonly Dictionary<int, Job> jobLookup 
             = new Dictionary<int, Job>();
 
@@ -49,7 +49,8 @@ namespace AvocadoServer.ServerCore
             }
         }
 
-        public override string ToString() => $"{app}.{name}:{id}";
+        public override string ToString() 
+            => $"{id}:{app}.{name}({string.Join(" ", args)})";
 
         public bool Start(out string output)
         {

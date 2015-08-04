@@ -1,5 +1,6 @@
 ﻿using AvocadoServer.ServerCore;
 using System.Collections.Generic;
+using System.Linq;
 using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
@@ -11,9 +12,9 @@ namespace AvocadoServer.ServerAPI
             return true;
         }
 
-        public IEnumerable<Job> GetJobs()
+        public IEnumerable<string> GetJobs()
         {
-            return null;
+            return Job.JobList.Select(x => x.ToString());
         }
 
         public WCFMessage RunJob(

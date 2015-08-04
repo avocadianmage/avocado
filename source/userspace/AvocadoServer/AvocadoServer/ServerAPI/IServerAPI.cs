@@ -12,7 +12,7 @@ namespace AvocadoServer.ServerAPI
         bool Ping();
 
         [OperationContract]
-        IEnumerable<Job> GetJobs();
+        IEnumerable<string> GetJobs();
 
         [OperationContract]
         WCFMessage RunJob(string app, string name, int secInterval, string[] args);

@@ -37,9 +37,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\DataSources\UtilityLib.WCF.WCFMessage.datasource" />
-    <None Include="Service References\AvocadoServerService\AvocadoClient.AvocadoServerService.Job.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="Service References\AvocadoServerService\ServerAPIService.wsdl" />
     <None Include="Service References\AvocadoServerService\ServerAPIService.xsd">
       <SubType>Designer</SubType>
@@ -51,9 +48,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\AvocadoServerService\ServerAPIService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\AvocadoServerService\ServerAPIService4.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
