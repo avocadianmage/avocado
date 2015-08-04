@@ -27,8 +27,7 @@ namespace AvocadoClient
         [Subcommand]
         public static void GetJobs(string[] args)
         {
-            var jobs = WCF.CreateClient().GetJobs();
-            foreach (var job in jobs) Console.WriteLine(job);
+            WCF.CreateClient().GetJobs().ForEach(Console.WriteLine);
         }
 
         [Subcommand]
