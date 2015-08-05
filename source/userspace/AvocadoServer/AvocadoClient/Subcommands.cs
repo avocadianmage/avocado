@@ -60,8 +60,7 @@ namespace AvocadoClient
             var result = client.RunJob(appName, progName, secInterval, jobArgs);
 
             // Output result.
-            var stream = result.Success ? Console.Out : Console.Error;
-            stream.WriteLine(result.Message); //TODO: generalize this
+            result.LogToConsole();
         }
 
         [Subcommand]
@@ -88,8 +87,7 @@ namespace AvocadoClient
             var result = client.KillJob(id);
 
             // Output result.
-            var stream = result.Success ? Console.Out : Console.Error;
-            stream.WriteLine(result.Message); //TODO: generalize this
+            result.LogToConsole();
         }
     }
 }
