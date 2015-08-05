@@ -1,11 +1,10 @@
 ﻿using AvocadoServer.ServerCore;
 using System.Collections.Generic;
-using System.Linq;
 using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
 {
-    public class ServerAPIService : IServerAPI
+    public sealed class ServerAPIService : IServerAPI
     {
         public bool Ping()
         {
@@ -14,7 +13,7 @@ namespace AvocadoServer.ServerAPI
 
         public IEnumerable<string> GetJobs()
         {
-            return Job.JobList.Select(x => x.ToString());
+            return EntryPoint.Jobs.JobLookupInfo;
         }
 
         public WCFMessage RunJob(
@@ -23,20 +22,16 @@ namespace AvocadoServer.ServerAPI
             int secInterval, 
             string[] args)
         {
-            // Create new job.
-            var job = new Job(app, name, secInterval, args);
-
-            // Start job.
-            string output;
-            var success = job.Start(out output);
-
-            // Return result message.
-            return new WCFMessage(success, output);
+            var msg = EntryPoint.Jobs.StartJob(app, name, secInterval, args);
+            Logger.WriteWCFMessage(msg);
+            return msg;
         }
 
-        public void KillJob(int id)
+        public WCFMessage KillJob(int id)
         {
-            
+            var msg = EntryPoint.Jobs.KillJob(id);
+            Logger.WriteWCFMessage(msg);
+            return msg;
         }
     }
 }

@@ -36,10 +36,11 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Jobs\JobList.cs" />
     <Compile Include="ServerAPI\IServerAPI.cs" />
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
-    <Compile Include="ServerCore\Job.cs" />
+    <Compile Include="Jobs\Job.cs" />
     <Compile Include="ServerCore\Logger.cs" />
     <Compile Include="ServerCore\WCF.cs" />
   </ItemGroup>

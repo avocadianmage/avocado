@@ -18,6 +18,6 @@ namespace AvocadoServer.ServerAPI
         WCFMessage RunJob(string app, string name, int secInterval, string[] args);
 
         [OperationContract]
-        void KillJob(int id);
+        WCFMessage KillJob(int id);
     }
 }

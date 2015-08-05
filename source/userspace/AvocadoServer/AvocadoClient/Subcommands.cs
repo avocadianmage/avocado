@@ -20,8 +20,8 @@ namespace AvocadoClient
             var timestamp = secs.ToRoundedString(3);
 
             // Output result.
-            const string FMT = "Ping {0} - completed in {1}s.";
-            Console.WriteLine(FMT, client.Endpoint.Address, timestamp);
+            var addr = client.Endpoint.Address;
+            Console.WriteLine($"Ping {addr} - completed in {timestamp}s.");
         }
 
         [Subcommand]
@@ -61,7 +61,35 @@ namespace AvocadoClient
 
             // Output result.
             var stream = result.Success ? Console.Out : Console.Error;
-            stream.WriteLine(result.Message);
+            stream.WriteLine(result.Message); //TODO: generalize this
+        }
+
+        [Subcommand]
+        public static void KillJob(string[] args)
+        {
+            // Retrieve and validate arguments.
+            var idStr = args.ElementAtOrDefault(0);
+            if (idStr == null)
+            {
+                ConsoleProc.TerminatingError(
+                    "Expected: Server KillJob <id>");
+            }
+
+            // Convert id to an integer.
+            int id;
+            if (!int.TryParse(idStr, out id))
+            {
+                ConsoleProc.TerminatingError(
+                    "Argument <id> must be an integer.");
+            }
+
+            // Call to server.
+            var client = WCF.CreateClient();
+            var result = client.KillJob(id);
+
+            // Output result.
+            var stream = result.Success ? Console.Out : Console.Error;
+            stream.WriteLine(result.Message); //TODO: generalize this
         }
     }
 }

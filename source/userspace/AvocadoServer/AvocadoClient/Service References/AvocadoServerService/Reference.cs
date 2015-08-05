@@ -34,10 +34,10 @@ namespace AvocadoClient.AvocadoServerService {
         System.Threading.Tasks.Task<UtilityLib.WCF.WCFMessage> RunJobAsync(string app, string name, int secInterval, string[] args);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/KillJob", ReplyAction="http://tempuri.org/IServerAPI/KillJobResponse")]
-        void KillJob(int id);
+        UtilityLib.WCF.WCFMessage KillJob(int id);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/KillJob", ReplyAction="http://tempuri.org/IServerAPI/KillJobResponse")]
-        System.Threading.Tasks.Task KillJobAsync(int id);
+        System.Threading.Tasks.Task<UtilityLib.WCF.WCFMessage> KillJobAsync(int id);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -91,11 +91,11 @@ namespace AvocadoClient.AvocadoServerService {
             return base.Channel.RunJobAsync(app, name, secInterval, args);
         }
         
-        public void KillJob(int id) {
-            base.Channel.KillJob(id);
+        public UtilityLib.WCF.WCFMessage KillJob(int id) {
+            return base.Channel.KillJob(id);
         }
         
-        public System.Threading.Tasks.Task KillJobAsync(int id) {
+        public System.Threading.Tasks.Task<UtilityLib.WCF.WCFMessage> KillJobAsync(int id) {
             return base.Channel.KillJobAsync(id);
         }
     }

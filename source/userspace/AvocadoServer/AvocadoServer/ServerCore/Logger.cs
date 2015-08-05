@@ -1,5 +1,7 @@
-﻿using System;
+﻿using AvocadoServer.Jobs;
+using System;
 using System.IO;
+using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerCore
 {
@@ -26,6 +28,14 @@ namespace AvocadoServer.ServerCore
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.ff");
             writer.WriteLine(
                 $"{timestamp} [{job?.ToString() ?? "sys"}] {msg}");
+        }
+
+        public static void WriteWCFMessage(WCFMessage msg)
+        {
+            var writer = msg.Success
+                ? (Action<string>)WriteLine
+                : WriteErrorLine;
+            writer(msg.Message);
         }
     }
 }

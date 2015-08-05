@@ -1,26 +1,24 @@
-﻿using AvocadoUtilities;
+﻿using AvocadoServer.ServerCore;
+using AvocadoUtilities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
-namespace AvocadoServer.ServerCore
+namespace AvocadoServer.Jobs
 {
-    public sealed class Job
+    sealed class Job
     {
-        public static IEnumerable<Job> JobList => jobLookup.Values;
-
-        static readonly Dictionary<int, Job> jobLookup 
-            = new Dictionary<int, Job>();
-
         readonly string app;
         readonly string name;
         readonly int secInterval;
         readonly IEnumerable<string> args;
 
         int id;
+        CancellationTokenSource tokenSource;
 
         public Job(
             string app, 
@@ -34,47 +32,38 @@ namespace AvocadoServer.ServerCore
             this.args = args;
         }
 
-        int getNewId()
+        public bool Verify(out string error)
         {
-            lock (jobLookup)
+            // Verify file exists.
+            if (!File.Exists(exePath))
             {
-                // Find an available id.
-                var id = 0;
-                while (jobLookup.ContainsKey(++id));
-
-                // Create a new entry in the lookup list.
-                jobLookup.Add(id, this);
-
-                return id;
+                // Output that the job failed to start.
+                error = $"Failure starting job: server file [{exePath}] does not exist.";
+                return false;
             }
+
+            error = null;
+            return true;
         }
 
         public override string ToString() 
             => $"{id}:{app}.{name}({string.Join(" ", args)})";
 
-        public bool Start(out string output)
+        public void Start(int id)
         {
-            // Verify file exists.
-            if (!File.Exists(exePath))
-            {
-                output = $"Failure starting job: server file [{exePath}] does not exist.";
-                Logger.WriteErrorLine(output);
-                return false;
-            }
-
-            id = getNewId();
-            output = $"Job {ToString()} started.";
-            Logger.WriteLine(output);
-            Task.Run(schedulerThread);
-            return true;
+            this.id = id;
+            tokenSource = new CancellationTokenSource();
+            Task.Run(schedulerThread, tokenSource.Token);
         }
+
+        public void Kill() => tokenSource.Cancel();
 
         string exePath
             => Path.Combine(RootDir.Avocado.Apps.Val, app, $"{name}.exe");
 
         async Task schedulerThread()
         {
-            while (true) //TODO - listen for killing
+            while (!tokenSource.Token.IsCancellationRequested)
             {
                 // Dispatch an execution of the job.
                 dispatchedThread().RunAsync();
@@ -85,6 +74,7 @@ namespace AvocadoServer.ServerCore
             }
         }
 
+        //TODO: terminate running process?
         async Task dispatchedThread()
         {
             var proc = new ManagedProcess(exePath, args.ToArray());
