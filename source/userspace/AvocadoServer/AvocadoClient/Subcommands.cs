@@ -3,18 +3,19 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using UtilityLib.MiscTools;
-using UtilityLib.Processes;
+using static AvocadoClient.WCF;
+using static UtilityLib.Processes.ConsoleProc;
 
 namespace AvocadoClient
 {
     static class Subcommands
     {
         [Subcommand]
-        public static void Ping(string[] args)
+        public static void Ping(Arguments args)
         {
             // Ping the server and measure the time taken.
             var stopwatch = Stopwatch.StartNew();
-            var client = WCF.CreateClient();
+            var client = CreateClient();
             stopwatch.Stop();
             var secs = stopwatch.ElapsedMilliseconds / 1000d;
             var timestamp = secs.ToRoundedString(3);
@@ -25,66 +26,48 @@ namespace AvocadoClient
         }
 
         [Subcommand]
-        public static void GetJobs(string[] args)
+        public static void GetJobs(Arguments args)
         {
-            WCF.CreateClient().GetJobs().ForEach(Console.WriteLine);
+            CreateClient().GetJobs().ForEach(Console.WriteLine);
         }
 
         [Subcommand]
-        public static void RunJob(string[] args)
+        public static void RunJob(Arguments args)
         {
-            var i = 0;
+            var appName = args.PopNextArg();
+            var progName = args.PopNextArg();
+            var secInterval = args.PopNextArg<int>();
 
-            // Retrieve and verify the correct number of arguments are given.
-            var appName = args.ElementAtOrDefault(i++);
-            var progName = args.ElementAtOrDefault(i++);
-            var secIntervalStr = args.ElementAtOrDefault(i++);
-            if (appName == null || progName == null || secIntervalStr == null)
+            if (appName == null || progName == null || secInterval == null)
             {
-                ConsoleProc.TerminatingError(
+                TerminatingError(
                     "Expected: Server RunJob <app> <name> <interval> [args]");
             }
 
-            var jobArgs = args.Skip(i).ToArray();
-
-            // Convert secInterval to an integer.
-            int secInterval;
-            if (!int.TryParse(secIntervalStr, out secInterval))
-            {
-                ConsoleProc.TerminatingError(
-                    "Argument <interval> must be an integer.");
-            }
-
+            var jobArgs = args.PopRemainingArgs().ToArray();
+            
             // Call to server.
-            var client = WCF.CreateClient();
-            var result = client.RunJob(appName, progName, secInterval, jobArgs);
+            var result = CreateClient().RunJob(
+                appName, 
+                progName, 
+                secInterval.Value, 
+                jobArgs);
 
             // Output result.
             result.LogToConsole();
         }
 
         [Subcommand]
-        public static void KillJob(string[] args)
+        public static void KillJob(Arguments args)
         {
-            // Retrieve and validate arguments.
-            var idStr = args.ElementAtOrDefault(0);
-            if (idStr == null)
+            var id = args.PopNextArg<int>();
+            if (id == null)
             {
-                ConsoleProc.TerminatingError(
-                    "Expected: Server KillJob <id>");
-            }
-
-            // Convert id to an integer.
-            int id;
-            if (!int.TryParse(idStr, out id))
-            {
-                ConsoleProc.TerminatingError(
-                    "Argument <id> must be an integer.");
+                TerminatingError("Expected: Server KillJob <id>");
             }
 
             // Call to server.
-            var client = WCF.CreateClient();
-            var result = client.KillJob(id);
+            var result = CreateClient().KillJob(id.Value);
 
             // Output result.
             result.LogToConsole();
