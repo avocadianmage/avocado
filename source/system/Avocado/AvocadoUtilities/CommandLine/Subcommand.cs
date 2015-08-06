@@ -36,7 +36,8 @@ namespace AvocadoUtilities.CommandLine
             }
 
             // Invoke the sub-command.
-            var subcommandArgs = EnvUtils.GetArgs(1).ToArray();
+            //var subcommandArgs = EnvUtils.GetArgs(1).ToArray();
+            var subcommandArgs = new Arguments(EnvUtils.GetArgs(1));
             method.Invoke(null, new object[] { subcommandArgs });
             return null;
         }

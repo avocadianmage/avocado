@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Jobs\JobList.cs" />
+    <Compile Include="Jobs\JobSerializer.cs" />
     <Compile Include="ServerAPI\IServerAPI.cs" />
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />

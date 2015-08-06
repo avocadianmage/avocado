@@ -28,7 +28,15 @@ namespace AvocadoClient
         [Subcommand]
         public static void GetJobs(Arguments args)
         {
-            CreateClient().GetJobs().ForEach(Console.WriteLine);
+            var jobs = CreateClient().GetJobs();
+
+            if (!jobs.Any())
+            {
+                Console.WriteLine("There are no jobs running.");
+                return;
+            }
+
+            jobs.ForEach(Console.WriteLine);
         }
 
         [Subcommand]

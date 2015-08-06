@@ -1,5 +1,6 @@
 ﻿using AvocadoServer.ServerCore;
 using AvocadoUtilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using UtilityLib.Processes;
 
 namespace AvocadoServer.Jobs
 {
+    [Serializable]
     sealed class Job
     {
         readonly string app;
@@ -17,7 +19,10 @@ namespace AvocadoServer.Jobs
         readonly int secInterval;
         readonly IEnumerable<string> args;
 
+        [NonSerialized]
         int id;
+
+        [NonSerialized]
         CancellationTokenSource tokenSource;
 
         public Job(

@@ -23,34 +23,33 @@ namespace AvocadoUtilities
 
         public static class Avocado
         {
-            public static string Val
-            {
-                get { return GetPath(RootDir.Val, typeof(Avocado)); }
-            }
+            public static string Val => GetPath(RootDir.Val, typeof(Avocado));
 
             public static class Apps
             {
-                public static string Val
-                {
-                    get { return GetPath(Avocado.Val, typeof(Apps)); }
-                }
+                public static string Val => GetPath(Avocado.Val, typeof(Apps));
 
-                public static string MyAppPath
+                public static string MyAppPath => 
+                    getAppPath(Assembly.GetCallingAssembly());
+
+                public static string MyAppDataPath
                 {
                     get
                     {
-                        var filePath = Assembly.GetCallingAssembly().Location;
-                        return Path.GetDirectoryName(filePath);
+                        var appPath = getAppPath(Assembly.GetCallingAssembly());
+                        var appDataPath = Path.Combine(appPath, "data");
+                        Directory.CreateDirectory(appDataPath);
+                        return appDataPath;
                     }
                 }
+
+                static string getAppPath(Assembly asm) => 
+                    Path.GetDirectoryName(asm.Location);
             }
 
             public static class Sys
             {
-                public static string Val
-                {
-                    get { return GetPath(Avocado.Val, typeof(Sys)); }
-                }
+                public static string Val => GetPath(Avocado.Val, typeof(Sys));
             }
         }
     }

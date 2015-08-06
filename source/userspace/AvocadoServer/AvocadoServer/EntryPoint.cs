@@ -11,12 +11,23 @@ namespace AvocadoServer
 
         static void Main(string[] args)
         {
+            // Start server.
             var host = WCF.CreateHost();
 
-            var endpointStr = host.BaseAddresses.First().ToString();
-            Logger.WriteServerStarted(endpointStr);
+            // Output log message that server has started.
+            var endpoint = host.BaseAddresses.First();
+            Logger.WriteLine(
+                $"AvocadoServer is now running at [{endpoint}]...");
+
+            // Restart existing jobs from disk.
+            Logger.WriteLine("Restarting jobs from last session...");
+            Jobs.RestoreFromDisk();
+            Logger.WriteLine("...done restarting jobs.");
+
+            // Block.
             Console.ReadKey();
 
+            // Close server.
             host.Close();
         }
     }
