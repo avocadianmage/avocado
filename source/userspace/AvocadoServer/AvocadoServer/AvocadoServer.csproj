@@ -37,7 +37,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Jobs\JobList.cs" />
-    <Compile Include="Jobs\JobSerializer.cs" />
+    <Compile Include="Jobs\Serialization\JobSerializer.cs" />
+    <Compile Include="Jobs\Serialization\XmlJob.cs" />
     <Compile Include="ServerAPI\IServerAPI.cs" />
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
@@ -55,11 +56,15 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
     <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

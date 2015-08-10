@@ -1,17 +1,21 @@
 ﻿using AvocadoUtilities;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace AvocadoServer.Jobs
+namespace AvocadoServer.Jobs.Serialization
 {
     static class JobSerializer
     {
         static string filePath =>
-            Path.Combine(RootDir.Avocado.Apps.MyAppDataPath, "jobs.bin");
+            Path.Combine(RootDir.Avocado.Apps.MyAppDataPath, "jobs.xml");
 
         static readonly object fileLock = new object();
+
+        static XmlSerializer serializer => 
+            new XmlSerializer(typeof(List<XmlJob>));
 
         public static async Task<IEnumerable<Job>> Load()
         {
@@ -24,10 +28,11 @@ namespace AvocadoServer.Jobs
             {
                 lock (fileLock)
                 {
-                    using (var stream = new FileStream(filePath, FileMode.Open))
+                    using (var reader = new StreamReader(filePath))
                     {
-                        jobs = (IEnumerable<Job>)
-                            new BinaryFormatter().Deserialize(stream);
+                        var xmlJobs = (IEnumerable<XmlJob>)
+                            serializer.Deserialize(reader);
+                        jobs = xmlJobs.Select(x => x.ToJob());
                     }
                 }
             });
@@ -40,11 +45,10 @@ namespace AvocadoServer.Jobs
             {
                 lock (fileLock)
                 {
-                    using (var stream = new FileStream(
-                        filePath, 
-                        FileMode.Create))
+                    using (var writer = new StreamWriter(filePath))
                     {
-                        new BinaryFormatter().Serialize(stream, jobs);
+                        var xmlJobs = jobs.Select(x => x.ToXml()).ToList();
+                        serializer.Serialize(writer, xmlJobs);
                     }
                 }
             });

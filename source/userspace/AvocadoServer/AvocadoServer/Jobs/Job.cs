@@ -1,6 +1,6 @@
-﻿using AvocadoServer.ServerCore;
+﻿using AvocadoServer.Jobs.Serialization;
+using AvocadoServer.ServerCore;
 using AvocadoUtilities;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,18 +11,14 @@ using UtilityLib.Processes;
 
 namespace AvocadoServer.Jobs
 {
-    [Serializable]
-    sealed class Job
+    public sealed class Job
     {
         readonly string app;
         readonly string name;
         readonly int secInterval;
         readonly IEnumerable<string> args;
-
-        [NonSerialized]
+        
         int id;
-
-        [NonSerialized]
         CancellationTokenSource tokenSource;
 
         public Job(
@@ -87,5 +83,13 @@ namespace AvocadoServer.Jobs
             proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
             await proc.RunBackgroundLive();
         }
+        
+        public XmlJob ToXml() => new XmlJob
+        {
+            App = app,
+            Name = name,
+            SecInterval = secInterval,
+            Args = args.ToList()
+        };
     }
 }

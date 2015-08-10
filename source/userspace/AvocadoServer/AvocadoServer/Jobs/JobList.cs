@@ -1,4 +1,5 @@
-﻿using AvocadoServer.ServerCore;
+﻿using AvocadoServer.Jobs.Serialization;
+using AvocadoServer.ServerCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
