@@ -12,10 +12,8 @@ namespace AvocadoServer.Jobs.Serialization
         static string filePath =>
             Path.Combine(RootDir.Avocado.Apps.MyAppDataPath, "jobs.xml");
 
-        static readonly object fileLock = new object();
-
-        static XmlSerializer serializer => 
-            new XmlSerializer(typeof(List<XmlJob>));
+        static readonly XmlSerializer serializer
+            = new XmlSerializer(typeof(List<XmlJob>));
 
         public static async Task<IEnumerable<Job>> Load()
         {
@@ -26,7 +24,7 @@ namespace AvocadoServer.Jobs.Serialization
             IEnumerable<Job> jobs = null;
             await Task.Run(() =>
             {
-                lock (fileLock)
+                lock (serializer)
                 {
                     using (var reader = new StreamReader(filePath))
                     {
@@ -43,7 +41,7 @@ namespace AvocadoServer.Jobs.Serialization
         {
             await Task.Run(() =>
             {
-                lock (fileLock)
+                lock (serializer)
                 {
                     using (var writer = new StreamWriter(filePath))
                     {
