@@ -49,7 +49,7 @@ namespace AvocadoClient
             if (appName == null || progName == null || secInterval == null)
             {
                 TerminatingError(
-                    "Expected: Server RunJob <app> <name> <interval> [args]");
+                    "Expected: Client RunJob <app> <name> <interval> [args]");
             }
 
             var jobArgs = args.PopRemainingArgs().ToArray();
@@ -71,7 +71,7 @@ namespace AvocadoClient
             var id = args.PopNextArg<int>();
             if (id == null)
             {
-                TerminatingError("Expected: Server KillJob <id>");
+                TerminatingError("Expected: Client KillJob <id>");
             }
 
             // Call to server.
