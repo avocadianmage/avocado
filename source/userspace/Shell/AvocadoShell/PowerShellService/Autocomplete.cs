@@ -1,5 +1,6 @@
 ﻿using System.Management.Automation;
 using System.Threading.Tasks;
+using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService
 {
@@ -18,12 +19,22 @@ namespace AvocadoShell.PowerShellService
             this.ps = ps;
         }
 
+        public async Task InitializeService()
+        {
+            const string DUMMY = "a";
+            await Task.Run(() => CommandCompletion.CompleteInput(
+                DUMMY,
+                DUMMY.Length,
+                null,
+                ps));
+        }
+
         public async Task<string> GetCompletion(
             string input,
             int index,
             bool forward)
         {
-            return await Task.Run<string>(
+            return await Task.Run(
                 () => getCompletion(input, index, forward));
         }
 

@@ -21,14 +21,14 @@ namespace AvocadoShell.Engine
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);
-            initPSEngine();
+            Task.Run(initPSEngine);
         }
 
-        void initPSEngine()
+        async Task initPSEngine()
         {
             psEngine = new PSEngine(this);
             psEngine.ExecDone += onExecDone;
-            psEngine.InitEnvironment();
+            await psEngine.InitEnvironment();
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)

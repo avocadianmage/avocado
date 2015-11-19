@@ -22,7 +22,7 @@ namespace AvocadoServer
             // Restart existing jobs from disk.
             Logger.WriteLine("Restarting jobs from last session...");
             Jobs.RestoreFromDisk();
-            Logger.WriteLine("...done restarting jobs.");
+            Logger.WriteLine("Done restarting jobs.");
 
             // Block.
             Console.ReadKey();

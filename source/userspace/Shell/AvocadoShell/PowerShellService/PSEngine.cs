@@ -20,15 +20,11 @@ namespace AvocadoShell.PowerShellService
         readonly PSDataCollection<PSObject> stdOut
             = new PSDataCollection<PSObject>();
 
-        public PSEngine(IShellUI shellUI)
+        public PSEngine(IShellUI ui)
         {
-            ps = PowerShell.Create();
-            this.shellUI = shellUI;
+            shellUI = ui;
+            ps = createPowershell(ui);
             autocomplete = new Autocomplete(ps);
-
-            preparePowershell();
-            initStandardOutput();
-            initStandardError();
         }
 
         static string getIncludeScript(string dir, string script)
@@ -51,7 +47,18 @@ namespace AvocadoShell.PowerShellService
             if (cmdArg != null) ps.AddScript(cmdArg);
         }
 
-        public void InitEnvironment()
+        public async Task InitEnvironment()
+        {
+            shellUI.WriteSystemLine($"Welcome to avocado[v{Config.Version}]");
+
+            shellUI.WriteSystemLine("Starting autocompletion service...");
+            await autocomplete.InitializeService();
+            
+            shellUI.WriteSystemLine("Executing profile scripts...");
+            runProfileScript();
+        }
+
+        void runProfileScript()
         {
             // Run user profile script.
             addProfileScriptToExec();
@@ -92,12 +99,24 @@ namespace AvocadoShell.PowerShellService
                 forward);
         }
 
-        void preparePowershell()
+        PowerShell createPowershell(IShellUI ui)
         {
-            var host = new CustomHost(shellUI);
+            var powershell = PowerShell.Create();
+            powershell.Runspace = createRunspace(ui);
+            
+            // Inititalize output and error streams.
+            stdOut.DataAdded += stdoutDataAdded;
+            powershell.Streams.Error.DataAdded += stderrDataAdded;
+
+            return powershell;
+        }
+
+        Runspace createRunspace(IShellUI ui)
+        {
+            var host = new CustomHost(ui);
             var runspace = RunspaceFactory.CreateRunspace(host);
             runspace.Open();
-            ps.Runspace = runspace;
+            return runspace;
         }
 
         void invocationStateSubscribe()
@@ -140,16 +159,6 @@ namespace AvocadoShell.PowerShellService
             var path = ps.Runspace.SessionStateProxy
                 .Path.CurrentLocation.Path;
             ExecDone(this, new ExecDoneEventArgs(path, error));
-        }
-
-        void initStandardError()
-        {
-            ps.Streams.Error.DataAdded += stderrDataAdded;
-        }
-
-        void initStandardOutput()
-        {
-            stdOut.DataAdded += stdoutDataAdded;
         }
 
         void stderrDataAdded(object sender, DataAddedEventArgs e)
