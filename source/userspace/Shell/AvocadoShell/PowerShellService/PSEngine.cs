@@ -28,11 +28,7 @@ namespace AvocadoShell.PowerShellService
         }
 
         static string getIncludeScript(string dir, string script)
-        {
-            const string FMT = ". {0}";
-            var path = Path.Combine(dir, script);
-            return string.Format(FMT, path);
-        }
+            => $". {Path.Combine(dir, script)}";
 
         void addProfileScriptToExec()
         {
@@ -79,14 +75,14 @@ namespace AvocadoShell.PowerShellService
 
         void execute()
         {
-            invocationStateSubscribe();
+            // Subscribe to command execution lifetime events.
+            ps.InvocationStateChanged += onInvocationStateChanged;
+
+            // Send the command to PowerShell to be executed.
             ps.BeginInvoke<PSObject, PSObject>(null, stdOut);
         }
 
-        public void Stop()
-        {
-            ps.BeginStop(null, null);
-        }
+        public void Stop() => ps.BeginStop(null, null);
 
         public async Task<string> GetCompletion(
             string input,
@@ -119,16 +115,6 @@ namespace AvocadoShell.PowerShellService
             return runspace;
         }
 
-        void invocationStateSubscribe()
-        {
-            ps.InvocationStateChanged += onInvocationStateChanged;
-        }
-
-        void invocationStateUnsubscribe()
-        {
-            ps.InvocationStateChanged -= onInvocationStateChanged;
-        }
-
         void onInvocationStateChanged(
             object sender,
             PSInvocationStateChangedEventArgs e)
@@ -136,11 +122,11 @@ namespace AvocadoShell.PowerShellService
             string error;
             switch (e.InvocationStateInfo.State)
             {
-                case PSInvocationState.Failed:
-                    error = e.InvocationStateInfo.Reason.Message;
-                    break;
                 case PSInvocationState.Completed:
                     error = null;
+                    break;
+                case PSInvocationState.Failed:
+                    error = e.InvocationStateInfo.Reason.Message;
                     break;
                 case PSInvocationState.Stopped:
                     error = "Execution aborted.";
@@ -152,14 +138,18 @@ namespace AvocadoShell.PowerShellService
 
         void finishExecution(string error)
         {
-            invocationStateUnsubscribe();
+            // Unsubscribe from command events.
+            ps.InvocationStateChanged -= onInvocationStateChanged;
+
+            // Clean up the command buffer.
             ps.Commands.Clear();
 
             // Fire event indicating the current execution has finished.
-            var path = ps.Runspace.SessionStateProxy
-                .Path.CurrentLocation.Path;
-            ExecDone(this, new ExecDoneEventArgs(path, error));
+            ExecDone(this, new ExecDoneEventArgs(workingDirectory, error));
         }
+
+        string workingDirectory
+            => ps.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
 
         void stderrDataAdded(object sender, DataAddedEventArgs e)
         {
@@ -171,7 +161,6 @@ namespace AvocadoShell.PowerShellService
         {
             var data = stdOut[e.Index].ToString();
             shellUI.WriteSystemLine(data);
-            var str = ps.HistoryString;
         }
     }
 }
