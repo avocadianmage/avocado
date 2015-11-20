@@ -46,12 +46,20 @@ namespace AvocadoShell.PowerShellService
         public async Task InitEnvironment()
         {
             shellUI.WriteSystemLine($"Welcome to avocado[v{Config.Version}]");
+            await doWork(
+                "Starting autocompletion service", 
+                autocomplete.InitializeService());
+            await doWork("Executing profile scripts", runProfileScript);
+        }
 
-            shellUI.WriteSystemLine("Starting autocompletion service...");
-            await autocomplete.InitializeService();
-            
-            shellUI.WriteSystemLine("Executing profile scripts...");
-            runProfileScript();
+        async Task doWork(string message, Action action)
+            => await doWork(message, Task.Run(action));
+
+        async Task doWork(string message, Task work)
+        {
+            shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
+            await work;
+            shellUI.WriteSystemLine("done.");
         }
 
         void runProfileScript()
