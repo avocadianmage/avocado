@@ -26,7 +26,7 @@
         <!--ScrollBars-->
         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-            <Setter Property="Foreground" Value="Orange" />
+            <Setter Property="Foreground" Value="CornflowerBlue" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Width" Value="3" />
             <Setter Property="MinWidth" Value="6" />
