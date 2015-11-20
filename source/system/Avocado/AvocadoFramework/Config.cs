@@ -14,7 +14,7 @@ namespace AvocadoFramework
         public static Color InactiveBorderColor { get { return Colors.Gray; } }
         public static Color ActiveBorderColor 
         { 
-            get { return Colors.LightGreen; } 
+            get { return Colors.CornflowerBlue; } 
         }
         public static double BorderFadeDuration { get { return 500; } }
 
