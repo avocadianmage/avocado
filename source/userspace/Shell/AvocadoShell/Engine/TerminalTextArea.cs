@@ -88,7 +88,7 @@ namespace AvocadoShell.Engine
                     break;
                 case Key.Home:
                     e.Handled = true;
-                    MoveCaret(currentPrompt.LinePos - CaretX);
+                    MoveCaret(-distanceToPromptStart);
                     SetDefaultForeground();
                     break;
 
@@ -155,18 +155,18 @@ namespace AvocadoShell.Engine
         void performTabCompletion()
         {
             InputEnabled = false;
-
-            var input = getInput();
-            var index = CaretX - currentPrompt.LinePos;
-            var forward = !IsShiftKeyDown;
-
+            
             var callback = new Action<string>((completion) =>
             {
                 if (completion != null) replaceInput(completion);
                 InputEnabled = true;
             });
 
-            getCompletion(input, index, forward, callback);
+            getCompletion(
+                getInput(), 
+                distanceToPromptStart, 
+                !IsShiftKeyDown, 
+                callback);
         }
 
         void getCompletion(
@@ -277,8 +277,9 @@ namespace AvocadoShell.Engine
         void clearInput()
         {
             MoveCaretToDocumentEnd();
-            var vector = currentPrompt.LinePos - CaretX;
-            TextBase.CaretPosition.DeleteTextInRun(vector);
+            TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptStart);
         }
+
+        int distanceToPromptStart => CaretX - currentPrompt.LinePos;
     }
 }

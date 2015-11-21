@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.WPF;
 
@@ -20,6 +21,16 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected RichTextBox TextBase 
             => this.GetTemplateElement<RichTextBox>("textBase");
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseDown(e);
+
+            // Disallow mouse interaction with text. Instead, continue to 
+            // support dragging the window.
+            e.Handled = true;
+            Window.GetWindow(this).DragMove();
+        }
 
         protected void Write(string text, Brush foreground)
         {

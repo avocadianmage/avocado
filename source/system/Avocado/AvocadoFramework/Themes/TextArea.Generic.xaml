@@ -23,7 +23,8 @@
                         FontSize="7.25pt"
                         FontWeight="Bold"
                         TextOptions.TextFormattingMode="Display"
-                        Focusable="False"
+                        IsTabStop="False"
+                        Cursor="Arrow"
                         Foreground="{TemplateBinding Foreground}">
                         
                         <RichTextBox.Resources>

@@ -16,12 +16,6 @@ namespace AvocadoFramework.Controls.TextRendering
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);
-            allowEditing();
-        }
-
-        void allowEditing()
-        {
-            TextBase.Focusable = true;
             TextBase.Focus();
         }
     }
