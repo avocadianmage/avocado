@@ -17,10 +17,14 @@ namespace AvocadoShell.Engine
 
         PSEngine psEngine;
         Prompt currentPrompt;
-        
+
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);
+
+            // Diable undo feature for the terminal.
+            TextBase.IsUndoEnabled = false;
+
             Task.Run(initPSEngine);
         }
 
@@ -92,7 +96,7 @@ namespace AvocadoShell.Engine
                     break;
                 case Key.Home:
                     e.Handled = true;
-                    MoveCaret(-distanceToPromptEnd);
+                    MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
                     break;
 
                 // Clear input.

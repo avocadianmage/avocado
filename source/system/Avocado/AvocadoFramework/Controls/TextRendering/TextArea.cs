@@ -66,10 +66,14 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void MoveCaretToDocumentEnd()
             => TextBase.CaretPosition = TextBase.CaretPosition.DocumentEnd;
 
-        protected void MoveCaret(int offset)
+        protected void MoveCaret(int offset, bool select)
         {
-            TextBase.CaretPosition
-                = TextBase.CaretPosition.GetPositionAtOffset(offset);
+            var before = TextBase.CaretPosition;
+            var after = before.GetPositionAtOffset(offset);
+
+            // If requested, select the contents in between.
+            if (select) TextBase.Selection.Select(before, after);
+            else TextBase.CaretPosition = after;
         }
 
         protected int CaretX
