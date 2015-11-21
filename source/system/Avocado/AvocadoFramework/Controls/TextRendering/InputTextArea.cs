@@ -5,8 +5,6 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public class InputTextArea : TextArea
     {
-        protected bool InputEnabled { get; set; }
-
         protected bool IsControlKeyDown
             => Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
 
@@ -17,6 +15,18 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             base.OnLoad(e);
             TextBase.Focus();
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            // Disallow other styling when pasting.
+            if (IsControlKeyDown && e.Key == Key.V)
+            {
+                e.Handled = true;
+                Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
+            }
         }
     }
 }

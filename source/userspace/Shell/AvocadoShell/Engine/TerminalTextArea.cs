@@ -17,7 +17,8 @@ namespace AvocadoShell.Engine
 
         PSEngine psEngine;
         Prompt currentPrompt;
-
+        bool inputEnabled;
+        
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);
@@ -65,21 +66,21 @@ namespace AvocadoShell.Engine
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            base.OnPreviewKeyDown(e);
-            
-            // Always detect Ctrl+C break.
-            if (IsControlKeyDown && e.Key == Key.C)
+            // Always detect Ctrl+Z break.
+            if (IsControlKeyDown && e.Key == Key.Z)
             {
                 terminateExec();
                 return;
             }
-
+            
             // Ignore input if the InputEnabled flag is false.
-            if (!InputEnabled)
+            if (!inputEnabled)
             {
                 e.Handled = true;
                 return;
             }
+
+            base.OnPreviewKeyDown(e);
 
             // Perform special handling for certain keys.
             switch (e.Key)
@@ -150,7 +151,7 @@ namespace AvocadoShell.Engine
         void prepareForOutput()
         {
             // Disable user input.
-            InputEnabled = false;
+            inputEnabled = false;
 
             // Position caret for writing command output.
             MoveCaretToDocumentEnd();
@@ -165,12 +166,12 @@ namespace AvocadoShell.Engine
 
         void performTabCompletion()
         {
-            InputEnabled = false;
+            inputEnabled = false;
             
             var callback = new Action<string>((completion) =>
             {
                 if (completion != null) replaceInput(completion);
-                InputEnabled = true;
+                inputEnabled = true;
             });
 
             getCompletion(
@@ -199,7 +200,7 @@ namespace AvocadoShell.Engine
         {
             Action action = () =>
             {
-                InputEnabled = false;
+                inputEnabled = false;
                 CloseWindow();
             };
             Dispatcher.BeginInvoke(action);
@@ -236,7 +237,7 @@ namespace AvocadoShell.Engine
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 
             // Enable user input.
-            InputEnabled = true;
+            inputEnabled = true;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)

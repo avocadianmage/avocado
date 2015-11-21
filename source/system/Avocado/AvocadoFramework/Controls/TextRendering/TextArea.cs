@@ -40,8 +40,6 @@ namespace AvocadoFramework.Controls.TextRendering
                 TextElement.ForegroundProperty, 
                 foreground);
             MoveCaretToDocumentEnd();
-
-            SetDefaultForeground();
         }
 
         protected void WriteLine()
