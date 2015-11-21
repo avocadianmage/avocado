@@ -1,5 +1,4 @@
 ﻿using AvocadoUtilities;
-using System.Windows.Documents;
 using UtilityLib.Processes;
 
 namespace AvocadoShell.Engine
@@ -8,17 +7,14 @@ namespace AvocadoShell.Engine
     {
         public bool FromShell => fromShell;
         public int LinePos => linePos;
-        public TextPointer Pointer => pointer;
 
         readonly bool fromShell;
         readonly int linePos;
-        readonly TextPointer pointer;
 
-        public Prompt(bool fromShell, int linePos, TextPointer pointer)
+        public Prompt(bool fromShell, int linePos)
         {
             this.fromShell = fromShell;
             this.linePos = linePos;
-            this.pointer = pointer;
         }
 
         public static string GetShellPromptStr(string path)

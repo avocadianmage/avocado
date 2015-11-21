@@ -3,7 +3,6 @@ using AvocadoShell.PowerShellService;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
@@ -235,10 +234,7 @@ namespace AvocadoShell.Engine
         void displayPrompt(bool fromShell)
         {
             // Update the current prompt object.
-            currentPrompt = new Prompt(
-                fromShell, 
-                CurrentLineString.Length, 
-                TextBase.CaretPosition.Paragraph.ContentStart);
+            currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 
             // Enable user input.
             inputEnabled = true;
@@ -267,16 +263,13 @@ namespace AvocadoShell.Engine
             Dispatcher.BeginInvoke(action, data, foreground);
         }
         
-        string getInput()
-        {
-            var range = new TextRange(
-                currentPrompt.Pointer, 
-                TextBase.CaretPosition.DocumentEnd);
-            return range.Text.Substring(currentPrompt.LinePos);
-        }
+        string getInput() => CurrentLineString.Substring(currentPrompt.LinePos);
 
         void inputHistoryLookup(bool forward)
         {
+            // Disallow lookup when not at the shell prompt.
+            if (!currentPrompt.FromShell) return;
+
             // Save the current user input to the buffer.
             inputHistory.SaveInput(getInput());
 

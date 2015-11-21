@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AvocadoFramework.Controls.TextRendering
@@ -25,8 +26,16 @@ namespace AvocadoFramework.Controls.TextRendering
             if (IsControlKeyDown && e.Key == Key.V)
             {
                 e.Handled = true;
-                Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
+                paste();
             }
+        }
+
+        void paste()
+        {
+            // Change any paragraph breaks to linebreaks.
+            var text = Clipboard.GetText(TextDataFormat.Text)
+                .Replace(Environment.NewLine, "\r");
+            Write(text, Foreground);
         }
     }
 }
