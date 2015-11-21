@@ -1,300 +1,300 @@
-﻿//using AvocadoFramework.Controls.Text.Input;
-//using AvocadoShell.PowerShellService;
-//using System;
-//using System.Threading.Tasks;
-//using System.Windows;
-//using System.Windows.Input;
-//using System.Windows.Media;
-//using UtilityLib.MiscTools;
+﻿using AvocadoFramework.Controls.Text.Input;
+using AvocadoShell.PowerShellService;
+using System;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using UtilityLib.MiscTools;
 
-//namespace AvocadoShell.Engine
-//{
-//    sealed class TerminalControl : InputControl, IShellUI
-//    {
-//        readonly InputHistory inputHistory = new InputHistory();
-//        readonly ResetEventWithData<string> resetEvent
-//            = new ResetEventWithData<string>();
+namespace AvocadoShell.Engine
+{
+    sealed class TerminalControl : InputControl, IShellUI
+    {
+        readonly InputHistory inputHistory = new InputHistory();
+        readonly ResetEventWithData<string> resetEvent
+            = new ResetEventWithData<string>();
 
-//        PSEngine psEngine;
-//        Prompt currentPrompt;
-        
-//        protected override void OnLoad(RoutedEventArgs e)
-//        {
-//            base.OnLoad(e);
-//            Task.Run(initPSEngine);
-//        }
+        PSEngine psEngine;
+        Prompt currentPrompt;
 
-//        async Task initPSEngine()
-//        {
-//            psEngine = new PSEngine(this);
-//            psEngine.ExecDone += onExecDone;
-//            await psEngine.InitEnvironment();
-//        }
+        protected override void OnLoad(RoutedEventArgs e)
+        {
+            base.OnLoad(e);
+            Task.Run(initPSEngine);
+        }
 
-//        void onExecDone(object sender, ExecDoneEventArgs e)
-//        {
-//            Action action = () =>
-//            {
-//                if (!string.IsNullOrWhiteSpace(e.Error))
-//                {
-//                    WriteLine(e.Error, Config.ErrorFontBrush);
-//                }
-//                displayShellPrompt(e.Path);
-//            };
-//            Dispatcher.BeginInvoke(action);
-//        }
+        async Task initPSEngine()
+        {
+            psEngine = new PSEngine(this);
+            psEngine.ExecDone += onExecDone;
+            await psEngine.InitEnvironment();
+        }
 
-//        void terminateExec()
-//        {
-//            // Terminate the powershell process.
-//            psEngine.Stop();
+        void onExecDone(object sender, ExecDoneEventArgs e)
+        {
+            Action action = () =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Error))
+                {
+                    WriteLine(e.Error, Config.ErrorFontBrush);
+                }
+                displayShellPrompt(e.Path);
+            };
+            Dispatcher.BeginInvoke(action);
+        }
 
-//            // Ensure the powershell thread is unblocked.
-//            resetEvent.Signal(null);
-//        }
+        void terminateExec()
+        {
+            // Terminate the powershell process.
+            psEngine.Stop();
 
-//        protected override void OnUnload(RoutedEventArgs e)
-//        {
-//            base.OnUnload(e);
-//            terminateExec();
-//        }
+            // Ensure the powershell thread is unblocked.
+            resetEvent.Signal(null);
+        }
 
-//        protected override void OnKeyDown(KeyEventArgs e)
-//        {
-//            // Detect Ctrl+C break.
-//            if (IsControlKeyDown && e.Key == Key.C)
-//            {
-//                terminateExec();
-//                return;
-//            }
-            
-//            base.OnKeyDown(e);
-//        }
+        protected override void OnUnload(RoutedEventArgs e)
+        {
+            base.OnUnload(e);
+            terminateExec();
+        }
 
-//        protected override void OnBackKeyDown(KeyEventArgs e)
-//        {
-//            // Do not allow the prompt to be erased.
-//            if (isCaretDirectlyInFrontOfPrompt) return;
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            // Detect Ctrl+C break.
+            if (IsControlKeyDown && e.Key == Key.C)
+            {
+                terminateExec();
+                return;
+            }
 
-//            // Otherwise, process the key press as usual.
-//            base.OnBackKeyDown(e);
-//        }
+            base.OnKeyDown(e);
+        }
 
-//        protected override void OnLeftKeyDown(KeyEventArgs e)
-//        {
-//            // Do not allow the caret to reach the prompt text.
-//            if (isCaretDirectlyInFrontOfPrompt) return;
+        protected override void OnBackKeyDown(KeyEventArgs e)
+        {
+            // Do not allow the prompt to be erased.
+            if (isCaretDirectlyInFrontOfPrompt) return;
 
-//            // Otherwise, process the key press as usual.
-//            base.OnLeftKeyDown(e);
-//        }
+            // Otherwise, process the key press as usual.
+            base.OnBackKeyDown(e);
+        }
 
-//        protected override void OnHomeKeyDown(KeyEventArgs e)
-//        {
-//            TextContent.Translate(1 - TextContent.CaretX);
-//        }
+        protected override void OnLeftKeyDown(KeyEventArgs e)
+        {
+            // Do not allow the caret to reach the prompt text.
+            if (isCaretDirectlyInFrontOfPrompt) return;
 
-//        protected override void OnUpKeyDown(KeyEventArgs e)
-//        {
-//            // Look up and display the previous input in the command history.
-//            inputHistoryLookup(false);
-//        }
+            // Otherwise, process the key press as usual.
+            base.OnLeftKeyDown(e);
+        }
 
-//        protected override void OnDownKeyDown(KeyEventArgs e)
-//        {
-//            // Look up and display the next input in the command history.
-//            inputHistoryLookup(true);
-//        }
+        protected override void OnHomeKeyDown(KeyEventArgs e)
+        {
+            TextContent.Translate(1 - TextContent.CaretX);
+        }
 
-//        protected override void OnEnterKeyDown(KeyEventArgs e)
-//        {
-//            // Get user input.
-//            var input = getInput();
+        protected override void OnUpKeyDown(KeyEventArgs e)
+        {
+            // Look up and display the previous input in the command history.
+            inputHistoryLookup(false);
+        }
 
-//            prepareForOutput();
+        protected override void OnDownKeyDown(KeyEventArgs e)
+        {
+            // Look up and display the next input in the command history.
+            inputHistoryLookup(true);
+        }
 
-//            // Signal to the powershell process that the we are done entering
-//            // input.
-//            resetEvent.Signal(input);
+        protected override void OnEnterKeyDown(KeyEventArgs e)
+        {
+            // Get user input.
+            var input = getInput();
 
-//            // Quit if the input was entered due to a custom prompt in an 
-//            // executing process.
-//            if (!currentPrompt.FromShell) return;
+            prepareForOutput();
 
-//            execute(input);
-//        }
+            // Signal to the powershell process that the we are done entering
+            // input.
+            resetEvent.Signal(input);
 
-//        void execute(string input)
-//        {
-//            inputHistory.Add(input);
-//            psEngine.ExecuteCommand(input);
-//        }
+            // Quit if the input was entered due to a custom prompt in an 
+            // executing process.
+            if (!currentPrompt.FromShell) return;
 
-//        void prepareForOutput()
-//        {
-//            // Disable user input.
-//            InputEnabled = false;
+            execute(input);
+        }
 
-//            // Position caret for writing command output.
-//            TextContent.TranslateToDocumentEnd();
-//            TextContent.InsertLineBreak();
-//        }
+        void execute(string input)
+        {
+            inputHistory.Add(input);
+            psEngine.ExecuteCommand(input);
+        }
 
-//        protected override void OnEscapeKeyDown(KeyEventArgs e)
-//        {
-//            clearInput();
-//        }
+        void prepareForOutput()
+        {
+            // Disable user input.
+            InputEnabled = false;
 
-//        protected override void OnTabKeyDown(KeyEventArgs e)
-//        {
-//            performTabCompletion();
-//        }
+            // Position caret for writing command output.
+            TextContent.TranslateToDocumentEnd();
+            TextContent.InsertLineBreak();
+        }
 
-//        void performTabCompletion()
-//        {
-//            InputEnabled = false;
+        protected override void OnEscapeKeyDown(KeyEventArgs e)
+        {
+            clearInput();
+        }
 
-//            var input = getInput();
-//            var index = TextContent.CaretX - 1;
-//            var forward = !IsShiftKeyDown;
+        protected override void OnTabKeyDown(KeyEventArgs e)
+        {
+            performTabCompletion();
+        }
 
-//            var callback = new Action<string>((completion) =>
-//            {
-//                if (completion != null) replaceInput(completion);
-//                InputEnabled = true;
-//            });
+        void performTabCompletion()
+        {
+            InputEnabled = false;
 
-//            getCompletion(input, index, forward, callback);
-//        }
-    
-//        void getCompletion(
-//            string input,
-//            int index,
-//            bool forward,
-//            Action<string> callback)
-//        {
-//            Task.Run<string>(
-//                () => psEngine.GetCompletion(input, index, forward))
-//            .ContinueWith(
-//                task => callback(task.Result), 
-//                TaskScheduler.FromCurrentSynchronizationContext());
-//        }
+            var input = getInput();
+            var index = TextContent.CaretX - 1;
+            var forward = !IsShiftKeyDown;
 
-//        bool isCaretDirectlyInFrontOfPrompt
-//        {
-//            get 
-//            {
-//                var promptLen = currentPrompt.LinePos;
-//                return TextContent.CaretX <= Math.Sign(promptLen); 
-//            }
-//        }
+            var callback = new Action<string>((completion) =>
+            {
+                if (completion != null) replaceInput(completion);
+                InputEnabled = true;
+            });
 
-//        public void Exit()
-//        {
-//            Action action = () =>
-//            {
-//                InputEnabled = false;
-//                CloseWindow();
-//            };
-//            Dispatcher.BeginInvoke(action);
-//        }
+            getCompletion(input, index, forward, callback);
+        }
 
-//        public string ReadLine()
-//        {
-//            var action = new Action<bool>(displayPrompt);
-//            Dispatcher.BeginInvoke(action, false);
-//            return resetEvent.Block();
-//        }
+        void getCompletion(
+            string input,
+            int index,
+            bool forward,
+            Action<string> callback)
+        {
+            Task.Run<string>(
+                () => psEngine.GetCompletion(input, index, forward))
+            .ContinueWith(
+                task => callback(task.Result),
+                TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
-//        void displayShellPrompt(string path)
-//        {
-//            // Do not display a new prompt if the window is closing.
-//            if (IsWindowClosing) return;
+        bool isCaretDirectlyInFrontOfPrompt
+        {
+            get
+            {
+                var promptLen = currentPrompt.LinePos;
+                return TextContent.CaretX <= Math.Sign(promptLen);
+            }
+        }
 
-//            // Update text and window title displays.
-//            var shellPromptStr = Prompt.GetShellPromptStr(path);
-//            if (!string.IsNullOrEmpty(TextContent.GetCurrentLineText()))
-//            {
-//                // If there is text on this line, go to a new line.
-//                TextContent.InsertLineBreak();
-//            }
-//            TextContent.InsertText(shellPromptStr, Config.PromptBrush);
-//            SetWindowTitle(shellPromptStr);
+        public void Exit()
+        {
+            Action action = () =>
+            {
+                InputEnabled = false;
+                CloseWindow();
+            };
+            Dispatcher.BeginInvoke(action);
+        }
 
-//            displayPrompt(true);
-//        }
+        public string ReadLine()
+        {
+            var action = new Action<bool>(displayPrompt);
+            Dispatcher.BeginInvoke(action, false);
+            return resetEvent.Block();
+        }
 
-//        void displayPrompt(bool fromShell)
-//        {
-//            // Update the current prompt object.
-//            var len = TextContent.GetCurrentLineText().Length;
-//            currentPrompt = new Prompt(fromShell, len);
+        void displayShellPrompt(string path)
+        {
+            // Do not display a new prompt if the window is closing.
+            if (IsWindowClosing) return;
 
-//            // Enable user input.
-//            InputEnabled = true;
-//        }
+            // Update text and window title displays.
+            var shellPromptStr = Prompt.GetShellPromptStr(path);
+            if (!string.IsNullOrEmpty(TextContent.GetCurrentLineText()))
+            {
+                // If there is text on this line, go to a new line.
+                TextContent.InsertLineBreak();
+            }
+            TextContent.InsertText(shellPromptStr, Config.PromptBrush);
+            SetWindowTitle(shellPromptStr);
 
-//        public void WriteCustom(string data, Brush foreground, bool newline)
-//        {
-//            safeWrite(data, foreground, newline);
-//        }
+            displayPrompt(true);
+        }
 
-//        public void WriteSystemLine(string data)
-//        {
-//            safeWrite(data, Config.SystemFontBrush, true);
-//        }
+        void displayPrompt(bool fromShell)
+        {
+            // Update the current prompt object.
+            var len = TextContent.GetCurrentLineText().Length;
+            currentPrompt = new Prompt(fromShell, len);
 
-//        public void WriteErrorLine(string data)
-//        {
-//            safeWrite(data, Config.ErrorFontBrush, true);
-//        }
+            // Enable user input.
+            InputEnabled = true;
+        }
 
-//        void safeWrite(string data, Brush foreground, bool newline)
-//        {
-//            var action = newline
-//                ? new Action<string, Brush>(WriteLine)
-//                : new Action<string, Brush>(TextContent.InsertText);
-//            Dispatcher.BeginInvoke(action, data, foreground);
-//        }
+        public void WriteCustom(string data, Brush foreground, bool newline)
+        {
+            safeWrite(data, foreground, newline);
+        }
 
-//        string getInput()
-//        {
-//            var lineText = TextContent.GetCurrentLineText();
-//            return lineText.Substring(currentPrompt.LinePos);
-//        }
+        public void WriteSystemLine(string data)
+        {
+            safeWrite(data, Config.SystemFontBrush, true);
+        }
 
-//        void inputHistoryLookup(bool forward)
-//        {
-//            // Save the current user input to the buffer.
-//            inputHistory.SaveInput(getInput());
+        public void WriteErrorLine(string data)
+        {
+            safeWrite(data, Config.ErrorFontBrush, true);
+        }
 
-//            // Look up the stored input to display from the buffer.
-//            var storedInput = inputHistory.Cycle(forward);
+        void safeWrite(string data, Brush foreground, bool newline)
+        {
+            var action = newline
+                ? new Action<string, Brush>(WriteLine)
+                : new Action<string, Brush>(TextContent.InsertText);
+            Dispatcher.BeginInvoke(action, data, foreground);
+        }
 
-//            // Return if no command was found.
-//            if (storedInput == null) return;
+        string getInput()
+        {
+            var lineText = TextContent.GetCurrentLineText();
+            return lineText.Substring(currentPrompt.LinePos);
+        }
 
-//            // Update the display to show the new input.
-//            replaceInput(storedInput);
-//        }
+        void inputHistoryLookup(bool forward)
+        {
+            // Save the current user input to the buffer.
+            inputHistory.SaveInput(getInput());
 
-//        void replaceInput(string replacement)
-//        {
-//            var commonSubstring = getInput().CommonStart(replacement);
-//            var commonLength = commonSubstring.Length;
+            // Look up the stored input to display from the buffer.
+            var storedInput = inputHistory.Cycle(forward);
 
-//            // Remove from the display the input that is changing.
-//            TextContent.Translate(-TextContent.CaretX + commonLength + 1);
-//            TextContent.DeleteToEnd();
+            // Return if no command was found.
+            if (storedInput == null) return;
 
-//            // Write the new part of the replacement input.
-//            var changingSubstring = replacement.Substring(commonLength);
-//            WriteInput(changingSubstring);
-//        }
+            // Update the display to show the new input.
+            replaceInput(storedInput);
+        }
 
-//        void clearInput()
-//        {
-//            replaceInput(string.Empty);
-//        }
-//    }
-//}
+        void replaceInput(string replacement)
+        {
+            var commonSubstring = getInput().CommonStart(replacement);
+            var commonLength = commonSubstring.Length;
+
+            // Remove from the display the input that is changing.
+            TextContent.Translate(-TextContent.CaretX + commonLength + 1);
+            TextContent.DeleteToEnd();
+
+            // Write the new part of the replacement input.
+            var changingSubstring = replacement.Substring(commonLength);
+            WriteInput(changingSubstring);
+        }
+
+        void clearInput()
+        {
+            replaceInput(string.Empty);
+        }
+    }
+}

@@ -83,16 +83,31 @@ namespace AvocadoShell.Engine
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:
-                    if (!isCaretDirectlyInFrontOfPrompt) break;
-                    e.Handled = true;
+                    e.Handled = isCaretDirectlyInFrontOfPrompt;
                     SetDefaultForeground();
                     break;
                 case Key.Home:
                     e.Handled = true;
-                    var offest = currentPrompt.LinePos - CaretX;
-                    TextBase.CaretPosition 
-                        = TextBase.CaretPosition.GetPositionAtOffset(offest);
+                    MoveCaret(currentPrompt.LinePos - CaretX);
                     SetDefaultForeground();
+                    break;
+
+                // Clear input.
+                case Key.Escape:
+                    clearInput();
+                    break;
+
+                // Input history.
+                case Key.Up:
+                case Key.Down:
+                    e.Handled = true;
+                    inputHistoryLookup(e.Key == Key.Down);
+                    break;
+
+                // Case autocompletion.
+                case Key.Tab:
+                    e.Handled = true;
+                    performTabCompletion();
                     break;
 
                 // Handle command execution.
@@ -102,18 +117,6 @@ namespace AvocadoShell.Engine
                     break;
             }
         }
-
-        //protected override void OnUpKeyDown(KeyEventArgs e)
-        //{
-        //    // Look up and display the previous input in the command history.
-        //    inputHistoryLookup(false);
-        //}
-
-        //protected override void OnDownKeyDown(KeyEventArgs e)
-        //{
-        //    // Look up and display the next input in the command history.
-        //    inputHistoryLookup(true);
-        //}
 
         void execute()
         {
@@ -139,7 +142,7 @@ namespace AvocadoShell.Engine
             InputEnabled = false;
 
             // Position caret for writing command output.
-            MoveToDocumentEnd();
+            MoveCaretToDocumentEnd();
             WriteLine();
         }
 
@@ -149,33 +152,23 @@ namespace AvocadoShell.Engine
             psEngine.ExecuteCommand(input);
         }
 
-        //protected override void OnEscapeKeyDown(KeyEventArgs e)
-        //{
-        //    clearInput();
-        //}
+        void performTabCompletion()
+        {
+            InputEnabled = false;
 
-        //protected override void OnTabKeyDown(KeyEventArgs e)
-        //{
-        //    performTabCompletion();
-        //}
+            var input = getInput();
+            var index = CaretX - currentPrompt.LinePos;
+            var forward = !IsShiftKeyDown;
 
-        //void performTabCompletion()
-        //{
-        //    InputEnabled = false;
+            var callback = new Action<string>((completion) =>
+            {
+                if (completion != null) replaceInput(completion);
+                InputEnabled = true;
+            });
 
-        //    var input = getInput();
-        //    var index = TextContent.CaretX - 1;
-        //    var forward = !IsShiftKeyDown;
+            getCompletion(input, index, forward, callback);
+        }
 
-        //    var callback = new Action<string>((completion) =>
-        //    {
-        //        if (completion != null) replaceInput(completion);
-        //        InputEnabled = true;
-        //    });
-
-        //    getCompletion(input, index, forward, callback);
-        //}
-    
         void getCompletion(
             string input,
             int index,
@@ -260,38 +253,32 @@ namespace AvocadoShell.Engine
 
         string getInput() => CurrentLineString.Substring(currentPrompt.LinePos);
 
-        //void inputHistoryLookup(bool forward)
-        //{
-        //    // Save the current user input to the buffer.
-        //    inputHistory.SaveInput(getInput());
+        void inputHistoryLookup(bool forward)
+        {
+            // Save the current user input to the buffer.
+            inputHistory.SaveInput(getInput());
 
-        //    // Look up the stored input to display from the buffer.
-        //    var storedInput = inputHistory.Cycle(forward);
+            // Look up the stored input to display from the buffer.
+            var storedInput = inputHistory.Cycle(forward);
 
-        //    // Return if no command was found.
-        //    if (storedInput == null) return;
+            // Return if no command was found.
+            if (storedInput == null) return;
 
-        //    // Update the display to show the new input.
-        //    replaceInput(storedInput);
-        //}
+            // Update the display to show the new input.
+            replaceInput(storedInput);
+        }
 
-        //void replaceInput(string replacement)
-        //{
-        //    var commonSubstring = getInput().CommonStart(replacement);
-        //    var commonLength = commonSubstring.Length;
+        void replaceInput(string replacement)
+        {
+            clearInput();
+            Write(replacement, Foreground);
+        }
 
-        //    // Remove from the display the input that is changing.
-        //    TextContent.Translate(-TextContent.CaretX + commonLength + 1);
-        //    TextContent.DeleteToEnd();
-
-        //    // Write the new part of the replacement input.
-        //    var changingSubstring = replacement.Substring(commonLength);
-        //    WriteInput(changingSubstring);
-        //}
-
-        //void clearInput()
-        //{
-        //    replaceInput(string.Empty);
-        //}
+        void clearInput()
+        {
+            MoveCaretToDocumentEnd();
+            var vector = currentPrompt.LinePos - CaretX;
+            TextBase.CaretPosition.DeleteTextInRun(vector);
+        }
     }
 }
