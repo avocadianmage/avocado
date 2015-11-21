@@ -28,12 +28,9 @@ namespace AvocadoFramework.Controls.TextRendering
             range.ApplyPropertyValue(
                 TextElement.ForegroundProperty, 
                 foreground);
-
             MoveToDocumentEnd();
 
-            TextBase.Selection.ApplyPropertyValue(
-                TextElement.ForegroundProperty,
-                Foreground);
+            SetDefaultForeground();
         }
 
         protected void WriteLine()
@@ -48,6 +45,11 @@ namespace AvocadoFramework.Controls.TextRendering
             WriteLine();
         }
 
+        protected void SetDefaultForeground()
+            => TextBase.Selection.ApplyPropertyValue(
+                TextElement.ForegroundProperty,
+                Foreground);
+
         protected void MoveToDocumentEnd()
             => TextBase.CaretPosition = TextBase.CaretPosition.DocumentEnd;
 
@@ -56,7 +58,7 @@ namespace AvocadoFramework.Controls.TextRendering
             get
             {
                 var current = TextBase.CaretPosition;
-                var lineStart = current.GetLineStartPosition(0);
+                var lineStart = current.Paragraph.ContentStart;
                 return Math.Max(0, lineStart.GetOffsetToPosition(current) - 1);
             }
         }
@@ -66,11 +68,8 @@ namespace AvocadoFramework.Controls.TextRendering
             get
             {
                 var caretPos = TextBase.CaretPosition;
-                var lineStart = caretPos.GetLineStartPosition(0);
-                var nextLineStart = caretPos.GetLineStartPosition(1)
-                    ?? caretPos.DocumentEnd;
-                var lineEnd = nextLineStart
-                    .GetInsertionPosition(LogicalDirection.Backward);
+                var lineStart = caretPos.Paragraph.ContentStart;
+                var lineEnd = caretPos.Paragraph.ContentEnd;
                 return new TextRange(lineStart, lineEnd).Text;
             }
         }

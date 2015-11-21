@@ -83,7 +83,9 @@ namespace AvocadoShell.Engine
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:
-                    e.Handled = isCaretDirectlyInFrontOfPrompt;
+                    if (!isCaretDirectlyInFrontOfPrompt) break;
+                    e.Handled = true;
+                    SetDefaultForeground();
                     break;
 
                 // Handle command execution.
