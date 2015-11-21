@@ -1,12 +1,13 @@
 ﻿using AvocadoUtilities;
+using System.Windows.Documents;
 using UtilityLib.Processes;
 
 namespace AvocadoShell.Engine
 {
     sealed class Prompt
     {
-        public bool FromShell { get { return fromShell; } }
-        public int LinePos { get { return linePos; } }
+        public bool FromShell => fromShell;
+        public int LinePos => linePos;
 
         readonly bool fromShell;
         readonly int linePos;

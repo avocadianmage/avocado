@@ -3,6 +3,7 @@ using AvocadoShell.PowerShellService;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
@@ -227,8 +228,7 @@ namespace AvocadoShell.Engine
         void displayPrompt(bool fromShell)
         {
             // Update the current prompt object.
-            var len = CurrentLineString.Length;
-            currentPrompt = new Prompt(fromShell, len);
+            currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 
             // Enable user input.
             InputEnabled = true;
