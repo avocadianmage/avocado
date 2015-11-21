@@ -61,6 +61,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\TextArea.Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\TextControl.Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +79,8 @@
     </Page>
     <Compile Include="Controls\BaseControl.cs" />
     <Compile Include="Controls\Progress\Progressor.cs" />
+    <Compile Include="Controls\TextRendering\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\TextArea.cs" />
     <Compile Include="Controls\Text\CaretMarker.cs" />
     <Compile Include="Controls\Text\Input\InputControl.cs" />
     <Compile Include="Controls\Text\Input\CaretUI.cs" />

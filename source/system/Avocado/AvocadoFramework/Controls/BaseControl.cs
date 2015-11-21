@@ -23,23 +23,12 @@ namespace AvocadoFramework.Controls
         }
 
         protected void SetWindowTitle(string title)
-        {
-            parentWindow.Title = title;
-        }
+            => parentWindow.Title = title;
 
-        protected void CloseWindow()
-        {
-            parentWindow.Close();
-        }
+        protected void CloseWindow() => parentWindow.Close();
 
-        protected bool IsWindowClosing
-        {
-            get { return parentWindow.IsClosing; }
-        }
+        protected bool IsWindowClosing => parentWindow.IsClosing;
 
-        GlassPane parentWindow
-        {
-            get { return Window.GetWindow(this) as GlassPane; }
-        }
+        GlassPane parentWindow => Window.GetWindow(this) as GlassPane;
     }
 }

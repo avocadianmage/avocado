@@ -135,7 +135,7 @@
                         </Border>
                         
                         <!-- Content. -->
-                        <Grid Margin="12,10,12,10">
+                        <Grid Margin="10"> <!--ckgtest-->
                             <ContentPresenter />
                         </Grid>
                         

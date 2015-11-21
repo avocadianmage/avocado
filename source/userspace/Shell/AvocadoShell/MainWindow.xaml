@@ -6,11 +6,16 @@
     xmlns:avocadoFramework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
     SizeToContent="WidthAndHeight">
     
-    <Grid>
+    <!--<Grid>
         <avocadoShell:TerminalControl 
             Width="625" 
             Height="458" 
             InputBrush="LightSkyBlue" />
-    </Grid>
-    
+    </Grid>--><!--ckgtest-->
+
+    <avocadoShell:TerminalTextArea 
+        Width="625"
+        Height="458" 
+        Foreground="SkyBlue" />
+
 </avocadoFramework:GlassPane>
