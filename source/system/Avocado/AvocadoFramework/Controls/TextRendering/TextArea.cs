@@ -32,21 +32,22 @@ namespace AvocadoFramework.Controls.TextRendering
             Window.GetWindow(this).DragMove();
         }
 
-        protected void Write(string text, Brush foreground)
+        TextRange write(string text)
         {
-            var contentEnd = TextBase.Document.ContentEnd;
-            var range = new TextRange(contentEnd, contentEnd) { Text = text };
-            range.ApplyPropertyValue(
-                TextElement.ForegroundProperty, 
-                foreground);
-            MoveCaretToDocumentEnd();
+            var pos = TextBase.CaretPosition;
+            var range = new TextRange(pos, pos) { Text = text };
+            TextBase.CaretPosition = range.End;
+            return range;
         }
 
-        protected void WriteLine()
+        protected void Write(string text, Brush foreground)
         {
-            TextBase.AppendText(Environment.NewLine);
-            MoveCaretToDocumentEnd();
+            write(text).ApplyPropertyValue(
+                TextElement.ForegroundProperty, 
+                foreground);
         }
+
+        protected void WriteLine() => write(Environment.NewLine);
 
         protected void WriteLine(string text, Brush foreground)
         {
