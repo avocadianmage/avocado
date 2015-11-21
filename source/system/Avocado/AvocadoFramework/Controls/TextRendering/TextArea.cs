@@ -28,16 +28,25 @@ namespace AvocadoFramework.Controls.TextRendering
             range.ApplyPropertyValue(
                 TextElement.ForegroundProperty, 
                 foreground);
+
+            MoveToDocumentEnd();
+
+            TextBase.Selection.ApplyPropertyValue(
+                TextElement.ForegroundProperty,
+                Foreground);
+        }
+
+        protected void WriteLine()
+        {
+            TextBase.AppendText(Environment.NewLine);
+            MoveToDocumentEnd();
         }
 
         protected void WriteLine(string text, Brush foreground)
         {
             Write(text, foreground);
             WriteLine();
-            MoveToDocumentEnd();
         }
-
-        protected void WriteLine() => TextBase.AppendText(Environment.NewLine);
 
         protected void MoveToDocumentEnd()
             => TextBase.CaretPosition = TextBase.CaretPosition.DocumentEnd;
@@ -48,7 +57,7 @@ namespace AvocadoFramework.Controls.TextRendering
             {
                 var current = TextBase.CaretPosition;
                 var lineStart = current.GetLineStartPosition(0);
-                return lineStart.GetOffsetToPosition(current);
+                return Math.Max(0, lineStart.GetOffsetToPosition(current) - 1);
             }
         }
 

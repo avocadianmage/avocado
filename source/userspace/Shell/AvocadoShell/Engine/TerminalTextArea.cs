@@ -71,6 +71,18 @@ namespace AvocadoShell.Engine
             base.OnKeyDown(e);
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            switch (e.Key)
+            {
+                case Key.Back:
+                    e.Handled = isCaretDirectlyInFrontOfPrompt;
+                    break;
+            }
+        }
+
         //protected override void OnBackKeyDown(KeyEventArgs e)
         //{
         //    // Do not allow the prompt to be erased.
@@ -173,21 +185,14 @@ namespace AvocadoShell.Engine
             bool forward,
             Action<string> callback)
         {
-            Task.Run<string>(
-                () => psEngine.GetCompletion(input, index, forward))
-            .ContinueWith(
-                task => callback(task.Result), 
-                TaskScheduler.FromCurrentSynchronizationContext());
+            Task.Run(() => psEngine.GetCompletion(input, index, forward))
+                .ContinueWith(
+                    task => callback(task.Result), 
+                    TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        bool isCaretDirectlyInFrontOfPrompt
-        {
-            get 
-            {
-                var promptLen = currentPrompt.LinePos;
-                return CaretX <= Math.Sign(promptLen); 
-            }
-        }
+        bool isCaretDirectlyInFrontOfPrompt 
+            => (CaretX <= currentPrompt.LinePos);
 
         public void Exit()
         {
