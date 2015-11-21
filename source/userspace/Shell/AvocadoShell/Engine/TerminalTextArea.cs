@@ -59,47 +59,40 @@ namespace AvocadoShell.Engine
             terminateExec();
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            // Detect Ctrl+C break.
+            base.OnPreviewKeyDown(e);
+            
+            // Always detect Ctrl+C break.
             if (IsControlKeyDown && e.Key == Key.C)
             {
                 terminateExec();
                 return;
             }
-            
-            base.OnKeyDown(e);
-        }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            base.OnPreviewKeyDown(e);
+            // Ignore input if the InputEnabled flag is false.
+            if (!InputEnabled)
+            {
+                e.Handled = true;
+                return;
+            }
 
+            // Perform special handling for certain keys.
             switch (e.Key)
             {
+                // Prevent overwriting the prompt.
                 case Key.Back:
+                case Key.Left:
                     e.Handled = isCaretDirectlyInFrontOfPrompt;
+                    break;
+
+                // Handle command execution.
+                case Key.Enter:
+                    e.Handled = true;
+                    execute();
                     break;
             }
         }
-
-        //protected override void OnBackKeyDown(KeyEventArgs e)
-        //{
-        //    // Do not allow the prompt to be erased.
-        //    if (isCaretDirectlyInFrontOfPrompt) return;
-
-        //    // Otherwise, process the key press as usual.
-        //    base.OnBackKeyDown(e);
-        //}
-
-        //protected override void OnLeftKeyDown(KeyEventArgs e)
-        //{
-        //    // Do not allow the caret to reach the prompt text.
-        //    if (isCaretDirectlyInFrontOfPrompt) return;
-
-        //    // Otherwise, process the key press as usual.
-        //    base.OnLeftKeyDown(e);
-        //}
 
         //protected override void OnHomeKeyDown(KeyEventArgs e)
         //{
@@ -118,28 +111,22 @@ namespace AvocadoShell.Engine
         //    inputHistoryLookup(true);
         //}
 
-        //protected override void OnEnterKeyDown(KeyEventArgs e)
-        //{
-        //    // Get user input.
-        //    var input = getInput();
-
-        //    prepareForOutput();
-
-        //    // Signal to the powershell process that the we are done entering
-        //    // input.
-        //    resetEvent.Signal(input);
-
-        //    // Quit if the input was entered due to a custom prompt in an 
-        //    // executing process.
-        //    if (!currentPrompt.FromShell) return;
-
-        //    execute(input);
-        //}
-
-        void execute(string input)
+        void execute()
         {
-            inputHistory.Add(input);
-            psEngine.ExecuteCommand(input);
+            // Get user input.
+            var input = getInput();
+
+            prepareForOutput();
+
+            // Signal to the powershell process that the we are done entering
+            // input.
+            resetEvent.Signal(input);
+
+            // Quit if the input was entered due to a custom prompt in an 
+            // executing process.
+            if (!currentPrompt.FromShell) return;
+
+            executeCommand(input);
         }
 
         void prepareForOutput()
@@ -150,6 +137,12 @@ namespace AvocadoShell.Engine
             // Position caret for writing command output.
             MoveToDocumentEnd();
             WriteLine();
+        }
+
+        void executeCommand(string input)
+        {
+            inputHistory.Add(input);
+            psEngine.ExecuteCommand(input);
         }
 
         //protected override void OnEscapeKeyDown(KeyEventArgs e)
@@ -234,8 +227,6 @@ namespace AvocadoShell.Engine
             // Update the current prompt object.
             var len = CurrentLineString.Length;
             currentPrompt = new Prompt(fromShell, len);
-
-            //MoveToDocumentEnd(); //ckgtest
 
             // Enable user input.
             InputEnabled = true;
