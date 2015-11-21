@@ -86,13 +86,13 @@ namespace AvocadoShell.Engine
             {
                 // Prevent overwriting the prompt.
                 case Key.Back:
-                    // The caret position does not change if text is selected,
-                    // so we should not suppress that case.
-                    e.Handled = isCaretDirectlyInFrontOfPrompt 
-                        && TextBase.Selection.IsEmpty;
-                    break;
                 case Key.Left:
-                    e.Handled = isCaretDirectlyInFrontOfPrompt;
+                    if (!isCaretDirectlyInFrontOfPrompt) break;
+                    // The caret position does not change if text is selected
+                    // (unless Shift+Left is pressed) so we should not 
+                    // suppress that case.
+                    e.Handled = TextBase.Selection.IsEmpty
+                        || (e.Key == Key.Left && IsShiftKeyDown);
                     break;
                 case Key.Home:
                     e.Handled = true;
