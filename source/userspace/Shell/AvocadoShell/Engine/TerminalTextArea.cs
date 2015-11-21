@@ -3,7 +3,6 @@ using AvocadoShell.PowerShellService;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
@@ -88,6 +87,13 @@ namespace AvocadoShell.Engine
                     e.Handled = true;
                     SetDefaultForeground();
                     break;
+                case Key.Home:
+                    e.Handled = true;
+                    var offest = currentPrompt.LinePos - CaretX;
+                    TextBase.CaretPosition 
+                        = TextBase.CaretPosition.GetPositionAtOffset(offest);
+                    SetDefaultForeground();
+                    break;
 
                 // Handle command execution.
                 case Key.Enter:
@@ -96,11 +102,6 @@ namespace AvocadoShell.Engine
                     break;
             }
         }
-
-        //protected override void OnHomeKeyDown(KeyEventArgs e)
-        //{
-        //    TextContent.Translate(1 - TextContent.CaretX);
-        //}
 
         //protected override void OnUpKeyDown(KeyEventArgs e)
         //{
