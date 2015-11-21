@@ -18,6 +18,7 @@
                         BorderThickness="0"
                         Background="Transparent"
                         CaretBrush="Orange"
+                        SelectionBrush="Orange"
                         VerticalScrollBarVisibility="Visible"
                         FontFamily="Consolas"
                         FontSize="7.25pt"

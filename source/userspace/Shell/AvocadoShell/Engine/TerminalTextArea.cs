@@ -82,14 +82,17 @@ namespace AvocadoShell.Engine
             {
                 // Prevent overwriting the prompt.
                 case Key.Back:
+                    // The caret position does not change if text is selected,
+                    // so we should not suppress that case.
+                    e.Handled = isCaretDirectlyInFrontOfPrompt 
+                        && TextBase.Selection.IsEmpty;
+                    break;
                 case Key.Left:
                     e.Handled = isCaretDirectlyInFrontOfPrompt;
-                    SetDefaultForeground();
                     break;
                 case Key.Home:
                     e.Handled = true;
-                    MoveCaret(-distanceToPromptStart);
-                    SetDefaultForeground();
+                    MoveCaret(-distanceToPromptEnd);
                     break;
 
                 // Clear input.
@@ -116,6 +119,10 @@ namespace AvocadoShell.Engine
                     execute();
                     break;
             }
+
+            // Ensure we are using the input color before actually processing 
+            // the keypress.
+            SetDefaultForeground();
         }
 
         void execute()
@@ -164,7 +171,7 @@ namespace AvocadoShell.Engine
 
             getCompletion(
                 getInput(), 
-                distanceToPromptStart, 
+                distanceToPromptEnd, 
                 !IsShiftKeyDown, 
                 callback);
         }
@@ -277,9 +284,9 @@ namespace AvocadoShell.Engine
         void clearInput()
         {
             MoveCaretToDocumentEnd();
-            TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptStart);
+            TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptEnd);
         }
 
-        int distanceToPromptStart => CaretX - currentPrompt.LinePos;
+        int distanceToPromptEnd => CaretX - currentPrompt.LinePos;
     }
 }
