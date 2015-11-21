@@ -58,8 +58,8 @@ namespace AvocadoFramework.Controls.TextRendering
             get
             {
                 var current = TextBase.CaretPosition;
-                var lineStart = current.Paragraph.ContentStart;
-                return Math.Max(0, lineStart.GetOffsetToPosition(current) - 1);
+                var start = current.Paragraph.ContentStart;
+                return new TextRange(start, current).Text.Length;
             }
         }
 
@@ -67,10 +67,10 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             get
             {
-                var caretPos = TextBase.CaretPosition;
-                var lineStart = caretPos.Paragraph.ContentStart;
-                var lineEnd = caretPos.Paragraph.ContentEnd;
-                return new TextRange(lineStart, lineEnd).Text;
+                var paragraph = TextBase.CaretPosition.Paragraph;
+                var start = paragraph.ContentStart;
+                var end = paragraph.ContentEnd;
+                return new TextRange(start, end).Text;
             }
         }
     }
