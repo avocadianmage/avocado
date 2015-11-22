@@ -31,7 +31,7 @@ namespace AvocadoFramework.Controls.TextRendering
             e.Handled = true;
             Window.GetWindow(this).DragMove();
         }
-
+        
         TextRange write(string text)
         {
             var pos = TextBase.CaretPosition;
@@ -47,13 +47,10 @@ namespace AvocadoFramework.Controls.TextRendering
                 foreground);
         }
 
-        protected void WriteLine() => write(Environment.NewLine);
+        protected void WriteLine() => write("\r");
 
         protected void WriteLine(string text, Brush foreground)
-        {
-            Write(text, foreground);
-            WriteLine();
-        }
+            => Write($"{text}\r", foreground);
 
         protected void SetDefaultForeground()
         {
