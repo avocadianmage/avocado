@@ -80,8 +80,9 @@ namespace AvocadoFramework.Controls.TextRendering
             get
             {
                 var current = TextBase.CaretPosition;
-                var start = current.Paragraph.ContentStart;
-                return new TextRange(start, current).Text.Length;
+                var paragraph = current.Paragraph;
+                var range = new TextRange(paragraph.ContentStart, current);
+                return range.Text.Length;
             }
         }
 

@@ -4,7 +4,7 @@ namespace AvocadoShell.Engine
 {
     interface IShellUI
     {
-        void Exit();
+        void RequestExit();
 
         void WriteSystemLine(string data);
         void WriteErrorLine(string data);

@@ -159,7 +159,7 @@
         /// host application should use.</param>
         public override void SetShouldExit(int exitCode)
         {
-            shellUI.Exit();
+            shellUI.RequestExit();
         }
     }
 }

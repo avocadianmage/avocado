@@ -17,7 +17,8 @@ namespace AvocadoShell.Engine
 
         PSEngine psEngine;
         Prompt currentPrompt;
-        bool inputEnabled;
+        bool inputEnabled = false;
+        bool exitRequested = false;
         
         protected override void OnLoad(RoutedEventArgs e)
         {
@@ -40,11 +41,15 @@ namespace AvocadoShell.Engine
         {
             Action action = () =>
             {
+                // Display error, if any.
                 if (!string.IsNullOrWhiteSpace(e.Error))
                 {
                     WriteLine(e.Error, Config.ErrorFontBrush);
                 }
-                displayShellPrompt(e.Path);
+
+                // Exit if requested. Otherwise, display a new prompt.
+                if (exitRequested) exit();
+                else displayShellPrompt(e.Path);
             };
             Dispatcher.BeginInvoke(action);
         }
@@ -196,7 +201,9 @@ namespace AvocadoShell.Engine
         bool isCaretDirectlyInFrontOfPrompt 
             => (CaretX <= currentPrompt.LinePos);
 
-        public void Exit()
+        public void RequestExit() => exitRequested = true;
+        
+        void exit()
         {
             Action action = () =>
             {
@@ -215,9 +222,6 @@ namespace AvocadoShell.Engine
 
         void displayShellPrompt(string path)
         {
-            // Do not display a new prompt if the window is closing.
-            if (IsWindowClosing) return;
-
             // Update text and window title displays.
             var shellPromptStr = Prompt.GetShellPromptStr(path);
             if (!string.IsNullOrEmpty(CurrentLineString))
