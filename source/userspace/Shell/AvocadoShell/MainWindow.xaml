@@ -15,7 +15,7 @@
 
     <avocadoShell:TerminalTextArea 
         Width="625"
-        Height="458" 
+        Height="451" 
         Foreground="SkyBlue" />
 
 </avocadoFramework:GlassPane>
