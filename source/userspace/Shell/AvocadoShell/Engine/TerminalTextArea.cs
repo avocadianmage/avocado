@@ -17,7 +17,6 @@ namespace AvocadoShell.Engine
 
         PSEngine psEngine;
         Prompt currentPrompt;
-        bool inputEnabled = false;
         bool exitRequested = false;
         
         protected override void OnLoad(RoutedEventArgs e)
@@ -79,7 +78,7 @@ namespace AvocadoShell.Engine
             }
             
             // Ignore input if the InputEnabled flag is false.
-            if (!inputEnabled)
+            if (!InputEnabled)
             {
                 e.Handled = true;
                 return;
@@ -156,7 +155,7 @@ namespace AvocadoShell.Engine
         void prepareForOutput()
         {
             // Disable user input.
-            inputEnabled = false;
+            InputEnabled = false;
 
             // Position caret for writing command output.
             MoveCaretToDocumentEnd();
@@ -171,12 +170,12 @@ namespace AvocadoShell.Engine
 
         void performTabCompletion()
         {
-            inputEnabled = false;
+            InputEnabled = false;
             
             var callback = new Action<string>((completion) =>
             {
                 if (completion != null) replaceInput(completion);
-                inputEnabled = true;
+                InputEnabled = true;
             });
 
             getCompletion(
@@ -207,7 +206,7 @@ namespace AvocadoShell.Engine
         {
             Action action = () =>
             {
-                inputEnabled = false;
+                InputEnabled = false;
                 CloseWindow();
             };
             Dispatcher.BeginInvoke(action);
@@ -240,7 +239,7 @@ namespace AvocadoShell.Engine
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 
             // Enable user input.
-            inputEnabled = true;
+            InputEnabled = true;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)
