@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AvocadoFramework.Animation;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -31,23 +31,30 @@ namespace AvocadoFramework.Controls.TextRendering
             e.Handled = true;
             Window.GetWindow(this).DragMove();
         }
-        
-        TextRange write(string text)
-        {
-            var pos = TextBase.CaretPosition;
-            var range = new TextRange(pos, pos) { Text = text };
-            TextBase.CaretPosition = range.End;
-            return range;
-        }
 
         protected void Write(string text, Brush foreground)
         {
-            write(text).ApplyPropertyValue(
-                TextElement.ForegroundProperty, 
-                foreground);
+            // Insert the text at the caret position.
+            var pos = TextBase.CaretPosition;
+            var range = new TextRange(pos, pos) { Text = text };
+
+            // Apply color and animation to the newly inserted text.
+            range.ApplyPropertyValue(
+                TextElement.ForegroundProperty,
+                createFadeInBrush(foreground));
+
+            // Move the caret to the end of the inserted text.
+            TextBase.CaretPosition = range.End;
         }
 
-        protected void WriteLine() => write("\r");
+        static Brush createFadeInBrush(Brush baseBrush)
+        {
+            return new BrushAnimation().GetFadingBrush(
+                baseBrush,
+                Config.TextFadeDuration);
+        }
+
+        protected void WriteLine() => Write("\r", Brushes.Transparent);
 
         protected void WriteLine(string text, Brush foreground)
             => Write($"{text}\r", foreground);
