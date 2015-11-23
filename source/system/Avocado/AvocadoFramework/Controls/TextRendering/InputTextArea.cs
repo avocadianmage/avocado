@@ -12,6 +12,8 @@ namespace AvocadoFramework.Controls.TextRendering
         protected bool IsShiftKeyDown
             => Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
 
+        protected bool InputEnabled { get; set; }
+        
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);

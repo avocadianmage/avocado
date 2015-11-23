@@ -27,13 +27,13 @@
                         IsTabStop="False"
                         Cursor="Arrow"
                         Foreground="{TemplateBinding Foreground}">
-                        
+
                         <RichTextBox.Resources>
                             <Style TargetType="{x:Type Paragraph}">
                                 <Setter Property="Margin" Value="0" />
                             </Style>
                         </RichTextBox.Resources>
-                        
+
                     </RichTextBox>
 
                 </ControlTemplate>

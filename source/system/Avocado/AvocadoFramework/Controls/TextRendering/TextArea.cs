@@ -18,9 +18,17 @@ namespace AvocadoFramework.Controls.TextRendering
                 frameType,
                 new FrameworkPropertyMetadata(frameType));
         }
+        
+        protected RichTextBox TextBase => textBase;
+        RichTextBox textBase;
+        
+        protected override void OnLoad(RoutedEventArgs e)
+        {
+            base.OnLoad(e);
 
-        protected RichTextBox TextBase 
-            => this.GetTemplateElement<RichTextBox>("textBase");
+            // Cache any template child controls.
+            textBase = this.GetTemplateElement<RichTextBox>("textBase");
+        }
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
