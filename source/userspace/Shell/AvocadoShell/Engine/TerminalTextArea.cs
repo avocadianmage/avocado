@@ -92,6 +92,7 @@ namespace AvocadoShell.Engine
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:
+                    if (TextBase.CaretPosition.Paragraph == null) break;
                     if (!isCaretDirectlyInFrontOfPrompt) break;
                     // The caret position does not change if text is selected
                     // (unless Shift+Left is pressed) so we should not 
