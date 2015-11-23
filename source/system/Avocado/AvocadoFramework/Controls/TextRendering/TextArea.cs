@@ -54,7 +54,8 @@ namespace AvocadoFramework.Controls.TextRendering
                 Config.TextFadeDuration);
         }
 
-        protected void WriteLine() => Write("\r", Brushes.Transparent);
+        protected void WriteLine() 
+            => WriteLine(string.Empty, Brushes.Transparent);
 
         protected void WriteLine(string text, Brush foreground)
             => Write($"{text}\r", foreground);
