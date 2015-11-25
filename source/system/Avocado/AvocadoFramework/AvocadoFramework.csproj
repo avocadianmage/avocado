@@ -80,6 +80,7 @@
     <Compile Include="Controls\BaseControl.cs" />
     <Compile Include="Controls\Progress\Progressor.cs" />
     <Compile Include="Controls\TextRendering\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\LabelTextArea.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
     <Compile Include="Controls\Text\CaretMarker.cs" />
     <Compile Include="Controls\Text\Input\InputControl.cs" />

@@ -33,6 +33,7 @@ namespace AvocadoFramework.Controls.Text.Input
             get { return Keyboard.Modifiers.HasFlag(ModifierKeys.Shift); }
         }
 
+        //ckgtest: move to onapplytemplate
         protected override void OnLoad(RoutedEventArgs e)
         {
             base.OnLoad(e);

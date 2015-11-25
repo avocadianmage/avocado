@@ -21,10 +21,10 @@ namespace AvocadoFramework.Controls.TextRendering
         
         protected RichTextBox TextBase => textBase;
         RichTextBox textBase;
-        
-        protected override void OnLoad(RoutedEventArgs e)
+
+        public override void OnApplyTemplate()
         {
-            base.OnLoad(e);
+            base.OnApplyTemplate();
 
             // Cache any template child controls.
             textBase = this.GetTemplateElement<RichTextBox>("textBase");
@@ -67,6 +67,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void WriteLine(string text, Brush foreground)
             => Write($"{text}\r", foreground);
+
+        protected void Clear() => TextBase.Document.Blocks.Clear();
 
         protected void SetDefaultForeground()
         {

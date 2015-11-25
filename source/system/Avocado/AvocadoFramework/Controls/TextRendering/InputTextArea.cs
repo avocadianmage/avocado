@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
-    public class InputTextArea : TextArea
+    public abstract class InputTextArea : TextArea
     {
         protected bool IsControlKeyDown
             => Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
