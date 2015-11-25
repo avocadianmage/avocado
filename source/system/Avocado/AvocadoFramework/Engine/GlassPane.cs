@@ -9,8 +9,6 @@ namespace AvocadoFramework.Engine
 {
     public abstract class GlassPane : Window
     {
-        public bool IsClosing { get; private set; }
-
         ReversibleAnimator<double> windowFadeAnimator;
         ReversibleAnimator<Color> borderFadeAnimator;
         bool closeImmediately = false;
@@ -25,7 +23,7 @@ namespace AvocadoFramework.Engine
         }
 
         // Initialization and startup code.
-        protected override void OnSourceInitialized(EventArgs e)
+        protected override void OnContentRendered(EventArgs e)
         {
             base.OnSourceInitialized(e);
 
@@ -61,9 +59,6 @@ namespace AvocadoFramework.Engine
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-
-            // Inform others that we are in the process of closing.
-            IsClosing = true;
 
             // If the window can close immediately, have it proceed 
             // unhindered.

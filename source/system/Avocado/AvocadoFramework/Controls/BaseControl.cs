@@ -27,8 +27,6 @@ namespace AvocadoFramework.Controls
 
         protected void CloseWindow() => parentWindow.Close();
 
-        protected bool IsWindowClosing => parentWindow.IsClosing;
-
         GlassPane parentWindow => Window.GetWindow(this) as GlassPane;
     }
 }
