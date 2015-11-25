@@ -121,7 +121,6 @@
     <Compile Include="PowerShellService\Autocomplete.cs" />
     <Compile Include="PowerShellService\PSEngine.cs" />
     <Compile Include="Engine\InputHistory.cs" />
-    <Compile Include="Engine\TerminalControl.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

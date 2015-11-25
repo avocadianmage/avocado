@@ -40,20 +40,6 @@
                                 </ProgressBar.Foreground>
                             </ProgressBar>
                             
-                            <!--<avocadoText:SimpleLabel
-                            Content="{TemplateBinding Title}"
-                            TextBrush="White"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Width="380" />
-                            <avocadoText:SimpleLabel
-                            Content="{TemplateBinding Status}"
-                            TextBrush="Yellow"
-                            Fade="False"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            TextAlign="Right"
-                            Width="380" />--><!--ckgtest-->
                             <Label
                                 Content="{TemplateBinding Title}"
                                 FontFamily="Consolas"
