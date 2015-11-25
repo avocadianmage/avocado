@@ -25,7 +25,6 @@
                         FontWeight="Bold"
                         TextOptions.TextFormattingMode="Display"
                         IsTabStop="False"
-                        ContextMenu="{x:Null}"
                         Cursor="Arrow"
                         Foreground="{TemplateBinding Foreground}">
 
