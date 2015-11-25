@@ -18,15 +18,21 @@ namespace AvocadoShell.Engine
         PSEngine psEngine;
         Prompt currentPrompt;
         bool exitRequested = false;
-        
-        protected override void OnLoad(RoutedEventArgs e)
+
+        public override void OnApplyTemplate()
         {
-            base.OnLoad(e);
+            base.OnApplyTemplate();
 
             // Diable undo feature for the terminal.
             TextBase.IsUndoEnabled = false;
 
             Task.Run(initPSEngine);
+        }
+
+        protected override void OnUnload(RoutedEventArgs e)
+        {
+            base.OnUnload(e);
+            terminateExec();
         }
 
         async Task initPSEngine()
@@ -60,12 +66,6 @@ namespace AvocadoShell.Engine
 
             // Ensure the powershell thread is unblocked.
             resetEvent.Signal(null);
-        }
-
-        protected override void OnUnload(RoutedEventArgs e)
-        {
-            base.OnUnload(e);
-            terminateExec();
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)

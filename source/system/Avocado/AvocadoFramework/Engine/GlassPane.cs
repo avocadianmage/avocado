@@ -36,7 +36,8 @@ namespace AvocadoFramework.Engine
         {
             base.OnMouseLeftButtonDown(e);
 
-            // Allow the window to be dragged via the left-mouse button.
+            // Only allow the mouse to drag the window.
+            e.Handled = true;
             DragMove();
         }
 

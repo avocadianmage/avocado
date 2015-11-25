@@ -30,16 +30,6 @@ namespace AvocadoFramework.Controls.TextRendering
             textBase = this.GetTemplateElement<RichTextBox>("textBase");
         }
 
-        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
-        {
-            base.OnPreviewMouseDown(e);
-
-            // Disallow mouse interaction with text. Instead, continue to 
-            // support dragging the window.
-            e.Handled = true;
-            Window.GetWindow(this).DragMove();
-        }
-
         protected void Write(string text, Brush foreground)
         {
             // Insert the text at the caret position.

@@ -1,6 +1,6 @@
-﻿using AvocadoFramework.Engine;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace AvocadoFramework.Controls
 {
@@ -12,6 +12,19 @@ namespace AvocadoFramework.Controls
             Unloaded += (sender, e) => OnUnload(e);
         }
 
+        #region Window APIs
+
+        Window parentWindow => Window.GetWindow(this);
+
+        protected void SetWindowTitle(string title)
+            => parentWindow.Title = title;
+
+        protected void CloseWindow() => parentWindow.Close();
+
+        #endregion
+
+        #region Overridable events
+
         protected virtual void OnLoad(RoutedEventArgs e)
         {
             // Base implementation does nothing.
@@ -22,11 +35,28 @@ namespace AvocadoFramework.Controls
             // Base implementation does nothing.
         }
 
-        protected void SetWindowTitle(string title)
-            => parentWindow.Title = title;
+        #endregion
 
-        protected void CloseWindow() => parentWindow.Close();
+        #region Suppress native control mouse input
 
-        GlassPane parentWindow => Window.GetWindow(this) as GlassPane;
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseDown(e);
+            e.Handled = true;
+
+            // Allow left-click to drag window.
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Window.GetWindow(this).DragMove();
+            }
+        }
+
+        protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseUp(e);
+            e.Handled = true;
+        }
+
+        #endregion
     }
 }
