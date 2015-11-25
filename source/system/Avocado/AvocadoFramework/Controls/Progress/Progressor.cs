@@ -64,9 +64,9 @@ namespace AvocadoFramework.Controls.Progress
             LostFocus += (sender, e) => borderColorAnimator.Animate(false);
         }
 
-        protected override void OnLoad(RoutedEventArgs e)
+        public override void OnApplyTemplate()
         {
-            base.OnLoad(e);
+            base.OnApplyTemplate();
             initAnimation();
         }
 

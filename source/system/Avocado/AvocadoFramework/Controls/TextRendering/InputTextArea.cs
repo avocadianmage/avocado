@@ -14,9 +14,9 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected bool InputEnabled { get; set; }
         
-        protected override void OnLoad(RoutedEventArgs e)
+        public override void OnApplyTemplate()
         {
-            base.OnLoad(e);
+            base.OnApplyTemplate();
             TextBase.Focus();
         }
 
