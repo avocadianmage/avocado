@@ -24,16 +24,14 @@
                                     Source={StaticResource Config}, 
                                     Path=ProgressorColor}" />
                         </Border.BorderBrush>
-                        <Grid>
+                        <Grid Width="400" Height="16">
                             <ProgressBar 
-                            Name="progress"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Width="400"
-                            Height="16"
-                            Minimum="0" 
-                            Maximum="100" 
-                            Value="{TemplateBinding Value}">
+                                Name="progress"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Minimum="0" 
+                                Maximum="100" 
+                                Value="{TemplateBinding Value}">
                                 <ProgressBar.Foreground>
                                     <SolidColorBrush 
                                         Color="{Binding 
@@ -56,20 +54,23 @@
                             VerticalAlignment="Center"
                             TextAlign="Right"
                             Width="380" />--><!--ckgtest-->
-                            <avocadoText:LabelTextArea
-                                Text="{TemplateBinding Title}"
+                            <Label
+                                Content="{TemplateBinding Title}"
+                                FontFamily="Consolas"
+                                FontSize="7.25pt"
+                                FontWeight="Bold"
+                                TextOptions.TextFormattingMode="Display"
                                 Foreground="White"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Width="400" />
-                            <avocadoText:LabelTextArea
-                                Text="{TemplateBinding Status}"
+                                Padding="4,2,4,2" />
+                            <Label
+                                Content="{TemplateBinding Status}"
+                                FontFamily="Consolas"
+                                FontSize="7.25pt"
+                                FontWeight="Bold"
+                                TextOptions.TextFormattingMode="Display"
                                 Foreground="Yellow"
-                                AnimateText="False"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FlowDirection="RightToLeft"
-                                Width="400" />
+                                HorizontalAlignment="Right" 
+                                Padding="4,2,4,2" />
                         </Grid>
                     </Border>
 
