@@ -12,10 +12,10 @@ namespace AvocadoFramework.Controls.TextRendering
         static TextArea()
         {
             // Associate this control with the default theme.
-            var frameType = typeof(TextArea);
+            var type = typeof(TextArea);
             DefaultStyleKeyProperty.OverrideMetadata(
-                frameType,
-                new FrameworkPropertyMetadata(frameType));
+                type,
+                new FrameworkPropertyMetadata(type));
         }
         
         protected RichTextBox TextBase => textBase;

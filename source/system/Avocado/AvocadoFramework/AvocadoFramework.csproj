@@ -61,6 +61,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\TextLabel.Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\TextArea.Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -76,6 +80,7 @@
     <Compile Include="Controls\BaseControl.cs" />
     <Compile Include="Controls\Progress\Progressor.cs" />
     <Compile Include="Controls\TextRendering\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\TextLabel.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
     <Compile Include="Engine\GlassPane.cs">
       <SubType>Code</SubType>

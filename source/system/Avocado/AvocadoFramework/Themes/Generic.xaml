@@ -9,6 +9,8 @@
             Source="/AvocadoFramework;component/themes/Progressor.Generic.xaml" />
         <ResourceDictionary 
             Source="/AvocadoFramework;component/themes/TextArea.Generic.xaml" />
+        <ResourceDictionary 
+            Source="/AvocadoFramework;component/themes/TextLabel.Generic.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

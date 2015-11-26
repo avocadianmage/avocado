@@ -9,8 +9,7 @@
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate 
-                    TargetType="{x:Type text:TextArea}">
+                <ControlTemplate TargetType="{x:Type text:TextArea}">
 
                     <!-- Layout. -->
                     <RichTextBox 
