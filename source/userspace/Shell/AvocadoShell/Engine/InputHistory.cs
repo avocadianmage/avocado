@@ -14,18 +14,26 @@ namespace AvocadoShell.Engine
 
         public void Add(string command)
         {
-            // Don't save blank input.
-            if (string.IsNullOrWhiteSpace(command)) return;
-
-            // If the input was the same as the previous one entered, don't save
-            // it again.
-            if (buffer.Last?.Previous?.Value == command) return;
+            // Check if the input should be added.
+            if (!shouldAdd(command)) return;
 
             // Set the last buffer value as the specified command.
             buffer.Last.Value = command;
 
             // Reset the buffer.
             reset();
+        }
+
+        bool shouldAdd(string command)
+        {
+            // Don't save blank input.
+            if (string.IsNullOrWhiteSpace(command)) return false;
+
+            // If the input was the same as the previous one entered, don't save
+            // it again.
+            if (buffer.Last?.Previous?.Value == command) return false;
+
+            return true;
         }
 
         public string Cycle(bool forward)
