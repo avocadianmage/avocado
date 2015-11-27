@@ -1,6 +1,5 @@
 ﻿using System.Management.Automation;
 using System.Threading.Tasks;
-using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService
 {
