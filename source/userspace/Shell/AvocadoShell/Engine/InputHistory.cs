@@ -14,6 +14,13 @@ namespace AvocadoShell.Engine
 
         public void Add(string command)
         {
+            // Don't save blank input.
+            if (string.IsNullOrWhiteSpace(command)) return;
+
+            // If the input was the same as the previous one entered, don't save
+            // it again.
+            if (buffer.Last?.Previous?.Value == command) return;
+
             // Set the last buffer value as the specified command.
             buffer.Last.Value = command;
 
