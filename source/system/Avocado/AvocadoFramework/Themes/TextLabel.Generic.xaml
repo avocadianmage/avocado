@@ -6,14 +6,16 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type text:TextLabel}">
         
+        <Setter Property="IsTabStop" Value="False" />
+        
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type text:TextLabel}">
 
                     <!-- Layout. -->
-                    <Label 
-                        Content="{TemplateBinding Content}"
+                    <TextBlock 
+                        Text="{TemplateBinding Content}"
                         Background="Transparent"
                         FontFamily="Consolas"
                         FontSize="7.25pt"
