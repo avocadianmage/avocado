@@ -63,9 +63,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Powershell.exe -ExecutionPolicy RemoteSigned -File %25UserProfile%25\avocado\sys\devtools\assembly-install.ps1 server server</PostBuildEvent>
