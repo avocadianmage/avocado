@@ -65,7 +65,7 @@
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
             {
-                var promptStr = string.Format("{0}: ", desc.Name);
+                var promptStr = $"{desc.Name}: ";
                 shellUI.WriteCustom(promptStr, Config.SystemFontBrush, false);
 
                 var input = shellUI.ReadLine();
@@ -102,14 +102,9 @@
             var sb = new StringBuilder();
             for (var i = 0; i < choices.Count; i++)
             {
-                sb.Append(string.Format(
-                    "[{0}] {1}  ",
-                    promptData[0, i],
-                    promptData[1, i]));
+                sb.Append($"[{promptData[0, i]}] {promptData[1, i]}  ");
             }
-            sb.Append(string.Format(
-                "(Default is \"{0}\"): ",
-                promptData[0, defaultChoice]));
+            sb.Append($"(Default is \"{promptData[0, defaultChoice]}\"): ");
 
             // Read prompts until a match is made, the default is
             // chosen, or the loop is interrupted with ctrl-C.
@@ -264,7 +259,7 @@
             WriteLine(
                 ConsoleColor.DarkYellow,
                 ConsoleColor.Black,
-                string.Format("DEBUG: {0}", message));
+                $"DEBUG: {message}");
         }
 
         /// <summary>

@@ -134,7 +134,7 @@ namespace AvocadoUtilities.Cmdlet
             for (var i = 0; i < options.Length; i++)
             {
                 var fmtNum = (i + 1).ToString().PadLeft(padding);
-                var opt = string.Format(" ({0}) {1}", fmtNum, options[i]);
+                var opt = $" ({fmtNum}) {options[i]}";
                 cmdlet.WriteObject(opt);
             }
         }

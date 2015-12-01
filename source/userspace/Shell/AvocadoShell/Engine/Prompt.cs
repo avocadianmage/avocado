@@ -29,7 +29,7 @@ namespace AvocadoShell.Engine
             var adminStr = EnvUtils.IsAdmin ? "[admin] " : string.Empty;
 
             // Return the formatted prompt string.
-            return string.Format("{0}{1} ", adminStr, path);
+            return $"{adminStr}{path} ";
         }
     }
 }

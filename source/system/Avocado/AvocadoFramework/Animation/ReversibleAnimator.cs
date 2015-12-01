@@ -73,10 +73,7 @@ namespace AvocadoFramework.Animation
         {
             var baseType = typeof(AnimationTimeline);
             var assembly = baseType.Assembly.FullName;
-            var typeName = string.Format(
-                "{0}.{1}Animation",
-                baseType.Namespace,
-                typeof(T).Name);
+            var typeName = $"{baseType.Namespace}.{typeof(T).Name}Animation";
             var handle = Activator.CreateInstance(assembly, typeName);
             return handle.Unwrap() as AnimationTimeline;
         }

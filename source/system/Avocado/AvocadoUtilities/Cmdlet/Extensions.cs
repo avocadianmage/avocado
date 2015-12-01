@@ -26,7 +26,7 @@ namespace AvocadoUtilities.Cmdlet
             string msg, 
             Func<T> work)
         {
-            cmdlet.Host.UI.Write(string.Format("{0}...", msg));
+            cmdlet.Host.UI.Write($"{msg}...");
 
             var task = Task.Run(work);
             while (!task.IsCompleted)
