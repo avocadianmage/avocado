@@ -245,6 +245,13 @@
                 return Config.SystemFontBrush;
             }
 
+            // Handle 'DarkYellow' which does not have a brush with a matching
+            // name.
+            if (consoleColor == ConsoleColor.DarkYellow)
+            {
+                return Brushes.DarkGoldenrod;
+            }
+
             var colorStr = consoleColor.ToString();
             var brush = new BrushConverter().ConvertFromString(colorStr);
             return brush as Brush;
@@ -256,10 +263,7 @@
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message)
         {
-            WriteLine(
-                ConsoleColor.DarkYellow,
-                ConsoleColor.Black,
-                $"DEBUG: {message}");
+            shellUI.WriteCustom($"[Debug] {message}", Brushes.Yellow, true);
         }
 
         /// <summary>
@@ -306,7 +310,10 @@
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
         {
-            shellUI.WriteCustom($"VERBOSE: {message}", Brushes.Magenta, true);
+            shellUI.WriteCustom(
+                $"[Verbose] {message}", 
+                Brushes.DarkGoldenrod, 
+                true);
         }
 
         /// <summary>
@@ -315,7 +322,7 @@
         /// <param name="message">The warning message that is displayed.</param>
         public override void WriteWarningLine(string message)
         {
-            shellUI.WriteCustom($"WARNING: {message}", Brushes.Yellow, true);
+            shellUI.WriteCustom($"[Warning] {message}", Brushes.Magenta, true);
         }
 
         /// <summary>
