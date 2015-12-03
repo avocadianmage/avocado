@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 
@@ -17,28 +18,21 @@ namespace UtilityLib.Processes
             }
         }
 
+        public static string CommandName
+            => Process.GetCurrentProcess().ProcessName;
+
         public static string GetArg(int index)
-        {
-            return Environment
-                .GetCommandLineArgs()
-                .ElementAtOrDefault(index + 1);
-        }
+            => Environment.GetCommandLineArgs().ElementAtOrDefault(index + 1);
 
         public static IEnumerable<string> GetArgs(int startIndex)
-        {
-            return Environment.GetCommandLineArgs().Skip(startIndex + 1);
-        }
+            => Environment.GetCommandLineArgs().Skip(startIndex + 1);
 
-        public static string BuildArgStr()
-        {
-            return BuildArgStr(GetArgs(0).ToArray());
-        }
+        public static string BuildArgStr() 
+            => BuildArgStr(GetArgs(0).ToArray());
 
         public static string BuildArgStr(params string[] args)
-        {
             // Escape each argument with quotes.
-            return $"\"{ string.Join("\" \"", args) }\"";
-        }
+            => $"\"{ string.Join("\" \"", args) }\"";
 
         public static string[] SplitArgStr(string argStr)
         {

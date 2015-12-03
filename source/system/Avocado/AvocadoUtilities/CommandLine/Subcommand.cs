@@ -10,7 +10,7 @@ namespace AvocadoUtilities.CommandLine
     {
         const string SUB_CMD_REQ = "Sub-command required.";
         const string SUB_CMD_INVALID_FMT = "Sub-command {0} is invalid.";
-        const string SUB_CMD_ERR_FMT = "{0} Expected: Server [{1}]";
+        const string SUB_CMD_ERR_FMT = "{0} Expected: {1} [{2}]";
 
         public static string Invoke()
         {
@@ -18,7 +18,7 @@ namespace AvocadoUtilities.CommandLine
 
             // Retrieve the sub-command from the command line input.
             var arg = EnvUtils.GetArg(0);
-
+            
             // Check for case of no input.
             if (arg == null)
             {
@@ -36,7 +36,6 @@ namespace AvocadoUtilities.CommandLine
             }
 
             // Invoke the sub-command.
-            //var subcommandArgs = EnvUtils.GetArgs(1).ToArray();
             var subcommandArgs = new Arguments(EnvUtils.GetArgs(1));
             method.Invoke(null, new object[] { subcommandArgs });
             return null;
@@ -68,7 +67,11 @@ namespace AvocadoUtilities.CommandLine
         {
             var subcommandNames = subcommands.Select(x => x.Name);
             var subcommandsStr = string.Join("|", subcommandNames);
-            return string.Format(SUB_CMD_ERR_FMT, message, subcommandsStr);
+            return string.Format(
+                SUB_CMD_ERR_FMT, 
+                message, 
+                EnvUtils.CommandName, 
+                subcommandsStr);
         }
     }
 }
