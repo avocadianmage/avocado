@@ -21,9 +21,8 @@ namespace AvocadoServer.ServerCore
         static void writeLine(TextWriter writer, Job job, string msg)
         {
             if (msg == null) return;
-            var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.f");
-            writer.WriteLine($"{timestamp} [{job?.ToString() ?? "sys"}]");
-            writer.WriteLine($"{new string(' ', 2)}{msg}");
+            var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
+            writer.WriteLine($"{timestamp} [{job?.ToString() ?? "sys"}] {msg}");
         }
 
         public static void WriteWCFMessage(WCFMessage msg)

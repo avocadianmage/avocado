@@ -13,7 +13,7 @@ namespace AvocadoServer.ServerAPI
 
         public IEnumerable<string> GetJobs()
         {
-            return EntryPoint.Jobs.JobTableInfo;
+            return EntryPoint.Jobs.GetJobTableInfo();
         }
 
         public WCFMessage RunJob(

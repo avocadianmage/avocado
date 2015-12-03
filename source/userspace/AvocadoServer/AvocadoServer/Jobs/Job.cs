@@ -17,7 +17,7 @@ namespace AvocadoServer.Jobs
         readonly string name;
         readonly int secInterval;
         readonly IEnumerable<string> args;
-        
+
         int id;
         CancellationTokenSource tokenSource;
 
@@ -48,7 +48,7 @@ namespace AvocadoServer.Jobs
         }
 
         public override string ToString() 
-            => $"{id}:{app}.{name}({string.Join(" ", args)})";
+            => $"{app}.{name}({string.Join(" ", args)})";
 
         public void Start(int id)
         {

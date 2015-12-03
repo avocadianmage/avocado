@@ -11,8 +11,14 @@ namespace AvocadoServer.Jobs
     {
         readonly Dictionary<int, Job> jobTable = new Dictionary<int, Job>();
 
-        public IEnumerable<string> JobTableInfo 
-            => jobTable.Values.Select(x => x.ToString());
+        public IEnumerable<string> GetJobTableInfo()
+        {
+            var padLen = jobTable.Keys.Max().ToString().Length;
+            foreach (var pair in jobTable)
+            {
+                yield return $"{pair.Key}:{pair.Value}";
+            }
+        }
         
         public void RestoreFromDisk()
         {

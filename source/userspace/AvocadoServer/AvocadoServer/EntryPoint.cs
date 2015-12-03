@@ -16,11 +16,10 @@ namespace AvocadoServer
 
             // Output log message that server has started.
             var endpoint = host.BaseAddresses.First();
-            Logger.WriteLine(
-                $"AvocadoServer is now running at [{endpoint}]...");
+            Logger.WriteLine($"AvocadoServer is now running ({endpoint}).");
 
             // Restart existing jobs from disk.
-            Logger.WriteLine("Restarting jobs from last session...");
+            Logger.WriteLine("Starting jobs...");
             Jobs.RestoreFromDisk();
             Logger.WriteLine("Done restarting jobs.");
 
