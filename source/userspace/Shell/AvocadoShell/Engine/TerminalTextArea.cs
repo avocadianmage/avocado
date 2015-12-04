@@ -225,9 +225,6 @@ namespace AvocadoShell.Engine
             // Update text and window title displays.
             var shellPromptStr = Prompt.GetShellPromptStr(path);
 
-            // If there is text on this line, go to a new line.
-            if (!CurrentLineString.EndsWith("\r")) WriteLine();
-
             Write(shellPromptStr, Config.PromptBrush);
             SetWindowTitle(shellPromptStr);
 
