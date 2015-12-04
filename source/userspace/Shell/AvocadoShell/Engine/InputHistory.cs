@@ -14,14 +14,15 @@ namespace AvocadoShell.Engine
 
         public void Add(string command)
         {
-            // Check if the input should be added.
-            if (!shouldAdd(command)) return;
+            try
+            {
+                // Check if the input should be added.
+                if (!shouldAdd(command)) return;
 
-            // Set the last buffer value as the specified command.
-            buffer.Last.Value = command;
-
-            // Reset the buffer.
-            reset();
+                // Set the last buffer value as the specified command.
+                buffer.Last.Value = command;
+            }
+            finally { reset(); }
         }
 
         bool shouldAdd(string command)
@@ -59,9 +60,14 @@ namespace AvocadoShell.Engine
 
         void reset()
         {
-            // Reset the pointer of the current node to a blank string at the
-            // end of the list.
-            currentNode = buffer.AddLast(string.Empty);
+            // If not already there add a blank string to the end of the buffer.
+            if (buffer.Last?.Value != string.Empty)
+            {
+                buffer.AddLast(string.Empty);
+            }
+
+            // Reset the pointer of the current node to that blank string.
+            currentNode = buffer.Last;
         }
     }
 }
