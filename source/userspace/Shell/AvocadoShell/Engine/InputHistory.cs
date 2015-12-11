@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AvocadoShell.Engine
 {
@@ -14,6 +15,8 @@ namespace AvocadoShell.Engine
 
         public void Add(string command)
         {
+            if (command == null) return;
+
             try
             {
                 // Check if the input should be added.
@@ -28,11 +31,14 @@ namespace AvocadoShell.Engine
         bool shouldAdd(string command)
         {
             // Don't save blank input.
-            if (string.IsNullOrWhiteSpace(command)) return false;
+            if (isEmptyOrWhitespace(command)) return false;
 
             // If the input was the same as the previous one entered, don't save
             // it again.
-            if (buffer.Last?.Previous?.Value == command) return false;
+            var prevCmd = isEmptyOrWhitespace(lastCommand)
+                ? buffer.Last?.Previous?.Value
+                : lastCommand;
+            if (prevCmd == command) return false;
 
             return true;
         }
@@ -53,21 +59,19 @@ namespace AvocadoShell.Engine
             return currentNode.Value;
         }
 
-        public void SaveInput(string input)
-        {
-            currentNode.Value = input;
-        }
+        public void SaveInput(string input) => currentNode.Value = input;
 
         void reset()
         {
             // If not already there add a blank string to the end of the buffer.
-            if (buffer.Last?.Value != string.Empty)
-            {
-                buffer.AddLast(string.Empty);
-            }
+            if (!isEmptyOrWhitespace(lastCommand)) buffer.AddLast(string.Empty);
 
             // Reset the pointer of the current node to that blank string.
             currentNode = buffer.Last;
         }
+
+        string lastCommand => buffer.Last?.Value;
+
+        bool isEmptyOrWhitespace(string str) => str?.Trim() == string.Empty;
     }
 }
