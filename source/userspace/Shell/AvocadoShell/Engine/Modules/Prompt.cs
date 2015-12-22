@@ -1,7 +1,7 @@
 ﻿using AvocadoUtilities;
 using UtilityLib.Processes;
 
-namespace AvocadoShell.Engine
+namespace AvocadoShell.Engine.Modules
 {
     sealed class Prompt
     {

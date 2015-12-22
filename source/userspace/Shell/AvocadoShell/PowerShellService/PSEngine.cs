@@ -45,11 +45,11 @@ namespace AvocadoShell.PowerShellService
 
         public async Task InitEnvironment()
         {
-            shellUI.WriteSystemLine($"Welcome to avocado[v{Config.Version}]");
+            shellUI.WriteOutputLine($"Welcome to avocado[v{Config.Version}]");
             await doWork(
                 "Starting autocompletion service", 
                 autocomplete.InitializeService());
-            await doWork("Executing profile scripts", runProfileScript);
+            await doWork("Importing profile", runProfileScript);
         }
 
         async Task doWork(string message, Action action)
@@ -59,7 +59,7 @@ namespace AvocadoShell.PowerShellService
         {
             shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
             await work;
-            shellUI.WriteSystemLine("done.");
+            shellUI.WriteOutputLine("done.");
         }
 
         void runProfileScript()
@@ -168,7 +168,7 @@ namespace AvocadoShell.PowerShellService
         void stdoutDataAdded(object sender, DataAddedEventArgs e)
         {
             var data = stdOut[e.Index].ToString();
-            shellUI.WriteSystemLine(data);
+            shellUI.WriteOutputLine(data);
         }
     }
 }

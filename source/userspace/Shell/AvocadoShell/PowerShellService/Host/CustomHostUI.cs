@@ -29,7 +29,7 @@
         void writeLineToUI(string data)
         {
             if (string.IsNullOrWhiteSpace(data)) return;
-            shellUI.WriteSystemLine(data);
+            shellUI.WriteOutputLine(data);
         }
 
         /// <summary>
@@ -291,7 +291,7 @@
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(string value)
         {
-            shellUI.WriteSystemLine(value);
+            shellUI.WriteOutputLine(value);
         }
 
         /// <summary>

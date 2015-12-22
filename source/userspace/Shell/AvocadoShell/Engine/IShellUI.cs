@@ -6,7 +6,7 @@ namespace AvocadoShell.Engine
     {
         void RequestExit();
 
-        void WriteSystemLine(string data);
+        void WriteOutputLine(string data);
         void WriteErrorLine(string data);
         void WriteCustom(string data, Brush foreground, bool newline);
 

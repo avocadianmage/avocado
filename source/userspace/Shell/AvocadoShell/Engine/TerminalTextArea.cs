@@ -1,6 +1,8 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using AvocadoShell.Engine.Modules;
 using AvocadoShell.PowerShellService;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -245,8 +247,16 @@ namespace AvocadoShell.Engine
             safeWrite(data, foreground, newline);
         }
 
-        public void WriteSystemLine(string data)
+        public void WriteOutputLine(string data)
         {
+            // Check if the line contains any ANSI codes that we should process.
+            if (ANSICode.ContainsANSICodes(data))
+            {
+                var action = new Action<string>(writeOutputLineWithANSICodes);
+                Dispatcher.BeginInvoke(action, data);
+                return;
+            }
+            
             safeWrite(data, Config.SystemFontBrush, true);
         }
 
@@ -261,6 +271,25 @@ namespace AvocadoShell.Engine
                 ? new Action<string, Brush>(WriteLine)
                 : new Action<string, Brush>(Write);
             Dispatcher.BeginInvoke(action, data, foreground);
+        }
+
+        void writeOutputLineWithANSICodes(string data)
+        {
+            var segments = ANSICode.GetColorSegments(data);
+            if (!segments.Any()) return;
+            segments
+                .Take(segments.Count - 1)
+                .ForEach(seg => writeANSISegment(seg, false));
+            writeANSISegment(segments.Last(), true);
+        }
+
+        void writeANSISegment(ANSISegment segment, bool newLine)
+        {
+            var text = segment.Text;
+            var brush = segment.Brush ?? Config.SystemFontBrush;
+            if (newLine) WriteLine(text, brush);
+            else Write(text, brush);
+
         }
         
         string getInput() => CurrentLineString.Substring(currentPrompt.LinePos);
