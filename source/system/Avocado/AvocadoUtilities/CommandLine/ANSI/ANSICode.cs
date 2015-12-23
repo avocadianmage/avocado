@@ -4,25 +4,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
-namespace AvocadoShell.Engine.Modules
+namespace AvocadoUtilities.CommandLine.ANSI
 {
-    struct ANSISegment
-    {
-        public Brush Brush { get; }
-        public string Text { get; }
-
-        public ANSISegment(Brush brush, string text)
-        {
-            Brush = brush;
-            Text = text;
-        }
-    }
-
-    static class ANSICode
+    public static class ANSICode
     {
         const string ANSI_PREIX = "\x1b[";
 
-        public static bool ContainsANSICodes(string str) 
+        public static bool ContainsANSICodes(string str)
             => str.Contains(ANSI_PREIX);
 
         public static void WriteLine(SolidColorBrush brush, string line)
@@ -38,7 +26,7 @@ namespace AvocadoShell.Engine.Modules
 
             // Split into separate segments for each ANSI sequence.
             var segments = line.Split(
-                new string[] { ANSI_PREIX }, 
+                new string[] { ANSI_PREIX },
                 StringSplitOptions.None);
 
             // If we have a non-empty first segment, then it did not have
@@ -103,7 +91,7 @@ namespace AvocadoShell.Engine.Modules
                 var foregroundRule = new Predicate<byte>(x => x == 38);
                 if (!tryParsePiece(codes[codeIdx], out n, foregroundRule))
                 { continue; }
-                                
+
                 // Skip if malformed (the next piece must be '2').
                 var rgbPrefixRule = new Predicate<byte>(x => x == 2);
                 if (!tryParsePiece(codes[codeIdx + 1], out n, rgbPrefixRule))
@@ -115,7 +103,7 @@ namespace AvocadoShell.Engine.Modules
                 for (; rgbIdx < rgb.Length; rgbIdx++)
                 {
                     if (!tryParsePiece(
-                        codes[codeIdx + 2 + rgbIdx], 
+                        codes[codeIdx + 2 + rgbIdx],
                         out rgb[rgbIdx]))
                     {
                         break;
@@ -138,8 +126,8 @@ namespace AvocadoShell.Engine.Modules
             => new SolidColorBrush(Color.FromRgb(r, g, b));
 
         static bool tryParsePiece(
-            string piece, 
-            out byte result, 
+            string piece,
+            out byte result,
             params Predicate<byte>[] rules)
         {
             // Fail if piece cannot be converted to an integer.

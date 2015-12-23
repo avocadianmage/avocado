@@ -1,6 +1,7 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoShell.Engine.Modules;
 using AvocadoShell.PowerShellService;
+using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

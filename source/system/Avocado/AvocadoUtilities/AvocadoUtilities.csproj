@@ -39,6 +39,8 @@
   <ItemGroup>
     <Compile Include="Cmdlet\Extensions.cs" />
     <Compile Include="Cmdlet\Prompts.cs" />
+    <Compile Include="CommandLine\ANSI\ANSISegment.cs" />
+    <Compile Include="CommandLine\ANSI\ANSICode.cs" />
     <Compile Include="CommandLine\Arguments.cs" />
     <Compile Include="CommandLine\Subcommand.cs" />
     <Compile Include="CommandLine\SubcommandAttribute.cs" />
@@ -46,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

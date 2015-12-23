@@ -110,7 +110,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\Modules\ANSICodeParser.cs" />
     <Compile Include="Engine\Modules\Prompt.cs" />
     <Compile Include="Engine\IShellUI.cs" />
     <Compile Include="Engine\TerminalTextArea.cs" />
