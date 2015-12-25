@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Animation;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -17,7 +18,10 @@ namespace AvocadoFramework.Controls.TextRendering
                 type,
                 new FrameworkPropertyMetadata(type));
         }
-        
+
+        protected EventHandler LineAdded;
+        void fireLineAdded() => LineAdded?.Invoke(this, EventArgs.Empty);
+
         protected RichTextBox TextBase => textBase;
         RichTextBox textBase;
 
@@ -51,11 +55,14 @@ namespace AvocadoFramework.Controls.TextRendering
                 Config.TextFadeDuration);
         }
 
-        protected void WriteLine() 
+        protected void WriteLine()
             => WriteLine(string.Empty, Brushes.Transparent);
 
         protected void WriteLine(string text, Brush foreground)
-            => Write($"{text}\r", foreground);
+        {
+            Write($"{text}\r", foreground);
+            fireLineAdded();
+        }
 
         protected void Clear() => TextBase.Document.Blocks.Clear();
 

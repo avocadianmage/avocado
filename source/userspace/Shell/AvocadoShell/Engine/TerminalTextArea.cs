@@ -29,6 +29,9 @@ namespace AvocadoShell.Engine
             // Diable undo feature for the terminal.
             TextBase.IsUndoEnabled = false;
 
+            // Scroll to the end each time a new line is added.
+            LineAdded += (sender, e) => TextBase.ScrollToEnd();
+
             Task.Run(initPSEngine);
         }
 
