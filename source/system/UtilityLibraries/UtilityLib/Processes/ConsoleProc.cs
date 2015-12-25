@@ -11,13 +11,7 @@ namespace UtilityLib.Processes
         }
 
         public static void RunCriticalCode(Action action)
-        {
-            RunCriticalCode<object>(() =>
-            {
-                action();
-                return null;
-            });
-        }
+            => RunCriticalCode<object>(() => { action(); return null; });
 
         public static T RunCriticalCode<T>(Func<T> action)
         {
