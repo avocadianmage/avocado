@@ -13,13 +13,16 @@ namespace UtilityLib.Processes
 
         public static void RunCriticalCode(Action action)
         {
-            try { action.Invoke(); }
-            catch (Exception e) { TerminatingError(e.Message); }
+            RunCriticalCode<object>(() =>
+            {
+                action();
+                return null;
+            });
         }
 
         public static T RunCriticalCode<T>(Func<T> action)
         {
-            try { return action.Invoke(); }
+            try { return action(); }
             catch (Exception e)
             {
                 TerminatingError(e.Message);
