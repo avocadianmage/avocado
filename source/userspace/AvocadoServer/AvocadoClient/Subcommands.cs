@@ -22,7 +22,7 @@ namespace AvocadoClient
 
             // Output result.
             var addr = client.Endpoint.Address;
-            Console.WriteLine($"Ping {addr} - completed in {timestamp}s.");
+            Console.WriteLine($"Ping to {addr} completed in {timestamp}s.");
         }
 
         [Subcommand]
