@@ -29,22 +29,24 @@ namespace AvocadoUtilities
             {
                 public static string Val => GetPath(Avocado.Val, typeof(Apps));
 
-                public static string MyAppPath => 
-                    getAppPath(Assembly.GetCallingAssembly());
+                public static string MyAppPath
+                {
+                    get
+                    {
+                        var location = Assembly.GetEntryAssembly().Location;
+                        return Path.GetDirectoryName(location);
+                    }
+                }
 
                 public static string MyAppDataPath
                 {
                     get
                     {
-                        var appPath = getAppPath(Assembly.GetCallingAssembly());
-                        var appDataPath = Path.Combine(appPath, "data");
+                        var appDataPath = Path.Combine(MyAppPath, "data");
                         Directory.CreateDirectory(appDataPath);
                         return appDataPath;
                     }
                 }
-
-                static string getAppPath(Assembly asm) => 
-                    Path.GetDirectoryName(asm.Location);
             }
 
             public static class Sys
