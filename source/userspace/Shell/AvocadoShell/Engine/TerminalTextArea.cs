@@ -26,9 +26,6 @@ namespace AvocadoShell.Engine
         {
             base.OnApplyTemplate();
 
-            // Diable undo feature for the terminal.
-            TextBase.IsUndoEnabled = false;
-
             // Scroll to the end each time a new line is added.
             LineAdded += (sender, e) => TextBase.ScrollToEnd();
 
@@ -76,8 +73,8 @@ namespace AvocadoShell.Engine
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            // Always detect Ctrl+Z break.
-            if (IsControlKeyDown && e.Key == Key.Z)
+            // Always detect Ctrl+B break.
+            if (IsControlKeyDown && e.Key == Key.B)
             {
                 terminateExec();
                 return;
@@ -242,8 +239,16 @@ namespace AvocadoShell.Engine
             // Update the current prompt object.
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 
+            clearUndoBuffer();
+
             // Enable user input.
             InputEnabled = true;
+        }
+
+        void clearUndoBuffer()
+        {
+            TextBase.IsUndoEnabled = false;
+            TextBase.IsUndoEnabled = true;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)
