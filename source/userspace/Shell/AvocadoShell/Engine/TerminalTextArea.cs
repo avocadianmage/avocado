@@ -87,8 +87,6 @@ namespace AvocadoShell.Engine
                 return;
             }
 
-            base.OnPreviewKeyDown(e);
-
             // Perform special handling for certain keys.
             switch (e.Key)
             {
@@ -130,12 +128,14 @@ namespace AvocadoShell.Engine
                 case Key.Enter:
                     execute();
                     e.Handled = true;
-                    break;
+                    return;
             }
 
             // Ensure we are using the input color before actually processing 
             // the keypress.
             SetDefaultForeground();
+
+            base.OnPreviewKeyDown(e);
         }
 
         void execute()
