@@ -104,8 +104,8 @@ namespace AvocadoShell.Engine
                         || (e.Key == Key.Left && IsShiftKeyDown);
                     break;
                 case Key.Home:
-                    e.Handled = true;
                     MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
+                    e.Handled = true;
                     break;
 
                 // Clear input.
@@ -116,20 +116,20 @@ namespace AvocadoShell.Engine
                 // Input history.
                 case Key.Up:
                 case Key.Down:
-                    e.Handled = true;
                     inputHistoryLookup(e.Key == Key.Down);
+                    e.Handled = true;
                     break;
 
                 // Case autocompletion.
                 case Key.Tab:
-                    e.Handled = true;
                     performTabCompletion();
+                    e.Handled = true;
                     break;
 
                 // Handle command execution.
                 case Key.Enter:
-                    e.Handled = true;
                     execute();
+                    e.Handled = true;
                     break;
             }
 
@@ -140,10 +140,15 @@ namespace AvocadoShell.Engine
 
         void execute()
         {
+            // Disable user input.
+            InputEnabled = false;
+
             // Get user input.
             var input = getInput();
 
-            prepareForOutput();
+            // Position caret for writing command output.
+            MoveCaretToDocumentEnd();
+            WriteLine();
 
             // Signal to the powershell process that the we are done entering
             // input.
@@ -154,16 +159,6 @@ namespace AvocadoShell.Engine
             if (!currentPrompt.FromShell) return;
 
             executeCommand(input);
-        }
-
-        void prepareForOutput()
-        {
-            // Disable user input.
-            InputEnabled = false;
-
-            // Position caret for writing command output.
-            MoveCaretToDocumentEnd();
-            WriteLine();
         }
 
         void executeCommand(string input)
