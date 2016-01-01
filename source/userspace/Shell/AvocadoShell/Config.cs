@@ -5,7 +5,7 @@ namespace AvocadoShell
 {
     sealed class Config
     {
-        public static string Version { get; } = "0.8.1";
+        public static string Version { get; } = "0.8.2";
 
         public static Brush PromptBrush { get; } = Brushes.LightGreen;
         public static Brush ErrorFontBrush { get; } = Brushes.Salmon;

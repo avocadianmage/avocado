@@ -88,6 +88,17 @@ namespace AvocadoShell.Engine
             }
 
             // Perform special handling for certain keys.
+            handleSpecialKeys(e);
+
+            // Ensure we are using the input color before actually processing 
+            // the keypress.
+            SetDefaultForeground();
+
+            base.OnPreviewKeyDown(e);
+        }
+
+        void handleSpecialKeys(KeyEventArgs e)
+        {
             switch (e.Key)
             {
                 // Prevent overwriting the prompt.
@@ -128,14 +139,8 @@ namespace AvocadoShell.Engine
                 case Key.Enter:
                     execute();
                     e.Handled = true;
-                    return;
+                    break;
             }
-
-            // Ensure we are using the input color before actually processing 
-            // the keypress.
-            SetDefaultForeground();
-
-            base.OnPreviewKeyDown(e);
         }
 
         void execute()

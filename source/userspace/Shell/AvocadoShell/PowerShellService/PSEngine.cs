@@ -27,14 +27,16 @@ namespace AvocadoShell.PowerShellService
             autocomplete = new Autocomplete(ps);
         }
 
-        static string getIncludeScript(string dir, string script)
-            => $". {Path.Combine(dir, script)}";
+        string profilePath 
+            => Path.Combine(RootDir.Avocado.Apps.MyAppPath, "profile.ps1");
 
         void addProfileScriptToExec()
         {
-            var dir = RootDir.Avocado.Apps.MyAppPath;
-            var script = getIncludeScript(dir, "profile.ps1");
-            ps.AddScript(script);
+            // Set $profile variable.
+            ps.AddScript($"$profile = \"{profilePath}\"");
+
+            // Import profile.
+            ps.AddScript(". $profile");
         }
 
         void addUserCmdsToExec()
@@ -49,7 +51,7 @@ namespace AvocadoShell.PowerShellService
             await doWork(
                 "Starting autocompletion service", 
                 autocomplete.InitializeService());
-            await doWork("Importing profile", runProfileScript);
+            await doWork("Running startup scripts", runStartupScripts);
         }
 
         async Task doWork(string message, Action action)
@@ -62,7 +64,7 @@ namespace AvocadoShell.PowerShellService
             shellUI.WriteOutputLine("done.");
         }
 
-        void runProfileScript()
+        void runStartupScripts()
         {
             // Run user profile script.
             addProfileScriptToExec();
