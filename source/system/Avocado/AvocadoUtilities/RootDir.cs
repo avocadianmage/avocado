@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace AvocadoUtilities
@@ -30,13 +32,7 @@ namespace AvocadoUtilities
                 public static string Val => GetPath(Avocado.Val, typeof(Apps));
 
                 public static string MyAppPath
-                {
-                    get
-                    {
-                        var location = Assembly.GetEntryAssembly().Location;
-                        return Path.GetDirectoryName(location);
-                    }
-                }
+                    => Path.GetDirectoryName(getParentAssembly().Location);
 
                 public static string MyAppDataPath
                 {
@@ -46,6 +42,24 @@ namespace AvocadoUtilities
                         Directory.CreateDirectory(appDataPath);
                         return appDataPath;
                     }
+                }
+
+                static Assembly getParentAssembly()
+                {
+                    var thisAsm = Assembly.GetExecutingAssembly();
+                    var frames = new StackTrace().GetFrames();
+                    foreach (var frame in frames)
+                    {
+                        var frameAsm = frame.GetMethod().DeclaringType.Assembly;
+
+                        // Ignore .NET framework assemblies.
+                        if (frameAsm.FullName.Contains(
+                            "PublicKeyToken=b77a5c561934e089")) continue;
+
+                        if (frameAsm != thisAsm) return frameAsm;
+                    }
+                    throw new Exception(
+                        "The callstack for method 'getParentAssembly' must originate from a different assembly.");
                 }
             }
 
