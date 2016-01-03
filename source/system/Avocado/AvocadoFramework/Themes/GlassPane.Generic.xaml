@@ -20,11 +20,7 @@
                         Path=InactiveBorderColor}" />
             </Setter.Value>
         </Setter>
-        <Setter 
-            Property="Opacity" 
-            Value="{Binding 
-                Source={StaticResource Config}, 
-                Path=MinOpacity}" />
+        <Setter Property="Opacity" Value="0" />
         <Setter Property="ResizeMode" Value="CanMinimize" />
         <Setter Property="WindowStyle" Value="None" />
         
@@ -42,7 +38,7 @@
                                     <ControlTemplate TargetType="{x:Type Thumb}">
                                         <Grid x:Name="Grid">
                                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
-                                            <Border x:Name="Rectangle1" CornerRadius="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Background="{TemplateBinding Background}" />
+                                            <Border x:Name="Rectangle1" CornerRadius="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Background="{TemplateBinding Background}" />
                                         </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="Tag" Value="Horizontal">
@@ -58,7 +54,12 @@
                         <!--ScrollBars-->
                         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
                             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-                            <Setter Property="Foreground" Value="Orange" />
+                            <Setter Property="Foreground" Value="Gray" />
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <BlurEffect Radius="2" />
+                                </Setter.Value>
+                            </Setter>
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="Width" Value="2" />
                             <Setter Property="MinWidth" Value="4" />
@@ -124,11 +125,13 @@
                         
                         <!-- Border. -->
                         <Border 
-                        Background="Black"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="2"
                         Margin="2"
                         CornerRadius="1">
+                            <Border.Background>
+                                <SolidColorBrush Color="Black" Opacity="0.8"/>
+                            </Border.Background>
                             <Border.Effect>
                                 <BlurEffect Radius="3" />
                             </Border.Effect>

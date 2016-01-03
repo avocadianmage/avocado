@@ -77,8 +77,8 @@ namespace AvocadoFramework.Engine
             windowFadeAnimator = new ReversibleAnimator<double>(
                 this,
                 OpacityProperty,
-                Config.MinOpacity,
-                Config.MaxOpacity,
+                0,
+                1,
                 Config.WindowFadeDuration);
             windowFadeAnimator.StartReached += onWindowFadeOut;
             windowFadeAnimator.EndReached += onWindowFadeIn;
