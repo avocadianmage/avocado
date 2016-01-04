@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace AvocadoFramework
 {
@@ -15,19 +14,6 @@ namespace AvocadoFramework
 
         // Text properties.
         public static double TextFadeDuration { get; } = 150;
-        public static Typeface Typeface
-        {
-            get
-            {
-                return new Typeface(
-                    new FontFamily("Consolas"),
-                    FontStyles.Normal,
-                    FontWeights.Bold,
-                    FontStretches.Normal);
-            }
-        }
-        public static double FontSize { get; } = 10;
-        public static int TabWidth { get; } = 4;
 
         // Progressor properties.
         public static Color ProgressorColor { get; } = Colors.Green;
