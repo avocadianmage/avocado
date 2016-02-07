@@ -1,2 +1,2 @@
 Set-Location $PSScriptRoot
-Get-ChildItem ..\AvocadoLib\* -Filter *.dll | foreach { .\gacutil.exe -i $_ }
+Get-ChildItem ..\Avocado\* -Filter *.dll | foreach { .\gacutil.exe -i $_ }

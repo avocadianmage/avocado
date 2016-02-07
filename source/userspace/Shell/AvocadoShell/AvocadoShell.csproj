@@ -79,13 +79,11 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Reference Include="AvocadoFramework, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0d311cd6fd080247, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\avocado\sys\AvocadoLib\AvocadoFramework.dll</HintPath>
+    <Reference Include="AvocadoFramework">
+      <HintPath>..\..\..\system\Avocado\AvocadoFramework\bin\Release\AvocadoFramework.dll</HintPath>
     </Reference>
-    <Reference Include="AvocadoUtilities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32080caa3309d9ec, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\avocado\sys\AvocadoLib\AvocadoUtilities.dll</HintPath>
+    <Reference Include="AvocadoUtilities">
+      <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -96,10 +94,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UtilityLib">
+      <HintPath>..\..\..\system\UtilityLibraries\UtilityLib\bin\Release\UtilityLib.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -183,7 +179,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Powershell.exe -ExecutionPolicy RemoteSigned -File %25UserProfile%25\avocado\sys\devtools\assembly-install.ps1 shell shell</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

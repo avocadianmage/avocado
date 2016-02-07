@@ -1,6 +1,5 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Host;
-using AvocadoUtilities;
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -27,8 +26,15 @@ namespace AvocadoShell.PowerShellService
             autocomplete = new Autocomplete(ps);
         }
 
-        string profilePath 
-            => Path.Combine(RootDir.Avocado.Apps.MyAppPath, "profile.ps1");
+        string profilePath
+        {
+            get
+            {
+                var docs = Environment.GetFolderPath(
+                    Environment.SpecialFolder.MyDocuments);
+                return Path.Combine(docs, "WindowsPowerShell", "profile.ps1");
+            }
+        }
 
         void addProfileScriptToExec()
         {
