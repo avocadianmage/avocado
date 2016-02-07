@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Media;
 
 namespace AvocadoShell
 {
     sealed class Config
     {
-        public static string Version { get; } = "0.8.2";
+        public static Version Version
+            => Assembly.GetExecutingAssembly().GetName().Version;
 
-        public static Brush PromptBrush { get; } = Brushes.LightGreen;
-        public static Brush ErrorFontBrush { get; } = Brushes.Salmon;
-        public static Brush SystemFontBrush { get; } = Brushes.LightGray;
+        public static Brush PromptBrush => Brushes.LightGreen;
+        public static Brush ErrorFontBrush => Brushes.Salmon;
+        public static Brush SystemFontBrush => Brushes.LightGray;
 
-        public static ConsoleColor DefaultConsoleColor { get; } 
-            = ConsoleColor.Gray;
+        public static ConsoleColor DefaultConsoleColor => ConsoleColor.Gray;
     }
 }

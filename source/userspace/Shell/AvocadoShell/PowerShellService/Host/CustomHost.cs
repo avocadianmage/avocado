@@ -4,6 +4,7 @@
     using System;
     using System.Globalization;
     using System.Management.Automation.Host;
+    using System.Reflection;
     using System.Threading;
 
     /// <summary>
@@ -94,10 +95,7 @@
         /// Gets the version object for this application. Typically this 
         /// should match the version resource in the application.
         /// </summary>
-        public override Version Version
-        {
-            get { return new Version(1, 0, 0, 0); }
-        }
+        public override Version Version => Config.Version;
 
         /// <summary>
         /// Creates an instance of the PSHostUserInterface object for this
