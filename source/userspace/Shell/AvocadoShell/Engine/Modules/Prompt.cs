@@ -1,4 +1,4 @@
-﻿using AvocadoUtilities;
+﻿using System;
 using UtilityLib.Processes;
 
 namespace AvocadoShell.Engine.Modules
@@ -19,17 +19,18 @@ namespace AvocadoShell.Engine.Modules
 
         public static string GetShellPromptStr(string path)
         {
+            var homeDir = Environment.GetFolderPath(
+                Environment.SpecialFolder.UserProfile);
+
             // Replace the root directory string with the tilde alias.
-            if (path.StartsWith(RootDir.Val))
-            {
-                path = path.Replace(RootDir.Val, "~");
-            }
+            if (path.StartsWith(homeDir)) path = path.Replace(homeDir, "~");
+
+            var promptStr = $"{path} ";
 
             // Indicate if this shell has administrative permissions.
-            var adminStr = EnvUtils.IsAdmin ? "[admin] " : string.Empty;
+            if (EnvUtils.IsAdmin) promptStr = $"[admin] {promptStr}";
 
-            // Return the formatted prompt string.
-            return $"{adminStr}{path} ";
+            return promptStr;
         }
     }
 }

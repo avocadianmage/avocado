@@ -22,11 +22,9 @@ namespace UtilityLib.Processes
 
         public string WorkingDirectory
         {
-            get { return startInfo.WorkingDirectory; }
-            set { startInfo.WorkingDirectory = value; }
+            get { return proc.StartInfo.WorkingDirectory; }
+            set { proc.StartInfo.WorkingDirectory = value; }
         }
-
-        ProcessStartInfo startInfo => proc.StartInfo;
 
         public void RunForeground()
         {
@@ -35,14 +33,14 @@ namespace UtilityLib.Processes
 
         public async Task<string> RunBackground()
         {
-            applyBackgroundProperties();
+            applyBackgroundProperties(proc.StartInfo);
             proc.Start();
             return await proc.StandardOutput.ReadToEndAsync();
         }
 
         public async Task RunBackgroundLive()
         {
-            applyBackgroundProperties();
+            applyBackgroundProperties(proc.StartInfo);
             proc.OutputDataReceived += OutputReceived;
             proc.ErrorDataReceived += ErrorReceived;
             proc.Start();
@@ -51,7 +49,7 @@ namespace UtilityLib.Processes
             await Task.Run(() => proc.WaitForExit());
         }
 
-        void applyBackgroundProperties()
+        static void applyBackgroundProperties(ProcessStartInfo startInfo)
         {
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = false;

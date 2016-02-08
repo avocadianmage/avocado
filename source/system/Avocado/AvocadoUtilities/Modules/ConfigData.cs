@@ -11,6 +11,13 @@ namespace AvocadoUtilities.Modules
 
         Dictionary<string, string> cache;
 
+        readonly string path;
+
+        public ConfigData(string path)
+        {
+            this.path = path;
+        }
+
         public async Task<string> GetValue(
             string property,
             string defaultVal)
@@ -24,7 +31,7 @@ namespace AvocadoUtilities.Modules
             // Otherwise, the config file did not exist, or the property was
             // not found. Create a new file if needed and add the property with
             // its default value.
-            using (var writer = new StreamWriter(getConfigFile(), true))
+            using (var writer = new StreamWriter(path, true))
             {
                 await writer.WriteLineAsync($"{property}{DELIM}{defaultVal}");
             }
@@ -35,21 +42,14 @@ namespace AvocadoUtilities.Modules
             return defaultVal;
         }
 
-        string getConfigFile() 
-            => Path.Combine(RootDir.Avocado.Apps.MyAppDataPath, "config.ini");
-
         async Task<Dictionary<string, string>> getPropertyDict()
         {
             var ret = new Dictionary<string, string>();
-            var configFile = getConfigFile();
 
-            if (!File.Exists(configFile))
-            {
-                return ret;
-            }
+            if (!File.Exists(path)) return ret;
 
             string fileContents;
-            using (var reader = new StreamReader(configFile))
+            using (var reader = new StreamReader(path))
             {
                 fileContents = await reader.ReadToEndAsync();
             }

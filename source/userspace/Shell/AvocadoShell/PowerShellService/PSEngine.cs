@@ -53,7 +53,7 @@ namespace AvocadoShell.PowerShellService
 
         public async Task InitEnvironment()
         {
-            shellUI.WriteOutputLine($"Welcome to avocado[v{Config.Version}]");
+            shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");
             await doWork(
                 "Starting autocompletion service", 
                 autocomplete.InitializeService());
