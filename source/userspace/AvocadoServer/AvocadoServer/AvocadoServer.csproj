@@ -47,10 +47,8 @@
     <Compile Include="ServerCore\WCF.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AvocadoUtilities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=32080caa3309d9ec, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\AvocadoUtilities.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="AvocadoUtilities">
+      <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -58,15 +56,14 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Serialization" />
-    <Reference Include="UtilityLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8dff5406a9d55e03, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\avocado\sys\AvocadoLib\UtilityLib.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UtilityLib">
+      <HintPath>..\..\..\system\UtilityLibraries\UtilityLib\bin\Release\UtilityLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Powershell.exe -ExecutionPolicy RemoteSigned -File %25UserProfile%25\avocado\sys\devtools\assembly-install.ps1 server server</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
