@@ -59,8 +59,7 @@ namespace AvocadoServer.Jobs
 
         public void Kill() => tokenSource.Cancel();
 
-        string exePath
-            => Path.Combine(RootDir.Avocado.Apps.Val, app, $"{name}.exe");
+        string exePath => Path.Combine(app, $"{name}.exe");
 
         async Task schedulerThread()
         {

@@ -9,8 +9,7 @@ namespace AvocadoServer.Jobs.Serialization
 {
     static class JobSerializer
     {
-        static string filePath =>
-            Path.Combine(RootDir.Avocado.Apps.MyAppDataPath, "jobs.xml");
+        const string FILE_PATH = "jobs.xml";
 
         static readonly XmlSerializer serializer
             = new XmlSerializer(typeof(List<XmlJob>));
@@ -18,7 +17,7 @@ namespace AvocadoServer.Jobs.Serialization
         public static async Task<IEnumerable<Job>> Load()
         {
             // Quit if serialized data does not exist.
-            if (!File.Exists(filePath)) return null;
+            if (!File.Exists(FILE_PATH)) return null;
 
             // Deserialize the saved list of jobs.
             IEnumerable<Job> jobs = null;
@@ -26,7 +25,7 @@ namespace AvocadoServer.Jobs.Serialization
             {
                 lock (serializer)
                 {
-                    using (var reader = new StreamReader(filePath))
+                    using (var reader = new StreamReader(FILE_PATH))
                     {
                         var xmlJobs = (IEnumerable<XmlJob>)
                             serializer.Deserialize(reader);
@@ -43,7 +42,7 @@ namespace AvocadoServer.Jobs.Serialization
             {
                 lock (serializer)
                 {
-                    using (var writer = new StreamWriter(filePath))
+                    using (var writer = new StreamWriter(FILE_PATH))
                     {
                         var xmlJobs = jobs.Select(x => x.ToXml()).ToList();
                         serializer.Serialize(writer, xmlJobs);

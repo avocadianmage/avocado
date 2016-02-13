@@ -8,7 +8,7 @@ namespace AvocadoUtilities.Context
     {
         readonly ConfigData configData = new ConfigData("config.ini");
 
-        public AvocadoContext(Assembly asm)
+        public void Establish(Assembly asm)
         {
             Directory.SetCurrentDirectory(Path.GetDirectoryName(asm.Location));
         }

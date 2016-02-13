@@ -47,7 +47,6 @@
     <Compile Include="CommandLine\SubcommandAttribute.cs" />
     <Compile Include="Context\AvocadoContext.cs" />
     <Compile Include="Context\ConfigData.cs" />
-    <Compile Include="RootDir.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
