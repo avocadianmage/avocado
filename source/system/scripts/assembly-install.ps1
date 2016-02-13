@@ -1,12 +1,8 @@
 # Command line parameters declaration.
 param
 (
-    [string]$appName = $(throw "Parameter for app name is required."),
-    [string]$alias
+    [string]$installPath = $(throw "Parameter for install path is required.")
 )
-
-# Get the app's installation path.
-$installPath = Join-Path ~/avocado/apps $appName
 
 # Create app directory if it does not exist.
 if (!(Test-Path -PathType Container $installPath))
@@ -24,13 +20,6 @@ Get-ChildItem * -Include *.exe, *.config |
 
 # Copy over DLLs.
 Get-ChildItem -Filter *.dll | Copy-Item -Destination $installPath
-
-# Rename the executable if an alias was specified.
-if ($alias)
-{
-    "$exe `$args" |
-        Out-File -Encoding UTF8 (Join-Path $installPath "$alias.ps1")
-}
 
 # Add app path to the environment path if it hasn't been yet.
 $fullInstallPath = Resolve-Path $installPath

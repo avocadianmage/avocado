@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace AvocadoUtilities.Modules
+namespace AvocadoUtilities.Context
 {
-    public class ConfigData
+    sealed class ConfigData
     {
         const string DELIM = "=";
 
         Dictionary<string, string> cache;
-
+        
         readonly string path;
 
         public ConfigData(string path)
@@ -18,26 +18,24 @@ namespace AvocadoUtilities.Modules
             this.path = path;
         }
 
-        public async Task<string> GetValue(
-            string property,
-            string defaultVal)
+        public async Task<string> GetValue(string prop, string defaultVal)
         {
             // Initialize cache, if needed.
             cache = cache ?? await getPropertyDict();
 
             // Check if the value is already cached.
-            if (cache.ContainsKey(property)) return cache[property];
+            if (cache.ContainsKey(prop)) return cache[prop];
 
             // Otherwise, the config file did not exist, or the property was
             // not found. Create a new file if needed and add the property with
             // its default value.
             using (var writer = new StreamWriter(path, true))
             {
-                await writer.WriteLineAsync($"{property}{DELIM}{defaultVal}");
+                await writer.WriteLineAsync($"{prop}{DELIM}{defaultVal}");
             }
 
             // Cache the property/value for fast subsequent access.
-            cache[property] = defaultVal;
+            cache[prop] = defaultVal;
 
             return defaultVal;
         }
