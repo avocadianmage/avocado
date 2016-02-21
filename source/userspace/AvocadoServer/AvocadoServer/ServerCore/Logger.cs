@@ -12,6 +12,8 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
+        static readonly Color systemColor = Colors.Gray;
+        static readonly Color jobColor = Colors.SkyBlue;
         static readonly Dictionary<ClientType, Color> clientTypeColorMapping
             = new Dictionary<ClientType, Color>() {
                 { ClientType.ThisMachine, Colors.LightGreen },
@@ -23,7 +25,7 @@ namespace AvocadoServer.ServerCore
             => writer.logLine(null, "sys", msg);
 
         public static void LogLine(this TextWriter writer, Job job, string msg)
-            => writer.logLine(Colors.SkyBlue, job.ToString(), msg);
+            => writer.logLine(jobColor, job.ToString(), msg);
 
         public static void LogLine(
             this TextWriter writer, MethodBase method, params object[] values)
@@ -56,7 +58,7 @@ namespace AvocadoServer.ServerCore
                 source
                     = ANSICode.GetColorPrefix(color.Value)
                     + source
-                    + ANSICode.GetColorPrefix(Colors.LightGray);
+                    + ANSICode.GetColorPrefix(systemColor);
             }
 
             // Use the specified TextWriter to perform the write.
