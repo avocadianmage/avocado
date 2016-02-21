@@ -1,4 +1,5 @@
 ﻿using AvocadoServer.ServerCore;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using UtilityLib.WCF;
@@ -11,8 +12,11 @@ namespace AvocadoServer.ServerAPI
         public bool Ping() => true;
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public IEnumerable<string> GetJobs() 
-            => EntryPoint.Jobs.GetJobTableInfo();
+        public IEnumerable<string> GetJobs()
+        {
+            Console.Out.LogLine(nameof(GetJobs), null);
+            return EntryPoint.Jobs.GetJobTableInfo();
+        }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public WCFMessage RunJob(

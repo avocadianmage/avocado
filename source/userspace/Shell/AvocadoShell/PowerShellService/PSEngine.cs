@@ -41,8 +41,8 @@ namespace AvocadoShell.PowerShellService
             // Set $profile variable.
             ps.AddScript($"$profile = \"{profilePath}\"");
 
-            // Import profile.
-            ps.AddScript(". $profile");
+            // Import profile if it exists.
+            if (File.Exists(profilePath)) ps.AddScript(". $profile");
         }
 
         void addUserCmdsToExec()

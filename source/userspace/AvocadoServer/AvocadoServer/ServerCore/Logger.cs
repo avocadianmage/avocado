@@ -1,7 +1,10 @@
 ﻿using AvocadoServer.Jobs;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Windows.Media;
 using UtilityLib.WCF;
 
@@ -9,40 +12,50 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
-        public static void WriteLine(string msg) => WriteLine(null, msg);
+        public static void LogLine(this TextWriter writer, string msg)
+            => writer.logLine(null, "sys", msg);
 
-        public static void WriteErrorLine(string msg)
-            => WriteErrorLine(null, msg);
+        public static void LogLine(this TextWriter writer, Job job, string msg)
+            => writer.logLine(Colors.SkyBlue, job.ToString(), msg);
 
-        public static void WriteLine(Job job, string msg)
+        public static void LogLine(
+            this TextWriter writer, string cmd, Dictionary<string, string> args)
         {
-            // If stdout text is being written from a job, give it a distinct
-            // color.
-            if (job != null)
-            {
-                msg = ANSICode.GetColoredText(Brushes.SkyBlue, msg);
-            }
-
-            writeLine(Console.Out, job, msg);
+            var argList = args?.ToString() ?? string.Empty;
+            var msg = $"Query: {cmd} {argList}";
+            writer.logLine(Colors.Yellow, getClientIP(), msg);
         }
 
-        public static void WriteErrorLine(Job job, string msg)
-            => writeLine(Console.Error, job, msg);
-
-        static void writeLine(TextWriter writer, Job job, string msg)
+        static void logLine(
+            this TextWriter writer, Color? color, string source, string msg)
         {
             if (string.IsNullOrWhiteSpace(msg)) return;
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
-            var jobStr = job?.ToString() ?? "sys";
-            writer.WriteLine($"{timestamp} [{jobStr}] {msg}");
+            
+            if (color.HasValue)
+            {
+                source
+                    = ANSICode.GetColorPrefix(color.Value)
+                    + source
+                    + ANSICode.GetColorPrefix(Colors.LightGray);
+            }
+
+            writer.WriteLine($"{timestamp} [{source}] {msg}");
         }
 
         public static void WriteWCFMessage(WCFMessage msg)
         {
-            var writer = msg.Success
-                ? (Action<string>)WriteLine
-                : WriteErrorLine;
-            writer(msg.Message);
+            var writer = msg.Success ? Console.Out : Console.Error;
+            writer.LogLine(msg.Message);
+        }
+        
+        
+
+        static string getClientIP()
+        {
+            var prop = OperationContext.Current.IncomingMessageProperties;
+            var endpoint = prop[RemoteEndpointMessageProperty.Name];
+            return (endpoint as RemoteEndpointMessageProperty).Address;
         }
     }
 }

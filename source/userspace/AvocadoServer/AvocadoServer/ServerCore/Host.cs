@@ -7,7 +7,7 @@ using UtilityLib.Processes;
 
 namespace AvocadoServer.ServerCore
 {
-    class Host
+    sealed class Host
     {
         public string TCPEndpoint => $"net.tcp://{internalIP}:{tcpPort}";
         public string MetadataEndpoint 

@@ -20,18 +20,18 @@ namespace AvocadoServer
             host.Start(showMetadata);
 
             // Output log message that server has started.
-            Logger.WriteLine(
+            Console.Out.LogLine(
                 $"AvocadoServer is now running ({host.TCPEndpoint})");
             if (showMetadata)
             {
-                Logger.WriteLine(
+                Console.Out.LogLine(
                     $"Metadata is enabled for this session ({host.MetadataEndpoint})");
             }
 
             // Restart existing jobs from disk.
-            Logger.WriteLine("Starting jobs...");
+            Console.Out.LogLine("Starting jobs...");
             Jobs.RestoreFromDisk();
-            Logger.WriteLine("Done restarting jobs.");
+            Console.Out.LogLine("Done restarting jobs.");
             
             // Block.
             Console.ReadKey();

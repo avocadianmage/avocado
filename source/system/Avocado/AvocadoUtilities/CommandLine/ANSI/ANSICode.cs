@@ -13,14 +13,8 @@ namespace AvocadoUtilities.CommandLine.ANSI
         public static bool ContainsANSICodes(string str)
             => str.Contains(ANSI_PREIX);
 
-        public static string GetColoredText(SolidColorBrush brush, string text)
-        {
-            // No need to color text if it's just whitespace.
-            if (string.IsNullOrWhiteSpace(text)) return text;
-
-            var color = brush.Color;
-            return $"{ANSI_PREIX}38;2;{color.R};{color.G};{color.B}m{text}";
-        }
+        public static string GetColorPrefix(Color color)
+            => $"{ANSI_PREIX}38;2;{color.R};{color.G};{color.B}m";
 
         public static ICollection<ANSISegment> GetColorSegments(string line)
         {

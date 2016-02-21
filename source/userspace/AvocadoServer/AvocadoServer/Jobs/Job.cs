@@ -1,5 +1,6 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -77,8 +78,8 @@ namespace AvocadoServer.Jobs
         async Task dispatchedThread()
         {
             var proc = new ManagedProcess(exePath, args.ToArray());
-            proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
-            proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
+            proc.OutputReceived += (s, e) => Console.Out.LogLine(this, e.Data);
+            proc.ErrorReceived += (s, e) => Console.Error.LogLine(this, e.Data);
             await proc.RunBackgroundLive();
         }
         
