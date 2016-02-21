@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ServerAPIService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="NetTcpBinding_IServerAPI_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
+                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
+                </msf:WindowsTransportSecurity>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://192.168.1.117:8265/ServerAPI?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://192.168.1.117:8265/ServerAPI?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://192.168.1.117:8265/ServerAPI?xsd=xsd2" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://192.168.1.117:8265/ServerAPI?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/UtilityLib.WCF" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IServerAPI_Ping_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ping" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_Ping_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_GetJobs_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetJobs" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_GetJobs_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetJobsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_RunJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:RunJob" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_RunJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RunJobResponse" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_KillJob_InputMessage">
+    <wsdl:part name="parameters" element="tns:KillJob" />
+  </wsdl:message>
+  <wsdl:message name="IServerAPI_KillJob_OutputMessage">
+    <wsdl:part name="parameters" element="tns:KillJobResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IServerAPI">
+    <wsdl:operation name="Ping">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServerAPI/Ping" message="tns:IServerAPI_Ping_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServerAPI/PingResponse" message="tns:IServerAPI_Ping_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetJobs">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServerAPI/GetJobs" message="tns:IServerAPI_GetJobs_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServerAPI/GetJobsResponse" message="tns:IServerAPI_GetJobs_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="RunJob">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServerAPI/RunJob" message="tns:IServerAPI_RunJob_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServerAPI/RunJobResponse" message="tns:IServerAPI_RunJob_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="KillJob">
+      <wsdl:input wsaw:Action="http://tempuri.org/IServerAPI/KillJob" message="tns:IServerAPI_KillJob_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IServerAPI/KillJobResponse" message="tns:IServerAPI_KillJob_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NetTcpBinding_IServerAPI" type="tns:IServerAPI">
+    <wsp:PolicyReference URI="#NetTcpBinding_IServerAPI_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="Ping">
+      <soap12:operation soapAction="http://tempuri.org/IServerAPI/Ping" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetJobs">
+      <soap12:operation soapAction="http://tempuri.org/IServerAPI/GetJobs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="RunJob">
+      <soap12:operation soapAction="http://tempuri.org/IServerAPI/RunJob" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="KillJob">
+      <soap12:operation soapAction="http://tempuri.org/IServerAPI/KillJob" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ServerAPIService">
+    <wsdl:port name="NetTcpBinding_IServerAPI" binding="tns:NetTcpBinding_IServerAPI">
+      <soap12:address location="net.tcp://192.168.1.117:8264/" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://192.168.1.117:8264/</wsa10:Address>
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+          <Upn>CLAYPC\User</Upn>
+        </Identity>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,21 +1,25 @@
 ﻿using AvocadoServer.ServerCore;
 using System.Collections.Generic;
+using System.ServiceModel;
 using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
 {
     public sealed class ServerAPIService : IServerAPI
     {
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public bool Ping()
         {
             return true;
         }
 
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public IEnumerable<string> GetJobs()
         {
             return EntryPoint.Jobs.GetJobTableInfo();
         }
 
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public WCFMessage RunJob(
             string app, 
             string name, 
@@ -27,6 +31,7 @@ namespace AvocadoServer.ServerAPI
             return msg;
         }
 
+        [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public WCFMessage KillJob(int id)
         {
             var msg = EntryPoint.Jobs.KillJob(id);

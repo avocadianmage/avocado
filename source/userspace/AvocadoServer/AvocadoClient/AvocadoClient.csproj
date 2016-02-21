@@ -37,23 +37,23 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\DataSources\UtilityLib.WCF.WCFMessage.datasource" />
-    <None Include="Service References\AvocadoServerService\ServerAPIService.wsdl" />
-    <None Include="Service References\AvocadoServerService\ServerAPIService.xsd">
+    <None Include="Service References\ServerAPIReference\ServerAPI.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AvocadoServerService\ServerAPIService1.xsd">
+    <None Include="Service References\ServerAPIReference\ServerAPI1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AvocadoServerService\ServerAPIService2.xsd">
+    <None Include="Service References\ServerAPIReference\ServerAPI2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\AvocadoServerService\ServerAPIService3.xsd">
+    <None Include="Service References\ServerAPIReference\ServerAPI3.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ServerAPIReference\ServerAPIService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntryPoint.cs" />
-    <Compile Include="Service References\AvocadoServerService\Reference.cs">
+    <Compile Include="Service References\ServerAPIReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -77,19 +77,16 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\AvocadoServerService\" />
+    <WCFMetadataStorage Include="Service References\ServerAPIReference\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AvocadoServerService\ServerAPIService.disco" />
+    <None Include="Service References\ServerAPIReference\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AvocadoServerService\configuration91.svcinfo" />
+    <None Include="Service References\ServerAPIReference\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\AvocadoServerService\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\AvocadoServerService\Reference.svcmap">
+    <None Include="Service References\ServerAPIReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

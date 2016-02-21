@@ -44,7 +44,7 @@
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Jobs\Job.cs" />
     <Compile Include="ServerCore\Logger.cs" />
-    <Compile Include="ServerCore\WCF.cs" />
+    <Compile Include="ServerCore\Host.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AvocadoUtilities">
@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />

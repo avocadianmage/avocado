@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AvocadoClient.AvocadoServerService {
+namespace AvocadoClient.ServerAPIReference {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="AvocadoServerService.IServerAPI")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServerAPIReference.IServerAPI")]
     public interface IServerAPI {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IServerAPI/Ping", ReplyAction="http://tempuri.org/IServerAPI/PingResponse")]
@@ -41,12 +41,12 @@ namespace AvocadoClient.AvocadoServerService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IServerAPIChannel : AvocadoClient.AvocadoServerService.IServerAPI, System.ServiceModel.IClientChannel {
+    public interface IServerAPIChannel : AvocadoClient.ServerAPIReference.IServerAPI, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ServerAPIClient : System.ServiceModel.ClientBase<AvocadoClient.AvocadoServerService.IServerAPI>, AvocadoClient.AvocadoServerService.IServerAPI {
+    public partial class ServerAPIClient : System.ServiceModel.ClientBase<AvocadoClient.ServerAPIReference.IServerAPI>, AvocadoClient.ServerAPIReference.IServerAPI {
         
         public ServerAPIClient() {
         }
