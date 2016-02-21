@@ -21,11 +21,11 @@ namespace AvocadoServer
 
             // Output log message that server has started.
             Console.Out.LogLine(
-                $"AvocadoServer is now running ({host.TCPEndpoint})");
+                $"AvocadoServer is now running ({Host.TCPEndpoint})");
             if (showMetadata)
             {
                 Console.Out.LogLine(
-                    $"Metadata is enabled for this session ({host.MetadataEndpoint})");
+                    $"Metadata is enabled for this session ({Host.MetadataEndpoint})");
             }
 
             // Restart existing jobs from disk.

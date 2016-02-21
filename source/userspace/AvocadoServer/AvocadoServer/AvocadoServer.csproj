@@ -43,6 +43,7 @@
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Jobs\Job.cs" />
+    <Compile Include="ServerCore\ClientIdentifier.cs" />
     <Compile Include="ServerCore\Logger.cs" />
     <Compile Include="ServerCore\Host.cs" />
   </ItemGroup>

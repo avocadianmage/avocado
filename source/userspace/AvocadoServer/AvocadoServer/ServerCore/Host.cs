@@ -9,13 +9,16 @@ namespace AvocadoServer.ServerCore
 {
     sealed class Host
     {
-        public string TCPEndpoint => $"net.tcp://{internalIP}:{tcpPort}";
-        public string MetadataEndpoint 
-            => $"http://{internalIP}:{metadataPort}/ServerAPI";
+        public static string InternalIP 
+            => ConfigurationManager.AppSettings["InternalIP"];
+        public static string TcpPort 
+            => ConfigurationManager.AppSettings["TCPPort"];
+        public static string MetadataPort 
+            => ConfigurationManager.AppSettings["metadataPort"];
 
-        string internalIP => ConfigurationManager.AppSettings["InternalIP"];
-        string tcpPort => ConfigurationManager.AppSettings["TCPPort"];
-        string metadataPort => ConfigurationManager.AppSettings["metadataPort"];
+        public static string TCPEndpoint => $"net.tcp://{InternalIP}:{TcpPort}";
+        public static string MetadataEndpoint
+            => $"http://{InternalIP}:{MetadataPort}/ServerAPI";
 
         readonly ServiceHost host = new ServiceHost(typeof(ServerAPIService));
 
