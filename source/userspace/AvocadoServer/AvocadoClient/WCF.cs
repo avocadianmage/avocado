@@ -1,6 +1,5 @@
 ﻿using AvocadoClient.ServerAPIReference;
 using System.Security.Principal;
-using UtilityLib.Processes;
 
 namespace AvocadoClient
 {
@@ -11,7 +10,6 @@ namespace AvocadoClient
             var client = new ServerAPIClient();
             client.ClientCredentials.Windows.AllowedImpersonationLevel
                 = TokenImpersonationLevel.Impersonation;
-            ConsoleProc.RunCriticalCode(() => client.Ping());
             return client;
         }
     }

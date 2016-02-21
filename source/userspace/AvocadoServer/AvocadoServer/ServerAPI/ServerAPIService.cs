@@ -8,16 +8,11 @@ namespace AvocadoServer.ServerAPI
     public sealed class ServerAPIService : IServerAPI
     {
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public bool Ping()
-        {
-            return true;
-        }
+        public bool Ping() => true;
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public IEnumerable<string> GetJobs()
-        {
-            return EntryPoint.Jobs.GetJobTableInfo();
-        }
+        public IEnumerable<string> GetJobs() 
+            => EntryPoint.Jobs.GetJobTableInfo();
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public WCFMessage RunJob(
