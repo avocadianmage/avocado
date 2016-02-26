@@ -13,9 +13,10 @@ namespace AvocadoShell.PowerShellService
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
 
-        readonly PowerShell ps;
         readonly IShellUI shellUI;
+        readonly PowerShell ps;
         readonly Autocomplete autocomplete;
+        readonly OutputFormatter formatter;
         readonly PSDataCollection<PSObject> stdOut
             = new PSDataCollection<PSObject>();
 
@@ -24,6 +25,7 @@ namespace AvocadoShell.PowerShellService
             shellUI = ui;
             ps = createPowershell(ui);
             autocomplete = new Autocomplete(ps);
+            formatter = new OutputFormatter(shellUI);
         }
 
         string profilePath
@@ -55,7 +57,7 @@ namespace AvocadoShell.PowerShellService
         {
             shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");
             await doWork(
-                "Starting autocompletion service", 
+                "Starting autocompletion service",
                 autocomplete.InitializeService());
             await doWork("Running startup scripts", runStartupScripts);
         }
@@ -115,7 +117,7 @@ namespace AvocadoShell.PowerShellService
         {
             var powershell = PowerShell.Create();
             powershell.Runspace = createRunspace(ui);
-            
+
             // Inititalize output and error streams.
             stdOut.DataAdded += stdoutDataAdded;
             powershell.Streams.Error.DataAdded += stderrDataAdded;
@@ -168,15 +170,9 @@ namespace AvocadoShell.PowerShellService
             => ps.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
 
         void stderrDataAdded(object sender, DataAddedEventArgs e)
-        {
-            var data = ps.Streams.Error[e.Index].ToString();
-            shellUI.WriteErrorLine(data);
-        }
+            => formatter.OutputError(ps.Streams.Error[e.Index]);
 
         void stdoutDataAdded(object sender, DataAddedEventArgs e)
-        {
-            var data = stdOut[e.Index].ToString();
-            shellUI.WriteOutputLine(data);
-        }
+            => formatter.OutputPSObject(stdOut[e.Index]);
     }
 }
