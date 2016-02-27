@@ -7,6 +7,7 @@
     using System.Globalization;
     using System.Management.Automation;
     using System.Management.Automation.Host;
+    using System.Security;
     using System.Text;
     using System.Windows.Media;
 
@@ -163,14 +164,24 @@
         /// behavior when it gathers the credentials.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override PSCredential PromptForCredential(
-                                                         string caption,
-                                                         string message,
-                                                         string userName,
-                                                         string targetName,
-                                                         PSCredentialTypes allowedCredentialTypes,
-                                                         PSCredentialUIOptions options)
+            string caption,
+            string message,
+            string userName,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options)
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            // Display password prompt.
+            var prompt = $"Password for {userName}: ";
+            shellUI.WriteCustom(prompt, Config.SystemFontBrush, false);
+
+            // Get password from user input.
+            var password = shellUI.ReadLine();
+            var securePassword = new SecureString();
+            foreach (var c in password) securePassword.AppendChar(c);
+
+            // Return PSCredential object.
+            return new PSCredential(userName, securePassword);
         }
 
 
@@ -370,8 +381,8 @@
             {
                 if (fragments[1].Length > 0)
                 {
-                    result[0] = fragments[1][0].ToString().
-                    ToUpper(CultureInfo.CurrentCulture);
+                    result[0] = fragments[1][0].ToString()
+                        .ToUpper(CultureInfo.CurrentCulture);
                 }
 
                 result[1] = (fragments[0] + fragments[1]).Trim();
