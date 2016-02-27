@@ -6,11 +6,17 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
+        protected bool IsAltKeyDown
+            => isModifierKeyDown(ModifierKeys.Alt);
+
         protected bool IsControlKeyDown
-            => Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+            => isModifierKeyDown(ModifierKeys.Control);
 
         protected bool IsShiftKeyDown
-            => Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+            => isModifierKeyDown(ModifierKeys.Shift);
+
+        bool isModifierKeyDown(ModifierKeys key)
+            => Keyboard.Modifiers.HasFlag(key);
 
         protected bool InputEnabled { get; set; }
         
@@ -22,6 +28,18 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
+            // Ignore input if the InputEnabled flag is false.
+            // The exception to this is system key handling (ex: Alt+F4).
+            if (!InputEnabled && e.Key != Key.System)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Handle any special key actions.
+            HandleSpecialKeys(e);
+
+            // Handle all other keys.
             base.OnPreviewKeyDown(e);
 
             // Disallow other styling when pasting.
@@ -30,6 +48,11 @@ namespace AvocadoFramework.Controls.TextRendering
                 e.Handled = true;
                 paste();
             }
+        }
+
+        protected virtual void HandleSpecialKeys(KeyEventArgs e)
+        {
+            // Base implementation is empty.
         }
 
         void paste()

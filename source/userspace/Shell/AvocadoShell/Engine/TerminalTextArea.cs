@@ -79,25 +79,11 @@ namespace AvocadoShell.Engine
                 terminateExec();
                 return;
             }
-            
-            // Ignore input if the InputEnabled flag is false.
-            if (!InputEnabled)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            // Perform special handling for certain keys.
-            handleSpecialKeys(e);
-
-            // Ensure we are using the input color before actually processing 
-            // the keypress.
-            SetDefaultForeground();
 
             base.OnPreviewKeyDown(e);
         }
 
-        void handleSpecialKeys(KeyEventArgs e)
+        protected override void HandleSpecialKeys(KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -141,6 +127,10 @@ namespace AvocadoShell.Engine
                     e.Handled = true;
                     break;
             }
+
+            // Ensure we are using the input color before processing regular
+            // keys.
+            SetDefaultForeground();
         }
 
         void execute()
