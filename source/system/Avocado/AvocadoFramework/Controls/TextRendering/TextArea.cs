@@ -66,13 +66,6 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void Clear() => TextBase.Document.Blocks.Clear();
 
-        protected void SetDefaultForeground()
-        {
-            TextBase.Selection.ApplyPropertyValue(
-                TextElement.ForegroundProperty,
-                Foreground);
-        }
-
         protected void MoveCaretToDocumentEnd()
             => TextBase.CaretPosition = TextBase.CaretPosition.DocumentEnd;
 

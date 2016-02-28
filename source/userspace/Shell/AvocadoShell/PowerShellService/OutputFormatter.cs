@@ -65,7 +65,7 @@ namespace AvocadoShell.PowerShellService
         void outputWSManConfigElement(WSManConfigElement ele)
         {
             var leaf = ele as WSManConfigLeafElement;
-            var val = leaf == null ? string.Empty : $": {leaf.Value}";
+            var val = leaf == null ? string.Empty : $" → {leaf.Value}";
             shellUI.WriteOutputLine($"{ele.Name}{val}");
         }
     }

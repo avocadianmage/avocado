@@ -35,32 +35,23 @@ namespace AvocadoFramework.Controls.TextRendering
                 e.Handled = true;
                 return;
             }
-
             // Handle any special key actions.
             HandleSpecialKeys(e);
 
             // Handle all other keys.
             base.OnPreviewKeyDown(e);
-
-            // Disallow other styling when pasting.
-            if (IsControlKeyDown && e.Key == Key.V)
-            {
-                e.Handled = true;
-                paste();
-            }
         }
 
         protected virtual void HandleSpecialKeys(KeyEventArgs e)
         {
-            // Base implementation is empty.
-        }
-
-        void paste()
-        {
-            // Change any paragraph breaks to linebreaks.
-            var text = Clipboard.GetText(TextDataFormat.Text)
-                .Replace(Environment.NewLine, "\r");
-            Write(text, Foreground);
+            // Disallow other styling when pasting.
+            if (IsControlKeyDown && e.Key == Key.V)
+            {
+                var text = Clipboard.GetText(TextDataFormat.Text)
+                    .Replace(Environment.NewLine, "\r");
+                Write(text, Foreground);
+                e.Handled = true;
+            }
         }
     }
 }

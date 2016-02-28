@@ -130,7 +130,7 @@ namespace AvocadoShell.Engine
 
             // Ensure we are using the input color before processing regular
             // keys.
-            SetDefaultForeground();
+            base.HandleSpecialKeys(e);
         }
 
         void execute()
@@ -206,10 +206,10 @@ namespace AvocadoShell.Engine
             Dispatcher.BeginInvoke(action);
         }
 
-        public string ReadLine()
+        public string WritePrompt(string prompt)
         {
-            var action = new Action<bool>(displayPrompt);
-            Dispatcher.BeginInvoke(action, false);
+            var action = new Action<bool, string>(startPrompt);
+            Dispatcher.BeginInvoke(action, false, prompt);
             return resetEvent.Block();
         }
 
@@ -217,15 +217,17 @@ namespace AvocadoShell.Engine
         {
             // Update text and window title displays.
             var shellPromptStr = Prompt.GetShellPromptStr(path);
-
-            Write(shellPromptStr, Config.PromptBrush);
             SetWindowTitle(shellPromptStr);
-
-            displayPrompt(true);
+            startPrompt(true, shellPromptStr);
         }
 
-        void displayPrompt(bool fromShell)
+        void startPrompt(bool fromShell, string text)
         {
+            // Write prompt text.
+            var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
+            Write(text.TrimEnd(), brush);
+            Write(" ", Foreground);
+
             // Update the current prompt object.
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
 

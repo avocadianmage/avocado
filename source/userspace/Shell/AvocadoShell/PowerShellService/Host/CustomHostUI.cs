@@ -36,16 +36,13 @@
         /// <summary>
         /// An instance of the PSRawUserInterface object.
         /// </summary>
-        private CustomRawHostUI myRawUi = new CustomRawHostUI();
+        CustomRawHostUI myRawUi = new CustomRawHostUI();
 
         /// <summary>
         /// Gets an instance of the PSRawUserInterface object for this host
         /// application.
         /// </summary>
-        public override PSHostRawUserInterface RawUI
-        {
-            get { return this.myRawUi; }
-        }
+        public override PSHostRawUserInterface RawUI => myRawUi;
 
         /// <summary>
         /// Prompts the user for input. 
@@ -66,10 +63,7 @@
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
             {
-                var promptStr = $"{desc.Name}: ";
-                shellUI.WriteCustom(promptStr, Config.SystemFontBrush, false);
-
-                var input = shellUI.ReadLine();
+                var input = shellUI.WritePrompt($"{desc.Name}: ");
                 if (input == null) return null;
 
                 results[desc.Name] = PSObject.AsPSObject(input);
@@ -111,9 +105,7 @@
             // chosen, or the loop is interrupted with ctrl-C.
             while (true)
             {
-                var promptStr = sb.ToString();
-                shellUI.WriteCustom(promptStr, Config.SystemFontBrush, false);
-                var input = shellUI.ReadLine();
+                var input = shellUI.WritePrompt(sb.ToString());
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
@@ -171,12 +163,8 @@
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            // Display password prompt.
-            var prompt = $"Password for {userName}: ";
-            shellUI.WriteCustom(prompt, Config.SystemFontBrush, false);
-
             // Get password from user input.
-            var password = shellUI.ReadLine();
+            var password = shellUI.WritePrompt($"Password for {userName}: ");
             var securePassword = new SecureString();
             foreach (var c in password) securePassword.AppendChar(c);
 
@@ -192,7 +180,7 @@
         /// <returns>The characters that are entered by the user.</returns>
         public override string ReadLine()
         {
-            return shellUI.ReadLine();
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -202,7 +190,7 @@
         /// NotImplementException exception.
         /// </summary>
         /// <returns>Throws a NotImplemented exception.</returns>
-        public override System.Security.SecureString ReadLineAsSecureString()
+        public override SecureString ReadLineAsSecureString()
         {
             throw new NotImplementedException("The method or operation is not implemented.");
         }

@@ -5,16 +5,13 @@ namespace AvocadoShell.Engine.Modules
 {
     sealed class Prompt
     {
-        public bool FromShell => fromShell;
-        public int LinePos => linePos;
-
-        readonly bool fromShell;
-        readonly int linePos;
-
+        public bool FromShell { get; }
+        public int LinePos { get; }
+    
         public Prompt(bool fromShell, int linePos)
         {
-            this.fromShell = fromShell;
-            this.linePos = linePos;
+            FromShell = fromShell;
+            LinePos = linePos;
         }
 
         public static string GetShellPromptStr(string path)
