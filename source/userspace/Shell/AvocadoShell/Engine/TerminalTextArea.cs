@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
@@ -123,7 +124,10 @@ namespace AvocadoShell.Engine
 
                 // Handle command execution.
                 case Key.Enter:
-                    execute();
+                    // Go to new line if shift is pressed.
+                    if (IsShiftKeyDown) WriteLine();
+                    // Otherwise, execute the input.
+                    else execute();
                     e.Handled = true;
                     break;
             }
@@ -230,7 +234,7 @@ namespace AvocadoShell.Engine
 
             // Update the current prompt object.
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
-
+            
             clearUndoBuffer();
 
             // Enable user input.

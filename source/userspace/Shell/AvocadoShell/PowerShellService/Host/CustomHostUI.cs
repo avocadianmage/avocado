@@ -280,7 +280,7 @@
         /// </summary>
         public override void WriteLine()
         {
-            Console.WriteLine();
+            throw new NotImplementedException();
         }
 
         /// <summary>
