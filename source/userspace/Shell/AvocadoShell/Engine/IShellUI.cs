@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Security;
+using System.Windows.Media;
 
 namespace AvocadoShell.Engine
 {
@@ -11,5 +12,6 @@ namespace AvocadoShell.Engine
         void WriteCustom(string data, Brush foreground, bool newline);
 
         string WritePrompt(string prompt);
+        SecureString WriteSecurePrompt(string prompt);
     }
 }

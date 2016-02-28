@@ -4,6 +4,7 @@ using AvocadoShell.PowerShellService;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
+using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -209,10 +210,20 @@ namespace AvocadoShell.Engine
             Dispatcher.BeginInvoke(action);
         }
 
-        public string WritePrompt(string prompt)
+        public string WritePrompt(string prompt) => writePrompt(prompt, false);
+
+        public SecureString WriteSecurePrompt(string prompt)
         {
-            var action = new Action<bool, string>(startPrompt);
-            Dispatcher.BeginInvoke(action, false, prompt);
+            var input = writePrompt(prompt, true);
+            var secureStr = new SecureString();
+            foreach (var c in input) secureStr.AppendChar(c);
+            return secureStr;
+        }
+
+        string writePrompt(string prompt, bool secure)
+        {
+            var action = new Action<string, bool, bool>(startPrompt);
+            Dispatcher.BeginInvoke(action, prompt, false, secure);
             return resetEvent.Block();
         }
 
@@ -221,15 +232,15 @@ namespace AvocadoShell.Engine
             // Update text and window title displays.
             var shellPromptStr = Prompt.GetShellPromptStr(path);
             SetWindowTitle(shellPromptStr);
-            startPrompt(true, shellPromptStr);
+            startPrompt(shellPromptStr, true, false);
         }
 
-        void startPrompt(bool fromShell, string text)
+        void startPrompt(string text, bool fromShell, bool secure)
         {
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
             Write(text.TrimEnd(), brush);
-            Write(" ", Foreground);
+            Write(" ", secure ? Brushes.Transparent : Foreground);
 
             // Update the current prompt object.
             currentPrompt = new Prompt(fromShell, CurrentLineString.Length);

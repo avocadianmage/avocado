@@ -163,13 +163,9 @@
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            // Get password from user input.
-            var password = shellUI.WritePrompt($"Password for {userName}: ");
-            var securePassword = new SecureString();
-            foreach (var c in password) securePassword.AppendChar(c);
-
-            // Return PSCredential object.
-            return new PSCredential(userName, securePassword);
+            var prompt = $"Password for {userName}: ";
+            var password = shellUI.WriteSecurePrompt(prompt);
+            return new PSCredential(userName, password);
         }
 
 
