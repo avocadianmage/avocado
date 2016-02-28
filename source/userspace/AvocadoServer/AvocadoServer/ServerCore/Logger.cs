@@ -12,7 +12,7 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
-        static readonly Color systemColor = Colors.Gray;
+        static readonly Color systemColor = Colors.LightGray;
         static readonly Color jobColor = Colors.SkyBlue;
         static readonly Dictionary<ClientType, Color> clientTypeColorMapping
             = new Dictionary<ClientType, Color>() {

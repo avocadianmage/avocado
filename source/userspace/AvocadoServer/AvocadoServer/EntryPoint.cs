@@ -34,7 +34,7 @@ namespace AvocadoServer
             Console.Out.LogLine("Done restarting jobs.");
             
             // Block.
-            Console.ReadKey();
+            Console.ReadLine();
 
             // Close server.
             host.Stop();
