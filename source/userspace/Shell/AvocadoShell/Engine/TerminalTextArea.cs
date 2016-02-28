@@ -124,8 +124,8 @@ namespace AvocadoShell.Engine
 
                 // Handle command execution.
                 case Key.Enter:
-                    // Go to new line if shift is pressed.
-                    if (IsShiftKeyDown) WriteLine();
+                    // Go to new line if shift is pressed at shell prompt.
+                    if (IsShiftKeyDown && currentPrompt.FromShell) WriteLine();
                     // Otherwise, execute the input.
                     else execute();
                     e.Handled = true;
