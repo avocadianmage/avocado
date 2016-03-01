@@ -217,6 +217,7 @@ namespace AvocadoShell.Engine
             var input = writePrompt(prompt, true);
             var secureStr = new SecureString();
             foreach (var c in input) secureStr.AppendChar(c);
+            secureStr.MakeReadOnly();
             return secureStr;
         }
 
