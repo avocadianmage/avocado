@@ -1,15 +1,15 @@
-﻿namespace AvocadoShell.PowerShellService.Host
-{
-    using System;
-    using System.Management.Automation.Host;
+﻿using System;
+using System.Management.Automation.Host;
 
+namespace AvocadoShell.PowerShellService.Host
+{
     /// <summary>
     /// A sample implementation of the PSHostRawUserInterface for console
     /// applications. Members of this class that easily map to the .NET 
     /// console class are implemented. More complex methods are not 
     /// implemented and throw a NotImplementedException exception.
     /// </summary>
-    internal class CustomRawHostUI : PSHostRawUserInterface
+    class CustomRawHostUI : PSHostRawUserInterface
     {
         /// <summary>
         /// Gets or sets the background color of text to be written.
@@ -127,7 +127,7 @@
         /// </summary>
         public override void FlushInputBuffer()
         {
-            return;
+            throw new NotImplementedException();
         }
 
         /// <summary>

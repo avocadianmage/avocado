@@ -1,16 +1,16 @@
-﻿namespace AvocadoShell.PowerShellService.Host
-{
-    using AvocadoShell.Engine;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Management.Automation;
-    using System.Management.Automation.Host;
-    using System.Security;
-    using System.Text;
-    using System.Windows.Media;
+﻿using AvocadoShell.Engine;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Security;
+using System.Text;
+using System.Windows.Media;
 
+namespace AvocadoShell.PowerShellService.Host
+{
     /// <summary>
     /// A sample implementation of the PSHostUserInterface abstract class for 
     /// console applications. Not all members are implemented. Those that are 
@@ -18,9 +18,9 @@
     /// nothing. Members that are implemented include those that map easily to 
     /// Console APIs and a basic implementation of the prompt API provided. 
     /// </summary>
-    internal class CustomHostUI : PSHostUserInterface
+    class CustomHostUI : PSHostUserInterface
     {
-        IShellUI shellUI;
+        readonly IShellUI shellUI;
 
         public CustomHostUI(IShellUI shellUI)
         {
@@ -36,7 +36,7 @@
         /// <summary>
         /// An instance of the PSRawUserInterface object.
         /// </summary>
-        CustomRawHostUI myRawUi = new CustomRawHostUI();
+        readonly CustomRawHostUI myRawUi = new CustomRawHostUI();
 
         /// <summary>
         /// Gets an instance of the PSRawUserInterface object for this host
@@ -303,7 +303,7 @@
         /// <param name="record">A ProgressReport object.</param>
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            return;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -338,7 +338,7 @@
         /// <returns>
         /// A two dimensional array containing the accelerator characters
         /// and the cleaned-up labels</returns>
-        private static string[,] BuildHotkeysAndPlainLabels(
+        static string[,] BuildHotkeysAndPlainLabels(
             Collection<ChoiceDescription> choices)
         {
             // Allocate the result array.
@@ -364,7 +364,7 @@
         /// <returns>
         /// A two dimensional array containing the parsed components.
         /// </returns>
-        private static string[] GetHotkeyAndLabel(string input)
+        static string[] GetHotkeyAndLabel(string input)
         {
             string[] result = new string[] { String.Empty, String.Empty };
             string[] fragments = input.Split('&');

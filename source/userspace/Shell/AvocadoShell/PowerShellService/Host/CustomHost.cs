@@ -1,21 +1,20 @@
-﻿namespace AvocadoShell.PowerShellService.Host
-{
-    using AvocadoShell.Engine;
-    using System;
-    using System.Globalization;
-    using System.Management.Automation.Host;
-    using System.Reflection;
-    using System.Threading;
+﻿using AvocadoShell.Engine;
+using System;
+using System.Globalization;
+using System.Management.Automation.Host;
+using System.Threading;
 
+namespace AvocadoShell.PowerShellService.Host
+{
     /// <summary>
     /// This is a sample implementation of the PSHost abstract class for 
     /// console applications. Not all members are implemented. Those that 
     /// are not implemented throw a NotImplementedException exception or 
     /// return nothing.
     /// </summary>
-    internal class CustomHost : PSHost
+    class CustomHost : PSHost
     {
-        IShellUI shellUI;
+        readonly IShellUI shellUI;
 
         public CustomHost(IShellUI shellUI)
         {
@@ -27,20 +26,20 @@
         /// The culture information of the thread that created
         /// this object.
         /// </summary>
-        private CultureInfo originalCultureInfo 
+        readonly CultureInfo originalCultureInfo 
             = Thread.CurrentThread.CurrentCulture;
 
         /// <summary>
         /// The UI culture information of the thread that created
         /// this object.
         /// </summary>
-        private CultureInfo originalUICultureInfo 
+        readonly CultureInfo originalUICultureInfo 
             = Thread.CurrentThread.CurrentUICulture;
 
         /// <summary>
         /// The identifier of this PSHost implementation.
         /// </summary>
-        private static Guid instanceId = Guid.NewGuid();
+        readonly static Guid instanceId = Guid.NewGuid();
 
         /// <summary>
         /// Gets the culture information to use. This implementation 
@@ -76,10 +75,7 @@
         /// Keep in mind that this string may be used by script writers to
         /// identify when your host is being used.
         /// </summary>
-        public override string Name
-        {
-            get { return "Avocado"; }
-        }
+        public override string Name => "Avocado";
 
         /// <summary>
         /// Gets an instance of the implementation of the PSHostUserInterface
@@ -101,7 +97,7 @@
         /// Creates an instance of the PSHostUserInterface object for this
         /// application.
         /// </summary>
-        private CustomHostUI myHostUserInterface;
+        readonly CustomHostUI myHostUserInterface;
 
         /// <summary>
         /// This API Instructs the host to interrupt the currently running 
@@ -133,7 +129,7 @@
         /// </summary>
         public override void NotifyBeginApplication()
         {
-            return;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -144,7 +140,7 @@
         /// </summary>
         public override void NotifyEndApplication()
         {
-            return;
+            throw new NotImplementedException();
         }
 
 
