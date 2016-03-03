@@ -63,9 +63,16 @@
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
             {
-                var input = shellUI.WritePrompt($"{desc.Name}: ");
-                if (input == null) return null;
+                // Get the correct prompting function depending on the 
+                // FieldDescription (supports -AsSecureString).
+                var expectedType = Type.GetType(desc.ParameterTypeFullName);
+                var promptFunc = expectedType == typeof(SecureString)
+                    ? (Func<string, object>)shellUI.WriteSecurePrompt
+                    : shellUI.WritePrompt;
 
+                // Prompt the user for input and store it in the return
+                // dictionary.
+                var input = promptFunc($"{desc.Name}: ");
                 results[desc.Name] = PSObject.AsPSObject(input);
             }
             return results;
