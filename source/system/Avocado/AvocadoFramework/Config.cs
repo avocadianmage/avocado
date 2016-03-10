@@ -5,19 +5,20 @@ namespace AvocadoFramework
     sealed class Config
     {
         // Window opacity properties.
-        public static double WindowFadeDuration { get; } = 250;
+        public static double WindowFadeDuration => 250;
 
         // Window border properties.
-        public static Color InactiveBorderColor { get; } = Colors.Gray;
-        public static Color ActiveBorderColor { get; } = Colors.CornflowerBlue;
-        public static double BorderFadeDuration { get; } = 500;
+        public static Color InactiveBorderColor => Colors.Gray;
+        public static Color ActiveBorderColor => Colors.CornflowerBlue;
+        public static double BorderFadeDuration => 500;
 
         // Text properties.
-        public static double TextFadeDuration { get; } = 150;
+        public static double TextFadeDuration => 200;
+        public static Brush CaretBrush => Brushes.Orange;
 
         // Progressor properties.
-        public static Color ProgressorColor { get; } = Colors.Green;
-        public static Color ProgressorSelectedColor { get; } = Colors.Orange;
-        public static double ProgressorFadeDuration { get; } = 200;
+        public static Color ProgressorColor => Colors.Green;
+        public static Color ProgressorSelectedColor => Colors.Orange;
+        public static double ProgressorFadeDuration => 200;
     }
 }

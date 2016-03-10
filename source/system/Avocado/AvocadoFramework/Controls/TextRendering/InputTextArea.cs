@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
@@ -18,8 +19,19 @@ namespace AvocadoFramework.Controls.TextRendering
         bool isModifierKeyDown(ModifierKeys key)
             => Keyboard.Modifiers.HasFlag(key);
 
-        protected bool InputEnabled { get; set; }
-        
+        protected bool InputEnabled
+        {
+            get { return inputEnabled; }
+            set
+            {
+                TextBase.CaretBrush 
+                    = value ? Config.CaretBrush : Brushes.Transparent;
+                inputEnabled = value;
+            }
+        }
+
+        bool inputEnabled = false;
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

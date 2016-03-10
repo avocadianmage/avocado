@@ -16,7 +16,7 @@
                         x:Name="textBase"
                         BorderThickness="0"
                         Background="Transparent"
-                        CaretBrush="Orange"
+                        CaretBrush="Transparent"
                         SelectionBrush="Orange"
                         VerticalScrollBarVisibility="Visible"
                         FontFamily="Consolas"
