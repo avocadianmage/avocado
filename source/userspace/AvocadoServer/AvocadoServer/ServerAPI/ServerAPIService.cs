@@ -1,7 +1,9 @@
 ﻿using AvocadoServer.ServerCore;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ServiceModel;
+
 namespace AvocadoServer.ServerAPI
 {
     public sealed class ServerAPIService : IServerAPI
@@ -13,18 +15,9 @@ namespace AvocadoServer.ServerAPI
         [AllowedClient(ClientType.LAN)]
         public Pipeline<IEnumerable<string>> GetJobs()
         {
-            var pipeline = new Pipeline<IEnumerable<string>>();
-            CommandContext.RunChecks(pipeline, MethodBase.GetCurrentMethod());
-
-            try
-            {
-                if (!pipeline.Success) return pipeline;
-
-                // Execute logic.
-                pipeline.Data = EntryPoint.Jobs.GetJobTableInfo();
-                return pipeline;
-            }
-            finally { pipeline.Log(); }
+            return executeRequest(
+                p => EntryPoint.Jobs.GetJobTableInfo(), 
+                MethodBase.GetCurrentMethod());
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
@@ -33,38 +26,45 @@ namespace AvocadoServer.ServerAPI
             int secInterval, 
             string[] args)
         {
-            var pipeline = new Pipeline();
-            CommandContext.RunChecks(
-                pipeline,
-                MethodBase.GetCurrentMethod(),
-                filename,
-                secInterval,
-                args);
-
-            try
-            {
-                if (!pipeline.Success) return pipeline;
-
-                // Execute logic.
-                EntryPoint.Jobs.StartJob(pipeline, filename, secInterval, args);
-                return pipeline;
-            }
-            finally { pipeline.Log(); }
+            return executeRequest(
+                p => EntryPoint.Jobs.StartJob(p, filename, secInterval, args), 
+                MethodBase.GetCurrentMethod(), 
+                filename, secInterval, args);
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
         public Pipeline KillJob(int id)
         {
-            var pipeline = new Pipeline();
-            CommandContext.RunChecks(
-                pipeline, MethodBase.GetCurrentMethod(), id);
+            return executeRequest(
+                p => EntryPoint.Jobs.KillJob(p, id),
+                MethodBase.GetCurrentMethod(), id);
+        }
+
+        Pipeline executeRequest(
+            Action<Pipeline> action, MethodBase method, params object[] args)
+        {
+            var result = executeRequest(
+                p => { action(p); return default(int); },
+                method,
+                args);
+            return new Pipeline
+            {
+                Success = result.Success,
+                Message = result.Message
+            };
+        }
+
+        Pipeline<T> executeRequest<T>(
+            Func<Pipeline, T> func, MethodBase method, params object[] args)
+        {
+            var pipeline = new Pipeline<T>();
+            CommandContext.RunChecks(pipeline, method, args);
 
             try
             {
                 if (!pipeline.Success) return pipeline;
 
-                // Execute logic.
-                EntryPoint.Jobs.KillJob(pipeline, id);
+                pipeline.Data = func(pipeline);
                 return pipeline;
             }
             finally { pipeline.Log(); }
