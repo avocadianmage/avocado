@@ -37,6 +37,12 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\DataSources\UtilityLib.WCF.WCFMessage.datasource" />
+    <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.Pipeline.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.PipelineOfArrayOfstringuHEDJ7Dj.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\ServerAPIReference\ServerAPI.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -59,6 +65,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Subcommands.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="WCF.cs" />
   </ItemGroup>
   <ItemGroup>

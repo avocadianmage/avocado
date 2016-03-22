@@ -1,9 +1,9 @@
 ﻿using AvocadoServer.Jobs.Serialization;
+using AvocadoServer.ServerAPI;
 using AvocadoServer.ServerCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UtilityLib.WCF;
 
 namespace AvocadoServer.Jobs
 {
@@ -23,40 +23,45 @@ namespace AvocadoServer.Jobs
             // Start all jobs that were deserialized.
             foreach (var job in jobs)
             {
-                var msg = startJobCore(job);
-                Logger.WriteWCFMessage(msg);
+                var pipeline = new Pipeline();
+                startJobCore(pipeline, job);
+                pipeline.Log();
             }
         }
 
         void saveJobs() => Task.Run(() => JobSerializer.Save(jobTable.Values));
         
-        public WCFMessage StartJob(
-            string app, 
-            string name, 
+        public void StartJob(
+            Pipeline pipeline,
+            string filename, 
             int secInterval,
             IEnumerable<string> args)
         {
             // Create job object.
-            var job = new Job(app, name, secInterval, args);
+            var job = new Job(filename, secInterval, args);
 
-            var msg = startJobCore(job);
+            startJobCore(pipeline, job);
 
             // If the job successfully started, save it to disk.
-            if (msg.Success) saveJobs();
-
-            return msg;
+            if (pipeline.Success) saveJobs();
         }
 
-        WCFMessage startJobCore(Job job)
+        void startJobCore(Pipeline pipeline, Job job)
         {
             // Verify the job is valid.
             string error;
-            if (!job.Verify(out error)) return new WCFMessage(false, error);
+            if (!job.Verify(out error))
+            {
+                pipeline.Success = false;
+                pipeline.Message = error;
+                return;
+            }
             
             var id = reserveId(job);
             job.Start(id);
-
-            return new WCFMessage(true, $"Job {job} started.");
+            
+            pipeline.Success = true;
+            pipeline.Message = $"Job {job} started.";
         }
 
         int reserveId(Job job)
@@ -74,16 +79,17 @@ namespace AvocadoServer.Jobs
             }
         }
 
-        public WCFMessage KillJob(int id)
+        public void KillJob(Pipeline pipeline, int id)
         {
             lock (jobTable)
             {
                 // Verify job exists.
                 if (!jobTable.ContainsKey(id))
                 {
-                    return new WCFMessage(
-                        false, 
-                        $"Failure killing job: ID {id} not found.");
+                    pipeline.Success = false;
+                    pipeline.Message 
+                        = $"Failure killing job: ID {id} not found.";
+                    return;
                 }
                 var job = jobTable[id];
 
@@ -96,7 +102,8 @@ namespace AvocadoServer.Jobs
                 // Update saved jobs on disk.
                 saveJobs();
 
-                return new WCFMessage(true, $"Job {job} killed.");
+                pipeline.Success = true;
+                pipeline.Message = $"Job {job} terminated.";
             }
         }
     }

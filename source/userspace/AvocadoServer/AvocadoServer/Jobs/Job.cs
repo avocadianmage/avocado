@@ -1,6 +1,5 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerCore;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,22 +12,16 @@ namespace AvocadoServer.Jobs
 {
     public sealed class Job
     {
-        readonly string app;
-        readonly string name;
+        readonly string filename;
         readonly int secInterval;
         readonly IEnumerable<string> args;
 
         int id;
         CancellationTokenSource tokenSource;
 
-        public Job(
-            string app, 
-            string name, 
-            int secInterval, 
-            IEnumerable<string> args)
+        public Job(string filename, int secInterval, IEnumerable<string> args)
         {
-            this.app = app;
-            this.name = name;
+            this.filename = Path.GetFullPath(filename);
             this.secInterval = secInterval;
             this.args = args;
         }
@@ -36,10 +29,10 @@ namespace AvocadoServer.Jobs
         public bool Verify(out string error)
         {
             // Verify file exists.
-            if (!File.Exists(exePath))
+            if (!File.Exists(filename))
             {
                 // Output that the job failed to start.
-                error = $"Failure starting job: server file [{exePath}] does not exist.";
+                error = $"Failure starting job: server file [{filename}] does not exist.";
                 return false;
             }
 
@@ -48,7 +41,7 @@ namespace AvocadoServer.Jobs
         }
 
         public override string ToString() 
-            => $"{app}.{name}({string.Join(" ", args)})";
+            => $"{filename}({string.Join(", ", args)})";
 
         public void Start(int id)
         {
@@ -58,8 +51,6 @@ namespace AvocadoServer.Jobs
         }
 
         public void Kill() => tokenSource.Cancel();
-
-        string exePath => Path.Combine(app, $"{name}.exe");
 
         async Task schedulerThread()
         {
@@ -77,16 +68,15 @@ namespace AvocadoServer.Jobs
         //TODO: terminate running process?
         async Task dispatchedThread()
         {
-            var proc = new ManagedProcess(exePath, args.ToArray());
-            proc.OutputReceived += (s, e) => Console.Out.LogLine(this, e.Data);
-            proc.ErrorReceived += (s, e) => Console.Error.LogLine(this, e.Data);
+            var proc = new ManagedProcess(filename, args.ToArray());
+            proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
+            proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
             await proc.RunBackgroundLive();
         }
         
         public XmlJob ToXml() => new XmlJob
         {
-            App = app,
-            Name = name,
+            Filename = filename,
             SecInterval = secInterval,
             Args = args.ToList()
         };

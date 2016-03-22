@@ -31,7 +31,8 @@ namespace AvocadoServer.ServerCore
             return isLanIP(addr) ? ClientType.LAN : ClientType.Outside;
         }
 
-        // attribution: http://stackoverflow.com/questions/7232287/check-if-ip-is-in-lan-behind-firewalls-and-routers
+        // attribution: 
+        // - http://stackoverflow.com/questions/7232287/check-if-ip-is-in-lan-behind-firewalls-and-routers
         static bool isLanIP(IPAddress addr)
         {
             foreach (var i in NetworkInterface.GetAllNetworkInterfaces())
@@ -55,7 +56,8 @@ namespace AvocadoServer.ServerCore
             return false;
         }
 
-        // attribution: http://stackoverflow.com/questions/7232287/check-if-ip-is-in-lan-behind-firewalls-and-routers
+        // attribution: 
+        // - http://stackoverflow.com/questions/7232287/check-if-ip-is-in-lan-behind-firewalls-and-routers
         static bool checkMask(IPAddress addr, IPAddress mask, IPAddress target)
         {
             if (mask == null) return false;

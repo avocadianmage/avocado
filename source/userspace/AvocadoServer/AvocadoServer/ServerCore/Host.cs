@@ -14,7 +14,7 @@ namespace AvocadoServer.ServerCore
         public static string TcpPort 
             => ConfigurationManager.AppSettings["TCPPort"];
         public static string MetadataPort 
-            => ConfigurationManager.AppSettings["metadataPort"];
+            => ConfigurationManager.AppSettings["MetadataPort"];
 
         public static string TCPEndpoint => $"net.tcp://{InternalIP}:{TcpPort}";
         public static string MetadataEndpoint

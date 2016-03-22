@@ -1,12 +1,11 @@
 ﻿using AvocadoServer.Jobs;
+using AvocadoServer.ServerAPI;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Media;
-using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerCore
 {
@@ -21,14 +20,28 @@ namespace AvocadoServer.ServerCore
                 { ClientType.Outside, Colors.Orange }
             };
 
-        public static void LogLine(this TextWriter writer, string msg)
-            => writer.logLine(null, "sys", msg);
+        public static void WriteLine(string msg)
+            => logLine(false, null, "sys", msg);
 
-        public static void LogLine(this TextWriter writer, Job job, string msg)
-            => writer.logLine(jobColor, job.ToString(), msg);
+        public static void WriteErrorLine(string msg)
+            => logLine(true, null, "sys", msg);
 
-        public static void LogLine(
-            this TextWriter writer, MethodBase method, params object[] values)
+        public static void WriteLine(Job job, string msg)
+            => logLine(false, jobColor, job.ToString(), msg);
+
+        public static void WriteErrorLine(Job job, string msg)
+            => logLine(true, jobColor, job.ToString(), msg);
+
+        public static void WriteLine(MethodBase method, params object[] values)
+            => logLine(false, method, values);
+
+        public static void WriteErrorLine(
+            MethodBase method, 
+            params object[] values)
+            => logLine(true, method, values);
+
+        static void logLine(
+            bool error, MethodBase method, params object[] values)
         {
             var color 
                 = clientTypeColorMapping[ClientIdentifier.GetClientType()];
@@ -38,13 +51,13 @@ namespace AvocadoServer.ServerCore
                 .GetParameters()
                 .Select(p => $"{p.Name}: {valueQueue.Dequeue()}");
             var argListStr = $"{{ {string.Join(", ", keyValueStrs)} }}";
-            var msg = $"Query: {method.Name} {argListStr}";
+            var msg = $"Command: {method.Name} {argListStr}";
 
-            writer.logLine(color, ClientIdentifier.GetIP(), msg);
+            logLine(error, color, ClientIdentifier.GetIP(), msg);
         }
 
         static void logLine(
-            this TextWriter writer, Color? color, string source, string msg)
+            bool error, Color? color, string source, string msg)
         {
             // Don't log an empty message.
             if (string.IsNullOrWhiteSpace(msg)) return;
@@ -62,13 +75,15 @@ namespace AvocadoServer.ServerCore
             }
 
             // Use the specified TextWriter to perform the write.
+            var writer = error ? Console.Error : Console.Out;
             writer.WriteLine($"{timestamp} [{source}] {msg}");
         }
 
-        public static void WriteWCFMessage(WCFMessage msg)
+        public static void Log(this Pipeline pipeline)
         {
-            var writer = msg.Success ? Console.Out : Console.Error;
-            writer.LogLine(msg.Message);
+            var writeAction = pipeline.Success
+                ? (Action<string>)WriteLine : WriteErrorLine;
+            writeAction(pipeline.Message);
         }
     }
 }

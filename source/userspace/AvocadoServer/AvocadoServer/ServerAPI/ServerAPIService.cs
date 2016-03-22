@@ -1,10 +1,7 @@
 ﻿using AvocadoServer.ServerCore;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ServiceModel;
-using UtilityLib.WCF;
-
 namespace AvocadoServer.ServerAPI
 {
     public sealed class ServerAPIService : IServerAPI
@@ -13,39 +10,64 @@ namespace AvocadoServer.ServerAPI
         public bool Ping() => true;
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public IEnumerable<string> GetJobs()
+        [AllowedClient(ClientType.LAN)]
+        public Pipeline<IEnumerable<string>> GetJobs()
         {
-            // Log action the client is requesting.
-            Console.Out.LogLine(MethodBase.GetCurrentMethod());
+            var pipeline = new Pipeline<IEnumerable<string>>();
+            CommandContext.RunChecks(pipeline, MethodBase.GetCurrentMethod());
 
-            return EntryPoint.Jobs.GetJobTableInfo();
+            try
+            {
+                if (!pipeline.Success) return pipeline;
+
+                // Execute logic.
+                pipeline.Data = EntryPoint.Jobs.GetJobTableInfo();
+                return pipeline;
+            }
+            finally { pipeline.Log(); }
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public WCFMessage RunJob(
-            string app, 
-            string name, 
+        public Pipeline RunJob(
+            string filename, 
             int secInterval, 
             string[] args)
         {
-            // Log action the client is requesting.
-            Console.Out.LogLine(
-                MethodBase.GetCurrentMethod(), app, name, secInterval, args);
+            var pipeline = new Pipeline();
+            CommandContext.RunChecks(
+                pipeline,
+                MethodBase.GetCurrentMethod(),
+                filename,
+                secInterval,
+                args);
 
-            var msg = EntryPoint.Jobs.StartJob(app, name, secInterval, args);
-            Logger.WriteWCFMessage(msg);
-            return msg;
+            try
+            {
+                if (!pipeline.Success) return pipeline;
+
+                // Execute logic.
+                EntryPoint.Jobs.StartJob(pipeline, filename, secInterval, args);
+                return pipeline;
+            }
+            finally { pipeline.Log(); }
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
-        public WCFMessage KillJob(int id)
+        public Pipeline KillJob(int id)
         {
-            // Log action the client is requesting.
-            Console.Out.LogLine(MethodBase.GetCurrentMethod(), id);
+            var pipeline = new Pipeline();
+            CommandContext.RunChecks(
+                pipeline, MethodBase.GetCurrentMethod(), id);
 
-            var msg = EntryPoint.Jobs.KillJob(id);
-            Logger.WriteWCFMessage(msg);
-            return msg;
+            try
+            {
+                if (!pipeline.Success) return pipeline;
+
+                // Execute logic.
+                EntryPoint.Jobs.KillJob(pipeline, id);
+                return pipeline;
+            }
+            finally { pipeline.Log(); }
         }
     }
 }

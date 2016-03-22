@@ -1,7 +1,5 @@
-﻿using AvocadoServer.ServerCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ServiceModel;
-using UtilityLib.WCF;
 
 namespace AvocadoServer.ServerAPI
 {
@@ -12,12 +10,12 @@ namespace AvocadoServer.ServerAPI
         bool Ping();
 
         [OperationContract]
-        IEnumerable<string> GetJobs();
+        Pipeline<IEnumerable<string>> GetJobs();
 
         [OperationContract]
-        WCFMessage RunJob(string app, string name, int secInterval, string[] args);
+        Pipeline RunJob(string name, int secInterval, string[] args);
 
         [OperationContract]
-        WCFMessage KillJob(int id);
+        Pipeline KillJob(int id);
     }
 }

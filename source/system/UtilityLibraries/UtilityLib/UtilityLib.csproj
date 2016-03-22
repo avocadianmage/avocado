@@ -62,7 +62,6 @@
     <Compile Include="Processes\NamedPipes\NamedPipeClient.cs" />
     <Compile Include="Processes\NamedPipes\NamedPipeServer.cs" />
     <Compile Include="Processes\ManagedProcess.cs" />
-    <Compile Include="WCF\WCFMessage.cs" />
     <Compile Include="WPF\WPFExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\Scraping\Parsing\LinkParser.cs" />

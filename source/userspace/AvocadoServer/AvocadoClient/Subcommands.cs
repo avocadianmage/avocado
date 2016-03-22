@@ -1,6 +1,7 @@
 ﻿using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using UtilityLib.MiscTools;
 using static AvocadoClient.WCF;
@@ -28,7 +29,11 @@ namespace AvocadoClient
         [Subcommand]
         public static void GetJobs(Arguments args)
         {
-            var jobs = CreateClient().GetJobs();
+            var result = CreateClient().GetJobs();
+            result.Log();
+
+            var jobs = result.Data;
+            if (jobs == null) return;
 
             if (!jobs.Any())
             {
@@ -42,27 +47,41 @@ namespace AvocadoClient
         [Subcommand]
         public static void RunJob(Arguments args)
         {
-            var appName = args.PopNextArg();
-            var progName = args.PopNextArg();
-            var secInterval = args.PopNextArg<int>();
+            const string ERROR_FORMAT 
+                = "{0} Expected: Client {1} <filename> <interval> [args]";
 
-            if (appName == null || progName == null || secInterval == null)
+            // Get required filename parameter.
+            var filename = args.PopNextArg();
+            if (filename == null)
             {
-                TerminatingError(
-                    "Expected: Client RunJob <app> <name> <interval> [args]");
+                TerminatingError(string.Format(
+                    ERROR_FORMAT, 
+                    "Missing <filename> parameter.", 
+                    nameof(RunJob)));
             }
+            filename = Path.GetFullPath(filename);
 
+            // Get required interval parameter.
+            var secInterval = args.PopNextArg<int>();
+            if (secInterval == null)
+            {
+                TerminatingError(string.Format(
+                    ERROR_FORMAT,
+                    "Missing <interval> parameter.",
+                    nameof(RunJob)));
+            }
+            
+            // Get any optional job arguments.
             var jobArgs = args.PopRemainingArgs().ToArray();
             
             // Call to server.
             var result = CreateClient().RunJob(
-                appName, 
-                progName, 
+                filename, 
                 secInterval.Value, 
                 jobArgs);
 
             // Output result.
-            result.LogToConsole();
+            result.Log();
         }
 
         [Subcommand]
@@ -78,7 +97,7 @@ namespace AvocadoClient
             var result = CreateClient().KillJob(id.Value);
 
             // Output result.
-            result.LogToConsole();
+            result.Log();
         }
     }
 }

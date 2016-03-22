@@ -39,11 +39,14 @@
     <Compile Include="Jobs\JobList.cs" />
     <Compile Include="Jobs\Serialization\JobSerializer.cs" />
     <Compile Include="Jobs\Serialization\XmlJob.cs" />
+    <Compile Include="ServerAPI\AllowedClient.cs" />
     <Compile Include="ServerAPI\IServerAPI.cs" />
+    <Compile Include="ServerAPI\Pipeline.cs" />
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Jobs\Job.cs" />
     <Compile Include="ServerCore\ClientIdentifier.cs" />
+    <Compile Include="ServerCore\CommandContext.cs" />
     <Compile Include="ServerCore\Logger.cs" />
     <Compile Include="ServerCore\Host.cs" />
   </ItemGroup>
