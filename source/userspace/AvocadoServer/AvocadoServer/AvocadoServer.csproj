@@ -45,6 +45,7 @@
     <Compile Include="ServerAPI\ServerAPIService.cs" />
     <Compile Include="EntryPoint.cs" />
     <Compile Include="Jobs\Job.cs" />
+    <Compile Include="ServerAPI\ServiceLogic.cs" />
     <Compile Include="ServerCore\ClientIdentifier.cs" />
     <Compile Include="ServerCore\CommandContext.cs" />
     <Compile Include="ServerCore\Logger.cs" />
