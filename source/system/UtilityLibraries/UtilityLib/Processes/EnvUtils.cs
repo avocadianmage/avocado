@@ -47,18 +47,5 @@ namespace UtilityLib.Processes
                 new string[] { "\" \"" }, 
                 StringSplitOptions.None);
         }
-
-        public static string GetFilePath(this string filename)
-        {
-            if (File.Exists(filename)) return Path.GetFullPath(filename);
-
-            var envPaths = Environment.GetEnvironmentVariable("PATH");
-            foreach (var path in envPaths.Split(';'))
-            {
-                var filePath = Path.Combine(path, filename);
-                if (File.Exists(filePath)) return filePath;
-            }
-            return null;
-        }
     }
 }
