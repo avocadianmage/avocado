@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 
 namespace UtilityLib.Processes
@@ -46,6 +47,16 @@ namespace UtilityLib.Processes
             return argStr.Split(
                 new string[] { "\" \"" }, 
                 StringSplitOptions.None);
+        }
+
+        public static string GetEmbeddedText(string resourceName)
+        {
+            var asm = Assembly.GetCallingAssembly();
+            using (var stream = asm.GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

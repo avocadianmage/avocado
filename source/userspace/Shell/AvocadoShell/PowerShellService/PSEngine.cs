@@ -1,7 +1,6 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Host;
 using System;
-using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
@@ -27,24 +26,11 @@ namespace AvocadoShell.PowerShellService
             autocomplete = new Autocomplete(ps);
             formatter = new OutputFormatter(shellUI);
         }
-
-        string profilePath
+        
+        void addStartupScriptToExec()
         {
-            get
-            {
-                var docs = Environment.GetFolderPath(
-                    Environment.SpecialFolder.MyDocuments);
-                return Path.Combine(docs, "WindowsPowerShell", "profile.ps1");
-            }
-        }
-
-        void addProfileScriptToExec()
-        {
-            // Set $profile variable.
-            ps.AddScript($"$profile = \"{profilePath}\"");
-
-            // Import profile if it exists.
-            if (File.Exists(profilePath)) ps.AddScript(". $profile");
+            ps.AddScript(
+                EnvUtils.GetEmbeddedText("AvocadoShell.Assets.startup.ps1"));
         }
 
         void addUserCmdsToExec()
@@ -75,7 +61,7 @@ namespace AvocadoShell.PowerShellService
         void runStartupScripts()
         {
             // Run user profile script.
-            addProfileScriptToExec();
+            addStartupScriptToExec();
 
             // Execute any commands provided via commandline arguments to
             // this process.
