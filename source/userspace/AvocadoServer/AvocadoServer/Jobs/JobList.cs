@@ -1,9 +1,7 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerAPI;
-using AvocadoServer.ServerCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AvocadoServer.Jobs
 {
@@ -17,39 +15,28 @@ namespace AvocadoServer.Jobs
         public void RestoreFromDisk()
         {
             // Load saved jobs from disk.
-            var jobs = JobSerializer.Load().Result;
+            var jobs = JobSerializer.Load();
             if (jobs == null) return;
 
             // Start all jobs that were deserialized.
-            foreach (var job in jobs)
-            {
-                var pipeline = new Pipeline();
-                startJobCore(pipeline, job);
-                pipeline.Log();
-            }
+            foreach (var job in jobs) startJobCore(job);
         }
 
-        void saveJobs() => Task.Run(() => JobSerializer.Save(jobTable.Values));
+        void saveJobs() => JobSerializer.Save(jobTable.Values);
         
         public void StartJob(
-            Pipeline pipeline,
             string filename, 
             int secInterval,
             IEnumerable<string> args)
         {
-            // Create job object.
-            var job = new Job(filename, secInterval, args);
-
-            startJobCore(pipeline, job);
-
-            // If the job successfully started, save it to disk.
-            if (pipeline.Success) saveJobs();
+            startJobCore(new Job(filename, secInterval, args));
+            saveJobs();
         }
 
-        void startJobCore(Pipeline pipeline, Job job)
+        void startJobCore(Job job)
         {
             reserveId(job);
-            job.Start(pipeline);
+            job.Start();
         }
 
         void reserveId(Job job)

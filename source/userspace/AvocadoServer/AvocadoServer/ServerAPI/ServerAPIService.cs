@@ -21,7 +21,7 @@ namespace AvocadoServer.ServerAPI
         public Pipeline RunJob(string filename, int secInterval, string[] args)
         {
             return ExecuteRequest(
-                p => EntryPoint.Jobs.StartJob(p, filename, secInterval, args), 
+                p => EntryPoint.Jobs.StartJob(filename, secInterval, args), 
                 MethodBase.GetCurrentMethod(), 
                 filename, secInterval, args);
         }

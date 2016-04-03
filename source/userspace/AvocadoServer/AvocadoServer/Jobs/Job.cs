@@ -1,5 +1,4 @@
 ﻿using AvocadoServer.Jobs.Serialization;
-using AvocadoServer.ServerAPI;
 using AvocadoServer.ServerCore;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,15 +33,7 @@ namespace AvocadoServer.Jobs
             return str;
         }
         
-        public void Start(Pipeline pipeline)
-        {
-            // Update pipeline.
-            pipeline.Success = true;
-            pipeline.Message = $"Job {this} created.";
-
-            // Kick off the job thread.
-            Task.Run(schedulerThread, tokenSource.Token);
-        }
+        public void Start() => Task.Run(schedulerThread, tokenSource.Token);
 
         public void Kill() => tokenSource.Cancel();
 
@@ -68,6 +59,7 @@ namespace AvocadoServer.Jobs
             proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
 
             // Run the process, catching any failures.
+            Logger.WriteLine(this, "Starting instance.");
             try { await proc.RunBackgroundLive(); }
             catch (Win32Exception exc)
             {
