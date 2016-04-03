@@ -1,7 +1,8 @@
 ﻿using AvocadoServer.Jobs.Serialization;
+using AvocadoServer.ServerAPI;
 using AvocadoServer.ServerCore;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,38 +16,31 @@ namespace AvocadoServer.Jobs
         readonly string filename;
         readonly int secInterval;
         readonly IEnumerable<string> args;
-
-        int id;
-        CancellationTokenSource tokenSource;
+        
+        readonly CancellationTokenSource tokenSource 
+            = new CancellationTokenSource();
 
         public Job(string filename, int secInterval, IEnumerable<string> args)
         {
-            this.filename = Path.GetFullPath(filename);
+            this.filename = filename;
             this.secInterval = secInterval;
             this.args = args;
         }
 
-        public bool Verify(out string error)
+        public override string ToString()
         {
-            // Verify file exists.
-            if (!File.Exists(filename))
-            {
-                // Output that the job failed to start.
-                error = $"Failure starting job: server file [{filename}] does not exist.";
-                return false;
-            }
-
-            error = null;
-            return true;
+            var str = filename;
+            if (args.Any()) str += $"({string.Join(", ", args)})";
+            return str;
         }
-
-        public override string ToString() 
-            => $"{filename}({string.Join(", ", args)})";
-
-        public void Start(int id)
+        
+        public void Start(Pipeline pipeline)
         {
-            this.id = id;
-            tokenSource = new CancellationTokenSource();
+            // Update pipeline.
+            pipeline.Success = true;
+            pipeline.Message = $"Job {this} created.";
+
+            // Kick off the job thread.
             Task.Run(schedulerThread, tokenSource.Token);
         }
 
@@ -68,10 +62,17 @@ namespace AvocadoServer.Jobs
         //TODO: terminate running process?
         async Task dispatchedThread()
         {
+            // Initialize the process.
             var proc = new ManagedProcess(filename, args.ToArray());
             proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
             proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
-            await proc.RunBackgroundLive();
+
+            // Run the process, catching any failures.
+            try { await proc.RunBackgroundLive(); }
+            catch (Win32Exception exc)
+            {
+                Logger.WriteErrorLine(this, exc.Message);
+            }
         }
         
         public XmlJob ToXml() => new XmlJob

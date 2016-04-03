@@ -48,23 +48,11 @@ namespace AvocadoServer.Jobs
 
         void startJobCore(Pipeline pipeline, Job job)
         {
-            // Verify the job is valid.
-            string error;
-            if (!job.Verify(out error))
-            {
-                pipeline.Success = false;
-                pipeline.Message = error;
-                return;
-            }
-            
-            var id = reserveId(job);
-            job.Start(id);
-            
-            pipeline.Success = true;
-            pipeline.Message = $"Job {job} started.";
+            reserveId(job);
+            job.Start(pipeline);
         }
 
-        int reserveId(Job job)
+        void reserveId(Job job)
         {
             lock (jobTable)
             {
@@ -74,8 +62,6 @@ namespace AvocadoServer.Jobs
 
                 // Create a new entry in the job table.
                 jobTable.Add(id, job);
-
-                return id;
             }
         }
 

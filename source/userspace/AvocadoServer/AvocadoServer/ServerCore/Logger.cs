@@ -66,7 +66,7 @@ namespace AvocadoServer.ServerCore
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
             
             // Set text color depending on source (job, IP, etc.)
-            if (color.HasValue)
+            if (!error && color.HasValue)
             {
                 source
                     = ANSICode.GetColorPrefix(color.Value)

@@ -59,7 +59,6 @@ namespace AvocadoClient
                     "Missing <filename> parameter.", 
                     nameof(RunJob)));
             }
-            filename = Path.GetFullPath(filename);
 
             // Get required interval parameter.
             var secInterval = args.PopNextArg<int>();

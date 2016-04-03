@@ -33,6 +33,7 @@ namespace AvocadoServer.ServerAPI
         }
 
         [OperationBehavior(Impersonation = ImpersonationOption.Allowed)]
+        [AllowedClient(ClientType.LAN)]
         public Pipeline KillJob(int id)
         {
             return executeRequest(

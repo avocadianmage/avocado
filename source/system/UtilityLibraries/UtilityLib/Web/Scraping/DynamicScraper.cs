@@ -97,7 +97,7 @@ namespace UtilityLib.Web.Scraping
         static string getSourceFromBrowser(WebBrowser browser)
         {
             dynamic dom = browser.Document?.DomDocument;
-            return dom?.documentElement.innerHTML;
+            return dom?.documentElement?.innerHTML;
         }
     }
 }
