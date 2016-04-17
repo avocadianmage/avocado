@@ -7,7 +7,11 @@ namespace AvocadoServer.ServerAPI
 {
     public sealed class ServerAPIService : IServerAPI
     {
-        public bool Ping() => true;
+        [AllowedClient(ClientType.LAN)]
+        public Pipeline Ping()
+        {
+            return ExecuteRequest(p => { }, MethodBase.GetCurrentMethod());
+        }
         
         [AllowedClient(ClientType.LAN)]
         public Pipeline<IEnumerable<string>> GetJobs()

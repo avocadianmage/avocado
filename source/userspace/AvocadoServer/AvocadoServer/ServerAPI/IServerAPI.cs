@@ -7,7 +7,7 @@ namespace AvocadoServer.ServerAPI
     public interface IServerAPI
     {
         [OperationContract]
-        bool Ping();
+        Pipeline Ping();
 
         [OperationContract]
         Pipeline<IEnumerable<string>> GetJobs();

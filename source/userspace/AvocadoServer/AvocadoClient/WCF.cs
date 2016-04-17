@@ -1,4 +1,5 @@
 ﻿using AvocadoClient.ServerAPIReference;
+using System;
 using System.Security.Principal;
 using UtilityLib.Processes;
 
@@ -11,8 +12,14 @@ namespace AvocadoClient
             var client = new ServerAPIClient();
             client.ClientCredentials.Windows.AllowedImpersonationLevel
                 = TokenImpersonationLevel.Impersonation;
-            ConsoleProc.RunCriticalCode(client.Ping);
             return client;
+        }
+
+        public static Pipeline RunCommand(Func<Pipeline> func)
+        {
+            var result = ConsoleProc.RunCriticalCode(func);
+            result.Log();
+            return result;
         }
     }
 }

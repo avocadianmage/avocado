@@ -1,7 +1,7 @@
-﻿using AvocadoUtilities.CommandLine;
+﻿using AvocadoClient.ServerAPIReference;
+using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using UtilityLib.MiscTools;
 using static AvocadoClient.WCF;
@@ -14,9 +14,13 @@ namespace AvocadoClient
         [Subcommand]
         public static void Ping(Arguments args)
         {
-            // Ping the server and measure the time taken.
+            // Measure the time taken.
             var stopwatch = Stopwatch.StartNew();
+            
+            // Ping the server.
             var client = CreateClient();
+            RunCommand(client.Ping);
+
             stopwatch.Stop();
             var secs = stopwatch.ElapsedMilliseconds / 1000d;
             var timestamp = secs.ToRoundedString(3);
@@ -29,10 +33,9 @@ namespace AvocadoClient
         [Subcommand]
         public static void GetJobs(Arguments args)
         {
-            var result = CreateClient().GetJobs();
-            result.Log();
+            var result = RunCommand(CreateClient().GetJobs);
 
-            var jobs = result.Data;
+            var jobs = (result as PipelineOfArrayOfstringuHEDJ7Dj).Data;
             if (jobs == null) return;
 
             if (!jobs.Any())
@@ -72,15 +75,10 @@ namespace AvocadoClient
             
             // Get any optional job arguments.
             var jobArgs = args.PopRemainingArgs().ToArray();
-            
-            // Call to server.
-            var result = CreateClient().RunJob(
-                filename, 
-                secInterval.Value, 
-                jobArgs);
 
-            // Output result.
-            result.Log();
+            // Call to server.
+            RunCommand(() => CreateClient().RunJob(
+                filename, secInterval.Value, jobArgs));
         }
 
         [Subcommand]
@@ -93,10 +91,7 @@ namespace AvocadoClient
             }
 
             // Call to server.
-            var result = CreateClient().KillJob(id.Value);
-
-            // Output result.
-            result.Log();
+            RunCommand(() => CreateClient().KillJob(id.Value));
         }
     }
 }

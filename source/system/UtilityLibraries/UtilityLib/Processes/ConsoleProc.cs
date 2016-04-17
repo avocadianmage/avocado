@@ -11,14 +11,14 @@ namespace UtilityLib.Processes
         }
 
         public static void RunCriticalCode(Action action)
-            => RunCriticalCode<object>(() => { action(); return null; });
+            => RunCriticalCode(() => { action(); return 0; });
 
-        public static T RunCriticalCode<T>(Func<T> action)
+        public static T RunCriticalCode<T>(Func<T> func)
         {
-            try { return action(); }
-            catch (Exception e)
+            try { return func(); }
+            catch (Exception exc)
             {
-                TerminatingError(e.Message);
+                TerminatingError(exc.Message);
                 return default(T);
             }
         }
