@@ -11,7 +11,7 @@ namespace UtilityLib.Processes
         }
 
         public static void RunCriticalCode(Action action)
-            => RunCriticalCode(() => { action(); return 0; });
+            => RunCriticalCode(() => { action(); return default(object); });
 
         public static T RunCriticalCode<T>(Func<T> func)
         {

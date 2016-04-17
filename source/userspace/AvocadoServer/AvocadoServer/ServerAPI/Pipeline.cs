@@ -6,7 +6,7 @@ namespace AvocadoServer.ServerAPI
     public class Pipeline
     {
         [DataMember]
-        public bool Success { get; set; }
+        public bool Success { get; set; } = true;
 
         [DataMember]
         public string Message { get; set; }

@@ -10,7 +10,7 @@ namespace AvocadoServer.ServerCore
             Action<Pipeline> action, MethodBase method, params object[] args)
         {
             var result = ExecuteRequest(
-                p => { action(p); return default(int); },
+                p => { action(p); return default(object); },
                 method,
                 args);
             return new Pipeline
