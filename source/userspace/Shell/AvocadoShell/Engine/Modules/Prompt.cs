@@ -25,7 +25,7 @@ namespace AvocadoShell.Engine.Modules
             var promptStr = $"{path} ";
 
             // Indicate if this shell has administrative permissions.
-            if (EnvUtils.IsAdmin) promptStr = $"[admin] {promptStr}";
+            if (EnvUtils.IsAdmin) promptStr = $"[root] {promptStr}";
 
             return promptStr;
         }
