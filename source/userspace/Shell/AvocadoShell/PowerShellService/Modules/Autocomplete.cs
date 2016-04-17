@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using System.Threading.Tasks;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.PowerShellService.Modules
 {
     sealed class Autocomplete
     {

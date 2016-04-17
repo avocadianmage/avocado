@@ -303,7 +303,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="record">A ProgressReport object.</param>
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            throw new NotImplementedException();
+            // Currently an empty implementation.
+            return;
         }
 
         /// <summary>

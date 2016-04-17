@@ -1,6 +1,8 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Host;
+using AvocadoShell.PowerShellService.Modules;
 using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
@@ -14,36 +16,28 @@ namespace AvocadoShell.PowerShellService
         public event EventHandler<ExecDoneEventArgs> ExecDone;
 
         readonly IShellUI shellUI;
-        readonly PowerShell ps;
+        readonly ExecutingPipeline pipeline;
         readonly Autocomplete autocomplete;
-        readonly PSDataCollection<PSObject> stdOut
-            = new PSDataCollection<PSObject>();
 
         public PSEngine(IShellUI ui)
         {
             shellUI = ui;
-            ps = createPowershell(ui);
-            autocomplete = new Autocomplete(ps);
-        }
-        
-        void addStartupScriptToExec()
-        {
-            ps.AddScript(
-                EnvUtils.GetEmbeddedText("AvocadoShell.Assets.startup.ps1"));
+
+            var powershell = createPowershell(ui);
+            pipeline = createPipeline(powershell.Runspace);
+
+            // No support for autocompletion while remoting.
+            if (!isRemote) autocomplete = new Autocomplete(powershell);
         }
 
-        void addUserCmdsToExec()
-        {
-            var cmdArg = EnvUtils.GetArg(0);
-            if (cmdArg != null) ps.AddScript(cmdArg);
-        }
+        bool isRemote => pipeline.Runspace.RunspaceIsRemote;
 
         public async Task InitEnvironment()
         {
             shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");
             await doWork(
                 "Starting autocompletion service",
-                autocomplete.InitializeService());
+                autocomplete?.InitializeService());
             await doWork("Running startup scripts", runStartupScripts);
         }
 
@@ -51,7 +45,8 @@ namespace AvocadoShell.PowerShellService
             => await doWork(message, Task.Run(action));
 
         async Task doWork(string message, Task work)
-        {
+        { 
+            if (work == null) return;
             shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
             await work;
             shellUI.WriteOutputLine("Done.");
@@ -59,54 +54,32 @@ namespace AvocadoShell.PowerShellService
 
         void runStartupScripts()
         {
-            // Run user profile script.
-            addStartupScriptToExec();
-
-            // Execute any commands provided via commandline arguments to
-            // this process.
-            addUserCmdsToExec();
-
-            // Perform the execution all at once.
-            execute();
+            ExecuteCommand(
+                EnvUtils.GetEmbeddedText("AvocadoShell.Assets.startup.ps1"));
         }
 
         public void ExecuteCommand(string cmd)
         {
-            ps.AddScript(cmd);
-            execute();
+            pipeline.AddScript(cmd);
+            pipeline.Execute();
         }
 
-        void execute()
-        {
-            // Subscribe to command execution lifetime events.
-            ps.InvocationStateChanged += onInvocationStateChanged;
-
-            // Send the command to PowerShell to be executed.
-            ps.BeginInvoke<PSObject, PSObject>(null, stdOut);
-        }
-
-        public void Stop() => ps.BeginStop(null, null);
+        public void Stop() => pipeline.Stop();
 
         public async Task<string> GetCompletion(
             string input,
             int index,
             bool forward)
         {
-            return await autocomplete.GetCompletion(
-                input,
-                index,
-                forward);
+            // No support for autocompletion while remoting.
+            if (isRemote) return null;
+            return await autocomplete.GetCompletion(input, index, forward);
         }
 
         PowerShell createPowershell(IShellUI ui)
         {
             var powershell = PowerShell.Create();
             powershell.Runspace = createRunspace(ui);
-
-            // Inititalize output and error streams.
-            stdOut.DataAdded += stdoutDataAdded;
-            powershell.Streams.Error.DataAdded += stderrDataAdded;
-
             return powershell;
         }
 
@@ -118,49 +91,19 @@ namespace AvocadoShell.PowerShellService
             return runspace;
         }
 
-        void onInvocationStateChanged(
-            object sender,
-            PSInvocationStateChangedEventArgs e)
+        ExecutingPipeline createPipeline(Runspace runspace)
         {
-            string error;
-            switch (e.InvocationStateInfo.State)
-            {
-                case PSInvocationState.Completed:
-                    error = null;
-                    break;
-                case PSInvocationState.Failed:
-                    error = e.InvocationStateInfo.Reason.Message;
-                    break;
-                case PSInvocationState.Stopped:
-                    error = "Execution aborted.";
-                    break;
-                default: return;
-            }
-            finishExecution(error);
+            var pipeline = new ExecutingPipeline(runspace);
+            pipeline.Done += (s, e) => ExecDone(this, e);
+            pipeline.OutputReceived += onOutputReceived;
+            pipeline.ErrorReceived += onErrorReceived;
+            return pipeline;
         }
 
-        void finishExecution(string error)
-        {
-            // Unsubscribe from command events.
-            ps.InvocationStateChanged -= onInvocationStateChanged;
+        void onOutputReceived(object sender, IEnumerable<string> e)
+            => e.ForEach(shellUI.WriteOutputLine);
 
-            // Clean up the command buffer.
-            ps.Commands.Clear();
-
-            // Fire event indicating the current execution has finished.
-            ExecDone(this, new ExecDoneEventArgs(workingDirectory, error));
-        }
-
-        string workingDirectory
-            => ps.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
-
-        void stderrDataAdded(object sender, DataAddedEventArgs e)
-            => shellUI.WriteErrorLine(ps.Streams.Error[e.Index].ToString());
-
-        void stdoutDataAdded(object sender, DataAddedEventArgs e)
-        {
-            OutputFormatter.FormatPSObject(stdOut[e.Index])
-                .ForEach(line => shellUI.WriteOutputLine(line));
-        }
+        void onErrorReceived(object sender, IEnumerable<string> e)
+            => e.ForEach(shellUI.WriteErrorLine);
     }
 }

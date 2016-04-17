@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using UtilityLib.MiscTools;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.PowerShellService.Modules
 {
     static class OutputFormatter
     {

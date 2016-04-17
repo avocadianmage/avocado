@@ -118,12 +118,13 @@
     <Compile Include="Engine\IShellUI.cs" />
     <Compile Include="Engine\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\ExecDoneEventArgs.cs" />
+    <Compile Include="PowerShellService\ExecutingPipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
     <Compile Include="PowerShellService\Host\CustomRawHostUI.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="PowerShellService\Autocomplete.cs" />
-    <Compile Include="PowerShellService\OutputFormatter.cs" />
+    <Compile Include="PowerShellService\Modules\Autocomplete.cs" />
+    <Compile Include="PowerShellService\Modules\OutputFormatter.cs" />
     <Compile Include="PowerShellService\PSEngine.cs" />
     <Compile Include="Engine\Modules\InputHistory.cs" />
     <Page Include="MainWindow.xaml">
