@@ -55,7 +55,7 @@ namespace AvocadoShell.PowerShellService
         {
             shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
             await work;
-            shellUI.WriteOutputLine("done.");
+            shellUI.WriteOutputLine("Done.");
         }
 
         void runStartupScripts()
