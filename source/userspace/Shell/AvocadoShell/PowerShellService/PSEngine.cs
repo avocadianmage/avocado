@@ -19,11 +19,15 @@ namespace AvocadoShell.PowerShellService
         readonly ExecutingPipeline pipeline;
         readonly Autocomplete autocomplete;
 
-        public PSEngine(IShellUI ui)
+        public PSEngine(IShellUI ui) : this(ui, null) { }
+
+        public PSEngine(IShellUI ui, string remoteComputerName)
         {
             shellUI = ui;
 
-            var powershell = createPowershell(ui);
+            // Create PowerShell service objects.
+            var remoteInfo = createRemoteInfo(remoteComputerName);
+            var powershell = createPowershell(ui, remoteInfo);
             pipeline = createPipeline(powershell.Runspace);
 
             // No support for autocompletion while remoting.
@@ -45,7 +49,7 @@ namespace AvocadoShell.PowerShellService
             => await doWork(message, Task.Run(action));
 
         async Task doWork(string message, Task work)
-        { 
+        {
             if (work == null) return;
             shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
             await work;
@@ -75,19 +79,32 @@ namespace AvocadoShell.PowerShellService
             if (isRemote) return null;
             return await autocomplete.GetCompletion(input, index, forward);
         }
-
-        PowerShell createPowershell(IShellUI ui)
+        
+        WSManConnectionInfo createRemoteInfo(string computerName)
+        {
+            return computerName == null
+                ? null
+                : new WSManConnectionInfo { ComputerName = computerName };
+        }
+        
+        PowerShell createPowershell(IShellUI ui, WSManConnectionInfo remoteInfo)
         {
             var powershell = PowerShell.Create();
-            powershell.Runspace = createRunspace(ui);
+            powershell.Runspace = createRunspace(ui, remoteInfo);
             return powershell;
         }
-
-        Runspace createRunspace(IShellUI ui)
+        
+        Runspace createRunspace(IShellUI ui, WSManConnectionInfo remoteInfo)
         {
+            // Initialize custom PowerShell host.
             var host = new CustomHost(ui);
-            var runspace = RunspaceFactory.CreateRunspace(host);
+
+            // Initialize local or remote runspace.
+            var runspace = remoteInfo == null
+                ? RunspaceFactory.CreateRunspace(host)
+                : RunspaceFactory.CreateRunspace(host, remoteInfo);
             runspace.Open();
+
             return runspace;
         }
 

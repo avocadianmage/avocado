@@ -53,7 +53,7 @@ namespace AvocadoShell.PowerShellService
                 default: return;
             }
             
-            // Fire event indication execution of the pipeline is finished.
+            // Fire event indicating execution of the pipeline is finished.
             Done(this, new ExecDoneEventArgs(getWorkingDirectory(), error));
 
             // Reset the pipeline.
