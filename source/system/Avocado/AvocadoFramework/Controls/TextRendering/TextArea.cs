@@ -78,6 +78,12 @@ namespace AvocadoFramework.Controls.TextRendering
             else TextBase.CaretPosition = after;
         }
 
+        protected void ClearSelection()
+        {
+            TextBase.Selection.Select(
+                TextBase.CaretPosition, TextBase.CaretPosition);
+        }
+
         protected int CaretX
         {
             get

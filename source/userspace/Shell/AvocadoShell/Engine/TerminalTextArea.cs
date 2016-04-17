@@ -103,10 +103,22 @@ namespace AvocadoShell.Engine
                     MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
                     e.Handled = true;
                     break;
+                case Key.A:
+                    if (!IsControlKeyDown) break;
+                    // Ctrl+A will select all text after the prompt.
+                    MoveCaretToDocumentEnd();
+                    TextBase.Selection.Select(
+                        TextBase.CaretPosition.GetPositionAtOffset(
+                            -distanceToPromptEnd),
+                        TextBase.CaretPosition);
+                    e.Handled = true;
+                    break;
 
-                // Clear input.
+                // Clear input or selection.
                 case Key.Escape:
-                    clearInput();
+                    if (TextBase.Selection.IsEmpty) clearInput();
+                    else ClearSelection();
+                    e.Handled = true;
                     break;
 
                 // Input history.
@@ -116,7 +128,7 @@ namespace AvocadoShell.Engine
                     e.Handled = true;
                     break;
 
-                // Case autocompletion.
+                // Autocompletion.
                 case Key.Tab:
                     performTabCompletion();
                     e.Handled = true;
