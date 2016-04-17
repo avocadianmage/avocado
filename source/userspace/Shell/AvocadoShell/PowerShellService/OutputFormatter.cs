@@ -1,39 +1,30 @@
-﻿using AvocadoShell.Engine;
-using Microsoft.Management.Infrastructure;
+﻿using Microsoft.Management.Infrastructure;
 using Microsoft.WSMan.Management;
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService
 {
-    sealed class OutputFormatter
+    static class OutputFormatter
     {
-        readonly IShellUI shellUI;
 
-        public OutputFormatter(IShellUI shellUI)
-        {
-            this.shellUI = shellUI;
-        }
-
-        public void OutputError(ErrorRecord error)
-            => shellUI.WriteErrorLine(error.ToString());
-
-        public void OutputPSObject(PSObject psObj)
+        public static IEnumerable<string> FormatPSObject(PSObject psObj)
         {
             // Handle specific formatting based on the underlying object type.
             var baseObj = psObj.BaseObject;
-            if (baseObj is CimInstance) outputCimInstance(psObj);
-            else if (baseObj is WSManConfigElement)
+            if (baseObj is CimInstance) return formatCimInstance(psObj);
+            if (baseObj is WSManConfigElement)
             {
-                outputWSManConfigElement(baseObj as WSManConfigElement);
+                return formatWSManConfigElement(baseObj as WSManConfigElement);
             }
 
             // Default formatting.
-            else shellUI.WriteOutputLine(psObj.ToString());
+            return psObj.ToString().Yield();
         }
 
-        void outputCimInstance(PSObject psObj)
+        static IEnumerable<string> formatCimInstance(PSObject psObj)
         {
             var propDict = new Dictionary<string, string>();
             var nameColWidth = 0;
@@ -58,15 +49,16 @@ namespace AvocadoShell.PowerShellService
             foreach (var prop in propDict)
             {
                 var paddedName = prop.Key.PadRight(nameColWidth);
-                shellUI.WriteOutputLine($"{paddedName} → {prop.Value}");
+                yield return $"{paddedName} → {prop.Value}";
             }
         }
 
-        void outputWSManConfigElement(WSManConfigElement ele)
+        static IEnumerable<string> formatWSManConfigElement(
+            WSManConfigElement ele)
         {
             var leaf = ele as WSManConfigLeafElement;
             var val = leaf == null ? string.Empty : $" → {leaf.Value}";
-            shellUI.WriteOutputLine($"{ele.Name}{val}");
+            yield return $"{ele.Name}{val}";
         }
     }
 }

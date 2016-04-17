@@ -55,5 +55,10 @@ namespace UtilityLib.MiscTools
             foreach (var i in enumerable) action(i);
             return enumerable;
         }
+
+        public static IEnumerable<T> Yield<T>(this T item)
+        {
+            yield return item;
+        }
     }
 }

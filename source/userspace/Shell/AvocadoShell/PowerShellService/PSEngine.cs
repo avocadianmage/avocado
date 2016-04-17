@@ -4,6 +4,7 @@ using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
+using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
 namespace AvocadoShell.PowerShellService
@@ -15,7 +16,6 @@ namespace AvocadoShell.PowerShellService
         readonly IShellUI shellUI;
         readonly PowerShell ps;
         readonly Autocomplete autocomplete;
-        readonly OutputFormatter formatter;
         readonly PSDataCollection<PSObject> stdOut
             = new PSDataCollection<PSObject>();
 
@@ -24,7 +24,6 @@ namespace AvocadoShell.PowerShellService
             shellUI = ui;
             ps = createPowershell(ui);
             autocomplete = new Autocomplete(ps);
-            formatter = new OutputFormatter(shellUI);
         }
         
         void addStartupScriptToExec()
@@ -156,9 +155,12 @@ namespace AvocadoShell.PowerShellService
             => ps.Runspace.SessionStateProxy.Path.CurrentLocation.Path;
 
         void stderrDataAdded(object sender, DataAddedEventArgs e)
-            => formatter.OutputError(ps.Streams.Error[e.Index]);
+            => shellUI.WriteErrorLine(ps.Streams.Error[e.Index].ToString());
 
         void stdoutDataAdded(object sender, DataAddedEventArgs e)
-            => formatter.OutputPSObject(stdOut[e.Index]);
+        {
+            OutputFormatter.FormatPSObject(stdOut[e.Index])
+                .ForEach(line => shellUI.WriteOutputLine(line));
+        }
     }
 }
