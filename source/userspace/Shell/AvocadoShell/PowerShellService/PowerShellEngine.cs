@@ -27,11 +27,6 @@ namespace AvocadoShell.PowerShellService
 
         public async Task OpenRemoteSession(string computerName)
         {
-            // Unsubscribe from the events of the local PowerShell instance.
-            localInstance.ExecDone -= onExecDone;
-            localInstance.ExitRequested -= onExitRequested;
-
-            // Create the new remote PowerShell instance.
             var remoteInstance = new PowerShellInstance(shellUI, computerName);
             updateCurrentInstance(remoteInstance);
             await currentInstance.InitEnvironment();
@@ -39,16 +34,31 @@ namespace AvocadoShell.PowerShellService
 
         void updateCurrentInstance(PowerShellInstance instance)
         {
-            instance.ExecDone += onExecDone;
-            instance.ExitRequested += onExitRequested;
+            // Clean up old instance.
+            if (currentInstance != null)
+            {
+                currentInstance.ExecDone -= onExecDone;
+                currentInstance.ExitRequested -= onExitRequested;
+            }
+
+            // Set the new instance.
             currentInstance = instance;
+            currentInstance.ExecDone += onExecDone;
+            currentInstance.ExitRequested += onExitRequested;
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)
             => ExecDone(this, e);
 
         void onExitRequested(object sender, EventArgs e)
-            => ExitRequested(this, e);
+        {
+            var instance = sender as PowerShellInstance;
+
+            // If we are exiting a remote session, restore the local session.
+            if (instance.IsRemote) updateCurrentInstance(localInstance);
+            // Otherwise, let the UI layer handle the exit.
+            else ExitRequested(this, e);
+        }
 
         public void ExecuteCommand(string cmd)
             => localInstance.ExecuteCommand(cmd);
