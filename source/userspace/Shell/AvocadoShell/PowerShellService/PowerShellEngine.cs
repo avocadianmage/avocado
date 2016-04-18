@@ -1,126 +1,66 @@
 ﻿using AvocadoShell.Engine;
-using AvocadoShell.PowerShellService.Host;
-using AvocadoShell.PowerShellService.Modules;
+using AvocadoShell.PowerShellService.Runspaces;
 using System;
-using System.Collections.Generic;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
-using UtilityLib.MiscTools;
-using UtilityLib.Processes;
 
 namespace AvocadoShell.PowerShellService
 {
     sealed class PowerShellEngine
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
+        public event EventHandler ExitRequested;
 
         readonly IShellUI shellUI;
-        readonly ExecutingPipeline pipeline;
-        readonly Autocomplete autocomplete;
+        readonly PowerShellInstance localInstance;
 
-        public PowerShellEngine(IShellUI ui) : this(ui, null) { }
+        PowerShellInstance currentInstance;
 
-        public PowerShellEngine(IShellUI ui, string remoteComputerName)
+        public PowerShellEngine(IShellUI ui)
         {
             shellUI = ui;
-
-            // Create PowerShell service objects.
-            var remoteInfo = createRemoteInfo(remoteComputerName);
-            var powershell = createPowershell(ui, remoteInfo);
-            pipeline = createPipeline(powershell.Runspace);
-
-            // No support for autocompletion while remoting.
-            if (!isRemote) autocomplete = new Autocomplete(powershell);
+            localInstance = new PowerShellInstance(ui);
+            updateCurrentInstance(localInstance);
         }
-
-        bool isRemote => pipeline.Runspace.RunspaceIsRemote;
 
         public async Task InitEnvironment()
+            => await localInstance.InitEnvironment();
+
+        public async Task OpenRemoteSession(string computerName)
         {
-            shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");
-            await doWork(
-                "Starting autocompletion service",
-                autocomplete?.InitializeService());
-            await doWork("Running startup scripts", runStartupScripts);
+            // Unsubscribe from the events of the local PowerShell instance.
+            localInstance.ExecDone -= onExecDone;
+            localInstance.ExitRequested -= onExitRequested;
+
+            // Create the new remote PowerShell instance.
+            var remoteInstance = new PowerShellInstance(shellUI, computerName);
+            updateCurrentInstance(remoteInstance);
+            await currentInstance.InitEnvironment();
         }
 
-        async Task doWork(string message, Action action)
-            => await doWork(message, Task.Run(action));
-
-        async Task doWork(string message, Task work)
+        void updateCurrentInstance(PowerShellInstance instance)
         {
-            if (work == null) return;
-            shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
-            await work;
-            shellUI.WriteOutputLine("Done.");
+            instance.ExecDone += onExecDone;
+            instance.ExitRequested += onExitRequested;
+            currentInstance = instance;
         }
 
-        void runStartupScripts()
-        {
-            ExecuteCommand(
-                EnvUtils.GetEmbeddedText("AvocadoShell.Assets.startup.ps1"));
-        }
+        void onExecDone(object sender, ExecDoneEventArgs e)
+            => ExecDone(this, e);
+
+        void onExitRequested(object sender, EventArgs e)
+            => ExitRequested(this, e);
 
         public void ExecuteCommand(string cmd)
-        {
-            pipeline.AddScript(cmd);
-            pipeline.Execute();
-        }
+            => localInstance.ExecuteCommand(cmd);
 
-        public void Stop() => pipeline.Stop();
+        public void Stop() => localInstance.Stop();
 
         public async Task<string> GetCompletion(
             string input,
             int index,
             bool forward)
         {
-            // No support for autocompletion while remoting.
-            if (isRemote) return null;
-            return await autocomplete.GetCompletion(input, index, forward);
+            return await localInstance.GetCompletion(input, index, forward);
         }
-        
-        WSManConnectionInfo createRemoteInfo(string computerName)
-        {
-            return computerName == null
-                ? null
-                : new WSManConnectionInfo { ComputerName = computerName };
-        }
-        
-        PowerShell createPowershell(IShellUI ui, WSManConnectionInfo remoteInfo)
-        {
-            var powershell = PowerShell.Create();
-            powershell.Runspace = createRunspace(ui, remoteInfo);
-            return powershell;
-        }
-        
-        Runspace createRunspace(IShellUI ui, WSManConnectionInfo remoteInfo)
-        {
-            // Initialize custom PowerShell host.
-            var host = new CustomHost(ui);
-
-            // Initialize local or remote runspace.
-            var runspace = remoteInfo == null
-                ? RunspaceFactory.CreateRunspace(host)
-                : RunspaceFactory.CreateRunspace(host, remoteInfo);
-            runspace.Open();
-
-            return runspace;
-        }
-
-        ExecutingPipeline createPipeline(Runspace runspace)
-        {
-            var pipeline = new ExecutingPipeline(runspace);
-            pipeline.Done += (s, e) => ExecDone(this, e);
-            pipeline.OutputReceived += onOutputReceived;
-            pipeline.ErrorReceived += onErrorReceived;
-            return pipeline;
-        }
-
-        void onOutputReceived(object sender, IEnumerable<string> e)
-            => e.ForEach(shellUI.WriteOutputLine);
-
-        void onErrorReceived(object sender, IEnumerable<string> e)
-            => e.ForEach(shellUI.WriteErrorLine);
     }
 }

@@ -6,7 +6,7 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using UtilityLib.MiscTools;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecutingPipeline
     {

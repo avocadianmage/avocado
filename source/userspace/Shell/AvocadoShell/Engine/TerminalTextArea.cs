@@ -1,6 +1,7 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoShell.Engine.Modules;
 using AvocadoShell.PowerShellService;
+using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace AvocadoShell.Engine
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
 
-        PowerShellEngine psEngine;
+        PowerShellEngine engine;
         Prompt currentPrompt;
         bool exitRequested = false;
 
@@ -41,9 +42,10 @@ namespace AvocadoShell.Engine
 
         async Task initPSEngine()
         {
-            psEngine = new PowerShellEngine(this);
-            psEngine.ExecDone += onExecDone;
-            await psEngine.InitEnvironment();
+            engine = new PowerShellEngine(this);
+            engine.ExecDone += onExecDone;
+            engine.ExitRequested += (s, e) => exitRequested = true;
+            await engine.InitEnvironment();
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)
@@ -66,7 +68,7 @@ namespace AvocadoShell.Engine
         void terminateExec()
         {
             // Terminate the powershell process.
-            psEngine.Stop();
+            engine.Stop();
 
             // Ensure the powershell thread is unblocked.
             resetEvent.Signal(null);
@@ -175,7 +177,7 @@ namespace AvocadoShell.Engine
         void executeCommand(string input)
         {
             inputHistory.Add(input);
-            psEngine.ExecuteCommand(input);
+            engine.ExecuteCommand(input);
         }
 
         void performTabCompletion()
@@ -201,7 +203,7 @@ namespace AvocadoShell.Engine
             bool forward,
             Action<string> callback)
         {
-            Task.Run(() => psEngine.GetCompletion(input, index, forward))
+            Task.Run(() => engine.GetCompletion(input, index, forward))
                 .ContinueWith(
                     task => callback(task.Result), 
                     TaskScheduler.FromCurrentSynchronizationContext());
@@ -209,8 +211,6 @@ namespace AvocadoShell.Engine
 
         bool isCaretDirectlyInFrontOfPrompt 
             => (CaretX <= currentPrompt.LinePos);
-
-        public void RequestExit() => exitRequested = true;
         
         void exit()
         {

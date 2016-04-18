@@ -15,6 +15,7 @@ namespace AvocadoFramework
         // Text properties.
         public static double TextFadeDuration => 200;
         public static Brush CaretBrush => Brushes.Orange;
+        public static Brush DisabledCaretBrush => Brushes.Gray;
 
         // Progressor properties.
         public static Color ProgressorColor => Colors.Green;

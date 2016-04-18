@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecDoneEventArgs : EventArgs
     {

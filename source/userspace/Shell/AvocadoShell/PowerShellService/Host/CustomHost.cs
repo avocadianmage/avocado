@@ -14,6 +14,8 @@ namespace AvocadoShell.PowerShellService.Host
     /// </summary>
     class CustomHost : PSHost
     {
+        public event EventHandler ExitRequested;
+
         readonly IShellUI shellUI;
 
         public CustomHost(IShellUI shellUI)
@@ -153,7 +155,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// host application should use.</param>
         public override void SetShouldExit(int exitCode)
         {
-            shellUI.RequestExit();
+            ExitRequested(this, new EventArgs());
         }
     }
 }

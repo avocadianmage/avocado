@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
@@ -24,8 +23,9 @@ namespace AvocadoFramework.Controls.TextRendering
             get { return inputEnabled; }
             set
             {
-                TextBase.CaretBrush 
-                    = value ? Config.CaretBrush : Brushes.Transparent;
+                TextBase.CaretBrush = value 
+                    ? Config.CaretBrush 
+                    : Config.DisabledCaretBrush;
                 inputEnabled = value;
             }
         }
