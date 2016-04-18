@@ -125,7 +125,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="PowerShellService\Modules\Autocomplete.cs" />
     <Compile Include="PowerShellService\Modules\OutputFormatter.cs" />
-    <Compile Include="PowerShellService\PSEngine.cs" />
+    <Compile Include="PowerShellService\PowerShellEngine.cs" />
     <Compile Include="Engine\Modules\InputHistory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

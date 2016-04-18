@@ -19,7 +19,7 @@ namespace AvocadoShell.Engine
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
 
-        PSEngine psEngine;
+        PowerShellEngine psEngine;
         Prompt currentPrompt;
         bool exitRequested = false;
 
@@ -41,7 +41,7 @@ namespace AvocadoShell.Engine
 
         async Task initPSEngine()
         {
-            psEngine = new PSEngine(this);
+            psEngine = new PowerShellEngine(this);
             psEngine.ExecDone += onExecDone;
             await psEngine.InitEnvironment();
         }

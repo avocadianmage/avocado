@@ -11,7 +11,7 @@ using UtilityLib.Processes;
 
 namespace AvocadoShell.PowerShellService
 {
-    sealed class PSEngine
+    sealed class PowerShellEngine
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
 
@@ -19,9 +19,9 @@ namespace AvocadoShell.PowerShellService
         readonly ExecutingPipeline pipeline;
         readonly Autocomplete autocomplete;
 
-        public PSEngine(IShellUI ui) : this(ui, null) { }
+        public PowerShellEngine(IShellUI ui) : this(ui, null) { }
 
-        public PSEngine(IShellUI ui, string remoteComputerName)
+        public PowerShellEngine(IShellUI ui, string remoteComputerName)
         {
             shellUI = ui;
 
