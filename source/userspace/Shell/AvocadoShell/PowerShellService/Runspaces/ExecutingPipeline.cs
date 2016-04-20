@@ -54,13 +54,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
             
             // Fire event indicating execution of the pipeline is finished.
-            Done(this, new ExecDoneEventArgs(getWorkingDirectory(), error));
+            Done(this, new ExecDoneEventArgs(GetWorkingDirectory(), error));
 
             // Reset the pipeline.
             pipeline = pipeline.Runspace.CreatePipeline();
         }
 
-        string getWorkingDirectory()
+        public string GetWorkingDirectory()
         {
             // SessionStateProxy properties are not supported in remote 
             // runspaces, so we must manually get the working directory by

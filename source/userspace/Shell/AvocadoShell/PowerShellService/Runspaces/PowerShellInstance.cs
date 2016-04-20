@@ -37,6 +37,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public bool IsRemote => pipeline.Runspace.RunspaceIsRemote;
 
+        public string GetWorkingDirectory() => pipeline.GetWorkingDirectory();
+
         public async Task InitEnvironment()
         {
             shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");

@@ -1,6 +1,7 @@
 ﻿using AvocadoShell.Engine;
 using AvocadoShell.PowerShellService.Runspaces;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService
@@ -10,67 +11,77 @@ namespace AvocadoShell.PowerShellService
         public event EventHandler<ExecDoneEventArgs> ExecDone;
         public event EventHandler ExitRequested;
 
-        readonly IShellUI shellUI;
-        readonly PowerShellInstance localInstance;
+        readonly IShellUI ui;
+        readonly LinkedList<PowerShellInstance> instances
+            = new LinkedList<PowerShellInstance>();
 
-        PowerShellInstance currentInstance;
+        PowerShellInstance rootInstance => instances.First.Value;
+        PowerShellInstance activeInstance => instances.Last.Value;
 
         public PowerShellEngine(IShellUI ui)
         {
-            shellUI = ui;
-            localInstance = new PowerShellInstance(ui);
-            updateCurrentInstance(localInstance);
+            this.ui = ui;
+            instances.AddFirst(createInstance(ui, null));
+        }
+
+        PowerShellInstance createInstance(
+            IShellUI ui, string remoteComputerName)
+        {
+            var instance = new PowerShellInstance(ui, remoteComputerName);
+            instance.ExecDone += onExecDone;
+            instance.ExitRequested += onExitRequested;
+            return instance;
         }
 
         public async Task InitEnvironment()
-            => await localInstance.InitEnvironment();
+            => await activeInstance.InitEnvironment();
 
         public async Task OpenRemoteSession(string computerName)
         {
-            var remoteInstance = new PowerShellInstance(shellUI, computerName);
-            updateCurrentInstance(remoteInstance);
-            await currentInstance.InitEnvironment();
-        }
-
-        void updateCurrentInstance(PowerShellInstance instance)
-        {
-            // Clean up old instance.
-            if (currentInstance != null)
-            {
-                currentInstance.ExecDone -= onExecDone;
-                currentInstance.ExitRequested -= onExitRequested;
-            }
-
-            // Set the new instance.
-            currentInstance = instance;
-            currentInstance.ExecDone += onExecDone;
-            currentInstance.ExitRequested += onExitRequested;
+            instances.AddLast(createInstance(ui, computerName));
+            await activeInstance.InitEnvironment();
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)
-            => ExecDone(this, e);
+        {
+            // Only process events from active instance.
+            if (sender != activeInstance) return;
+
+            ExecDone(this, e);
+        }
 
         void onExitRequested(object sender, EventArgs e)
         {
-            var instance = sender as PowerShellInstance;
+            // Only process events from active instance.
+            if (sender != activeInstance) return;
 
-            // If we are exiting a remote session, restore the local session.
-            if (instance.IsRemote) updateCurrentInstance(localInstance);
-            // Otherwise, let the UI layer handle the exit.
-            else ExitRequested(this, e);
+            // If we are exiting the original session, let the UI layer handle
+            // this.
+            if (sender == rootInstance)
+            {
+                ExitRequested(this, e);
+                return;
+            }
+
+            // Pop the active instance.
+            instances.RemoveLast();
+
+            // Retrigger local prompt.
+            var workingDir = activeInstance.GetWorkingDirectory();
+            ExecDone(this, new ExecDoneEventArgs(workingDir, null));
         }
 
         public void ExecuteCommand(string cmd)
-            => localInstance.ExecuteCommand(cmd);
+            => activeInstance.ExecuteCommand(cmd);
 
-        public void Stop() => localInstance.Stop();
+        public void Stop() => activeInstance.Stop();
 
         public async Task<string> GetCompletion(
             string input,
             int index,
             bool forward)
         {
-            return await localInstance.GetCompletion(input, index, forward);
+            return await activeInstance.GetCompletion(input, index, forward);
         }
     }
 }
