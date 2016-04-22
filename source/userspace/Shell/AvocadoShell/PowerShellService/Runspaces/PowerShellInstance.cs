@@ -32,16 +32,22 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline = createPipeline(powershell.Runspace);
 
             // No support for autocompletion while remoting.
-            if (!IsRemote) autocomplete = new Autocomplete(powershell);
+            if (!isRemote) autocomplete = new Autocomplete(powershell);
         }
+        
+        bool isRemote => pipeline.Runspace.RunspaceIsRemote;
 
-        public bool IsRemote => pipeline.Runspace.RunspaceIsRemote;
-
+        public string RemoteComputerName 
+            => pipeline.Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => pipeline.GetWorkingDirectory();
 
         public async Task InitEnvironment()
         {
-            shellUI.WriteOutputLine($"Booting avocado [v{Config.Version}]");
+            var loadingStr = isRemote
+                ? $"Connecting to {RemoteComputerName}."
+                : $"Booting avocado [v{Config.Version}]";
+            shellUI.WriteOutputLine(loadingStr);
+
             await doWork(
                 "Starting autocompletion service",
                 autocomplete?.InitializeService());
@@ -79,7 +85,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             bool forward)
         {
             // No support for autocompletion while remoting.
-            if (IsRemote) return null;
+            if (isRemote) return null;
             return await autocomplete.GetCompletion(input, index, forward);
         }
         

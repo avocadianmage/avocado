@@ -54,7 +54,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
             
             // Fire event indicating execution of the pipeline is finished.
-            Done(this, new ExecDoneEventArgs(GetWorkingDirectory(), error));
+            Done(this, new ExecDoneEventArgs(error));
 
             // Reset the pipeline.
             pipeline = pipeline.Runspace.CreatePipeline();

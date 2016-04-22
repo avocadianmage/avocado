@@ -1,10 +1,11 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoShell.Engine.Modules;
 using AvocadoShell.PowerShellService;
-using AvocadoShell.PowerShellService.Runspaces;
+using AvocadoUtilities.CommandLine;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
+using System.Management.Automation.Remoting;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,24 +44,24 @@ namespace AvocadoShell.Engine
         async Task initPSEngine()
         {
             engine = new PowerShellEngine(this);
-            engine.ExecDone += onExecDone;
+            engine.ExecDone += (s, e) => finishExecution(e.Error);
             engine.ExitRequested += (s, e) => exitRequested = true;
             await engine.InitEnvironment();
         }
 
-        void onExecDone(object sender, ExecDoneEventArgs e)
+        void finishExecution(string error)
         {
             Action action = () =>
             {
                 // Display error, if any.
-                if (!string.IsNullOrWhiteSpace(e.Error))
+                if (!string.IsNullOrWhiteSpace(error))
                 {
-                    WriteLine(e.Error, Config.ErrorFontBrush);
+                    WriteLine(error, Config.ErrorFontBrush);
                 }
 
                 // Exit if requested. Otherwise, display a new prompt.
                 if (exitRequested) exit();
-                else displayShellPrompt(e.Path);
+                else displayShellPrompt();
             };
             Dispatcher.BeginInvoke(action);
         }
@@ -210,7 +211,7 @@ namespace AvocadoShell.Engine
         }
 
         bool isCaretDirectlyInFrontOfPrompt 
-            => (CaretX <= currentPrompt.LinePos);
+            => (CaretX <= currentPrompt.Text.Length);
         
         void exit()
         {
@@ -240,10 +241,9 @@ namespace AvocadoShell.Engine
             return resetEvent.Block();
         }
 
-        void displayShellPrompt(string path)
+        void displayShellPrompt()
         {
-            // Update text and window title displays.
-            var shellPromptStr = Prompt.GetShellPromptStr(path);
+            var shellPromptStr = engine.GetPromptString();
             SetWindowTitle(shellPromptStr);
             startPrompt(shellPromptStr, true, false);
         }
@@ -256,7 +256,7 @@ namespace AvocadoShell.Engine
             Write(" ", secure ? Brushes.Transparent : Foreground);
 
             // Update the current prompt object.
-            currentPrompt = new Prompt(fromShell, CurrentLineString.Length);
+            currentPrompt = new Prompt(fromShell, CurrentLineString);
             
             clearUndoBuffer();
 
@@ -320,7 +320,8 @@ namespace AvocadoShell.Engine
 
         }
         
-        string getInput() => CurrentLineString.Substring(currentPrompt.LinePos);
+        string getInput() 
+            => CurrentLineString.Substring(currentPrompt.Text.Length);
 
         void inputHistoryLookup(bool forward)
         {
@@ -352,6 +353,6 @@ namespace AvocadoShell.Engine
             TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptEnd);
         }
 
-        int distanceToPromptEnd => CaretX - currentPrompt.LinePos;
+        int distanceToPromptEnd => CaretX - currentPrompt.Text.Length;
     }
 }
