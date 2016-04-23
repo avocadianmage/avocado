@@ -255,12 +255,8 @@ namespace AvocadoShell.Engine
 
         void exit()
         {
-            Action action = () =>
-            {
-                InputEnabled = false;
-                CloseWindow();
-            };
-            Dispatcher.BeginInvoke(action);
+            InputEnabled = false;
+            CloseWindow();
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
@@ -311,9 +307,7 @@ namespace AvocadoShell.Engine
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)
-        {
-            safeWrite(data, foreground, newline);
-        }
+            => safeWrite(data, foreground, newline);
 
         public void WriteOutputLine(string data)
         {
@@ -329,9 +323,7 @@ namespace AvocadoShell.Engine
         }
 
         public void WriteErrorLine(string data)
-        {
-            safeWrite(data, Config.ErrorFontBrush, true);
-        }
+            => safeWrite(data, Config.ErrorFontBrush, true);
 
         void safeWrite(string data, Brush foreground, bool newline)
         {
@@ -357,7 +349,6 @@ namespace AvocadoShell.Engine
             var brush = segment.Brush ?? Config.SystemFontBrush;
             if (newLine) WriteLine(text, brush);
             else Write(text, brush);
-
         }
 
         string getInput()
