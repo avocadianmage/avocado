@@ -1,4 +1,7 @@
-function build($path) { msbuild $path /t:Build /p:Configuration=Release }
+function build($path) 
+{ 
+    C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe $path /t:Build /p:Configuration=Release 
+}
 
 # Build system solutions.
 build system/UtilityLibraries/UtilityLibraries.sln
