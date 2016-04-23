@@ -54,7 +54,7 @@ namespace AvocadoClient
                 = "{0} Expected: Client {1} <filename> <interval> [args]";
 
             // Get required filename parameter.
-            var filename = args.PopNextArg();
+            var filename = args.PopArg();
             if (filename == null)
             {
                 TerminatingError(string.Format(
@@ -64,7 +64,7 @@ namespace AvocadoClient
             }
 
             // Get required interval parameter.
-            var secInterval = args.PopNextArg<int>();
+            var secInterval = args.PopArg<int>();
             if (secInterval == null)
             {
                 TerminatingError(string.Format(
@@ -84,7 +84,7 @@ namespace AvocadoClient
         [Subcommand]
         public static void KillJob(Arguments args)
         {
-            var id = args.PopNextArg<int>();
+            var id = args.PopArg<int>();
             if (id == null)
             {
                 TerminatingError("Expected: Client KillJob <id>");

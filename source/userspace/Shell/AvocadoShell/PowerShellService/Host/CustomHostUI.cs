@@ -219,7 +219,7 @@ namespace AvocadoShell.PowerShellService.Host
             ConsoleColor backgroundColor,
             string value)
         {
-            var brush = ConsoleColorToBrush(foregroundColor);
+            var brush = consoleColorToBrush(foregroundColor);
             shellUI.WriteCustom(value, brush, false);
         }
 
@@ -235,11 +235,11 @@ namespace AvocadoShell.PowerShellService.Host
             ConsoleColor backgroundColor,
             string value)
         {
-            var brush = ConsoleColorToBrush(foregroundColor);
+            var brush = consoleColorToBrush(foregroundColor);
             shellUI.WriteCustom(value, brush, true);
         }
 
-        static Brush ConsoleColorToBrush(ConsoleColor consoleColor)
+        static Brush consoleColorToBrush(ConsoleColor consoleColor)
         {
             // Recognize default system color.
             if (consoleColor == Config.DefaultConsoleColor)
@@ -255,8 +255,7 @@ namespace AvocadoShell.PowerShellService.Host
             }
 
             var colorStr = consoleColor.ToString();
-            var brush = new BrushConverter().ConvertFromString(colorStr);
-            return brush as Brush;
+            return new BrushConverter().ConvertFromString(colorStr) as Brush;
         }
 
         /// <summary>

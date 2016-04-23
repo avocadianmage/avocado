@@ -190,7 +190,7 @@ namespace AvocadoShell.Engine
         bool checkForNativeCommand(string input)
         {
             var args = new Arguments(input);
-            switch (args.PopNextArg()?.ToLower())
+            switch (args.PopArg()?.ToLower())
             {
                 case "rsh":
                     Task.Run(() => rsh(args));
@@ -202,7 +202,7 @@ namespace AvocadoShell.Engine
 
         async Task rsh(Arguments args)
         {
-            var computerName = args.PopNextArg();
+            var computerName = args.PopArg();
             if (computerName == null)
             {
                 finishExecution(

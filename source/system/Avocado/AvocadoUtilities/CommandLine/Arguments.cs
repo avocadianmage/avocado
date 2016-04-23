@@ -18,17 +18,17 @@ namespace AvocadoUtilities.CommandLine
             remainingArgs = args;
         }
         
-        public string PopNextArg()
+        public string PopArg()
         {
             var arg = remainingArgs.FirstOrDefault();
             remainingArgs = remainingArgs.Skip(1);
             return arg;
         }
         
-        public T? PopNextArg<T>() where T : struct, IConvertible
+        public T? PopArg<T>() where T : struct, IConvertible
         {
             // Retrieve the argument.
-            var arg = PopNextArg();
+            var arg = PopArg();
             if (arg == null) return null;
 
             // Convert the element to the specified type.
