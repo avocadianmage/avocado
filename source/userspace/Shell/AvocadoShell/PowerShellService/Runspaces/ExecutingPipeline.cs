@@ -23,7 +23,14 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline = runspace.CreatePipeline();
         }
 
-        public void Stop() => pipeline.StopAsync();
+        public void Stop()
+        {
+            // Only stop the pipeline if it is running.
+            if (pipeline.PipelineStateInfo.State == PipelineState.Running)
+            {
+                pipeline.StopAsync();
+            }
+        }
 
         public void AddScript(string script)
             => pipeline.Commands.AddScript(script);
@@ -52,12 +59,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
                     break;
                 default: return;
             }
-            
-            // Fire event indicating execution of the pipeline is finished.
-            Done(this, new ExecDoneEventArgs(error));
 
             // Reset the pipeline.
             pipeline = pipeline.Runspace.CreatePipeline();
+
+            // Fire event indicating execution of the pipeline is finished.
+            Done(this, new ExecDoneEventArgs(error));
         }
 
         public string GetWorkingDirectory()
