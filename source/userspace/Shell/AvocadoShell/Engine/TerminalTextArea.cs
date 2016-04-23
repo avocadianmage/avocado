@@ -177,14 +177,54 @@ namespace AvocadoShell.Engine
 
         void executeCommand(string input)
         {
+            // Add command to history.
             inputHistory.Add(input);
+
+            // Try to interpret the command natively first.
+            if (checkForNativeCommand(input)) return;
+
+            // Otherwise, use PowerShell to interpret the command.
             engine.ExecuteCommand(input);
+        }
+
+        bool checkForNativeCommand(string input)
+        {
+            var args = new Arguments(input);
+            switch (args.PopNextArg()?.ToLower())
+            {
+                case "rsh":
+                    Task.Run(() => rsh(args));
+                    return true;
+
+                default: return false;
+            }
+        }
+
+        async Task rsh(Arguments args)
+        {
+            var computerName = args.PopNextArg();
+            if (computerName == null)
+            {
+                finishExecution(
+                    "Missing <computer name> parameter. "
+                    + "Expected: rsh <computer name>");
+                return;
+            }
+
+            try
+            {
+                await engine.OpenRemoteSession(computerName);
+            }
+            catch (PSRemotingTransportException exc)
+            {
+                finishExecution(exc.Message);
+            }
         }
 
         void performTabCompletion()
         {
             InputEnabled = false;
-            
+
             var callback = new Action<string>((completion) =>
             {
                 if (completion != null) replaceInput(completion);
@@ -192,9 +232,9 @@ namespace AvocadoShell.Engine
             });
 
             getCompletion(
-                getInput(), 
-                distanceToPromptEnd, 
-                !IsShiftKeyDown, 
+                getInput(),
+                distanceToPromptEnd,
+                !IsShiftKeyDown,
                 callback);
         }
 
@@ -206,13 +246,13 @@ namespace AvocadoShell.Engine
         {
             Task.Run(() => engine.GetCompletion(input, index, forward))
                 .ContinueWith(
-                    task => callback(task.Result), 
+                    task => callback(task.Result),
                     TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        bool isCaretDirectlyInFrontOfPrompt 
+        bool isCaretDirectlyInFrontOfPrompt
             => (CaretX <= currentPrompt.Text.Length);
-        
+
         void exit()
         {
             Action action = () =>
@@ -257,7 +297,7 @@ namespace AvocadoShell.Engine
 
             // Update the current prompt object.
             currentPrompt = new Prompt(fromShell, CurrentLineString);
-            
+
             clearUndoBuffer();
 
             // Enable user input.
@@ -284,7 +324,7 @@ namespace AvocadoShell.Engine
                 Dispatcher.BeginInvoke(action, data);
                 return;
             }
-            
+
             safeWrite(data, Config.SystemFontBrush, true);
         }
 
@@ -319,8 +359,8 @@ namespace AvocadoShell.Engine
             else Write(text, brush);
 
         }
-        
-        string getInput() 
+
+        string getInput()
             => CurrentLineString.Substring(currentPrompt.Text.Length);
 
         void inputHistoryLookup(bool forward)
