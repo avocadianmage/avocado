@@ -2,9 +2,7 @@
 using AvocadoShell.PowerShellService.Runspaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using UtilityLib.Processes;
 
 namespace AvocadoShell.PowerShellService
 {
@@ -20,32 +18,14 @@ namespace AvocadoShell.PowerShellService
         PowerShellInstance rootInstance => instances.First.Value;
         PowerShellInstance activeInstance => instances.Last.Value;
 
+        public string RemoteComputerName => activeInstance.RemoteComputerName;
+        public string GetWorkingDirectory()
+            => activeInstance.GetWorkingDirectory();
+
         public PowerShellEngine(IShellUI ui)
         {
             this.ui = ui;
             instances.AddFirst(createInstance(ui, null));
-        }
-        
-        public string GetPromptString()
-        {
-            var prompt = string.Empty;
-
-            // Add root indication.
-            if (EnvUtils.IsAdmin) prompt += "(root) ";
-
-            // Add remote computer names.
-            var computerNames = instances
-                .Select(ins => ins.RemoteComputerName)
-                .Where(name => name != null);
-            if (computerNames.Any())
-            {
-                prompt += $"[{string.Join("\\", computerNames)}] ";
-            }
-
-            // Add working directory.
-            prompt += $"{activeInstance.GetWorkingDirectory()} ";
-
-            return prompt;
         }
 
         PowerShellInstance createInstance(

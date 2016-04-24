@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
+using UtilityLib.Processes;
 
 namespace AvocadoShell.Engine
 {
@@ -279,9 +280,28 @@ namespace AvocadoShell.Engine
 
         void displayShellPrompt()
         {
-            var shellPromptStr = engine.GetPromptString();
+            var shellPromptStr = getShellPromptString();
             SetWindowTitle(shellPromptStr);
             startPrompt(shellPromptStr, true, false);
+        }
+
+        string getShellPromptString()
+        {
+            var prompt = string.Empty;
+
+            // Add root indication.
+            if (EnvUtils.IsAdmin) prompt += "(root) ";
+
+            // Add remote computer names.
+            if (engine.RemoteComputerName != null)
+            {
+                prompt += $"[{engine.RemoteComputerName}] ";
+            }
+
+            // Add working directory.
+            prompt += $"{engine.GetWorkingDirectory()} ";
+
+            return prompt;
         }
 
         void startPrompt(string text, bool fromShell, bool secure)
