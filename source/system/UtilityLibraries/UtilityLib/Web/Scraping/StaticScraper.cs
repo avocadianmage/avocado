@@ -9,6 +9,7 @@ namespace UtilityLib.Web.Scraping
     public sealed class StaticScraper : IScraper
     {
         readonly CookieContainer cookies = new CookieContainer();
+        readonly WebClient downloadWebClient = new WebClient();
 
         // Fires when there is a progress update on the current download.
         public event DownloadProgressChangedEventHandler ProgressUpdated;
@@ -39,12 +40,11 @@ namespace UtilityLib.Web.Scraping
         // specified filepath.
         public async Task Download(string url, string savePath)
         {
-            using (var client = new WebClient())
-            {
-                client.DownloadProgressChanged += ProgressUpdated;
-                await client.DownloadFileTaskAsync(url, savePath);
-            }
+            downloadWebClient.DownloadProgressChanged += ProgressUpdated;
+            await downloadWebClient.DownloadFileTaskAsync(url, savePath);
         }
+        
+        public void CancelDownload() => downloadWebClient.CancelAsync();
 
         HttpClientHandler clientHandler 
             => new HttpClientHandler { CookieContainer = cookies, };
