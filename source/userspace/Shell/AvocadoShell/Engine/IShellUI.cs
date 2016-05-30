@@ -1,4 +1,5 @@
 ﻿using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace AvocadoShell.Engine
@@ -11,5 +12,7 @@ namespace AvocadoShell.Engine
 
         string WritePrompt(string prompt);
         SecureString WriteSecurePrompt(string prompt);
+
+        Task RunNativeCommand(string command);
     }
 }

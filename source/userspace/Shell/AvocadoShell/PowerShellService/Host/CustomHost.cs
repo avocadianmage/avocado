@@ -77,7 +77,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// Keep in mind that this string may be used by script writers to
         /// identify when your host is being used.
         /// </summary>
-        public override string Name => "Avocado";
+        public override string Name => "avocado";
 
         /// <summary>
         /// Gets an instance of the implementation of the PSHostUserInterface

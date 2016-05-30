@@ -71,7 +71,6 @@ namespace AvocadoShell.PowerShellService
             instances.RemoveLast();
 
             // Retrigger local prompt.
-            var workingDir = activeInstance.GetWorkingDirectory();
             ExecDone(this, new ExecDoneEventArgs());
         }
 

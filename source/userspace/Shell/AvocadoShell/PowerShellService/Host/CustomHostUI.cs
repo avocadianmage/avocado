@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace AvocadoShell.PowerShellService.Host
@@ -293,6 +294,24 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteLine(string value)
         {
             shellUI.WriteOutputLine(value);
+        }
+
+        /// <summary>
+        /// Specifies how Windows PowerShell handles information stream data for 
+        /// a command.
+        /// </summary>
+        /// <param name="record">The information data.</param>
+        public override void WriteInformation(InformationRecord record)
+        {
+            // Process native command.
+            if (record.Tags.Contains("avocado"))
+            {
+                var command = record.MessageData.ToString();
+                Task.Run(() => shellUI.RunNativeCommand(command)).Wait();
+                return;
+            }
+
+            base.WriteInformation(record);
         }
 
         /// <summary>

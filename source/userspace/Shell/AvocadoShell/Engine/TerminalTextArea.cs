@@ -1,11 +1,10 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoShell.Engine.Modules;
 using AvocadoShell.PowerShellService;
-using AvocadoUtilities.CommandLine;
+using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
-using System.Management.Automation.Remoting;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,7 +23,6 @@ namespace AvocadoShell.Engine
 
         PowerShellEngine engine;
         Prompt currentPrompt;
-        bool exitRequested = false;
 
         public override void OnApplyTemplate()
         {
@@ -45,26 +43,19 @@ namespace AvocadoShell.Engine
         async Task initPSEngine()
         {
             engine = new PowerShellEngine(this);
-            engine.ExecDone += (s, e) => finishExecution(e.Error);
-            engine.ExitRequested += (s, e) => exitRequested = true;
+            engine.ExecDone += onExecDone;
+            engine.ExitRequested += (s, e) 
+                => Dispatcher.BeginInvoke(new Action(exit));
             await engine.InitEnvironment();
         }
-
-        void finishExecution(string error)
+        
+        void onExecDone(object sender, ExecDoneEventArgs e)
         {
-            Action action = () =>
-            {
-                // Display error, if any.
-                if (!string.IsNullOrWhiteSpace(error))
-                {
-                    WriteLine(error, Config.ErrorFontBrush);
-                }
+            // Display error, if any.
+            if (!string.IsNullOrWhiteSpace(e.Error)) WriteErrorLine(e.Error);
 
-                // Exit if requested. Otherwise, display a new prompt.
-                if (exitRequested) exit();
-                else displayShellPrompt();
-            };
-            Dispatcher.BeginInvoke(action);
+            // Show the next shell prompt.
+            Dispatcher.BeginInvoke(new Action(displayShellPrompt));
         }
 
         void terminateExec()
@@ -181,44 +172,18 @@ namespace AvocadoShell.Engine
             // Add command to history.
             inputHistory.Add(input);
 
-            // Try to interpret the command natively first.
-            if (checkForNativeCommand(input)) return;
-
             // Otherwise, use PowerShell to interpret the command.
             engine.ExecuteCommand(input);
         }
-
-        bool checkForNativeCommand(string input)
+        
+        public async Task RunNativeCommand(string command)
         {
-            var args = new Arguments(input);
-            switch (args.PopArg()?.ToLower())
+            var pieces = command.Split(' ');
+            switch (pieces.First())
             {
-                case "rsh":
-                    Task.Run(() => rsh(args));
-                    return true;
-
-                default: return false;
-            }
-        }
-
-        async Task rsh(Arguments args)
-        {
-            var computerName = args.PopArg();
-            if (computerName == null)
-            {
-                finishExecution(
-                    "Missing <computer name> parameter. "
-                    + "Expected: rsh <computer name>");
-                return;
-            }
-
-            try
-            {
-                await engine.OpenRemoteSession(computerName);
-            }
-            catch (PSRemotingTransportException exc)
-            {
-                finishExecution(exc.Message);
+                case "Enter-PSSession":
+                    await engine.OpenRemoteSession(pieces[1]);
+                    break;
             }
         }
 
@@ -292,7 +257,7 @@ namespace AvocadoShell.Engine
             // Add root indication.
             if (EnvUtils.IsAdmin) prompt += "(root) ";
 
-            // Add remote computer names.
+            // Add remote computer name.
             if (engine.RemoteComputerName != null)
             {
                 prompt += $"[{engine.RemoteComputerName}] ";

@@ -3,8 +3,10 @@ using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Modules;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
@@ -43,15 +45,16 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public async Task InitEnvironment()
         {
-            var loadingStr = isRemote
+            shellUI.WriteOutputLine(isRemote
                 ? $"Connecting to {RemoteComputerName}."
-                : $"Booting avocado [v{Config.Version}]";
-            shellUI.WriteOutputLine(loadingStr);
+                : $"Booting avocado [v{Config.Version}]");
 
             await doWork(
                 "Starting autocompletion service",
                 autocomplete?.InitializeService());
-            await doWork("Running startup scripts", runStartupScripts);
+            await doWork("Running startup scripts", addStartupScripts);
+
+            pipeline.Execute();
         }
 
         async Task doWork(string message, Action action)
@@ -65,10 +68,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
             shellUI.WriteOutputLine("Done.");
         }
 
-        void runStartupScripts()
+        void addStartupScripts()
         {
-            ExecuteCommand(
-                EnvUtils.GetEmbeddedText("AvocadoShell.Assets.startup.ps1"));
+            Assembly.GetExecutingAssembly()
+                .GetManifestResourceNames()
+                .Where(r => r.EndsWith(".ps1"))
+                .ForEach(r => pipeline.AddScript(EnvUtils.GetEmbeddedText(r)));
         }
 
         public void ExecuteCommand(string cmd)
