@@ -182,13 +182,14 @@ namespace AvocadoShell.Engine
             if (!message.StartsWith(AVOCADO_PREFX)) return false;
 
             var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
+            var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
             {
                 case "Enter-PSSession":
-                    await engine.OpenRemoteSession(pieces[1]);
+                    await engine.OpenRemoteSession(arg);
                     break;
                 case "Download-Remote":
-                    await engine.DownloadRemote(pieces.Skip(1));
+                    await engine.DownloadRemote(arg);
                     break;
             }
             return true;

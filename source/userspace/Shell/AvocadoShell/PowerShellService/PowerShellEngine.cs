@@ -46,10 +46,9 @@ namespace AvocadoShell.PowerShellService
             await activeInstance.InitEnvironment();
         }
         
-        public async Task DownloadRemote(IEnumerable<string> pathList)
+        public async Task DownloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
-            var paths = $"{string.Join(",", pathList)}";
             await Task.Run(() => rootInstance.RunBackgroundCommand(
                 $"DownloadToRoot {computerName} {paths}"));
         }
