@@ -176,15 +176,22 @@ namespace AvocadoShell.Engine
             engine.ExecuteCommand(input);
         }
         
-        public async Task RunNativeCommand(string command)
+        public async Task<bool> RunNativeCommand(string message)
         {
-            var pieces = command.Split(' ');
+            const string AVOCADO_PREFX = "avocado:";
+            if (!message.StartsWith(AVOCADO_PREFX)) return false;
+
+            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
             switch (pieces.First())
             {
                 case "Enter-PSSession":
                     await engine.OpenRemoteSession(pieces[1]);
                     break;
+                case "Download-Remote":
+                    await engine.DownloadRemote(pieces.Skip(1));
+                    break;
             }
+            return true;
         }
 
         void performTabCompletion()

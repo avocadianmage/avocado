@@ -43,6 +43,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
             => pipeline.Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => pipeline.GetWorkingDirectory();
 
+        public IEnumerable<string> RunBackgroundCommand(string command)
+            => pipeline.RunBackgroundCommand(command);
+
         public async Task InitEnvironment()
         {
             shellUI.WriteOutputLine(isRemote

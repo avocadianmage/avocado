@@ -1,7 +1,7 @@
 # PowerShell remoting interactive session support.
 function Enter-PSSession
 {
-	Param([Parameter(Mandatory=$true)][string]$ComputerName)
+	Param([Parameter(Mandatory = $true)][string]$ComputerName)
 
 	# Throw error if this was called from a remote session.
 	if (IsRemoteSession) { Throw "Nested remoting is not supported." }

@@ -260,15 +260,6 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Writes a debug message to the output display of the host.
-        /// </summary>
-        /// <param name="message">The debug message that is displayed.</param>
-        public override void WriteDebugLine(string message)
-        {
-            shellUI.WriteCustom($"[Debug] {message}", Brushes.Yellow, true);
-        }
-
-        /// <summary>
         /// Writes an error message to the output display of the host.
         /// </summary>
         /// <param name="value">The error message that is displayed.</param>
@@ -297,24 +288,6 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Specifies how Windows PowerShell handles information stream data for 
-        /// a command.
-        /// </summary>
-        /// <param name="record">The information data.</param>
-        public override void WriteInformation(InformationRecord record)
-        {
-            // Process native command.
-            if (record.Tags.Contains("avocado"))
-            {
-                var command = record.MessageData.ToString();
-                Task.Run(() => shellUI.RunNativeCommand(command)).Wait();
-                return;
-            }
-
-            base.WriteInformation(record);
-        }
-
-        /// <summary>
         /// Writes a progress report to the output display of the host.
         /// </summary>
         /// <param name="sourceId">Unique identifier of the source of the record. </param>
@@ -326,11 +299,24 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
+        /// Writes a debug message to the output display of the host.
+        /// </summary>
+        /// <param name="message">The debug message that is displayed.</param>
+        public override void WriteDebugLine(string message)
+        {
+            shellUI.WriteCustom($"[Debug] {message}", Brushes.Magenta, true);
+        }
+
+        /// <summary>
         /// Writes a verbose message to the output display of the host.
         /// </summary>
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
         {
+            // Check for native command.
+            var task = Task.Run(() => shellUI.RunNativeCommand(message));
+            if (task.Result) return;
+
             shellUI.WriteCustom(
                 $"[Verbose] {message}", 
                 Brushes.DarkGoldenrod, 
@@ -343,7 +329,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="message">The warning message that is displayed.</param>
         public override void WriteWarningLine(string message)
         {
-            shellUI.WriteCustom($"[Warning] {message}", Brushes.Magenta, true);
+            shellUI.WriteCustom($"[Warning] {message}", Brushes.Yellow, true);
         }
 
         /// <summary>

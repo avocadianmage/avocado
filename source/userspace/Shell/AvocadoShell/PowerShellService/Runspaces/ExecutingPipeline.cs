@@ -74,7 +74,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // running a PowerShell command.
             if (pipeline.Runspace.RunspaceIsRemote)
             {
-                return runUtilityQuery("$PWD.Path.Replace($HOME, '~')");
+                return RunBackgroundCommand(
+                    "$PWD.Path.Replace($HOME, '~')").First();
             }
 
             var homeDir = Environment.GetFolderPath(
@@ -84,10 +85,10 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Replace(homeDir, "~");
         }
 
-        string runUtilityQuery(string query)
+        public IEnumerable<string> RunBackgroundCommand(string command)
         {
-            return pipeline.Runspace.CreatePipeline(query).Invoke()
-                .First().ToString();
+            return pipeline.Runspace.CreatePipeline(command).Invoke()
+                .Select(l => l.ToString());
         }
 
         void onOutputDataReady(object sender, EventArgs e)
