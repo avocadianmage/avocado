@@ -10,8 +10,9 @@ Function Enter-PSSession
 	}
 
 	# Verify the connection is valid.
-	Get-PSSession $ComputerName
+	New-PSSession $ComputerName | Out-Null
 	if (-not $?) { Return }
+	Remove-PSSession $ComputerName
 
 	# Run native command.
 	Write-Information `
