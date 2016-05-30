@@ -17,9 +17,7 @@ namespace AvocadoUtilities.Cmdlet
         }
 
         public static void Terminate(this PSCmdlet cmdlet)
-        {
-            cmdlet.Terminate(string.Empty);
-        }
+            => cmdlet.Terminate(string.Empty);
 
         public static T DoOperation<T>(
             this PSCmdlet cmdlet,  
@@ -40,8 +38,6 @@ namespace AvocadoUtilities.Cmdlet
         }
 
         public static string GetModulePath(this PSCmdlet cmdlet)
-        {
-            return cmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
-        }
+            => cmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
     }
 }
