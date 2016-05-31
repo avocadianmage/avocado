@@ -132,13 +132,13 @@ namespace AvocadoShell.Engine
                 // Handle command execution.
                 case Key.Enter:
                     // Go to new line if shift is pressed at shell prompt.
-                    if (IsShiftKeyDown) WriteLine();
+                    if (IsShiftKeyDown) break;
                     // Otherwise, execute the input.
-                    else execute();
+                    execute();
                     e.Handled = true;
                     break;
             }
-
+            
             // Ensure we are using the input color before processing regular
             // keys.
             base.HandleSpecialKeys(e);

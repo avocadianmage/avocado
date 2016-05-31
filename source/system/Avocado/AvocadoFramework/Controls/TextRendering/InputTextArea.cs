@@ -56,13 +56,22 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected virtual void HandleSpecialKeys(KeyEventArgs e)
         {
-            // Disallow other styling when pasting.
-            if (IsControlKeyDown && e.Key == Key.V)
+            switch (e.Key)
             {
-                var text = Clipboard.GetText(TextDataFormat.Text)
-                    .Replace(Environment.NewLine, "\r");
-                Write(text, Foreground);
-                e.Handled = true;
+                // Sanitize linebreak.
+                case Key.Enter:
+                    WriteLine();
+                    e.Handled = true;
+                    break;
+                    
+                // Disallow other styling when pasting.
+                case Key.V:
+                    if (!IsControlKeyDown) break;
+                    var text = Clipboard.GetText(TextDataFormat.Text)
+                        .Replace(Environment.NewLine, "\r");
+                    Write(text, Foreground);
+                    e.Handled = true;
+                    break;
             }
         }
     }
