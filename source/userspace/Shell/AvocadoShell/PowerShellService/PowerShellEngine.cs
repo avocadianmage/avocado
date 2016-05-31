@@ -15,7 +15,7 @@ namespace AvocadoShell.PowerShellService
         readonly LinkedList<PowerShellInstance> instances
             = new LinkedList<PowerShellInstance>();
 
-        PowerShellInstance rootInstance => instances.First.Value;
+        PowerShellInstance localInstance => instances.First.Value;
         PowerShellInstance activeInstance => instances.Last.Value;
 
         public string RemoteComputerName => activeInstance.RemoteComputerName;
@@ -49,8 +49,8 @@ namespace AvocadoShell.PowerShellService
         public async Task DownloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
-            await Task.Run(() => rootInstance.RunBackgroundCommand(
-                $"DownloadToRoot {computerName} {paths}"));
+            await Task.Run(() => localInstance.RunBackgroundCommand(
+                $"SendToLocal {computerName} {paths}"));
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)
@@ -68,7 +68,7 @@ namespace AvocadoShell.PowerShellService
 
             // If we are exiting the original session, let the UI layer handle
             // this.
-            if (sender == rootInstance)
+            if (sender == localInstance)
             {
                 ExitRequested(this, e);
                 return;

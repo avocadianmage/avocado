@@ -1,16 +1,15 @@
-# Utility function executed by root PowerShell instance to complete the remote
+# Utility function executed by local PowerShell instance to complete the remote
 # download.
-function DownloadToRoot
+function SendToLocal
 {
 	Param(
 		[Parameter(Mandatory = $true)][string]$RemoteComputerName,
 		[Parameter(Mandatory = $true)][string[]]$SourcePaths)
 
-	# Get the local machine destination directory.
-	$dest = Join-Path `
-		([Environment]::GetFolderPath("MyDocuments")) `
-		"Avocado\Downloads"
-	New-Item -ItemType Directory -Force -Path $dest | Out-Null
+	# Get the Downloads directory of the local machine.
+	$dest = (Get-ItemProperty `
+		"HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders" `
+		)."{374DE290-123F-4565-9164-39C4925E467B}"
 
 	# Perform the download.
 	Copy-Item `
