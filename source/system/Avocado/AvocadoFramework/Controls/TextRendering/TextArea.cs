@@ -83,16 +83,11 @@ namespace AvocadoFramework.Controls.TextRendering
             TextBase.Selection.Select(
                 TextBase.CaretPosition, TextBase.CaretPosition);
         }
-
-        protected int CaretX
+        
+        protected int GetX(TextPointer pointer)
         {
-            get
-            {
-                var current = TextBase.CaretPosition;
-                var paragraph = current.Paragraph;
-                var range = new TextRange(paragraph.ContentStart, current);
-                return range.Text.Length;
-            }
+            var range = new TextRange(pointer.Paragraph.ContentStart, pointer);
+            return range.Text.Length;
         }
 
         protected string CurrentLineString

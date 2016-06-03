@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using UtilityLib.MiscTools;
@@ -87,7 +88,7 @@ namespace AvocadoShell.Engine
                 case Key.Back:
                 case Key.Left:
                     if (TextBase.CaretPosition.Paragraph == null) break;
-                    if (!isCaretDirectlyInFrontOfPrompt) break;
+                    if (!isAtOrBeforePrompt(TextBase.CaretPosition)) break;
                     // The caret position does not change if text is selected
                     // (unless Shift+Left is pressed) so we should not 
                     // suppress that case.
@@ -95,6 +96,12 @@ namespace AvocadoShell.Engine
                         || (e.Key == Key.Left && IsShiftKeyDown);
                     break;
                 case Key.Home:
+                    var lineStart 
+                        = TextBase.CaretPosition.GetLineStartPosition(0);
+                    if (!isAtOrBeforePrompt(lineStart)) break;
+                    // If we are on the same line as the prompt, move the cursor
+                    // to the end of the prompt instead of the beginning of the
+                    // line.
                     MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
                     e.Handled = true;
                     break;
@@ -223,9 +230,6 @@ namespace AvocadoShell.Engine
                     task => callback(task.Result),
                     TaskScheduler.FromCurrentSynchronizationContext());
         }
-
-        bool isCaretDirectlyInFrontOfPrompt
-            => (CaretX <= currentPrompt.Text.Length);
 
         void exit()
         {
@@ -377,6 +381,10 @@ namespace AvocadoShell.Engine
             TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptEnd);
         }
 
-        int distanceToPromptEnd => CaretX - currentPrompt.Text.Length;
+        bool isAtOrBeforePrompt(TextPointer pointer)
+            => (GetX(pointer) <= currentPrompt.Text.Length);
+
+        int distanceToPromptEnd
+            => GetX(TextBase.CaretPosition) - currentPrompt.Text.Length;
     }
 }
