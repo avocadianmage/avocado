@@ -82,6 +82,8 @@ namespace AvocadoShell.Engine
 
         protected override void HandleSpecialKeys(KeyEventArgs e)
         {
+            if (e.Handled) return;
+
             switch (e.Key)
             {
                 // Prevent overwriting the prompt.
@@ -184,23 +186,7 @@ namespace AvocadoShell.Engine
         }
         
         public async Task<bool> RunNativeCommand(string message)
-        {
-            const string AVOCADO_PREFX = "avocado:";
-            if (!message.StartsWith(AVOCADO_PREFX)) return false;
-
-            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
-            var arg = string.Join(" ", pieces.Skip(1));
-            switch (pieces.First())
-            {
-                case "Enter-PSSession":
-                    await engine.OpenRemoteSession(arg);
-                    break;
-                case "Download-Remote":
-                    await engine.DownloadRemote(arg);
-                    break;
-            }
-            return true;
-        }
+            => await engine.RunNativeCommand(message);
 
         void performTabCompletion()
         {

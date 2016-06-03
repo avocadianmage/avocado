@@ -2,6 +2,7 @@
 using AvocadoShell.PowerShellService.Runspaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService
@@ -40,13 +41,32 @@ namespace AvocadoShell.PowerShellService
         public async Task InitEnvironment()
             => await activeInstance.InitEnvironment();
 
-        public async Task OpenRemoteSession(string computerName)
+        public async Task<bool> RunNativeCommand(string message)
+        {
+            const string AVOCADO_PREFX = "avocado:";
+            if (!message.StartsWith(AVOCADO_PREFX)) return false;
+
+            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
+            var arg = string.Join(" ", pieces.Skip(1));
+            switch (pieces.First())
+            {
+                case "Enter-PSSession":
+                    await openRemoteSession(arg);
+                    break;
+                case "Download-Remote":
+                    await downloadRemote(arg);
+                    break;
+            }
+            return true;
+        }
+
+        async Task openRemoteSession(string computerName)
         {
             instances.AddLast(createInstance(ui, computerName));
             await activeInstance.InitEnvironment();
         }
         
-        public async Task DownloadRemote(string paths)
+        async Task downloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
             await Task.Run(() => localInstance.RunBackgroundCommand(

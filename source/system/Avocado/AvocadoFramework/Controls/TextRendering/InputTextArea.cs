@@ -56,6 +56,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected virtual void HandleSpecialKeys(KeyEventArgs e)
         {
+            if (e.Handled) return;
+
             switch (e.Key)
             {
                 // Sanitize linebreak.
