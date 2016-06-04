@@ -50,27 +50,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public async Task InitEnvironment()
         {
-            shellUI.WriteOutputLine(isRemote
-                ? $"Connecting to {RemoteComputerName}."
-                : $"Booting avocado [v{Config.Version}]");
+            // Prepare autocompletion.
+            await autocomplete.InitializeService();
 
-            await doWork(
-                "Starting autocompletion service",
-                autocomplete?.InitializeService());
-            await doWork("Running startup scripts", addStartupScripts);
+            // Add startup scripts to the initial pipeline.
+            addStartupScripts();
 
             pipeline.Execute();
-        }
-
-        async Task doWork(string message, Action action)
-            => await doWork(message, Task.Run(action));
-
-        async Task doWork(string message, Task work)
-        {
-            if (work == null) return;
-            shellUI.WriteCustom($"{message}...", Config.SystemFontBrush, false);
-            await work;
-            shellUI.WriteOutputLine("Done.");
         }
 
         void addStartupScripts()

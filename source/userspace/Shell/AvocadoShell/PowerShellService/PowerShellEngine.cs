@@ -38,7 +38,7 @@ namespace AvocadoShell.PowerShellService
             return instance;
         }
 
-        public async Task InitEnvironment()
+        public async Task InitEnvironment() 
             => await activeInstance.InitEnvironment();
 
         public async Task<bool> RunNativeCommand(string message)
