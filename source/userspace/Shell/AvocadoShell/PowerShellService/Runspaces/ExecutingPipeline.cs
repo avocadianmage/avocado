@@ -90,9 +90,17 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
         {
-            var tempPipeline = pipeline.Runspace.CreatePipeline(command);
-            var result = await Task.Run(() => tempPipeline.Invoke());
-            return result.Select(l => l.ToString());
+            IEnumerable<PSObject> result = null;
+            try
+            {
+                result = await Task.Run(
+                    () => pipeline.Runspace.CreatePipeline(command).Invoke());
+            }
+            catch (RuntimeException exc)
+            {
+                ErrorReceived(this, exc.Message.Yield());
+            }
+            return result?.Select(l => l.ToString());
         }
 
         void onOutputDataReady(object sender, EventArgs e)

@@ -12,9 +12,11 @@ function SendToLocal
 		)."{374DE290-123F-4565-9164-39C4925E467B}"
 
 	# Perform the download.
+	$session = New-PSSession $RemoteComputerName
 	Copy-Item `
-		-FromSession (New-PSSession $RemoteComputerName) `
+		-FromSession $session `
 		-Path $SourcePaths `
 		-Destination $dest `
 		-Recurse
+	Remove-PSSession $session
 }
