@@ -52,18 +52,25 @@ namespace AvocadoShell.PowerShellService.Runspaces
             await autocomplete.InitializeService();
 
             // Add startup scripts to the initial pipeline.
-            addStartupScripts();
+            getStartupScripts().ForEach(s => pipeline.AddScript(s));
+
+            // Add scripts specified via commandline.
+            pipeline.AddScript(getUserScripts());
 
             pipeline.Execute();
         }
 
-        void addStartupScripts()
+        IEnumerable<string> getStartupScripts()
         {
-            Assembly.GetExecutingAssembly()
+            var asm = Assembly.GetExecutingAssembly();
+            return asm
                 .GetManifestResourceNames()
                 .Where(r => r.EndsWith(".ps1"))
-                .ForEach(r => pipeline.AddScript(EnvUtils.GetEmbeddedText(r)));
+                .Select(r => EnvUtils.GetEmbeddedText(asm, r));
         }
+
+        string getUserScripts()
+            => string.Join(" ", Environment.GetCommandLineArgs().Skip(1));
 
         public void ExecuteCommand(string cmd)
         {

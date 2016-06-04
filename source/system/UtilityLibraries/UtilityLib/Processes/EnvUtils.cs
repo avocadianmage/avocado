@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace UtilityLib.Processes
 {
@@ -49,9 +50,8 @@ namespace UtilityLib.Processes
                 StringSplitOptions.None);
         }
 
-        public static string GetEmbeddedText(string resourceName)
+        public static string GetEmbeddedText(Assembly asm, string resourceName)
         {
-            var asm = Assembly.GetCallingAssembly();
             using (var stream = asm.GetManifestResourceStream(resourceName))
             using (var reader = new StreamReader(stream))
             {
