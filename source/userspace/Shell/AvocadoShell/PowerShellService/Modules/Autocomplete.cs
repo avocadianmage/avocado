@@ -27,9 +27,7 @@ namespace AvocadoShell.PowerShellService.Modules
 
         public async Task<string> GetCompletion(
             string input, int index, bool forward)
-        {
-            return await Task.Run(() => getCompletion(input, index, forward));
-        }
+            => await Task.Run(() => getCompletion(input, index, forward));
 
         string getCompletion(string input, int index, bool forward)
         {

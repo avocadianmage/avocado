@@ -34,7 +34,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline = createPipeline(powershell.Runspace);
 
             // No support for autocompletion while remoting.
-            if (!isRemote) autocomplete = new Autocomplete(powershell);
+            autocomplete = new Autocomplete(powershell);
         }
         
         bool isRemote => pipeline.Runspace.RunspaceIsRemote;
@@ -90,14 +90,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public void Stop() => pipeline.Stop();
 
         public async Task<string> GetCompletion(
-            string input,
-            int index,
-            bool forward)
-        {
-            // No support for autocompletion while remoting.
-            if (isRemote) return null;
-            return await autocomplete.GetCompletion(input, index, forward);
-        }
+            string input, int index, bool forward)
+            => await autocomplete.GetCompletion(input, index, forward);
         
         WSManConnectionInfo createRemoteInfo(string computerName)
         {
@@ -122,9 +116,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // Initialize local or remote runspace.
             var runspace = remoteInfo == null
                 ? RunspaceFactory.CreateRunspace(host)
-                : RunspaceFactory.CreateRunspace(host, remoteInfo);
+                : RunspaceFactory.CreateRunspace(
+                    remoteInfo, host, TypeTable.LoadDefaultTypeFiles());
             runspace.Open();
-
             return runspace;
         }
 
