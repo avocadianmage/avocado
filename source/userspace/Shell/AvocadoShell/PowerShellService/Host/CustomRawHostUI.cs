@@ -38,7 +38,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { throw new NotImplementedException(); }
+            get { return default(Coordinates); } // Not implemented.
             set { throw new NotImplementedException(); }
         }
 
@@ -48,7 +48,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override int CursorSize
         {
-            get { return Console.CursorSize; }
+            get { return default(int); } // Not implemented.
             set { Console.CursorSize = value; }
         }
 
@@ -97,7 +97,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Coordinates WindowPosition
         {
-            get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
+            get { return default(Coordinates); } // Not implemented.
             set { Console.SetWindowPosition(value.X, value.Y); }
         }
 
@@ -107,7 +107,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Size WindowSize
         {
-            get { return new Size(Console.WindowWidth, Console.WindowHeight); }
+            get { return default(Size); } // Not implemented.
             set { Console.SetWindowSize(value.Width, value.Height); }
         }
 
@@ -117,7 +117,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override string WindowTitle
         {
-            get { return Console.Title; }
+            get { return default(string); } // Not implemented.
             set { Console.Title = value; }
         }
 
