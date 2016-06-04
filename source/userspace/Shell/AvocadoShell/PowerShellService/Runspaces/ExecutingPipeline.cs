@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService.Runspaces
@@ -67,15 +68,16 @@ namespace AvocadoShell.PowerShellService.Runspaces
             Done(this, new ExecDoneEventArgs(error));
         }
 
-        public string GetWorkingDirectory()
+        public async Task<string> GetWorkingDirectory()
         {
             // SessionStateProxy properties are not supported in remote 
             // runspaces, so we must manually get the working directory by
             // running a PowerShell command.
             if (pipeline.Runspace.RunspaceIsRemote)
             {
-                return RunBackgroundCommand(
-                    "$PWD.Path.Replace($HOME, '~')").First();
+                var result = await RunBackgroundCommand(
+                    "$PWD.Path.Replace($HOME, '~')");
+                return result.First();
             }
 
             var homeDir = Environment.GetFolderPath(
@@ -85,10 +87,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Replace(homeDir, "~");
         }
 
-        public IEnumerable<string> RunBackgroundCommand(string command)
+        public async Task<IEnumerable<string>> RunBackgroundCommand(
+            string command)
         {
-            return pipeline.Runspace.CreatePipeline(command).Invoke()
-                .Select(l => l.ToString());
+            var tempPipeline = pipeline.Runspace.CreatePipeline(command);
+            var result = await Task.Run(() => tempPipeline.Invoke());
+            return result.Select(l => l.ToString());
         }
 
         void onOutputDataReady(object sender, EventArgs e)

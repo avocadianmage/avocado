@@ -41,10 +41,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public string RemoteComputerName 
             => pipeline.Runspace.ConnectionInfo?.ComputerName;
-        public string GetWorkingDirectory() => pipeline.GetWorkingDirectory();
+        public async Task<string> GetWorkingDirectory() => 
+            await pipeline.GetWorkingDirectory();
 
-        public IEnumerable<string> RunBackgroundCommand(string command)
-            => pipeline.RunBackgroundCommand(command);
+        public async Task<IEnumerable<string>> RunBackgroundCommand(
+            string command)
+            => await pipeline.RunBackgroundCommand(command);
 
         public async Task InitEnvironment()
         {

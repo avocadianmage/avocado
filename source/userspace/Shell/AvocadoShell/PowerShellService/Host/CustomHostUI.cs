@@ -322,8 +322,7 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteVerboseLine(string message)
         {
             // Check for native command.
-            var task = Task.Run(() => shellUI.RunNativeCommand(message));
-            if (task.Result) return;
+            if (shellUI.RunNativeCommand(message).Result) return;
 
             shellUI.WriteCustom(
                 $"[Verbose] {message}", 

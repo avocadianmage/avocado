@@ -20,8 +20,8 @@ namespace AvocadoShell.PowerShellService
         PowerShellInstance activeInstance => instances.Last.Value;
 
         public string RemoteComputerName => activeInstance.RemoteComputerName;
-        public string GetWorkingDirectory()
-            => activeInstance.GetWorkingDirectory();
+        public async Task<string> GetWorkingDirectory()
+            => await activeInstance.GetWorkingDirectory();
 
         public PowerShellEngine(IShellUI ui)
         {
@@ -69,8 +69,8 @@ namespace AvocadoShell.PowerShellService
         async Task downloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
-            await Task.Run(() => localInstance.RunBackgroundCommand(
-                $"SendToLocal {computerName} {paths}"));
+            await localInstance.RunBackgroundCommand(
+                $"SendToLocal {computerName} {paths}");
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)

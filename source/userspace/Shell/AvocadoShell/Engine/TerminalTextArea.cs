@@ -56,7 +56,9 @@ namespace AvocadoShell.Engine
             if (!string.IsNullOrWhiteSpace(e.Error)) WriteErrorLine(e.Error);
 
             // Show the next shell prompt.
-            Dispatcher.BeginInvoke(new Action(displayShellPrompt));
+            var shellPromptStr = getShellPromptString().Result;
+            Dispatcher.BeginInvoke(
+                new Action(() => displayShellPrompt(shellPromptStr)));
         }
 
         void terminateExec()
@@ -241,14 +243,13 @@ namespace AvocadoShell.Engine
             return resetEvent.Block();
         }
 
-        void displayShellPrompt()
+        void displayShellPrompt(string text)
         {
-            var shellPromptStr = getShellPromptString();
-            SetWindowTitle(shellPromptStr);
-            startPrompt(shellPromptStr, true, false);
+            SetWindowTitle(text);
+            startPrompt(text, true, false);
         }
 
-        string getShellPromptString()
+        async Task<string> getShellPromptString()
         {
             var prompt = string.Empty;
 
@@ -262,7 +263,7 @@ namespace AvocadoShell.Engine
             }
 
             // Add working directory.
-            prompt += $"{engine.GetWorkingDirectory()} ";
+            prompt += $"{await engine.GetWorkingDirectory()} ";
 
             return prompt;
         }
