@@ -36,8 +36,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // No support for autocompletion while remoting.
             autocomplete = new Autocomplete(powershell);
         }
-        
-        bool isRemote => pipeline.Runspace.RunspaceIsRemote;
 
         public string RemoteComputerName 
             => pipeline.Runspace.ConnectionInfo?.ComputerName;
