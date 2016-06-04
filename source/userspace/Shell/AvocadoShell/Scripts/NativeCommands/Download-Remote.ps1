@@ -17,3 +17,6 @@ function Download-Remote
 	# Run native command.
 	RunNativeCommand "Download-Remote $pathList"
 }
+
+# Shortcut.
+New-Alias rdl Download-Remote

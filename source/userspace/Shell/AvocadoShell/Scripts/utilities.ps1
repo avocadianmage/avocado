@@ -19,4 +19,7 @@ function SendToLocal
 		-Destination $dest `
 		-Recurse
 	Remove-PSSession $session
+
+	# Spawn a new shell session at the location of the download.
+	Shell "Set-Location $dest; Get-ChildItem"
 }

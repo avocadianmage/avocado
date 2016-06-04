@@ -14,3 +14,6 @@ function Enter-PSSession
 	# Run native command.
 	RunNativeCommand "Enter-PSSession $ComputerName"
 }
+
+# Shortcut.
+New-Alias rsh Enter-PSSession
