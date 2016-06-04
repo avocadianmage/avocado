@@ -21,6 +21,8 @@ namespace AvocadoShell.PowerShellService.Host
     class CustomHostUI : PSHostUserInterface
     {
         readonly IShellUI shellUI;
+        readonly List<ProgressRecord> actionsInProgress
+            = new List<ProgressRecord>();
 
         public CustomHostUI(IShellUI shellUI)
         {
@@ -293,16 +295,17 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="record">A ProgressReport object.</param>
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            // Do not log completed actions.
-            if (record.RecordType == ProgressRecordType.Completed) return;
-            
-            var discreteProg = $"{record.PercentComplete}%";
-            if (record.SecondsRemaining != -1)
+            if (record.RecordType == ProgressRecordType.Completed)
             {
-                discreteProg += $", {record.SecondsRemaining}s remaining";
+                actionsInProgress.Remove(record);
+                return;
             }
+            
+            if (actionsInProgress.Contains(record)) return;
+
+            actionsInProgress.Add(record);
             shellUI.WriteOutputLine(
-                $"{record.Activity} - {record.StatusDescription} ({discreteProg})");
+                $"{record.Activity} - {record.StatusDescription}");
         }
 
         /// <summary>
@@ -377,7 +380,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </returns>
         static string[] GetHotkeyAndLabel(string input)
         {
-            string[] result = new string[] { String.Empty, String.Empty };
+            string[] result = new string[] { string.Empty, string.Empty };
             string[] fragments = input.Split('&');
             if (fragments.Length == 2)
             {
