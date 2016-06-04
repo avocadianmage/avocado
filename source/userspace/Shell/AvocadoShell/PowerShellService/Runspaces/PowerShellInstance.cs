@@ -119,6 +119,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 : RunspaceFactory.CreateRunspace(
                     remoteInfo, host, TypeTable.LoadDefaultTypeFiles());
             runspace.Open();
+
             return runspace;
         }
 
