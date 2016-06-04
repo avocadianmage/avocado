@@ -22,19 +22,13 @@ namespace AvocadoShell.PowerShellService.Modules
         {
             const string DUMMY = "a";
             await Task.Run(() => CommandCompletion.CompleteInput(
-                DUMMY,
-                DUMMY.Length,
-                null,
-                ps));
+                DUMMY, DUMMY.Length, null, ps));
         }
 
         public async Task<string> GetCompletion(
-            string input,
-            int index,
-            bool forward)
+            string input, int index, bool forward)
         {
-            return await Task.Run(
-                () => getCompletion(input, index, forward));
+            return await Task.Run(() => getCompletion(input, index, forward));
         }
 
         string getCompletion(string input, int index, bool forward)
@@ -53,18 +47,14 @@ namespace AvocadoShell.PowerShellService.Modules
             if (completionListNeedsUpdate(input, index))
             {
                 cachedCompletions = CommandCompletion.CompleteInput(
-                    input,
-                    index,
-                    null,
-                    ps);
+                    input, index, null, ps);
             }
 
             var result = cachedCompletions.GetNextResult(forward);
             if (result == null) return null;
 
             expectedInput = input.Substring(
-                0, 
-                cachedCompletions.ReplacementIndex);
+                0, cachedCompletions.ReplacementIndex);
             expectedInput += result.CompletionText;
             expectedInputIndex = expectedInput.Length;
             return expectedInput;

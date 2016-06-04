@@ -97,30 +97,27 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         void onOutputDataReady(object sender, EventArgs e)
         {
-            var outputList = new List<string>();
-
-            var reader = sender as PipelineReader<PSObject>;
-            while (reader.Count > 0)
-            {
-                OutputFormatter
-                    .FormatPSObject(reader.Read())
-                    .ForEach(outputList.Add);
-            }
-
+            var outputList = readData(
+                sender as PipelineReader<PSObject>,
+                o => OutputFormatter.FormatPSObject(o));
             OutputReceived(this, outputList);
         }
         
         void onErrorDataReady(object sender, EventArgs e)
         {
-            var errorList = new List<string>();
-
-            var reader = sender as PipelineReader<object>;
-            while (reader.Count > 0)
-            {
-                errorList.Add(reader.Read().ToString());
-            }
-
+            var errorList = readData(
+                sender as PipelineReader<object>, 
+                o => o.ToString().Yield());
             ErrorReceived(this, errorList);
+        }
+
+        IEnumerable<string> readData<T>(
+            PipelineReader<T> reader, 
+            Func<T, IEnumerable<string>> format)
+        {
+            var data = new List<string>();
+            while (reader.Count > 0) data.AddRange(format(reader.Read()));
+            return data;
         }
     }
 }
