@@ -12,7 +12,7 @@ build system/UtilityLibraries/UtilityLibraries.sln
 build system/Avocado/Avocado.sln
 
 # Build userspace solutions.
-build userspace/Shell/Shell.sln
+build userspace/AvocadoShell/AvocadoShell.sln
 build userspace/AvocadoServer/AvocadoServer.sln
 
 # Ensure shortcut path is included in environment path variable.
