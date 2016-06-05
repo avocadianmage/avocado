@@ -54,10 +54,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // Add startup scripts to the initial pipeline.
             getStartupScripts().ForEach(s => pipeline.AddScript(s));
 
-            // Add shortcut to launch separate shell sessions.
-            pipeline.AddScript(
-                $"New-Alias Shell {Assembly.GetEntryAssembly().Location}");
-
             // Add scripts specified via commandline.
             pipeline.AddScript(getUserScripts());
 
