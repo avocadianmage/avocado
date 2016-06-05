@@ -21,5 +21,5 @@ function SendToLocal
 	Remove-PSSession $session
 
 	# Spawn a new shell session at the location of the download.
-	AvocadoShell "Set-Location $dest; Write-Output 'Download completed.'"
+	Shell "Set-Location $dest; Write-Output 'Download completed.'"
 }

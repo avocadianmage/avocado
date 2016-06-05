@@ -1,4 +1,5 @@
 $shortcutPath = Join-Path $env:APPDATA "Avocado"
+if (Test-Path $shortcutPath) { Remove-Item $shortcutPath\* -Recurse }
 
 function build($path) 
 { 
