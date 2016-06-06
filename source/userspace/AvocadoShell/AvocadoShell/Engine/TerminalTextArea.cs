@@ -100,9 +100,12 @@ namespace AvocadoShell.Engine
                         || (e.Key == Key.Left && IsShiftKeyDown);
                     break;
                 case Key.Home:
-                    var lineStart 
-                        = TextBase.CaretPosition.GetLineStartPosition(0);
-                    if (!isAtOrBeforePrompt(lineStart)) break;
+                    if (!IsControlKeyDown)
+                    {
+                        var lineStart
+                            = TextBase.CaretPosition.GetLineStartPosition(0);
+                        if (!isAtOrBeforePrompt(lineStart)) break;
+                    }
                     // If we are on the same line as the prompt, move the cursor
                     // to the end of the prompt instead of the beginning of the
                     // line.
@@ -117,6 +120,12 @@ namespace AvocadoShell.Engine
                         TextBase.CaretPosition.GetPositionAtOffset(
                             -distanceToPromptEnd),
                         TextBase.CaretPosition);
+                    e.Handled = true;
+                    break;
+
+                // Currently no support for PageUp/PageDown.
+                case Key.PageUp:
+                case Key.PageDown:
                     e.Handled = true;
                     break;
 
