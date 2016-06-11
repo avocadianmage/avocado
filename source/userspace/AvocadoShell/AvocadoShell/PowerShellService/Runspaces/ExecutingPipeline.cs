@@ -17,26 +17,36 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         Pipeline pipeline;
 
-        public Runspace Runspace => pipeline.Runspace;
+        public Runspace Runspace { get; }
 
         public ExecutingPipeline(Runspace runspace)
         {
-            pipeline = runspace.CreatePipeline();
+            Runspace = runspace;
         }
 
         public void Stop()
         {
             // Only stop the pipeline if it is running.
-            if (pipeline.PipelineStateInfo.State == PipelineState.Running)
+            if (pipeline?.PipelineStateInfo.State == PipelineState.Running)
             {
                 pipeline.StopAsync();
             }
         }
 
-        public void AddScript(string script)
-            => pipeline.Commands.AddScript(script);
+        public void ExecuteCommand(string command)
+        {
+            pipeline = Runspace.CreatePipeline(command, true);
+            executePipeline();
+        }
 
-        public void Execute()
+        public void ExecuteScripts(IEnumerable<string> scripts)
+        {
+            pipeline = Runspace.CreatePipeline();
+            scripts.ForEach(pipeline.Commands.AddScript);
+            executePipeline();
+        }
+
+        void executePipeline()
         {
             pipeline.StateChanged += onPipelineStateChanged;
             pipeline.Output.DataReady += onOutputDataReady;
@@ -62,7 +72,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
 
             // Reset the pipeline.
-            pipeline = pipeline.Runspace.CreatePipeline();
+            pipeline = null;
 
             // Fire event indicating execution of the pipeline is finished.
             Done(this, new ExecDoneEventArgs(error));
@@ -73,7 +83,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // SessionStateProxy properties are not supported in remote 
             // runspaces, so we must manually get the working directory by
             // running a PowerShell command.
-            if (pipeline.Runspace.RunspaceIsRemote)
+            if (Runspace.RunspaceIsRemote)
             {
                 var result = await RunBackgroundCommand(
                     "$PWD.Path.Replace($HOME, '~')");
@@ -82,7 +92,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
             var homeDir = Environment.GetFolderPath(
                 Environment.SpecialFolder.UserProfile);
-            return pipeline.Runspace.SessionStateProxy
+            return Runspace.SessionStateProxy
                 .Path.CurrentLocation.Path
                 .Replace(homeDir, "~");
         }
@@ -94,7 +104,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             try
             {
                 result = await Task.Run(
-                    () => pipeline.Runspace.CreatePipeline(command).Invoke());
+                    () => Runspace.CreatePipeline(command).Invoke());
             }
             catch (RuntimeException exc)
             {

@@ -51,16 +51,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
             // Prepare autocompletion.
             await autocomplete.InitializeService();
 
-            // Add startup scripts to the initial pipeline.
-            getStartupScripts().ForEach(s => pipeline.AddScript(s));
-
-            // Add scripts specified via commandline.
-            pipeline.AddScript(getUserScripts());
-
-            pipeline.Execute();
+            // Execute startup scripts.
+            var startupScripts = getSystemStartupScripts()
+                .Concat(getUserStartupScripts());
+            pipeline.ExecuteScripts(startupScripts);
         }
 
-        IEnumerable<string> getStartupScripts()
+        IEnumerable<string> getSystemStartupScripts()
         {
             var asm = Assembly.GetExecutingAssembly();
             return asm
@@ -69,14 +66,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Select(r => EnvUtils.GetEmbeddedText(asm, r));
         }
 
-        string getUserScripts()
-            => string.Join(" ", Environment.GetCommandLineArgs().Skip(1));
-
-        public void ExecuteCommand(string cmd)
-        {
-            pipeline.AddScript(cmd);
-            pipeline.Execute();
-        }
+        IEnumerable<string> getUserStartupScripts()
+            => string
+                .Join(" ", Environment.GetCommandLineArgs().Skip(1))
+                .Yield();
+        
+        public void ExecuteCommand(string cmd) => pipeline.ExecuteCommand(cmd);
 
         public void Stop() => pipeline.Stop();
 
