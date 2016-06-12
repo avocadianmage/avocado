@@ -18,25 +18,18 @@ namespace AvocadoShell.Engine
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
+        readonly PowerShellEngine psEngine;
         readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
-        readonly PowerShellEngine psEngine;
-
-        Prompt currentPrompt;
+        readonly Prompt currentPrompt = new Prompt();
 
         public TerminalTextArea()
         {
-            psEngine = createEngine();
-        }
-
-        PowerShellEngine createEngine()
-        {
-            var engine = new PowerShellEngine(this);
-            engine.ExecDone += onExecDone;
-            engine.ExitRequested += (s, e)
+            psEngine = new PowerShellEngine(this);
+            psEngine.ExecDone += onExecDone;
+            psEngine.ExitRequested += (s, e)
                 => Dispatcher.BeginInvoke(new Action(exit));
-            return engine;
         }
 
         public override void OnApplyTemplate()
@@ -290,7 +283,7 @@ namespace AvocadoShell.Engine
             Write(" ", secure ? Brushes.Transparent : Foreground);
 
             // Update the current prompt object.
-            currentPrompt = new Prompt(fromShell, CurrentLineString);
+            currentPrompt.Update(fromShell, CurrentLineString);
 
             clearUndoBuffer();
 

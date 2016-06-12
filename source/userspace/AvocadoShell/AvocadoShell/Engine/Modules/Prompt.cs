@@ -2,10 +2,10 @@
 {
     sealed class Prompt
     {
-        public bool FromShell { get; }
-        public string Text { get; }
-    
-        public Prompt(bool fromShell, string text)
+        public bool FromShell { get; private set; }
+        public string Text { get; private set; }
+
+        public void Update(bool fromShell, string text)
         {
             FromShell = fromShell;
             Text = text;
