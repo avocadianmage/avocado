@@ -21,9 +21,23 @@ namespace AvocadoShell.Engine
         readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
+        readonly PowerShellEngine psEngine;
 
-        PowerShellEngine engine;
         Prompt currentPrompt;
+
+        public TerminalTextArea()
+        {
+            psEngine = createEngine();
+        }
+
+        PowerShellEngine createEngine()
+        {
+            var engine = new PowerShellEngine(this);
+            engine.ExecDone += onExecDone;
+            engine.ExitRequested += (s, e)
+                => Dispatcher.BeginInvoke(new Action(exit));
+            return engine;
+        }
 
         public override void OnApplyTemplate()
         {
@@ -31,23 +45,14 @@ namespace AvocadoShell.Engine
 
             // Scroll to the end each time a new line is added.
             LineAdded += (sender, e) => TextBase.ScrollToEnd();
-
-            Task.Run(initPSEngine);
+            
+            psEngine.InitEnvironment();
         }
 
         protected override void OnUnload(RoutedEventArgs e)
         {
             base.OnUnload(e);
             terminateExec();
-        }
-
-        async Task initPSEngine()
-        {
-            engine = new PowerShellEngine(this);
-            engine.ExecDone += onExecDone;
-            engine.ExitRequested += (s, e) 
-                => Dispatcher.BeginInvoke(new Action(exit));
-            await engine.InitEnvironment();
         }
         
         void onExecDone(object sender, ExecDoneEventArgs e)
@@ -64,7 +69,7 @@ namespace AvocadoShell.Engine
         void terminateExec()
         {
             // Terminate the powershell process.
-            engine.Stop();
+            psEngine.Stop();
 
             // Ensure the powershell thread is unblocked.
             resetEvent.Signal(null);
@@ -193,11 +198,11 @@ namespace AvocadoShell.Engine
             inputHistory.Add(input);
 
             // Otherwise, use PowerShell to interpret the command.
-            engine.ExecuteCommand(input);
+            psEngine.ExecuteCommand(input);
         }
         
         public async Task<bool> RunNativeCommand(string message)
-            => await engine.RunNativeCommand(message);
+            => await psEngine.RunNativeCommand(message);
 
         void performTabCompletion()
         {
@@ -222,7 +227,7 @@ namespace AvocadoShell.Engine
             bool forward,
             Action<string> callback)
         {
-            Task.Run(() => engine.GetCompletion(input, index, forward))
+            Task.Run(() => psEngine.GetCompletion(input, index, forward))
                 .ContinueWith(
                     task => callback(task.Result),
                     TaskScheduler.FromCurrentSynchronizationContext());
@@ -266,13 +271,13 @@ namespace AvocadoShell.Engine
             if (EnvUtils.IsAdmin) prompt += "(root) ";
 
             // Add remote computer name.
-            if (engine.RemoteComputerName != null)
+            if (psEngine.RemoteComputerName != null)
             {
-                prompt += $"[{engine.RemoteComputerName}] ";
+                prompt += $"[{psEngine.RemoteComputerName}] ";
             }
 
             // Add working directory.
-            prompt += $"{await engine.GetWorkingDirectory()} ";
+            prompt += $"{await psEngine.GetWorkingDirectory()} ";
 
             return prompt;
         }

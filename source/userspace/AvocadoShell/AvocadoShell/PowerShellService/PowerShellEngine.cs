@@ -38,8 +38,7 @@ namespace AvocadoShell.PowerShellService
             return instance;
         }
 
-        public async Task InitEnvironment() 
-            => await activeInstance.InitEnvironment();
+        public void InitEnvironment() => activeInstance.InitEnvironment();
 
         public async Task<bool> RunNativeCommand(string message)
         {
@@ -51,7 +50,7 @@ namespace AvocadoShell.PowerShellService
             switch (pieces.First())
             {
                 case "Enter-PSSession":
-                    await openRemoteSession(arg);
+                    openRemoteSession(arg);
                     break;
                 case "Download-Remote":
                     await downloadRemote(arg);
@@ -60,10 +59,10 @@ namespace AvocadoShell.PowerShellService
             return true;
         }
 
-        async Task openRemoteSession(string computerName)
+        void openRemoteSession(string computerName)
         {
             instances.AddLast(createInstance(ui, computerName));
-            await activeInstance.InitEnvironment();
+            activeInstance.InitEnvironment();
         }
         
         async Task downloadRemote(string paths)

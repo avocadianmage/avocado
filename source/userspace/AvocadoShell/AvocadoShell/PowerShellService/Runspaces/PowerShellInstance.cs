@@ -46,12 +46,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
             string command)
             => await pipeline.RunBackgroundCommand(command);
 
-        public async Task InitEnvironment()
+        public void InitEnvironment()
         {
-            // Prepare autocompletion.
-            await autocomplete.InitializeService();
-
-            // Execute startup scripts.
             var startupScripts = getSystemStartupScripts()
                 .Concat(getUserStartupScripts());
             pipeline.ExecuteScripts(startupScripts);

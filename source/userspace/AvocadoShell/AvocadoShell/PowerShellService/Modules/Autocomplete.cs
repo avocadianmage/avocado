@@ -18,13 +18,6 @@ namespace AvocadoShell.PowerShellService.Modules
             this.ps = ps;
         }
 
-        public async Task InitializeService()
-        {
-            const string DUMMY = "a";
-            await Task.Run(() => CommandCompletion.CompleteInput(
-                DUMMY, DUMMY.Length, null, ps));
-        }
-
         public async Task<string> GetCompletion(
             string input, int index, bool forward)
             => await Task.Run(() => getCompletion(input, index, forward));
