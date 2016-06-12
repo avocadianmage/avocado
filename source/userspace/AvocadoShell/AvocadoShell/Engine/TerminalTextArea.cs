@@ -143,7 +143,7 @@ namespace AvocadoShell.Engine
 
                 // Autocompletion.
                 case Key.Tab:
-                    performTabCompletion();
+                    performAutocomplete();
                     e.Handled = true;
                     break;
 
@@ -196,34 +196,23 @@ namespace AvocadoShell.Engine
         
         public async Task<bool> RunNativeCommand(string message)
             => await psEngine.RunNativeCommand(message);
-
-        void performTabCompletion()
+        
+        void performAutocomplete()
         {
             InputEnabled = false;
 
-            var callback = new Action<string>((completion) =>
-            {
-                if (completion != null) replaceInput(completion);
-                InputEnabled = true;
-            });
+            var input = getInput();
+            var index = distanceToPromptEnd;
+            var forward = !IsShiftKeyDown;
 
-            getCompletion(
-                getInput(),
-                distanceToPromptEnd,
-                !IsShiftKeyDown,
-                callback);
-        }
-
-        void getCompletion(
-            string input,
-            int index,
-            bool forward,
-            Action<string> callback)
-        {
             Task.Run(() => psEngine.GetCompletion(input, index, forward))
-                .ContinueWith(
-                    task => callback(task.Result),
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                .ContinueWith(task =>
+                {
+                    var completion = task.Result;
+                    if (completion != null) replaceInput(completion);
+                    InputEnabled = true;
+                }, 
+                TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         void exit()

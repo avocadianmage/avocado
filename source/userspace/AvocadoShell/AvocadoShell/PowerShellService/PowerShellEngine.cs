@@ -106,11 +106,7 @@ namespace AvocadoShell.PowerShellService
         public void Stop() => activeInstance.Stop();
 
         public async Task<string> GetCompletion(
-            string input,
-            int index,
-            bool forward)
-        {
-            return await activeInstance.GetCompletion(input, index, forward);
-        }
+            string input, int index, bool forward)
+            => await activeInstance.GetCompletion(input, index, forward);
     }
 }

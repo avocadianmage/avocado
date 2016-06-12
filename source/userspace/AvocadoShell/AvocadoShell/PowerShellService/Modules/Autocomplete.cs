@@ -17,12 +17,9 @@ namespace AvocadoShell.PowerShellService.Modules
         {
             this.ps = ps;
         }
-
+        
         public async Task<string> GetCompletion(
             string input, int index, bool forward)
-            => await Task.Run(() => getCompletion(input, index, forward));
-
-        string getCompletion(string input, int index, bool forward)
         {
             // Suggest a file if the input is blank.
             if (string.IsNullOrWhiteSpace(input))
@@ -37,11 +34,13 @@ namespace AvocadoShell.PowerShellService.Modules
             // completion list.
             if (completionListNeedsUpdate(input, index))
             {
-                cachedCompletions = CommandCompletion.CompleteInput(
-                    input, index, null, ps);
+                cachedCompletions = await Task.Run(
+                    () => CommandCompletion.CompleteInput(
+                        input, index, null, ps));
             }
 
-            var result = cachedCompletions.GetNextResult(forward);
+            var result = await Task.Run(
+                () => cachedCompletions.GetNextResult(forward));
             if (result == null) return null;
 
             expectedInput = input.Substring(
