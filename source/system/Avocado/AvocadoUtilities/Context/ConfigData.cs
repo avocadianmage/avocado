@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using UtilityLib.MiscTools;
 
 namespace AvocadoUtilities.Context
 {
@@ -29,10 +29,8 @@ namespace AvocadoUtilities.Context
             // Otherwise, the config file did not exist, or the property was
             // not found. Create a new file if needed and add the property with
             // its default value.
-            using (var writer = new StreamWriter(path, true))
-            {
-                await writer.WriteLineAsync($"{prop}{DELIM}{defaultVal}");
-            }
+            var lines = $"{prop}{DELIM}{defaultVal}".Yield();
+            await Task.Run(() => File.AppendAllLines(path, lines));
 
             // Cache the property/value for fast subsequent access.
             cache[prop] = defaultVal;
@@ -46,15 +44,7 @@ namespace AvocadoUtilities.Context
 
             if (!File.Exists(path)) return ret;
 
-            string fileContents;
-            using (var reader = new StreamReader(path))
-            {
-                fileContents = await reader.ReadToEndAsync();
-            }
-
-            var lines = fileContents.Split(
-                new string[] { Environment.NewLine },
-                StringSplitOptions.RemoveEmptyEntries);
+            var lines = await Task.Run(() => File.ReadLines(path));
             foreach (var line in lines)
             {
                 var index = line.IndexOf(DELIM);

@@ -15,9 +15,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public event EventHandler<IEnumerable<string>> OutputReceived;
         public event EventHandler<IEnumerable<string>> ErrorReceived;
 
-        Pipeline pipeline;
-
         public Runspace Runspace { get; }
+
+        Pipeline pipeline;
 
         public ExecutingPipeline(Runspace runspace)
         {

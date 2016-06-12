@@ -49,7 +49,7 @@ namespace AvocadoShell.PowerShellService.Modules
             foreach (var prop in propDict)
             {
                 var paddedName = prop.Key.PadRight(nameColWidth);
-                yield return $"{paddedName} → {prop.Value}";
+                yield return $"{paddedName} : {prop.Value}";
             }
         }
 
@@ -57,7 +57,7 @@ namespace AvocadoShell.PowerShellService.Modules
             WSManConfigElement ele)
         {
             var leaf = ele as WSManConfigLeafElement;
-            var val = leaf == null ? string.Empty : $" → {leaf.Value}";
+            var val = leaf == null ? string.Empty : $" : {leaf.Value}";
             yield return $"{ele.Name}{val}";
         }
     }
