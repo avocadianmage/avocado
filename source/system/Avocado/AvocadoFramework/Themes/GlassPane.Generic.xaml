@@ -128,13 +128,11 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="2"
                         Margin="2"
-                        CornerRadius="1">
+                        CornerRadius="1"
+                        Opacity="0.8">
                             <Border.Background>
-                                <SolidColorBrush Color="Black" Opacity="0.8"/>
+                                <SolidColorBrush Color="Black" />
                             </Border.Background>
-                            <Border.Effect>
-                                <BlurEffect Radius="3" />
-                            </Border.Effect>
                         </Border>
                         
                         <!-- Content. -->
