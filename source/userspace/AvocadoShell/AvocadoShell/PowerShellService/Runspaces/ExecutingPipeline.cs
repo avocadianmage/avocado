@@ -66,7 +66,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
                     error = e.PipelineStateInfo.Reason.Message;
                     break;
                 case PipelineState.Stopped:
-                    error = "Execution aborted.";
+                    error = "[break]";
                     break;
                 default: return;
             }
