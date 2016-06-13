@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using UtilityLib.Processes;
 
 namespace AvocadoFramework.Engine
 {
@@ -101,11 +102,16 @@ namespace AvocadoFramework.Engine
 
         void initializeBorderFading()
         {
+            // Use different active border color based on whether the program
+            // has elevated permissions.
+            var activeBorderColor = EnvUtils.IsAdmin
+                ? Config.ActiveBorderColorElevated : Config.ActiveBorderColor;
+
             borderFadeAnimator = new ReversibleAnimator<Color>(
                 BorderBrush,
                 SolidColorBrush.ColorProperty,
                 Config.InactiveBorderColor,
-                Config.ActiveBorderColor,
+                activeBorderColor,
                 Config.BorderFadeDuration);
         }
 

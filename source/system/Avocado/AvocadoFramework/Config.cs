@@ -10,6 +10,7 @@ namespace AvocadoFramework
         // Window border properties.
         public static Color InactiveBorderColor => Colors.Gray;
         public static Color ActiveBorderColor => Colors.CornflowerBlue;
+        public static Color ActiveBorderColorElevated => Colors.Salmon;
         public static double BorderFadeDuration => 500;
 
         // Text properties.
