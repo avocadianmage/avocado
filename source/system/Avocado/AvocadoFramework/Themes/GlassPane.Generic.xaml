@@ -130,7 +130,7 @@
                         Margin="2"
                         CornerRadius="1">
                             <Border.Background>
-                                <SolidColorBrush Color="Black" Opacity="0.8"/>
+                                <SolidColorBrush Color="Black" Opacity="0.85"/>
                             </Border.Background>
                         </Border>
                         
