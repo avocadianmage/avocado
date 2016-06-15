@@ -23,11 +23,7 @@ namespace AvocadoFramework.Controls.TextRendering
         bool isModifierKeyDown(ModifierKeys key)
             => Keyboard.Modifiers.HasFlag(key);
 
-        protected bool InputEnabled
-        {
-            get { return inputEnabled; }
-            set { inputEnabled = value; }
-        }
+        protected void EnableInput(bool enabled) => inputEnabled = enabled;
 
         bool inputEnabled = false;
         Border caret;
@@ -81,11 +77,12 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             // Ignore input if the InputEnabled flag is false.
             // The exception to this is system key handling (ex: Alt+F4).
-            if (!InputEnabled && e.Key != Key.System)
+            if (!inputEnabled && e.Key != Key.System)
             {
                 e.Handled = true;
                 return;
             }
+
             // Handle any special key actions.
             HandleSpecialKeys(e);
 

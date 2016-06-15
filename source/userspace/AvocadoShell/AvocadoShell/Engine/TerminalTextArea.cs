@@ -165,7 +165,7 @@ namespace AvocadoShell.Engine
         void execute()
         {
             // Disable user input.
-            InputEnabled = false;
+            EnableInput(false);
 
             // Get user input.
             var input = getInput();
@@ -199,7 +199,7 @@ namespace AvocadoShell.Engine
         
         void performAutocomplete()
         {
-            InputEnabled = false;
+            EnableInput(false);
 
             var input = getInput();
             var index = distanceToPromptEnd;
@@ -210,14 +210,14 @@ namespace AvocadoShell.Engine
                 {
                     var completion = task.Result;
                     if (completion != null) replaceInput(completion);
-                    InputEnabled = true;
+                    EnableInput(true);
                 }, 
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         void exit()
         {
-            InputEnabled = false;
+            EnableInput(false);
             CloseWindow();
         }
 
@@ -277,7 +277,7 @@ namespace AvocadoShell.Engine
             clearUndoBuffer();
 
             // Enable user input.
-            InputEnabled = true;
+            EnableInput(true);
         }
 
         void clearUndoBuffer()
