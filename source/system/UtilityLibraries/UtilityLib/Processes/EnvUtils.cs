@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace UtilityLib.Processes
 {

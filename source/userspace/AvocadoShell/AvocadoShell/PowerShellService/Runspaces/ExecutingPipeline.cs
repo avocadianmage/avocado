@@ -60,10 +60,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
             switch (e.PipelineStateInfo.State)
             {
                 case PipelineState.Completed:
-                    error = null;
-                    break;
                 case PipelineState.Failed:
-                    error = e.PipelineStateInfo.Reason.Message;
+                    error = e.PipelineStateInfo.Reason?.Message;
                     break;
                 case PipelineState.Stopped:
                     error = "[break]";
