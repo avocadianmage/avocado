@@ -1,6 +1,11 @@
-﻿using System;
+﻿using AvocadoFramework.Animation;
+using System;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using UtilityLib.WPF;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
@@ -21,21 +26,55 @@ namespace AvocadoFramework.Controls.TextRendering
         protected bool InputEnabled
         {
             get { return inputEnabled; }
-            set
-            {
-                TextBase.CaretBrush = value 
-                    ? Config.CaretBrush 
-                    : Config.DisabledCaretBrush;
-                inputEnabled = value;
-            }
+            set { inputEnabled = value; }
         }
 
         bool inputEnabled = false;
+        Border caret;
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            initCaret();
             TextBase.Focus();
+        }
+
+        void initCaret()
+        {
+            caret = this.GetTemplateElement<Border>("Caret");
+            caret.BorderBrush = new BrushAnimation().GetFadingBrush(
+                Config.CaretBrush, Config.CursorBlinkDuration, true); 
+
+            // Set size.
+            var formattedText = new FormattedText(
+                default(char).ToString(),
+                CultureInfo.CurrentUICulture,
+                TextBase.FlowDirection,
+                new Typeface(
+                    TextBase.FontFamily,
+                    TextBase.FontStyle,
+                    TextBase.FontWeight,
+                    TextBase.FontStretch),
+                TextBase.FontSize,
+                TextBase.Foreground);
+            caret.Width = formattedText.Width + 1;
+            caret.Height = formattedText.Height + 1;
+
+            // Hook events.
+            TextBase.SelectionChanged += onSelectionChanged;
+            TextBase.LostFocus += 
+                (s, e) => caret.Visibility = Visibility.Collapsed;
+            TextBase.GotFocus +=
+                (s, e) => caret.Visibility = Visibility.Visible;
+        }
+
+        void onSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var caretLocation = TextBase.CaretPosition.GetCharacterRect(
+                TextBase.CaretPosition.LogicalDirection);
+            Canvas.SetLeft(caret, caretLocation.X);
+            Canvas.SetTop(caret, caretLocation.Y);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)

@@ -12,28 +12,39 @@
                 <ControlTemplate TargetType="{x:Type text:TextArea}">
 
                     <!-- Layout. -->
-                    <RichTextBox 
-                        x:Name="textBase"
-                        BorderThickness="0"
-                        Background="Transparent"
-                        CaretBrush="Transparent"
-                        SelectionBrush="Orange"
-                        VerticalScrollBarVisibility="Visible"
-                        FontFamily="Consolas"
-                        FontSize="7.25pt"
-                        FontWeight="Bold"
-                        TextOptions.TextFormattingMode="Display"
-                        IsTabStop="False"
-                        Cursor="Arrow"
-                        Foreground="{TemplateBinding Foreground}">
+                    <Grid>
 
-                        <RichTextBox.Resources>
-                            <Style TargetType="{x:Type Paragraph}">
-                                <Setter Property="Margin" Value="0" />
-                            </Style>
-                        </RichTextBox.Resources>
+                        <!-- Text input. -->
+                        <RichTextBox x:Name="textBase"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     CaretBrush="Transparent"
+                                     SelectionBrush="Orange"
+                                     VerticalScrollBarVisibility="Visible"
+                                     FontFamily="Consolas"
+                                     FontSize="7.25pt"
+                                     FontWeight="Bold"
+                                     TextOptions.TextFormattingMode="Display"
+                                     IsTabStop="False"
+                                     Cursor="Arrow"
+                                     Foreground="{TemplateBinding Foreground}">
 
-                    </RichTextBox>
+                            <RichTextBox.Resources>
+                                <Style TargetType="{x:Type Paragraph}">
+                                    <Setter Property="Margin" Value="0" />
+                                </Style>
+                            </RichTextBox.Resources>
+
+                        </RichTextBox>
+
+                        <!-- Caret. -->
+                        <Canvas>
+                            <Border x:Name="Caret" 
+                                    BorderThickness="0 0 0 1"
+                                    SnapsToDevicePixels="True" />
+                        </Canvas>
+
+                    </Grid>
 
                 </ControlTemplate>
             </Setter.Value>
