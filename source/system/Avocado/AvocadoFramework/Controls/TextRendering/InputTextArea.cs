@@ -26,7 +26,6 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void EnableInput(bool enabled) => inputEnabled = enabled;
 
         bool inputEnabled = false;
-        Border caret;
 
         public override void OnApplyTemplate()
         {
@@ -38,7 +37,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         void initCaret()
         {
-            caret = this.GetTemplateElement<Border>("Caret");
+            var caret = this.GetTemplateElement<Border>("Caret");
             caret.BorderBrush = new BrushAnimation().GetFadingBrush(
                 Config.CaretBrush, Config.CursorBlinkDuration, true); 
 
@@ -58,14 +57,16 @@ namespace AvocadoFramework.Controls.TextRendering
             caret.Height = formattedText.Height + 1;
 
             // Hook events.
-            TextBase.SelectionChanged += onSelectionChanged;
-            TextBase.LostFocus += 
-                (s, e) => caret.Visibility = Visibility.Collapsed;
-            TextBase.GotFocus +=
+            TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);
+
+            var window = Window.GetWindow(this);
+            window.Activated += 
                 (s, e) => caret.Visibility = Visibility.Visible;
+            window.Deactivated += 
+                (s, e) => caret.Visibility = Visibility.Collapsed;
         }
 
-        void onSelectionChanged(object sender, RoutedEventArgs e)
+        void updateCaretLocation(UIElement caret)
         {
             var caretLocation = TextBase.CaretPosition.GetCharacterRect(
                 TextBase.CaretPosition.LogicalDirection);
