@@ -6,12 +6,6 @@ namespace AvocadoFramework.Controls
 {
     public class BaseControl : Control
     {
-        public BaseControl()
-        {
-            Loaded += (sender, e) => OnLoad(e);
-            Unloaded += (sender, e) => OnUnload(e);
-        }
-
         #region Window APIs
 
         Window parentWindow => Window.GetWindow(this);
@@ -20,20 +14,6 @@ namespace AvocadoFramework.Controls
             => parentWindow.Title = title;
 
         protected void CloseWindow() => parentWindow.Close();
-
-        #endregion
-
-        #region Overridable events
-
-        protected virtual void OnLoad(RoutedEventArgs e)
-        {
-            // Base implementation does nothing.
-        }
-
-        protected virtual void OnUnload(RoutedEventArgs e)
-        {
-            // Base implementation does nothing.
-        }
 
         #endregion
 

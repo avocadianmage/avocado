@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -26,10 +25,18 @@ namespace AvocadoShell.Engine
 
         public TerminalTextArea()
         {
-            psEngine = new PowerShellEngine(this);
+            psEngine = createPowerShellEngine();
+
+            Unloaded += (s, e) => terminateExec();
+        }
+
+        PowerShellEngine createPowerShellEngine()
+        {
+            var psEngine = new PowerShellEngine(this);
             psEngine.ExecDone += onExecDone;
             psEngine.ExitRequested += (s, e)
                 => Dispatcher.BeginInvoke(new Action(exit));
+            return psEngine;
         }
 
         public override void OnApplyTemplate()
@@ -40,12 +47,6 @@ namespace AvocadoShell.Engine
             LineAdded += (sender, e) => TextBase.ScrollToEnd();
             
             psEngine.InitEnvironment();
-        }
-
-        protected override void OnUnload(RoutedEventArgs e)
-        {
-            base.OnUnload(e);
-            terminateExec();
         }
         
         void onExecDone(object sender, ExecDoneEventArgs e)
