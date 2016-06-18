@@ -45,9 +45,9 @@ namespace AvocadoFramework.Controls
             e.Handled = true;
 
             // Allow left-click to drag window.
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed) 
             {
-                Window.GetWindow(this).DragMove();
+                parentWindow.DragMove();
             }
         }
 
