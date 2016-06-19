@@ -35,13 +35,17 @@ namespace AvocadoShell.Engine
             var psEngine = new PowerShellEngine(this);
             psEngine.ExecDone += onExecDone;
             psEngine.ExitRequested += (s, e)
-                => Dispatcher.BeginInvoke(new Action(exit));
+                => Dispatcher.BeginInvoke((Action)exit);
             return psEngine;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            // Scroll to the bottom when text changes.
+            TextBase.TextChanged += (s, e) => TextBase.ScrollToEnd();
+
             psEngine.InitEnvironment();
         }
         
@@ -53,7 +57,7 @@ namespace AvocadoShell.Engine
             // Show the next shell prompt.
             var promptStr = await getShellPromptString();
             await Dispatcher.BeginInvoke(
-                new Action(() => displayShellPrompt(promptStr)));
+                (Action)(() => displayShellPrompt(promptStr)));
         }
 
         void terminateExec()
@@ -282,8 +286,8 @@ namespace AvocadoShell.Engine
 
         string writePrompt(string prompt, bool secure)
         {
-            var action = new Action<string, bool, bool>(startPrompt);
-            Dispatcher.BeginInvoke(action, prompt, false, secure);
+            Dispatcher.BeginInvoke(
+                (Action)(() => startPrompt(prompt, false, secure)));
             return resetEvent.Block();
         }
 
@@ -342,8 +346,8 @@ namespace AvocadoShell.Engine
             // Check if the line contains any ANSI codes that we should process.
             if (ANSICode.ContainsANSICodes(data))
             {
-                var action = new Action<string>(writeOutputLineWithANSICodes);
-                Dispatcher.BeginInvoke(action, data);
+                Dispatcher.BeginInvoke(
+                    (Action<string>)writeOutputLineWithANSICodes, data);
                 return;
             }
 
