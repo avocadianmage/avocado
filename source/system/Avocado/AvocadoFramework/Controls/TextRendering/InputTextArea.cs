@@ -56,10 +56,14 @@ namespace AvocadoFramework.Controls.TextRendering
             caret.Width = formattedText.Width + 1;
             caret.Height = formattedText.Height + 1;
 
-            // Hook events.
+            // RichTextBox events.
             TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);
             TextBase.TextChanged += (s, e) => updateCaretLocation(caret);
+            var handler = new ScrollChangedEventHandler(
+                (s, e) => updateCaretLocation(caret));
+            TextBase.AddHandler(ScrollViewer.ScrollChangedEvent, handler);
 
+            // Window events.
             var window = Window.GetWindow(this);
             window.Activated += 
                 (s, e) => caret.Visibility = Visibility.Visible;
@@ -71,14 +75,8 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             var caretRect = TextBase.CaretPosition.GetCharacterRect(
                 TextBase.CaretPosition.LogicalDirection);
-
-            // Set X.
             Canvas.SetLeft(caret, caretRect.X);
-
-            // Set Y. It could appear below the viewport (if the text box has
-            // not scrolled yet) which is why we need to bound it.
-            var y = Math.Min(caretRect.Y, TextBase.ActualHeight - caretRect.Height);
-            Canvas.SetTop(caret, y);
+            Canvas.SetTop(caret, caretRect.Y);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
