@@ -46,6 +46,15 @@
 
                     </Grid>
 
+                    <!-- Give the text box focus. -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="textBase" 
+                                    Property="FocusManager.FocusedElement" 
+                                    Value="{Binding ElementName=textBase}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

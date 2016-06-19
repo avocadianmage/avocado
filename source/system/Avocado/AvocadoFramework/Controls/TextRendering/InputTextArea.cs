@@ -32,7 +32,7 @@ namespace AvocadoFramework.Controls.TextRendering
             base.OnApplyTemplate();
 
             initCaret();
-            TextBase.Focus();
+            Focus();
         }
 
         void initCaret()
