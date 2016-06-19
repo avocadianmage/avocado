@@ -77,6 +77,90 @@ namespace AvocadoShell.Engine
             base.OnPreviewKeyDown(e);
         }
 
+        bool handleBackAndLeftKeys(Key key)
+        {
+            if (TextBase.CaretPosition.Paragraph == null
+                || !isAtOrBeforePrompt(TextBase.CaretPosition))
+            {
+                return false;
+            }
+
+            // The caret position does not change if text is selected
+            // (unless Shift+Left is pressed) so we should not 
+            // suppress that case.
+            return TextBase.Selection.IsEmpty
+                || (key == Key.Left && IsShiftKeyDown);
+        }
+
+        bool handleHomeKey()
+        {
+            // Allow native handling if we are on separate line from the prompt
+            // and Ctrl was not pressed.
+            if (!IsControlKeyDown)
+            {
+                var lineStart
+                    = TextBase.CaretPosition.GetLineStartPosition(0);
+                if (!isAtOrBeforePrompt(lineStart)) return false;
+            }
+
+            // If we are on the same line as the prompt, move the cursor
+            // to the end of the prompt instead of the beginning of the
+            // line.
+            MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
+
+            return true;
+        }
+
+        bool handleCtrlAKey()
+        {
+            if (!IsControlKeyDown) return false;
+
+            // Ctrl+A will select all text after the prompt.
+            MoveCaretToDocumentEnd();
+            var promptPointer = TextBase.CaretPosition.GetPositionAtOffset(
+                -distanceToPromptEnd);
+            TextBase.Selection.Select(promptPointer, TextBase.CaretPosition);
+
+            return true;
+        }
+
+        bool handleEscKey()
+        {
+            // If no text was selected, delete all text at the prompt.
+            if (TextBase.Selection.IsEmpty) clearInput();
+            // Otherwise, cancel the selected text.
+            else ClearSelection();
+            return true;
+        }
+
+        bool handlePageUpAndPageDownKeys()
+        {
+            // Currently no support for PageUp/PageDown.
+            return true;
+        }
+
+        bool handleUpAndDownKeys(Key key)
+        {
+            inputHistoryLookup(key == Key.Down);
+            return true;
+        }
+
+        bool handleTabKey()
+        {
+            performAutocomplete();
+            return true;
+        }
+
+        bool handleEnterKey()
+        {
+            // Go to new line if shift is pressed at shell prompt.
+            if (IsShiftKeyDown) return false;
+
+            // Otherwise, execute the input.
+            execute();
+            return true;
+        }
+
         protected override void HandleSpecialKeys(KeyEventArgs e)
         {
             if (e.Handled) return;
@@ -86,71 +170,38 @@ namespace AvocadoShell.Engine
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:
-                    if (TextBase.CaretPosition.Paragraph == null) break;
-                    if (!isAtOrBeforePrompt(TextBase.CaretPosition)) break;
-                    // The caret position does not change if text is selected
-                    // (unless Shift+Left is pressed) so we should not 
-                    // suppress that case.
-                    e.Handled = TextBase.Selection.IsEmpty
-                        || (e.Key == Key.Left && IsShiftKeyDown);
+                    e.Handled = handleBackAndLeftKeys(e.Key);
                     break;
                 case Key.Home:
-                    if (!IsControlKeyDown)
-                    {
-                        var lineStart
-                            = TextBase.CaretPosition.GetLineStartPosition(0);
-                        if (!isAtOrBeforePrompt(lineStart)) break;
-                    }
-                    // If we are on the same line as the prompt, move the cursor
-                    // to the end of the prompt instead of the beginning of the
-                    // line.
-                    MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
-                    e.Handled = true;
+                    e.Handled = handleHomeKey();
                     break;
                 case Key.A:
-                    if (!IsControlKeyDown) break;
-                    // Ctrl+A will select all text after the prompt.
-                    MoveCaretToDocumentEnd();
-                    TextBase.Selection.Select(
-                        TextBase.CaretPosition.GetPositionAtOffset(
-                            -distanceToPromptEnd),
-                        TextBase.CaretPosition);
-                    e.Handled = true;
+                    e.Handled = handleCtrlAKey();
                     break;
-
-                // Currently no support for PageUp/PageDown.
                 case Key.PageUp:
                 case Key.PageDown:
-                    e.Handled = true;
+                    e.Handled = handlePageUpAndPageDownKeys();
                     break;
 
                 // Clear input or selection.
                 case Key.Escape:
-                    if (TextBase.Selection.IsEmpty) clearInput();
-                    else ClearSelection();
-                    e.Handled = true;
+                    e.Handled = handleEscKey();
                     break;
 
                 // Input history.
                 case Key.Up:
                 case Key.Down:
-                    inputHistoryLookup(e.Key == Key.Down);
-                    e.Handled = true;
+                    e.Handled = handleUpAndDownKeys(e.Key);
                     break;
 
                 // Autocompletion.
                 case Key.Tab:
-                    performAutocomplete();
-                    e.Handled = true;
+                    e.Handled = handleTabKey();
                     break;
 
                 // Handle command execution.
                 case Key.Enter:
-                    // Go to new line if shift is pressed at shell prompt.
-                    if (IsShiftKeyDown) break;
-                    // Otherwise, execute the input.
-                    execute();
-                    e.Handled = true;
+                    e.Handled = handleEnterKey();
                     break;
             }
             
