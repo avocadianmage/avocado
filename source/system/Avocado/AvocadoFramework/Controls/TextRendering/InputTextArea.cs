@@ -69,10 +69,16 @@ namespace AvocadoFramework.Controls.TextRendering
 
         void updateCaretLocation(UIElement caret)
         {
-            var caretLocation = TextBase.CaretPosition.GetCharacterRect(
+            var caretRect = TextBase.CaretPosition.GetCharacterRect(
                 TextBase.CaretPosition.LogicalDirection);
-            Canvas.SetLeft(caret, caretLocation.X);
-            Canvas.SetTop(caret, caretLocation.Y);
+
+            // Set X.
+            Canvas.SetLeft(caret, caretRect.X);
+
+            // Set Y. It could appear below the viewport (if the text box has
+            // not scrolled yet) which is why we need to bound it.
+            var y = Math.Min(caretRect.Y, TextBase.ActualHeight - caretRect.Height);
+            Canvas.SetTop(caret, y);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
