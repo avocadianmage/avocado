@@ -1,10 +1,11 @@
 $shortcutPath = Join-Path $env:APPDATA "Avocado"
-if (Test-Path $shortcutPath) { Remove-Item $shortcutPath\* -Recurse }
 
-function build($path) 
-{ 
+function build($path)
+{
     & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" $path `
-        /t:Build /p:Configuration=Release /p:OutputPath=$shortcutPath
+        /t:Clean,Build /p:Configuration=Release
+    & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" $path `
+        /t:Clean,Build /p:Configuration=Release /p:OutputPath=$shortcutPath
 }
 
 # Build system solutions.

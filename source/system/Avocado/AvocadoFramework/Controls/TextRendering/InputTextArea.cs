@@ -58,6 +58,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
             // Hook events.
             TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);
+            TextBase.TextChanged += (s, e) => updateCaretLocation(caret);
 
             var window = Window.GetWindow(this);
             window.Activated += 

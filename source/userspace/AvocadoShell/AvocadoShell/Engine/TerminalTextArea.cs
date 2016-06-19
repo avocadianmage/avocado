@@ -42,10 +42,6 @@ namespace AvocadoShell.Engine
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            // Scroll to the end each time a new line is added.
-            LineAdded += (sender, e) => TextBase.ScrollToEnd();
-            
             psEngine.InitEnvironment();
         }
         

@@ -1,5 +1,4 @@
 ﻿using AvocadoFramework.Animation;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -18,9 +17,6 @@ namespace AvocadoFramework.Controls.TextRendering
                 type,
                 new FrameworkPropertyMetadata(type));
         }
-
-        protected EventHandler LineAdded;
-        void fireLineAdded() => LineAdded?.Invoke(this, EventArgs.Empty);
 
         protected RichTextBox TextBase => textBase;
         RichTextBox textBase;
@@ -58,15 +54,13 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void WriteLine() => WriteLine(string.Empty, Foreground);
 
         protected void WriteLine(string text, Brush foreground)
-        {
-            Write($"{text.TrimEnd()}\r", foreground);
-            fireLineAdded();
-        }
-
-        protected void Clear() => TextBase.Document.Blocks.Clear();
+            => Write($"{text.TrimEnd()}\r", foreground);
 
         protected void MoveCaretToDocumentEnd()
-            => TextBase.CaretPosition = TextBase.CaretPosition.DocumentEnd;
+        {
+            TextBase.CaretPosition
+                = TextBase.CaretPosition.Paragraph.ContentEnd;
+        }
 
         protected void MoveCaret(int offset, bool select)
         {
@@ -83,9 +77,10 @@ namespace AvocadoFramework.Controls.TextRendering
             TextBase.Selection.Select(
                 TextBase.CaretPosition, TextBase.CaretPosition);
         }
-        
+
         protected int GetX(TextPointer pointer)
         {
+            // Use length of text, not symbols.
             var range = new TextRange(pointer.Paragraph.ContentStart, pointer);
             return range.Text.Length;
         }
