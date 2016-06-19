@@ -26,7 +26,10 @@ namespace AvocadoFramework.Engine
         // Initialization and startup code.
         protected override void OnContentRendered(EventArgs e)
         {
-            base.OnSourceInitialized(e);
+            base.OnContentRendered(e);
+
+            // Set initial focus.
+            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
             // Show the window.
             initializeWindowFading();

@@ -30,9 +30,7 @@ namespace AvocadoFramework.Controls.TextRendering
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
             initCaret();
-            Focus();
         }
 
         void initCaret()
