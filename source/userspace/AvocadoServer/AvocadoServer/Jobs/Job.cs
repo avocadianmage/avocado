@@ -1,6 +1,6 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerCore;
-using System.Collections.Generic;
+using AvocadoUtilities.CommandLine;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -13,23 +13,20 @@ namespace AvocadoServer.Jobs
     public sealed class Job
     {
         readonly string filename;
-        readonly int secInterval;
-        readonly IEnumerable<string> args;
+        readonly int? secInterval;
         
         readonly CancellationTokenSource tokenSource 
             = new CancellationTokenSource();
 
-        public Job(string filename, int secInterval, IEnumerable<string> args)
+        public Job(string filename, int? secInterval)
         {
             this.filename = filename;
             this.secInterval = secInterval;
-            this.args = args;
         }
 
         public override string ToString()
         {
             var str = filename;
-            if (args.Any()) str += $"({string.Join(", ", args)})";
             return str;
         }
         
@@ -43,18 +40,25 @@ namespace AvocadoServer.Jobs
             {
                 // Dispatch an execution of the job.
                 dispatchedThread().RunAsync();
-                
+
+                // If no interval is specified, only execute the job once.
+                if (!secInterval.HasValue) break;
+
                 // Wait for the specified interval between dispatches.
                 const int MsInSec = 1000;
-                await Task.Delay(secInterval * MsInSec);
+                await Task.Delay(secInterval.Value * MsInSec);
             }
         }
 
         //TODO: terminate running process?
         async Task dispatchedThread()
         {
+            var args = new Arguments(filename);
+
             // Initialize the process.
-            var proc = new ManagedProcess(filename, args.ToArray());
+            var proc = new ManagedProcess(
+                args.PopArg(), 
+                args.PopRemainingArgs().ToArray());
             proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
             proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
 
@@ -70,8 +74,7 @@ namespace AvocadoServer.Jobs
         public XmlJob ToXml() => new XmlJob
         {
             Filename = filename,
-            SecInterval = secInterval,
-            Args = args.ToList()
+            SecInterval = secInterval.Value
         };
     }
 }

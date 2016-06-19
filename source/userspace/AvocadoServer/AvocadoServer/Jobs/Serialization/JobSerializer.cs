@@ -5,14 +5,14 @@ using System.Xml.Serialization;
 
 namespace AvocadoServer.Jobs.Serialization
 {
-    static class JobSerializer
+    sealed class JobSerializer
     {
-        static string filePath => Path.Combine(Path.GetTempPath(), "jobs.xml");
-
-        static readonly XmlSerializer serializer 
+        readonly static XmlSerializer serializer
             = new XmlSerializer(typeof(List<XmlJob>));
 
-        public static IEnumerable<Job> Load()
+        string filePath => Path.Combine(Path.GetTempPath(), "jobs.xml");
+
+        public IEnumerable<Job> Load()
         {
             // Quit if serialized data does not exist.
             if (!File.Exists(filePath)) return null;
@@ -29,7 +29,7 @@ namespace AvocadoServer.Jobs.Serialization
             }
         }
 
-        public static void Save(IEnumerable<Job> jobs)
+        public void Save(IEnumerable<Job> jobs)
         {
             lock (serializer)
             {

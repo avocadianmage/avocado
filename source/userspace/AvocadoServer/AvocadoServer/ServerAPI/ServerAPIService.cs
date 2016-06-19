@@ -22,12 +22,12 @@ namespace AvocadoServer.ServerAPI
         }
 
         [AllowedClient(ClientType.ThisMachine)]
-        public Pipeline RunJob(string filename, int secInterval, string[] args)
+        public Pipeline RunJob(string filename, int? secInterval)
         {
             return ExecuteRequest(
-                p => EntryPoint.Jobs.StartJob(filename, secInterval, args), 
+                p => EntryPoint.Jobs.StartJob(filename, secInterval), 
                 MethodBase.GetCurrentMethod(), 
-                filename, secInterval, args);
+                filename, secInterval);
         }
         
         [AllowedClient(ClientType.LAN)]

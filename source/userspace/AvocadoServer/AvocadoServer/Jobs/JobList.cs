@@ -2,6 +2,8 @@
 using AvocadoServer.ServerAPI;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using UtilityLib.MiscTools;
 
 namespace AvocadoServer.Jobs
 {
@@ -14,28 +16,25 @@ namespace AvocadoServer.Jobs
         
         public void RestoreFromDisk()
         {
-            // Load saved jobs from disk.
-            var jobs = JobSerializer.Load();
-            if (jobs == null) return;
-
-            // Start all jobs that were deserialized.
-            foreach (var job in jobs) startJobCore(job);
+            // Load saved jobs from disk and start them.
+            new JobSerializer().Load()?.ForEach(job =>
+            {
+                reserveId(job);
+                job.Start();
+            });
         }
 
-        void saveJobs() => JobSerializer.Save(jobTable.Values);
+        void saveJobs()
+            => Task.Run(() => new JobSerializer().Save(jobTable.Values));
         
-        public void StartJob(
-            string filename, 
-            int secInterval,
-            IEnumerable<string> args)
+        public void StartJob(string filename, int? secInterval)
         {
-            startJobCore(new Job(filename, secInterval, args));
-            saveJobs();
-        }
-
-        void startJobCore(Job job)
-        {
-            reserveId(job);
+            var job = new Job(filename, secInterval);
+            if (secInterval.HasValue)
+            {
+                reserveId(job);
+                saveJobs();
+            }
             job.Start();
         }
 

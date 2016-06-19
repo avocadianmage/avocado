@@ -51,7 +51,7 @@ namespace AvocadoClient
         public static void RunJob(Arguments args)
         {
             const string ERROR_FORMAT 
-                = "{0} Expected: Client {1} <filename> <interval> [args]";
+                = "{0} Expected: Client {1} <filename> [interval]";
 
             // Get required filename parameter.
             var filename = args.PopArg();
@@ -63,22 +63,11 @@ namespace AvocadoClient
                     nameof(RunJob)));
             }
 
-            // Get required interval parameter.
+            // Get optional interval parameter.
             var secInterval = args.PopArg<int>();
-            if (secInterval == null)
-            {
-                TerminatingError(string.Format(
-                    ERROR_FORMAT,
-                    "Missing <interval> parameter.",
-                    nameof(RunJob)));
-            }
-            
-            // Get any optional job arguments.
-            var jobArgs = args.PopRemainingArgs().ToArray();
 
             // Call to server.
-            RunCommand(() => CreateClient().RunJob(
-                filename, secInterval.Value, jobArgs));
+            RunCommand(() => CreateClient().RunJob(filename, secInterval));
         }
 
         [Subcommand]
