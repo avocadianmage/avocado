@@ -13,7 +13,8 @@ namespace AvocadoServer.Jobs
 
         public IEnumerable<string> GetJobTableInfo()
         {
-            var padding = jobTable.Keys.Max().ToString().Length;
+            var padding = jobTable.Keys
+                .DefaultIfEmpty().Max().ToString().Length;
             return jobTable.Select(pair 
                 => $"{pair.Key.ToString().PadLeft(padding)} - [{pair.Value}]");
         }
