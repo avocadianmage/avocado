@@ -40,7 +40,7 @@
     <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.Pipeline.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.PipelineOfArrayOfstringuHEDJ7Dj.datasource">
+    <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.PipelineOfstring.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\ServerAPIReference\ServerAPI.xsd">
@@ -50,9 +50,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServerAPIReference\ServerAPI2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServerAPIReference\ServerAPI3.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServerAPIReference\ServerAPIService.wsdl" />

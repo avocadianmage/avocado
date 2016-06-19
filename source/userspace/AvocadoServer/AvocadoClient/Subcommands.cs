@@ -3,7 +3,6 @@ using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using UtilityLib.MiscTools;
 using static AvocadoClient.WCF;
 using static UtilityLib.Processes.ConsoleProc;
@@ -36,16 +35,14 @@ namespace AvocadoClient
         {
             var result = RunCommand(CreateClient().GetJobs);
 
-            var jobs = (result as PipelineOfArrayOfstringuHEDJ7Dj).Data;
-            if (jobs == null) return;
-
-            if (!jobs.Any())
+            var jobs = (result as PipelineOfstring).Data;
+            if (string.IsNullOrWhiteSpace(jobs))
             {
                 Console.WriteLine("There are no jobs running.");
                 return;
             }
 
-            jobs.ForEach(Console.WriteLine);
+            Console.WriteLine(jobs);
         }
 
         [Subcommand]

@@ -1,5 +1,6 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerAPI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +12,15 @@ namespace AvocadoServer.Jobs
     {
         readonly Dictionary<int, Job> jobTable = new Dictionary<int, Job>();
 
-        public IEnumerable<string> GetJobTableInfo()
+        public string GetJobTableInfo()
         {
-            var padding = jobTable.Keys
-                .DefaultIfEmpty().Max().ToString().Length;
-            return jobTable.Select(pair 
-                => $"{pair.Key.ToString().PadLeft(padding)} - [{pair.Value}]");
+            if (!jobTable.Any()) return null;
+
+            var padding = jobTable.Keys.Max().ToString().Length;
+            return jobTable
+                .Select(pair =>
+                    $"{pair.Key.ToString().PadLeft(padding)} - [{pair.Value}]")
+                .Aggregate((a, l) => a + Environment.NewLine + l);
         }
         
         public void RestoreFromDisk()

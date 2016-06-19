@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace AvocadoServer.ServerAPI
 {
@@ -10,7 +9,7 @@ namespace AvocadoServer.ServerAPI
         Pipeline Ping();
 
         [OperationContract]
-        Pipeline<IEnumerable<string>> GetJobs();
+        Pipeline<string> GetJobs();
 
         [OperationContract]
         Pipeline RunJob(string workingDirectory, string name, int? secInterval);

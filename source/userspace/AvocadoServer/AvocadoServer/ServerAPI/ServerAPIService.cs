@@ -1,5 +1,4 @@
 ﻿using AvocadoServer.ServerCore;
-using System.Collections.Generic;
 using System.Reflection;
 using static AvocadoServer.ServerCore.CommandContext;
 
@@ -14,7 +13,7 @@ namespace AvocadoServer.ServerAPI
         }
         
         [AllowedClient(ClientType.LAN)]
-        public Pipeline<IEnumerable<string>> GetJobs()
+        public Pipeline<string> GetJobs()
         {
             return ExecuteRequest(
                 p => EntryPoint.Jobs.GetJobTableInfo(), 
