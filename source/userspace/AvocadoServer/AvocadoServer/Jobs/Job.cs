@@ -1,8 +1,6 @@
 ﻿using AvocadoServer.Jobs.Serialization;
 using AvocadoServer.ServerCore;
-using AvocadoUtilities.CommandLine;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
@@ -51,11 +49,8 @@ namespace AvocadoServer.Jobs
         //TODO: terminate running process?
         async Task dispatchedThread()
         {
-            var args = new Arguments(filename);
-
             // Initialize the process.
-            var proc = new ManagedProcess(
-                args.PopArg(), args.PopRemainingArgs().ToArray());
+            var proc = new ManagedProcess("PowerShell", filename);
             proc.WorkingDirectory = workingDirectory;
             proc.OutputReceived += (s, e) => Logger.WriteLine(this, e.Data);
             proc.ErrorReceived += (s, e) => Logger.WriteErrorLine(this, e.Data);
