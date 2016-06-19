@@ -2,6 +2,7 @@
 using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using UtilityLib.MiscTools;
 using static AvocadoClient.WCF;
@@ -67,7 +68,8 @@ namespace AvocadoClient
             var secInterval = args.PopArg<int>();
 
             // Call to server.
-            RunCommand(() => CreateClient().RunJob(filename, secInterval));
+            RunCommand(() => CreateClient().RunJob(
+                Directory.GetCurrentDirectory(), filename, secInterval));
         }
 
         [Subcommand]

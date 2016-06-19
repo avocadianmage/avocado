@@ -13,7 +13,7 @@ namespace AvocadoServer.ServerAPI
         Pipeline<IEnumerable<string>> GetJobs();
 
         [OperationContract]
-        Pipeline RunJob(string name, int? secInterval);
+        Pipeline RunJob(string workingDirectory, string name, int? secInterval);
 
         [OperationContract]
         Pipeline KillJob(int id);

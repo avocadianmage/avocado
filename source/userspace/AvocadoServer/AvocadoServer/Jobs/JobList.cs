@@ -12,7 +12,11 @@ namespace AvocadoServer.Jobs
         readonly Dictionary<int, Job> jobTable = new Dictionary<int, Job>();
 
         public IEnumerable<string> GetJobTableInfo()
-            => jobTable.Select(pair => $"{pair.Key}:{pair.Value}");
+        {
+            var padding = jobTable.Keys.Max().ToString().Length;
+            return jobTable.Select(pair 
+                => $"{pair.Key.ToString().PadLeft(padding)} - [{pair.Value}]");
+        }
         
         public void RestoreFromDisk()
         {
@@ -27,9 +31,10 @@ namespace AvocadoServer.Jobs
         void saveJobs()
             => Task.Run(() => new JobSerializer().Save(jobTable.Values));
         
-        public void StartJob(string filename, int? secInterval)
+        public void StartJob(
+            string workingDirectory, string filename, int? secInterval)
         {
-            var job = new Job(filename, secInterval);
+            var job = new Job(workingDirectory, filename, secInterval);
             if (secInterval.HasValue)
             {
                 reserveId(job);

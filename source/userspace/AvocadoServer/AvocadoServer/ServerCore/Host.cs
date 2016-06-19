@@ -24,28 +24,41 @@ namespace AvocadoServer.ServerCore
 
         public void Start(bool withMetadata)
         {
-            addTCPEndpoint(host);
-            if (withMetadata) addMetadataEndpoint(host);
+            addTCPEndpoint();
+            addBehaviors(withMetadata);
             ConsoleProc.RunCriticalCode(host.Open);
         }
 
         public void Stop() => host.Close();
 
-        void addTCPEndpoint(ServiceHost host)
+        void addTCPEndpoint()
         {
             host.AddServiceEndpoint(
-                typeof(IServerAPI),
-                new NetTcpBinding(),
-                TCPEndpoint);
+                typeof(IServerAPI), new NetTcpBinding(), TCPEndpoint);
         }
 
-        void addMetadataEndpoint(ServiceHost host)
+        void addBehaviors(bool withMetadata)
         {
-            host.Description.Behaviors.Add(new ServiceMetadataBehavior
+            var behaviors = host.Description.Behaviors;
+
+            // Add metadata end point.
+            if (withMetadata)
             {
-                HttpGetEnabled = true,
-                HttpGetUrl = new Uri(MetadataEndpoint)
-            });
+                behaviors.Add(new ServiceMetadataBehavior
+                {
+                    HttpGetEnabled = true,
+                    HttpGetUrl = new Uri(MetadataEndpoint)
+                });
+            }
+
+            // Add debugging information.
+            var debugBehaviorType = typeof(ServiceDebugBehavior);
+            if (!behaviors.Contains(debugBehaviorType))
+            {
+                behaviors.Add(new ServiceDebugBehavior());
+            }
+            (behaviors[debugBehaviorType] as ServiceDebugBehavior)
+                .IncludeExceptionDetailInFaults = true;
         }
     }
 }
