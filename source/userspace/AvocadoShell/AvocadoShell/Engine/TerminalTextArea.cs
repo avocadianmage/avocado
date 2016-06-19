@@ -45,15 +45,15 @@ namespace AvocadoShell.Engine
             psEngine.InitEnvironment();
         }
         
-        void onExecDone(object sender, ExecDoneEventArgs e)
+        async void onExecDone(object sender, ExecDoneEventArgs e)
         {
             // Display error, if any.
             if (!string.IsNullOrWhiteSpace(e.Error)) WriteErrorLine(e.Error);
 
             // Show the next shell prompt.
-            var shellPromptStr = getShellPromptString().Result;
-            Dispatcher.BeginInvoke(
-                new Action(() => displayShellPrompt(shellPromptStr)));
+            var promptStr = await getShellPromptString();
+            await Dispatcher.BeginInvoke(
+                new Action(() => displayShellPrompt(promptStr)));
         }
 
         void terminateExec()
