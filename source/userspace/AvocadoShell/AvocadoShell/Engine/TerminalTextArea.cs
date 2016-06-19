@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
@@ -57,7 +58,8 @@ namespace AvocadoShell.Engine
             // Show the next shell prompt.
             var promptStr = await getShellPromptString();
             await Dispatcher.BeginInvoke(
-                (Action)(() => displayShellPrompt(promptStr)));
+                (Action)(() => writeShellPrompt(promptStr)),
+                DispatcherPriority.Loaded);
         }
 
         void terminateExec()
@@ -287,14 +289,14 @@ namespace AvocadoShell.Engine
         string writePrompt(string prompt, bool secure)
         {
             Dispatcher.BeginInvoke(
-                (Action)(() => startPrompt(prompt, false, secure)));
+                (Action)(() => writePromptCore(prompt, false, secure)));
             return resetEvent.Block();
         }
 
-        void displayShellPrompt(string text)
+        void writeShellPrompt(string text)
         {
             SetWindowTitle(text);
-            startPrompt(text, true, false);
+            writePromptCore(text, true, false);
         }
 
         async Task<string> getShellPromptString()
@@ -316,7 +318,7 @@ namespace AvocadoShell.Engine
             return prompt;
         }
 
-        void startPrompt(string text, bool fromShell, bool secure)
+        void writePromptCore(string text, bool fromShell, bool secure)
         {
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
@@ -324,7 +326,7 @@ namespace AvocadoShell.Engine
             Write(" ", secure ? Brushes.Transparent : Foreground);
 
             // Update the current prompt object.
-            currentPrompt.Update(fromShell, CurrentLineString);
+            currentPrompt.Update(fromShell, FullText.Length);
 
             clearUndoBuffer();
 
@@ -346,12 +348,9 @@ namespace AvocadoShell.Engine
             // Check if the line contains any ANSI codes that we should process.
             if (ANSICode.ContainsANSICodes(data))
             {
-                Dispatcher.BeginInvoke(
-                    (Action<string>)writeOutputLineWithANSICodes, data);
-                return;
+                writeOutputLineWithANSICodes(data);
             }
-
-            safeWrite(data, Config.SystemFontBrush, true);
+            else safeWrite(data, Config.SystemFontBrush, true);
         }
 
         public void WriteErrorLine(string data)
@@ -360,9 +359,10 @@ namespace AvocadoShell.Engine
         void safeWrite(string data, Brush foreground, bool newline)
         {
             var action = newline
-                ? new Action<string, Brush>(WriteLine)
-                : new Action<string, Brush>(Write);
-            Dispatcher.BeginInvoke(action, data, foreground);
+                ? (Action<string, Brush>)WriteLine
+                : (Action<string, Brush>)Write;
+            Dispatcher.BeginInvoke(
+                action, DispatcherPriority.Loaded, data, foreground);
         }
 
         void writeOutputLineWithANSICodes(string data)
@@ -375,16 +375,18 @@ namespace AvocadoShell.Engine
             writeANSISegment(segments.Last(), true);
         }
 
-        void writeANSISegment(ANSISegment segment, bool newLine)
+        void writeANSISegment(ANSISegment segment, bool newline)
         {
-            var text = segment.Text;
-            var brush = segment.Brush ?? Config.SystemFontBrush;
-            if (newLine) WriteLine(text, brush);
-            else Write(text, brush);
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                var brush = segment.Color.HasValue
+                    ? new SolidColorBrush(segment.Color.Value)
+                    : Config.SystemFontBrush;
+                safeWrite(segment.Text, brush, newline);
+            }));
         }
 
-        string getInput()
-            => CurrentLineString.Substring(currentPrompt.Text.Length);
+        string getInput() => FullText.Substring(currentPrompt.Length);
 
         void inputHistoryLookup(bool forward)
         {
@@ -417,9 +419,9 @@ namespace AvocadoShell.Engine
         }
 
         bool isAtOrBeforePrompt(TextPointer pointer)
-            => (GetX(pointer) <= currentPrompt.Text.Length);
+            => (GetX(pointer) <= currentPrompt.Length);
 
         int distanceToPromptEnd
-            => GetX(TextBase.CaretPosition) - currentPrompt.Text.Length;
+            => GetX(TextBase.CaretPosition) - currentPrompt.Length;
     }
 }

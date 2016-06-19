@@ -32,7 +32,7 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void Write(string text, Brush foreground)
         {
             // Insert the text at the caret position.
-            var pos = TextBase.CaretPosition;
+            var pos = textBase.CaretPosition;
             var range = new TextRange(pos, pos) { Text = text };
 
             // Apply color and animation to the newly inserted text.
@@ -41,7 +41,7 @@ namespace AvocadoFramework.Controls.TextRendering
                 createFadeInBrush(foreground));
 
             // Move the caret to the end of the inserted text.
-            TextBase.CaretPosition = range.End;
+            textBase.CaretPosition = range.End;
         }
 
         static Brush createFadeInBrush(Brush baseBrush)
@@ -58,24 +58,24 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void MoveCaretToDocumentEnd()
         {
-            TextBase.CaretPosition
-                = TextBase.CaretPosition.Paragraph.ContentEnd;
+            textBase.CaretPosition
+                = textBase.CaretPosition.Paragraph.ContentEnd;
         }
 
         protected void MoveCaret(int offset, bool select)
         {
-            var before = TextBase.CaretPosition;
+            var before = textBase.CaretPosition;
             var after = before.GetPositionAtOffset(offset);
 
             // If requested, select the contents in between.
-            if (select) TextBase.Selection.Select(before, after);
-            else TextBase.CaretPosition = after;
+            if (select) textBase.Selection.Select(before, after);
+            else textBase.CaretPosition = after;
         }
 
         protected void ClearSelection()
         {
-            TextBase.Selection.Select(
-                TextBase.CaretPosition, TextBase.CaretPosition);
+            textBase.Selection.Select(
+                textBase.CaretPosition, textBase.CaretPosition);
         }
 
         protected int GetX(TextPointer pointer)
@@ -85,14 +85,12 @@ namespace AvocadoFramework.Controls.TextRendering
             return range.Text.Length;
         }
 
-        protected string CurrentLineString
+        protected string FullText
         {
             get
             {
-                var paragraph = TextBase.CaretPosition.Paragraph;
-                var start = paragraph.ContentStart;
-                var end = paragraph.ContentEnd;
-                return new TextRange(start, end).Text;
+                var para = TextBase.CaretPosition.Paragraph;
+                return new TextRange(para.ContentStart, para.ContentEnd).Text;
             }
         }
     }

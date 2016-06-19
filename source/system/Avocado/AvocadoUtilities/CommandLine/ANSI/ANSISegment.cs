@@ -4,12 +4,12 @@ namespace AvocadoUtilities.CommandLine.ANSI
 {
     public struct ANSISegment
     {
-        public Brush Brush { get; }
+        public Color? Color { get; }
         public string Text { get; }
 
-        public ANSISegment(Brush brush, string text)
+        public ANSISegment(Color? color, string text)
         {
-            Brush = brush;
+            Color = color;
             Text = text;
         }
     }

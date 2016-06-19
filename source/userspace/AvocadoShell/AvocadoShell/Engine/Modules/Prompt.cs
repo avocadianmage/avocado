@@ -3,12 +3,12 @@
     sealed class Prompt
     {
         public bool FromShell { get; private set; }
-        public string Text { get; private set; }
+        public int Length { get; private set; }
 
-        public void Update(bool fromShell, string text)
+        public void Update(bool fromShell, int length)
         {
             FromShell = fromShell;
-            Text = text;
+            Length = length;
         }
     }
 }

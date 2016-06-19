@@ -35,7 +35,7 @@ namespace AvocadoUtilities.CommandLine.ANSI
 
             // Any following segments are guaranteed to have ANSI codes 
             // prefixes.
-            Brush brush = null;
+            Color? color = null;
             for (var i = 1; i < segments.Length; i++)
             {
                 var seg = segments[i];
@@ -57,13 +57,13 @@ namespace AvocadoUtilities.CommandLine.ANSI
                     if (seg[commandIndex] == 'm')
                     {
                         var sequence = seg.Substring(0, commandIndex);
-                        brush = codeSequenceToBrush(sequence);
+                        color = codeSequenceToColor(sequence);
                     }
                 }
 
                 // Add the text segment, if it is not empty.
                 if (string.IsNullOrEmpty(text)) continue;
-                ret.Add(new ANSISegment(brush, text));
+                ret.Add(new ANSISegment(color, text));
             }
 
             return ret;
@@ -71,7 +71,7 @@ namespace AvocadoUtilities.CommandLine.ANSI
 
         // Look for extended foreground color set sequence '38;2;{R};{G};{B}'.
         // This is the only thing we support.
-        static Brush codeSequenceToBrush(string sequence)
+        static Color? codeSequenceToColor(string sequence)
         {
             // Loop through the semicolon-delimited list of codes.
             var codes = sequence.Split(';');
@@ -111,15 +111,12 @@ namespace AvocadoUtilities.CommandLine.ANSI
 
                 // Convert the RGB to a Brush object and return.
                 var i = 0;
-                return rgbToBrush(rgb[i++], rgb[i++], rgb[i++]);
+                return Color.FromRgb(rgb[i++], rgb[i++], rgb[i++]);
             }
 
             // Quit if no valid sequence was found.
             return null;
         }
-
-        static Brush rgbToBrush(byte r, byte g, byte b)
-            => new SolidColorBrush(Color.FromRgb(r, g, b));
 
         static bool tryParsePiece(
             string piece,
