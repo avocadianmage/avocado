@@ -59,7 +59,7 @@ namespace AvocadoShell.Engine
             var promptStr = await getShellPromptString();
             await Dispatcher.BeginInvoke(
                 (Action)(() => writeShellPrompt(promptStr)),
-                DispatcherPriority.Loaded);
+                DispatcherPriority.Background);
         }
 
         void terminateExec()
@@ -362,7 +362,7 @@ namespace AvocadoShell.Engine
                 ? (Action<string, Brush>)WriteLine
                 : (Action<string, Brush>)Write;
             Dispatcher.BeginInvoke(
-                action, DispatcherPriority.Loaded, data, foreground);
+                action, DispatcherPriority.Background, data, foreground);
         }
 
         void writeOutputLineWithANSICodes(string data)
