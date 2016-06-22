@@ -132,7 +132,6 @@
                         <!-- Border. -->
                         <Border BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="2"
-                                Margin="2"
                                 CornerRadius="1">
                             <Border.Background>
                                 <SolidColorBrush Color="Black" Opacity="0.85"/>
