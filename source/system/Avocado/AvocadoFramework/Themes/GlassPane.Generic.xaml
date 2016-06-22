@@ -9,7 +9,19 @@
     
     <!-- Styling. -->
     <Style TargetType="{x:Type engine:GlassPane}">
+
+        <!-- Resources -->
+        <Style.Resources>
+            <Thickness x:Key="WindowMargin">10</Thickness>
+        </Style.Resources>
         
+        <!-- Area for resizing. -->
+        <Setter Property="WindowChrome.WindowChrome">
+            <Setter.Value>
+                <WindowChrome ResizeBorderThickness="{StaticResource WindowMargin}" />
+            </Setter.Value>
+        </Setter>
+
         <!-- Properties. -->
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="BorderBrush">
@@ -21,7 +33,6 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Opacity" Value="0" />
-        <Setter Property="ResizeMode" Value="CanMinimize" />
         <Setter Property="WindowStyle" Value="None" />
         
         <!-- Template. -->
@@ -119,18 +130,17 @@
                     <Grid>
                         
                         <!-- Border. -->
-                        <Border 
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="2"
-                        Margin="2"
-                        CornerRadius="1">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="2"
+                                Margin="2"
+                                CornerRadius="1">
                             <Border.Background>
                                 <SolidColorBrush Color="Black" Opacity="0.85"/>
                             </Border.Background>
                         </Border>
                         
                         <!-- Content. -->
-                        <Grid Margin="10">
+                        <Grid Margin="{StaticResource WindowMargin}">
                             <ContentPresenter />
                         </Grid>
                         

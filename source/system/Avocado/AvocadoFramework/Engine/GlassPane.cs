@@ -36,15 +36,6 @@ namespace AvocadoFramework.Engine
             windowFadeAnimator.Animate(true);
         }
 
-        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonDown(e);
-
-            // Only allow the mouse to drag the window.
-            e.Handled = true;
-            DragMove();
-        }
-
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);

@@ -4,11 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avocadoShell="clr-namespace:AvocadoShell.Engine"
     xmlns:avocadoFramework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
-    SizeToContent="WidthAndHeight">
+    Width="640" Height="460">
 
-    <avocadoShell:TerminalTextArea 
-        Width="625"
-        Height="451" 
-        Foreground="SkyBlue" />
+    <avocadoShell:TerminalTextArea Foreground="SkyBlue" />
 
 </avocadoFramework:GlassPane>
