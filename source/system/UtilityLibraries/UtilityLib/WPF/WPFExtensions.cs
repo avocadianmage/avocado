@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace UtilityLib.WPF
 {
@@ -10,8 +11,7 @@ namespace UtilityLib.WPF
         // Get the element with the specified name from the template of this
         // control.
         public static T GetTemplateElement<T>(
-            this Control control,
-            string name) where T : FrameworkElement
+            this Control control, string name) where T : FrameworkElement
         {
             return (T)control.Template.FindName(name, control);
         }
@@ -26,5 +26,8 @@ namespace UtilityLib.WPF
                 element.GetType());
             desc.AddValueChanged(element, handler);
         }
+
+        public static IntPtr GetHandle(this Window window)
+            => new WindowInteropHelper(window).Handle;
     }
 }

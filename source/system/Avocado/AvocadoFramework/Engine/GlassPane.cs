@@ -2,9 +2,12 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using UtilityLib.Processes;
+using UtilityLib.WPF;
 
 namespace AvocadoFramework.Engine
 {
@@ -23,13 +26,23 @@ namespace AvocadoFramework.Engine
                 new FrameworkPropertyMetadata(frameType));
         }
 
-        // Initialization and startup code.
+        // Startup code.
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+
+            // Handle maximizing.
+            var source = HwndSource.FromHwnd(this.GetHandle());
+            source.AddHook(new HwndSourceHook(WndProc));
+            
+            // Set initial focus.
+            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+        }
+
+        // UI startup code.
         protected override void OnContentRendered(EventArgs e)
         {
             base.OnContentRendered(e);
-
-            // Set initial focus.
-            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
             // Show the window.
             initializeWindowFading();
@@ -65,6 +78,30 @@ namespace AvocadoFramework.Engine
 
             // Start the fade out animation.
             windowFadeAnimator.Animate(false);
+        }
+
+        IntPtr WndProc(
+            IntPtr hwnd,
+            int msg,
+            IntPtr wParam, IntPtr lParam,
+            ref bool handled)
+        {
+            const int WM_SYSCOMMAND = 0x112;
+            const int SC_MAXIMIZE = 0xF030;
+
+            // Listen for maximize event.
+            if (msg != WM_SYSCOMMAND) return IntPtr.Zero;
+            if (wParam.ToInt32() != SC_MAXIMIZE) return IntPtr.Zero;
+
+            // Set dimensions to the current screen's working area.
+            var workArea = Screen.FromHandle(this.GetHandle()).WorkingArea;
+            Width = workArea.Width;
+            Height = workArea.Height;
+            Left = workArea.Left;
+            Top = workArea.Top;
+
+            handled = true;
+            return IntPtr.Zero;
         }
 
         void initializeWindowFading()
