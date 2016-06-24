@@ -12,12 +12,12 @@ namespace AvocadoServer.Jobs
     {
         readonly string workingDirectory;
         readonly string filename;
-        readonly int? secInterval;
+        readonly int secInterval;
         
         readonly CancellationTokenSource tokenSource 
             = new CancellationTokenSource();
 
-        public Job(string workingDirectory, string filename, int? secInterval)
+        public Job(string workingDirectory, string filename, int secInterval)
         {
             this.workingDirectory = workingDirectory;
             this.filename = filename;
@@ -38,11 +38,11 @@ namespace AvocadoServer.Jobs
                 dispatchedThread().RunAsync();
 
                 // If no interval is specified, only execute the job once.
-                if (!secInterval.HasValue) break;
+                if (secInterval <= 0) break;
 
                 // Wait for the specified interval between dispatches.
                 const int MsInSec = 1000;
-                await Task.Delay(secInterval.Value * MsInSec);
+                await Task.Delay(secInterval * MsInSec);
             }
         }
 
@@ -68,7 +68,7 @@ namespace AvocadoServer.Jobs
         {
             WorkingDirectory = workingDirectory,
             Filename = filename,
-            SecInterval = secInterval.Value
+            SecInterval = secInterval
         };
     }
 }

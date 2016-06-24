@@ -37,10 +37,10 @@ namespace AvocadoServer.Jobs
             => Task.Run(() => new JobSerializer().Save(jobTable.Values));
         
         public void StartJob(
-            string workingDirectory, string filename, int? secInterval)
+            string workingDirectory, string filename, int secInterval)
         {
             var job = new Job(workingDirectory, filename, secInterval);
-            if (secInterval.HasValue)
+            if (secInterval > 0)
             {
                 reserveId(job);
                 saveJobs();

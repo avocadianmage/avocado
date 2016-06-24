@@ -39,14 +39,5 @@ namespace AvocadoServer.ServerAPI
                 MethodBase.GetCurrentMethod(),
                 workingDirectory, secInterval, filename);
         }
-
-        [AllowedClient(ClientType.ThisMachine)]
-        public Pipeline Run(string workingDirectory, string filename)
-        {
-            return ExecuteRequest(
-                p => EntryPoint.Jobs.StartJob(workingDirectory, filename, null),
-                MethodBase.GetCurrentMethod(),
-                workingDirectory, filename);
-        }
     }
 }

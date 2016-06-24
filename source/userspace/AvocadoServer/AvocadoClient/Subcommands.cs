@@ -73,11 +73,6 @@ namespace AvocadoClient
                     "Missing <interval> parameter.",
                     nameof(RunJob)));
             }
-            else if (secInterval <= 0)
-            {
-                TerminatingError(
-                    "Fatal: <interval> must be a positive integer.");
-            }
 
             // Get required filename parameter.
             var filename = string.Join(" ", args.PopRemainingArgs());
@@ -105,8 +100,8 @@ namespace AvocadoClient
             }
 
             // Execute command on server.
-            RunCommand(() => CreateClient().Run(
-                Directory.GetCurrentDirectory(), filename));
+            RunCommand(() => CreateClient().RunJob(
+                Directory.GetCurrentDirectory(), 0, filename));
         }
     }
 }
