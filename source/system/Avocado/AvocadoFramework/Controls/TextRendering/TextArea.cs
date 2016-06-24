@@ -57,10 +57,7 @@ namespace AvocadoFramework.Controls.TextRendering
             => Write($"{text.TrimEnd()}\r", foreground);
 
         protected void MoveCaretToDocumentEnd()
-        {
-            textBase.CaretPosition
-                = textBase.CaretPosition.Paragraph.ContentEnd;
-        }
+            => textBase.CaretPosition = paragraph.ContentEnd;
 
         protected void MoveCaret(int offset, bool select)
         {
@@ -84,14 +81,14 @@ namespace AvocadoFramework.Controls.TextRendering
             var range = new TextRange(pointer.Paragraph.ContentStart, pointer);
             return range.Text.Length;
         }
-
+        
         protected string FullText
-        {
-            get
-            {
-                var para = TextBase.CaretPosition.Paragraph;
-                return new TextRange(para.ContentStart, para.ContentEnd).Text;
-            }
-        }
+            => new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text;
+
+        Paragraph paragraph
+            => textBase.CaretPosition.Paragraph 
+            ?? textBase.CaretPosition
+                .GetNextInsertionPosition(LogicalDirection.Backward)
+                .Paragraph;
     }
 }

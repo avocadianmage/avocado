@@ -95,10 +95,8 @@ namespace AvocadoFramework.Engine
 
             // Set dimensions to the current screen's working area.
             var workArea = Screen.FromHandle(this.GetHandle()).WorkingArea;
-            Width = workArea.Width;
-            Height = workArea.Height;
-            Left = workArea.Left;
-            Top = workArea.Top;
+            Width = workArea.Width; Height = workArea.Height;
+            Left = workArea.Left; Top = workArea.Top;
 
             handled = true;
             return IntPtr.Zero;
