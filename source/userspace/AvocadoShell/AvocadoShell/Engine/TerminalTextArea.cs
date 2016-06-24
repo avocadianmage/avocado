@@ -56,10 +56,7 @@ namespace AvocadoShell.Engine
             if (!string.IsNullOrWhiteSpace(e.Error)) WriteErrorLine(e.Error);
 
             // Show the next shell prompt.
-            var promptStr = await getShellPromptString();
-            await Dispatcher.BeginInvoke(
-                (Action)(() => writeShellPrompt(promptStr)),
-                DispatcherPriority.Background);
+            await writeShellPrompt();
         }
 
         void terminateExec()
@@ -288,16 +285,12 @@ namespace AvocadoShell.Engine
 
         string writePrompt(string prompt, bool secure)
         {
-            Dispatcher.BeginInvoke(
-                (Action)(() => writePromptCore(prompt, false, secure)));
+            safeWritePromptCore(prompt, false, secure);
             return resetEvent.Block();
         }
 
-        void writeShellPrompt(string text)
-        {
-            SetWindowTitle(text);
-            writePromptCore(text, true, false);
-        }
+        async Task writeShellPrompt()
+            => safeWritePromptCore(await getShellPromptString(), true, false);
 
         async Task<string> getShellPromptString()
         {
@@ -318,11 +311,21 @@ namespace AvocadoShell.Engine
             return prompt;
         }
 
-        void writePromptCore(string text, bool fromShell, bool secure)
+        void safeWritePromptCore(string prompt, bool fromShell, bool secure)
         {
+            Dispatcher.BeginInvoke(
+                (Action)(() => writePromptCore(prompt, fromShell, secure)),
+                DispatcherPriority.Background);
+        }
+
+        void writePromptCore(string prompt, bool fromShell, bool secure)
+        {
+            // Update window title to prompt text, if this is the shell prompt.
+            if (fromShell) SetWindowTitle(prompt);
+
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
-            Write(text.TrimEnd(), brush);
+            Write(prompt.TrimEnd(), brush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
 
             // Update the current prompt object.
@@ -383,7 +386,8 @@ namespace AvocadoShell.Engine
                     ? new SolidColorBrush(segment.Color.Value)
                     : Config.SystemFontBrush;
                 safeWrite(segment.Text, brush, newline);
-            }));
+            }), 
+            DispatcherPriority.Background);
         }
 
         string getInput() => FullText.Substring(currentPrompt.Length);
