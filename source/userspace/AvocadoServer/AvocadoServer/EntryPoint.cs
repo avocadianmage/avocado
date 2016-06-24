@@ -28,10 +28,8 @@ namespace AvocadoServer
                     $"Metadata is enabled for this session ({Host.MetadataEndpoint})");
             }
 
-            // Restart existing jobs from disk.
-            Logger.WriteLine("Starting jobs...");
+            // Restart existing jobs.
             Jobs.RestoreFromDisk();
-            Logger.WriteLine("Done restarting jobs.");
             
             // Block.
             Console.ReadLine();

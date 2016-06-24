@@ -20,17 +20,6 @@ namespace AvocadoServer.ServerAPI
                 MethodBase.GetCurrentMethod());
         }
 
-        [AllowedClient(ClientType.ThisMachine)]
-        public Pipeline RunJob(
-            string workingDirectory, string filename, int? secInterval)
-        {
-            return ExecuteRequest(
-                p => EntryPoint.Jobs.StartJob(
-                    workingDirectory, filename, secInterval), 
-                MethodBase.GetCurrentMethod(), 
-                workingDirectory, filename, secInterval);
-        }
-        
         [AllowedClient(ClientType.LAN)]
         public Pipeline KillJob(int id)
         {
@@ -38,6 +27,26 @@ namespace AvocadoServer.ServerAPI
                 p => EntryPoint.Jobs.KillJob(p, id),
                 MethodBase.GetCurrentMethod(), 
                 id);
+        }
+
+        [AllowedClient(ClientType.ThisMachine)]
+        public Pipeline RunJob(
+            string workingDirectory, string filename, int secInterval)
+        {
+            return ExecuteRequest(
+                p => EntryPoint.Jobs.StartJob(
+                    workingDirectory, filename, secInterval),
+                MethodBase.GetCurrentMethod(),
+                workingDirectory, filename, secInterval);
+        }
+
+        [AllowedClient(ClientType.ThisMachine)]
+        public Pipeline Run(string workingDirectory, string filename)
+        {
+            return ExecuteRequest(
+                p => EntryPoint.Jobs.StartJob(workingDirectory, filename, null),
+                MethodBase.GetCurrentMethod(),
+                workingDirectory, filename);
         }
     }
 }

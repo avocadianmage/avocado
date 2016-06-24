@@ -46,30 +46,6 @@ namespace AvocadoClient
         }
 
         [Subcommand]
-        public static void RunJob(Arguments args)
-        {
-            const string ERROR_FORMAT 
-                = "{0} Expected: Client {1} <filename> [interval]";
-
-            // Get required filename parameter.
-            var filename = args.PopArg();
-            if (filename == null)
-            {
-                TerminatingError(string.Format(
-                    ERROR_FORMAT, 
-                    "Missing <filename> parameter.", 
-                    nameof(RunJob)));
-            }
-
-            // Get optional interval parameter.
-            var secInterval = args.PopArg<int>();
-
-            // Call to server.
-            RunCommand(() => CreateClient().RunJob(
-                Directory.GetCurrentDirectory(), filename, secInterval));
-        }
-
-        [Subcommand]
         public static void KillJob(Arguments args)
         {
             var id = args.PopArg<int>();
@@ -78,8 +54,54 @@ namespace AvocadoClient
                 TerminatingError("Expected: Client KillJob <id>");
             }
 
-            // Call to server.
+            // Execute command on server.
             RunCommand(() => CreateClient().KillJob(id.Value));
+        }
+
+        [Subcommand]
+        public static void RunJob(Arguments args)
+        {
+            const string ERROR_FORMAT
+                = "{0} Expected: Client {1} <filename> <interval>";
+
+            // Get required filename parameter.
+            var filename = args.PopArg();
+            if (filename == null)
+            {
+                TerminatingError(string.Format(
+                    ERROR_FORMAT,
+                    "Missing <filename> parameter.",
+                    nameof(RunJob)));
+            }
+
+            // Get optional interval parameter.
+            var secInterval = args.PopArg<int>();
+            if (secInterval == null)
+            {
+                TerminatingError(string.Format(
+                    ERROR_FORMAT,
+                    "Missing <interval> parameter.",
+                    nameof(RunJob)));
+            }
+
+            // Execute command on server.
+            RunCommand(() => CreateClient().RunJob(
+                Directory.GetCurrentDirectory(), filename, secInterval.Value));
+        }
+
+        [Subcommand]
+        public static void Run(Arguments args)
+        {
+            // Get required filename parameter.
+            var filename = string.Join(" ", args.PopRemainingArgs());
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                TerminatingError("Expected: Client Run <filename>");
+            }
+
+            // Execute command on server.
+            RunCommand(() => CreateClient().Run(
+                Directory.GetCurrentDirectory(), filename));
         }
     }
 }
