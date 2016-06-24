@@ -62,17 +62,7 @@ namespace AvocadoClient
         public static void RunJob(Arguments args)
         {
             const string ERROR_FORMAT
-                = "{0} Expected: Client {1} <filename> <interval>";
-
-            // Get required filename parameter.
-            var filename = args.PopArg();
-            if (filename == null)
-            {
-                TerminatingError(string.Format(
-                    ERROR_FORMAT,
-                    "Missing <filename> parameter.",
-                    nameof(RunJob)));
-            }
+                = "{0} Expected: Client {1} <interval> <filename>";
 
             // Get optional interval parameter.
             var secInterval = args.PopArg<int>();
@@ -83,10 +73,25 @@ namespace AvocadoClient
                     "Missing <interval> parameter.",
                     nameof(RunJob)));
             }
+            else if (secInterval <= 0)
+            {
+                TerminatingError(
+                    "Fatal: <interval> must be a positive integer.");
+            }
+
+            // Get required filename parameter.
+            var filename = string.Join(" ", args.PopRemainingArgs());
+            if (string.IsNullOrWhiteSpace(filename))
+            {
+                TerminatingError(string.Format(
+                    ERROR_FORMAT,
+                    "Missing <filename> parameter.",
+                    nameof(RunJob)));
+            }
 
             // Execute command on server.
             RunCommand(() => CreateClient().RunJob(
-                Directory.GetCurrentDirectory(), filename, secInterval.Value));
+                Directory.GetCurrentDirectory(), secInterval.Value, filename));
         }
 
         [Subcommand]
@@ -96,7 +101,7 @@ namespace AvocadoClient
             var filename = string.Join(" ", args.PopRemainingArgs());
             if (string.IsNullOrWhiteSpace(filename))
             {
-                TerminatingError("Expected: Client Run <filename>");
+                TerminatingError($"Expected: Client {nameof(Run)} <filename>");
             }
 
             // Execute command on server.

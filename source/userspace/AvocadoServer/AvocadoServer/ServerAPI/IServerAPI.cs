@@ -15,7 +15,7 @@ namespace AvocadoServer.ServerAPI
         Pipeline KillJob(int id);
 
         [OperationContract]
-        Pipeline RunJob(string workingDirectory, string name, int secInterval);
+        Pipeline RunJob(string workingDirectory, int secInterval, string name);
 
         [OperationContract]
         Pipeline Run(string workingDirectory, string name);

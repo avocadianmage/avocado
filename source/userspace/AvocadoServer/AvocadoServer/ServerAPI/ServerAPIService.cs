@@ -31,13 +31,13 @@ namespace AvocadoServer.ServerAPI
 
         [AllowedClient(ClientType.ThisMachine)]
         public Pipeline RunJob(
-            string workingDirectory, string filename, int secInterval)
+            string workingDirectory, int secInterval, string filename)
         {
             return ExecuteRequest(
                 p => EntryPoint.Jobs.StartJob(
                     workingDirectory, filename, secInterval),
                 MethodBase.GetCurrentMethod(),
-                workingDirectory, filename, secInterval);
+                workingDirectory, secInterval, filename);
         }
 
         [AllowedClient(ClientType.ThisMachine)]
