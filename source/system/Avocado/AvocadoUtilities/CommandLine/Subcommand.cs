@@ -57,8 +57,7 @@ namespace AvocadoUtilities.CommandLine
                 .GetEntryAssembly()
                 .GetTypes()
                 .SelectMany(x => x.GetMethods())
-                .Where(
-                    x => x.GetCustomAttributes<SubcommandAttribute>().Any());
+                .Where(x => x.GetCustomAttributes<SubcommandAttribute>().Any());
         }
 
         static string getSubcommandError(
