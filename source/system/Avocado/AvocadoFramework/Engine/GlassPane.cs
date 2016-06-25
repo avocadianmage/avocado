@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -30,14 +31,31 @@ namespace AvocadoFramework.Engine
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-
-            // Handle maximizing.
-            var source = HwndSource.FromHwnd(this.GetHandle());
-            source.AddHook(new HwndSourceHook(WndProc));
-            
-            // Set initial focus.
-            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            hookMaximize();
+            hookDragMove();
+            initFocus();
         }
+
+        void hookMaximize()
+        {
+            HwndSource.FromHwnd(this.GetHandle())
+                .AddHook(new HwndSourceHook(WndProc));
+        }
+
+        void hookDragMove()
+        {
+            var contentArea
+                = this.GetTemplateElement<ContentPresenter>("ContentArea");
+            contentArea.PreviewMouseDown += (s, e) =>
+            {
+                e.Handled = true;
+                if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+            };
+            contentArea.PreviewMouseUp += (s, e) => e.Handled = true;
+        }
+
+        void initFocus()
+            => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
         // UI startup code.
         protected override void OnContentRendered(EventArgs e)

@@ -1,0 +1,8 @@
+﻿<avocadoFramework:GlassPane 
+    x:Class="War.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avocadoFramework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
+    Width="640" Height="460">
+
+</avocadoFramework:GlassPane>

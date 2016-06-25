@@ -1,8 +1,9 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
-    public class TextLabel : BaseControl
+    public class TextLabel : Control
     {
         static TextLabel()
         {

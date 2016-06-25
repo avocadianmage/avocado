@@ -6,7 +6,7 @@ using UtilityLib.WPF;
 
 namespace AvocadoFramework.Controls.Progress
 {
-    public class Progressor : BaseControl
+    public class Progressor : Control
     {
         ReversibleAnimator<Color> borderColorAnimator;
 

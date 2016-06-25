@@ -7,7 +7,7 @@ using UtilityLib.WPF;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
-    public abstract class TextArea : BaseControl
+    public abstract class TextArea : Control
     {
         static TextArea()
         {

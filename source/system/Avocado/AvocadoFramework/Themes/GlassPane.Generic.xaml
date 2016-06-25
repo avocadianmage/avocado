@@ -140,7 +140,7 @@
                         
                         <!-- Content. -->
                         <Grid Margin="{StaticResource WindowMargin}">
-                            <ContentPresenter />
+                            <ContentPresenter x:Name="ContentArea" />
                         </Grid>
                         
                     </Grid>

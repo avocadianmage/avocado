@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -269,7 +270,7 @@ namespace AvocadoShell.Engine
         void exit()
         {
             EnableInput(false);
-            CloseWindow();
+            Window.GetWindow(this).Close();
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
@@ -321,7 +322,7 @@ namespace AvocadoShell.Engine
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
             // Update window title to prompt text, if this is the shell prompt.
-            if (fromShell) SetWindowTitle(prompt);
+            if (fromShell) Window.GetWindow(this).Title = prompt;
 
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
