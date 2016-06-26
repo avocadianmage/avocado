@@ -7,14 +7,10 @@ namespace AvocadoFramework.Animation
     sealed class BrushAnimation
     {
         public Brush GetFadingBrush(Brush baseBrush, double duration)
-        {
-            return GetFadingBrush(baseBrush, duration, false);
-        }
+            => GetFadingBrush(baseBrush, duration, false);
 
         public Brush GetFadingBrush(
-            Brush baseBrush, 
-            double duration, 
-            bool oscillating)
+            Brush baseBrush, double duration, bool oscillating)
         {
             var brush = getZeroOpacityBrush(baseBrush);
             var animation = getAnimation(duration, oscillating);

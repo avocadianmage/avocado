@@ -139,10 +139,9 @@
                         </Border>
                         
                         <!-- Content. -->
-                        <Grid Margin="{StaticResource WindowMargin}">
-                            <ContentPresenter x:Name="ContentArea" />
-                        </Grid>
-                        
+                        <ContentPresenter x:Name="ContentArea" 
+                                          Margin="{StaticResource WindowMargin}" />
+
                     </Grid>
 
                 </ControlTemplate>
