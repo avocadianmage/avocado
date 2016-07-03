@@ -29,7 +29,7 @@ namespace AvocadoShell.PowerShellService.Host
             this.shellUI = shellUI;
         }
 
-        void writeLineToUI(string data)
+        void writeLineUnlessWhitespace(string data)
         {
             if (string.IsNullOrWhiteSpace(data)) return;
             shellUI.WriteOutputLine(data);
@@ -59,8 +59,8 @@ namespace AvocadoShell.PowerShellService.Host
             string message,
             Collection<FieldDescription> descriptions)
         {
-            writeLineToUI(caption);
-            writeLineToUI(message);
+            writeLineUnlessWhitespace(caption);
+            writeLineUnlessWhitespace(message);
 
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
@@ -98,8 +98,8 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            writeLineToUI(caption);
-            writeLineToUI(message);
+            writeLineUnlessWhitespace(caption);
+            writeLineUnlessWhitespace(message);
 
             // Format the overall choice prompt string to display.
             var promptData = BuildHotkeysAndPlainLabels(choices);
@@ -205,9 +205,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The characters to be written.</param>
         public override void Write(string value)
-        {
-            shellUI.WriteCustom(value, Config.SystemFontBrush, false);
-        }
+            => shellUI.WriteCustom(value, Config.SystemFontBrush, false);
 
         /// <summary>
         /// Writes characters to the output display of the host with possible 
@@ -280,7 +278,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(string value)
-            => shellUI.WriteOutputLine(value);
+            => writeLineUnlessWhitespace(value);
 
         /// <summary>
         /// Writes a progress report to the output display of the host.

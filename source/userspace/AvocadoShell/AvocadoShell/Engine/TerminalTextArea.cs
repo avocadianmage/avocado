@@ -362,11 +362,18 @@ namespace AvocadoShell.Engine
 
         void safeWrite(string data, Brush foreground, bool newline)
         {
+            Dispatcher.BeginInvoke(
+                (Action<string, Brush, bool>)write,
+                DispatcherPriority.Background,
+                data, foreground, newline);
+        }
+        
+        void write(string data, Brush foreground, bool newline)
+        {
             var action = newline
                 ? (Action<string, Brush>)WriteLine
                 : (Action<string, Brush>)Write;
-            Dispatcher.BeginInvoke(
-                action, DispatcherPriority.Background, data, foreground);
+            action(data, foreground);
         }
 
         void writeOutputLineWithANSICodes(string data)
@@ -384,10 +391,10 @@ namespace AvocadoShell.Engine
             Dispatcher.BeginInvoke((Action)(() =>
             {
                 var brush = segment.Color.HasValue
-                    ? new SolidColorBrush(segment.Color.Value)
-                    : Config.SystemFontBrush;
-                safeWrite(segment.Text, brush, newline);
-            }), 
+                        ? new SolidColorBrush(segment.Color.Value)
+                        : Config.SystemFontBrush;
+                write(segment.Text, brush, newline);
+            }),
             DispatcherPriority.Background);
         }
 
