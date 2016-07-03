@@ -14,5 +14,7 @@ namespace AvocadoShell
         public static Brush SystemFontBrush => Brushes.LightGray;
 
         public static ConsoleColor DefaultConsoleColor => ConsoleColor.Gray;
+
+        public static int MaxBufferWidth => 10000;
     }
 }

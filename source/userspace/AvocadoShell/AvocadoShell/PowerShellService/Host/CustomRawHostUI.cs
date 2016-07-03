@@ -26,9 +26,9 @@ namespace AvocadoShell.PowerShellService.Host
         /// size members.
         /// </summary>
         public override Size BufferSize
-        { 
-            get { return new Size(3000, 1); } //TODO: implement this correctly?
-            set { Console.SetBufferSize(value.Width, value.Height); }
+        {
+            get { return new Size(Config.MaxBufferWidth, 1); }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>

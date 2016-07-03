@@ -40,19 +40,9 @@ namespace AvocadoFramework.Controls.TextRendering
                 Config.CaretBrush, Config.CursorBlinkDuration, true); 
 
             // Set size.
-            var formattedText = new FormattedText(
-                default(char).ToString(),
-                CultureInfo.CurrentUICulture,
-                TextBase.FlowDirection,
-                new Typeface(
-                    TextBase.FontFamily,
-                    TextBase.FontStyle,
-                    TextBase.FontWeight,
-                    TextBase.FontStretch),
-                TextBase.FontSize,
-                TextBase.Foreground);
-            caret.Width = formattedText.Width + 1;
-            caret.Height = formattedText.Height + 1;
+            var charDimensions = getCharDimensions();
+            caret.Width = charDimensions.Width + 1;
+            caret.Height = charDimensions.Height + 1;
 
             // RichTextBox events.
             TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);
@@ -67,6 +57,22 @@ namespace AvocadoFramework.Controls.TextRendering
                 (s, e) => caret.Visibility = Visibility.Visible;
             window.Deactivated += 
                 (s, e) => caret.Visibility = Visibility.Collapsed;
+        }
+
+        Size getCharDimensions()
+        {
+            var formattedText = new FormattedText(
+                default(char).ToString(),
+                CultureInfo.CurrentUICulture,
+                TextBase.FlowDirection,
+                new Typeface(
+                    TextBase.FontFamily,
+                    TextBase.FontStyle,
+                    TextBase.FontWeight,
+                    TextBase.FontStretch),
+                TextBase.FontSize,
+                TextBase.Foreground);
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         void updateCaretLocation(UIElement caret)

@@ -19,7 +19,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public event EventHandler ExitRequested;
 
         readonly IShellUI shellUI;
-        readonly ExecutingPipeline pipeline;
+        readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
 
         public PowerShellInstance(IShellUI ui) : this(ui, null) { }
@@ -29,28 +29,26 @@ namespace AvocadoShell.PowerShellService.Runspaces
             shellUI = ui;
 
             // Create PowerShell service objects.
-            var remoteInfo = createRemoteInfo(remoteComputerName);
-            var powershell = createPowershell(ui, remoteInfo);
-            pipeline = createPipeline(powershell.Runspace);
-
-            // No support for autocompletion while remoting.
+            var powershell = createPowershell(
+                ui, createRemoteInfo(remoteComputerName), createHost(ui));
+            executingPipeline = createPipeline(powershell.Runspace);
             autocomplete = new Autocomplete(powershell);
         }
-
+        
         public string RemoteComputerName 
-            => pipeline.Runspace.ConnectionInfo?.ComputerName;
+            => executingPipeline.Runspace.ConnectionInfo?.ComputerName;
         public async Task<string> GetWorkingDirectory() => 
-            await pipeline.GetWorkingDirectory();
+            await executingPipeline.GetWorkingDirectory();
 
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
-            => await pipeline.RunBackgroundCommand(command);
+            => await executingPipeline.RunBackgroundCommand(command);
 
         public void InitEnvironment()
         {
             var startupScripts = getSystemStartupScripts()
                 .Concat(getUserStartupScripts());
-            pipeline.ExecuteScripts(startupScripts);
+            executingPipeline.ExecuteScripts(startupScripts);
         }
 
         IEnumerable<string> getSystemStartupScripts()
@@ -67,9 +65,10 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Join(" ", Environment.GetCommandLineArgs().Skip(1))
                 .Yield();
         
-        public void ExecuteCommand(string cmd) => pipeline.ExecuteCommand(cmd);
+        public void ExecuteCommand(string cmd) 
+            => executingPipeline.ExecuteCommand(cmd);
 
-        public void Stop() => pipeline.Stop();
+        public void Stop() => executingPipeline.Stop();
 
         public async Task<string> GetCompletion(
             string input, int index, bool forward)
@@ -81,27 +80,30 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 ? null
                 : new WSManConnectionInfo { ComputerName = computerName };
         }
-        
-        PowerShell createPowershell(IShellUI ui, WSManConnectionInfo remoteInfo)
+
+        CustomHost createHost(IShellUI ui)
+        {
+            var host = new CustomHost(ui);
+            host.ExitRequested += (s, e) => ExitRequested(this, e);
+            return host;
+        }
+
+        PowerShell createPowershell(
+            IShellUI ui, WSManConnectionInfo remoteInfo, CustomHost host)
         {
             var powershell = PowerShell.Create();
-            powershell.Runspace = createRunspace(ui, remoteInfo);
+            powershell.Runspace = createRunspace(ui, remoteInfo, host);
             return powershell;
         }
         
-        Runspace createRunspace(IShellUI ui, WSManConnectionInfo remoteInfo)
+        Runspace createRunspace(
+            IShellUI ui, WSManConnectionInfo remoteInfo, CustomHost host)
         {
-            // Initialize custom PowerShell host.
-            var host = new CustomHost(ui);
-            host.ExitRequested += (s, e) => ExitRequested(this, e);
-
-            // Initialize local or remote runspace.
             var runspace = remoteInfo == null
                 ? RunspaceFactory.CreateRunspace(host)
                 : RunspaceFactory.CreateRunspace(
                     remoteInfo, host, TypeTable.LoadDefaultTypeFiles());
             runspace.Open();
-
             return runspace;
         }
 
