@@ -109,15 +109,11 @@ namespace AvocadoShell.PowerShellService.Runspaces
         {
             var pipeline = new ExecutingPipeline(runspace);
             pipeline.Done += (s, e) => ExecDone(this, e);
-            pipeline.OutputReceived += onOutputReceived;
             pipeline.ErrorReceived += onErrorReceived;
             return pipeline;
         }
 
-        void onOutputReceived(object sender, IEnumerable<string> e)
-            => e.ForEach(shellUI.WriteOutputLine);
-
-        void onErrorReceived(object sender, IEnumerable<string> e)
-            => e.ForEach(shellUI.WriteErrorLine);
+        void onErrorReceived(object sender, string e)
+            => shellUI.WriteErrorLine(e);
     }
 }

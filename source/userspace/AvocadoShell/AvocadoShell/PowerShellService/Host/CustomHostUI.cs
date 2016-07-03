@@ -265,18 +265,14 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The error message that is displayed.</param>
         public override void WriteErrorLine(string value)
-        {
-            shellUI.WriteErrorLine(value);
-        }
+            => shellUI.WriteErrorLine(value);
 
         /// <summary>
         /// Writes a newline character (carriage return) 
         /// to the output display of the host. 
         /// </summary>
-        public override void WriteLine()
-        {
-            throw new NotImplementedException();
-        }
+        public override void WriteLine() 
+            => shellUI.WriteOutputLine(string.Empty);
 
         /// <summary>
         /// Writes a line of characters to the output display of the host 
@@ -284,9 +280,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(string value)
-        {
-            shellUI.WriteOutputLine(value);
-        }
+            => shellUI.WriteOutputLine(value);
 
         /// <summary>
         /// Writes a progress report to the output display of the host.

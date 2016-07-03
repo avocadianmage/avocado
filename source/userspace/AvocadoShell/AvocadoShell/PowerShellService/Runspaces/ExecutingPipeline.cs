@@ -1,5 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Modules;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -12,8 +11,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
     sealed class ExecutingPipeline
     {
         public event EventHandler<ExecDoneEventArgs> Done;
-        public event EventHandler<IEnumerable<string>> OutputReceived;
-        public event EventHandler<IEnumerable<string>> ErrorReceived;
+        public event EventHandler<string> ErrorReceived;
 
         public Runspace Runspace { get; }
 
@@ -48,9 +46,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         void executePipeline()
         {
+            // Have the our host format the output.
+            pipeline.Commands.Add("Out-Default");
+
+            // Subscribe to the pipeline lifetime events.
             pipeline.StateChanged += onPipelineStateChanged;
-            pipeline.Output.DataReady += onOutputDataReady;
-            pipeline.Error.DataReady += onErrorDataReady;
+
+            // Execute the pipeline.
             pipeline.InvokeAsync();
         }
 
@@ -106,34 +108,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
             catch (RuntimeException exc)
             {
-                ErrorReceived(this, exc.Message.Yield());
+                ErrorReceived(this, exc.Message);
             }
             return result?.Select(l => l.ToString());
-        }
-
-        void onOutputDataReady(object sender, EventArgs e)
-        {
-            var outputList = readData(
-                sender as PipelineReader<PSObject>,
-                o => OutputFormatter.FormatPSObject(o));
-            OutputReceived(this, outputList);
-        }
-        
-        void onErrorDataReady(object sender, EventArgs e)
-        {
-            var errorList = readData(
-                sender as PipelineReader<object>, 
-                o => o.ToString().Yield());
-            ErrorReceived(this, errorList);
-        }
-
-        IEnumerable<string> readData<T>(
-            PipelineReader<T> reader, 
-            Func<T, IEnumerable<string>> format)
-        {
-            var data = new List<string>();
-            while (reader.Count > 0) data.AddRange(format(reader.Read()));
-            return data;
         }
     }
 }
