@@ -119,7 +119,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override void NotifyBeginApplication()
         {
-            throw new NotImplementedException();
+            // Empty implementation.
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override void NotifyEndApplication()
         {
-            throw new NotImplementedException();
+            // Empty implementation.
         }
 
 
