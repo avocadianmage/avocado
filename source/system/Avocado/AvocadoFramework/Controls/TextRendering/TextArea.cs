@@ -45,6 +45,8 @@ namespace AvocadoFramework.Controls.TextRendering
         
         protected TextPointer StartPointer => paragraph.ContentStart;
         protected TextPointer EndPointer => paragraph.ContentEnd;
+        protected TextPointer LineStartPointer 
+            => textBase.CaretPosition.GetLineStartPosition(0);
 
         Paragraph paragraph
             => textBase.CaretPosition.Paragraph

@@ -94,11 +94,7 @@ namespace AvocadoShell.Engine
 
         bool handleBackAndLeftKeys(Key key)
         {
-            if (TextBase.CaretPosition.Paragraph == null
-                || !atOrBeforePrompt(TextBase.CaretPosition))
-            {
-                return false;
-            }
+            if (!atOrBeforePrompt(TextBase.CaretPosition)) return false;
 
             // The caret position does not change if text is selected
             // (unless Shift+Left is pressed) so we should not 
@@ -111,11 +107,9 @@ namespace AvocadoShell.Engine
         {
             // Allow native handling if we are on separate line from the prompt
             // and Ctrl was not pressed.
-            if (!IsControlKeyDown)
+            if (!IsControlKeyDown && !atOrBeforePrompt(LineStartPointer))
             {
-                var lineStart
-                    = TextBase.CaretPosition.GetLineStartPosition(0);
-                if (!atOrBeforePrompt(lineStart)) return false;
+                return false;
             }
 
             // If we are on the same line as the prompt (or Ctrl is pressed), 
