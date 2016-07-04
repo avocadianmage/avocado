@@ -95,7 +95,7 @@ namespace AvocadoShell.Engine
         bool handleBackAndLeftKeys(Key key)
         {
             if (TextBase.CaretPosition.Paragraph == null
-                || !isAtOrBeforePrompt(TextBase.CaretPosition))
+                || !atOrBeforePrompt(TextBase.CaretPosition))
             {
                 return false;
             }
@@ -115,13 +115,13 @@ namespace AvocadoShell.Engine
             {
                 var lineStart
                     = TextBase.CaretPosition.GetLineStartPosition(0);
-                if (!isAtOrBeforePrompt(lineStart)) return false;
+                if (!atOrBeforePrompt(lineStart)) return false;
             }
 
-            // If we are on the same line as the prompt, move the cursor
-            // to the end of the prompt instead of the beginning of the
-            // line.
-            MoveCaret(-distanceToPromptEnd, IsShiftKeyDown);
+            // If we are on the same line as the prompt (or Ctrl is pressed), 
+            // move the cursor to the end of the prompt instead of the beginning 
+            // of the line.
+            MoveCaret(getPromptPointer(), IsShiftKeyDown);
 
             return true;
         }
@@ -131,10 +131,7 @@ namespace AvocadoShell.Engine
             if (!IsControlKeyDown) return false;
 
             // Ctrl+A will select all text after the prompt.
-            MoveCaretToDocumentEnd();
-            var promptPointer = TextBase.CaretPosition.GetPositionAtOffset(
-                -distanceToPromptEnd);
-            TextBase.Selection.Select(promptPointer, TextBase.CaretPosition);
+            TextBase.Selection.Select(getPromptPointer(), EndPointer);
 
             return true;
         }
@@ -145,6 +142,7 @@ namespace AvocadoShell.Engine
             if (TextBase.Selection.IsEmpty) clearInput();
             // Otherwise, cancel the selected text.
             else ClearSelection();
+
             return true;
         }
 
@@ -234,7 +232,7 @@ namespace AvocadoShell.Engine
             var input = getInput();
 
             // Position caret for writing command output.
-            MoveCaretToDocumentEnd();
+            MoveCaret(EndPointer, false);
             WriteLine();
 
             // Signal to the powershell process that the we are done entering
@@ -265,7 +263,7 @@ namespace AvocadoShell.Engine
             EnableInput(false);
 
             var input = getInput();
-            var index = distanceToPromptEnd;
+            var index = getInputTextRange(TextBase.CaretPosition).Text.Length;
             var forward = !IsShiftKeyDown;
 
             Task.Run(() => psEngine.GetCompletion(input, index, forward))
@@ -345,12 +343,14 @@ namespace AvocadoShell.Engine
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
             Write(prompt.TrimEnd(), brush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
-
-            // Update the current prompt object.
-            currentPrompt.Update(fromShell, FullText.Length);
-
+            
             clearUndoBuffer();
 
+            // Update the current prompt object.
+            currentPrompt.Update(
+                fromShell, 
+                StartPointer.GetOffsetToPosition(TextBase.CaretPosition));
+            
             // Enable user input.
             EnableInput(true);
         }
@@ -418,7 +418,7 @@ namespace AvocadoShell.Engine
             DispatcherPriority.Background);
         }
 
-        string getInput() => FullText.Substring(currentPrompt.Length);
+        string getInput() => getInputTextRange(EndPointer).Text;
 
         void inputHistoryLookup(bool forward)
         {
@@ -444,16 +444,18 @@ namespace AvocadoShell.Engine
             Write(replacement, Foreground);
         }
 
-        void clearInput()
+        void clearInput() => getInputTextRange(EndPointer).Text = string.Empty;
+
+        TextPointer getPromptPointer() 
+            => StartPointer.GetPositionAtOffset(currentPrompt.LengthInSymbols);
+
+        TextRange getInputTextRange(TextPointer end)
+            => new TextRange(getPromptPointer(), end);
+
+        bool atOrBeforePrompt(TextPointer pointer)
         {
-            MoveCaretToDocumentEnd();
-            TextBase.CaretPosition.DeleteTextInRun(-distanceToPromptEnd);
+            return StartPointer.GetOffsetToPosition(pointer)
+                <= currentPrompt.LengthInSymbols;
         }
-
-        bool isAtOrBeforePrompt(TextPointer pointer)
-            => (GetX(pointer) <= currentPrompt.Length);
-
-        int distanceToPromptEnd
-            => GetX(TextBase.CaretPosition) - currentPrompt.Length;
     }
 }

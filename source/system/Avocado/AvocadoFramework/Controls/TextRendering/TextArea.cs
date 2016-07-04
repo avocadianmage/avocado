@@ -1,5 +1,4 @@
-﻿using AvocadoFramework.Animation;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -32,42 +31,34 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void Write(string text, Brush foreground)
         {
-            // Insert the text at the caret position.
-            var pos = textBase.CaretPosition;
-            var range = new TextRange(pos, pos) { Text = text };
-
-            // Apply color and animation to the newly inserted text.
-            range.ApplyPropertyValue(
-                TextElement.ForegroundProperty,
-                createFadeInBrush(foreground));
-
-            // Move the caret to the end of the inserted text.
-            textBase.CaretPosition = range.End;
-        }
-
-        static Brush createFadeInBrush(Brush baseBrush)
-        {
-            return new BrushAnimation().GetFadingBrush(
-                baseBrush,
-                Config.TextFadeDuration);
+            textBase.CaretPosition = new Run(text, textBase.CaretPosition)
+            {
+                Foreground = foreground
+            }
+            .ContentEnd;
         }
 
         protected void WriteLine() => WriteLine(string.Empty, Foreground);
 
         protected void WriteLine(string text, Brush foreground)
             => Write($"{text.TrimEnd()}\r", foreground);
+        
+        protected TextPointer StartPointer => paragraph.ContentStart;
+        protected TextPointer EndPointer => paragraph.ContentEnd;
 
-        protected void MoveCaretToDocumentEnd()
-            => textBase.CaretPosition = paragraph.ContentEnd;
+        Paragraph paragraph
+            => textBase.CaretPosition.Paragraph
+            ?? textBase.CaretPosition
+                .GetNextInsertionPosition(LogicalDirection.Backward)
+                .Paragraph;
 
-        protected void MoveCaret(int offset, bool select)
+        protected void MoveCaret(TextPointer pointer, bool select)
         {
-            var before = textBase.CaretPosition;
-            var after = before.GetPositionAtOffset(offset);
-
-            // If requested, select the contents in between.
-            if (select) textBase.Selection.Select(before, after);
-            else textBase.CaretPosition = after;
+            if (select)
+            {
+                textBase.Selection.Select(textBase.CaretPosition, pointer);
+            }
+            else textBase.CaretPosition = pointer;
         }
 
         protected void ClearSelection()
@@ -75,22 +66,6 @@ namespace AvocadoFramework.Controls.TextRendering
             textBase.Selection.Select(
                 textBase.CaretPosition, textBase.CaretPosition);
         }
-
-        protected int GetX(TextPointer pointer)
-        {
-            // Use length of text, not symbols.
-            var range = new TextRange(pointer.Paragraph.ContentStart, pointer);
-            return range.Text.Length;
-        }
-        
-        protected string FullText
-            => new TextRange(paragraph.ContentStart, paragraph.ContentEnd).Text;
-
-        Paragraph paragraph
-            => textBase.CaretPosition.Paragraph 
-            ?? textBase.CaretPosition
-                .GetNextInsertionPosition(LogicalDirection.Backward)
-                .Paragraph;
         
         protected Size GetCharDimensions()
         {
