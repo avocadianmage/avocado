@@ -335,7 +335,7 @@ namespace AvocadoShell.Engine
 
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
-            Write(prompt.TrimEnd(), brush);
+            Write(prompt.TrimEnd(), OutputBuffer.CreateTextFadeBrush(brush));
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
             clearUndoBuffer();
@@ -383,11 +383,13 @@ namespace AvocadoShell.Engine
         {
             // Run the data through the output buffer to determine if 
             // anything should be printed right now.
-            var outputData = outputBuffer.ProcessNewOutput(data);
-            if (outputData == null) return;
+            if (!outputBuffer.ProcessNewOutput(ref data, ref foreground))
+            {
+                return;
+            }
 
             var action = newline ? (Action<string, Brush>)WriteLine : Write;
-            action(outputData, foreground);
+            action(data, foreground);
         }
 
         void writeOutputLineWithANSICodes(string data)

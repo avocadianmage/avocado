@@ -1,29 +1,44 @@
-﻿namespace AvocadoShell.Engine.Modules
+﻿using AvocadoFramework.Animation;
+using System.Windows.Media;
+
+namespace AvocadoShell.Engine.Modules
 {
     sealed class OutputBuffer
     {
+        public static Brush CreateTextFadeBrush(Brush baseBrush)
+        {
+            return new BrushAnimation().GetFadingBrush(
+                baseBrush,
+                Config.TextFadeDuration);
+        }
+
         string newlineBuffer;
         bool hitNonwhitespace;
+        Brush animatedBrush;
 
         public OutputBuffer()
         {
             Reset();
         }
 
-        public string ProcessNewOutput(string text)
+        public bool ProcessNewOutput(ref string text, ref Brush brush)
         {
             lock (this)
             {
                 if (string.IsNullOrWhiteSpace(text))
                 {
                     if (hitNonwhitespace) newlineBuffer += "\r";
-                    return null;
+                    return false;
                 }
 
                 hitNonwhitespace = true;
                 text = newlineBuffer + text;
                 newlineBuffer = string.Empty;
-                return text;
+
+                brush = animatedBrush = 
+                    animatedBrush ?? CreateTextFadeBrush(brush);
+
+                return true;
             }
         }
 
@@ -33,6 +48,7 @@
             {
                 newlineBuffer = string.Empty;
                 hitNonwhitespace = false;
+                animatedBrush = null;
             }
         }
     }

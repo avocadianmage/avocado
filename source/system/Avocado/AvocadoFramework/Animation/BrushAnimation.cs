@@ -4,7 +4,7 @@ using System.Windows.Media.Animation;
 
 namespace AvocadoFramework.Animation
 {
-    sealed class BrushAnimation
+    public sealed class BrushAnimation
     {
         public Brush GetFadingBrush(Brush baseBrush, double duration)
             => GetFadingBrush(baseBrush, duration, false);

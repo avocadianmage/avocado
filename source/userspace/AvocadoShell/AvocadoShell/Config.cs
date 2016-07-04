@@ -13,6 +13,8 @@ namespace AvocadoShell
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
 
+        public static double TextFadeDuration => 200;
+
         public static ConsoleColor DefaultConsoleColor => ConsoleColor.Gray;
     }
 }

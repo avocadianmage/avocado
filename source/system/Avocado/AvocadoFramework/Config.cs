@@ -13,10 +13,9 @@ namespace AvocadoFramework
         public static Color ActiveBorderColorElevated => Colors.Salmon;
         public static double BorderFadeDuration => 500;
 
-        // Text properties.
-        public static double TextFadeDuration => 200;
+        // Caret properties.
         public static Brush CaretBrush => Brushes.Orange;
-        public static double CursorBlinkDuration => 750;
+        public static double CaretBlinkDuration => 750;
 
         // Progressor properties.
         public static Color ProgressorColor => Colors.Green;

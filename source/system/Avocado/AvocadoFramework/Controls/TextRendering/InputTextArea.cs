@@ -35,7 +35,7 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             var caret = this.GetTemplateElement<Border>("Caret");
             caret.BorderBrush = new BrushAnimation().GetFadingBrush(
-                Config.CaretBrush, Config.CursorBlinkDuration, true); 
+                Config.CaretBrush, Config.CaretBlinkDuration, true); 
 
             // Set size.
             var charDimensions = GetCharDimensions();
