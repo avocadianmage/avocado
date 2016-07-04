@@ -25,11 +25,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// Gets or sets the host buffer size adapted from the Console buffer 
         /// size members.
         /// </summary>
-        public override Size BufferSize
-        {
-            get { return new Size(Config.MaxBufferWidth, 1); }
-            set { throw new NotImplementedException(); }
-        }
+        public override Size BufferSize { get; set; }
 
         /// <summary>
         /// Gets or sets the cursor position. In this example this 

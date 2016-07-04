@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public event EventHandler ExitRequested;
 
         readonly IShellUI shellUI;
+        readonly CustomHost psHost;
         readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
 
@@ -29,12 +31,14 @@ namespace AvocadoShell.PowerShellService.Runspaces
             shellUI = ui;
 
             // Create PowerShell service objects.
+            psHost = createHost(ui);
             var powershell = createPowershell(
-                ui, createRemoteInfo(remoteComputerName), createHost(ui));
+                ui, createRemoteInfo(remoteComputerName), psHost);
             executingPipeline = createPipeline(powershell.Runspace);
             autocomplete = new Autocomplete(powershell);
         }
-        
+
+        public PSHostRawUserInterface HostRawUI => psHost.UI.RawUI;
         public string RemoteComputerName 
             => executingPipeline.Runspace.ConnectionInfo?.ComputerName;
         public async Task<string> GetWorkingDirectory() => 

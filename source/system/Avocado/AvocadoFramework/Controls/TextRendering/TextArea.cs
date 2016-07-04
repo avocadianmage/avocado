@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Animation;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -90,5 +91,21 @@ namespace AvocadoFramework.Controls.TextRendering
             ?? textBase.CaretPosition
                 .GetNextInsertionPosition(LogicalDirection.Backward)
                 .Paragraph;
+        
+        protected Size GetCharDimensions()
+        {
+            var formattedText = new FormattedText(
+                default(char).ToString(),
+                CultureInfo.CurrentUICulture,
+                textBase.FlowDirection,
+                new Typeface(
+                    textBase.FontFamily,
+                    textBase.FontStyle,
+                    textBase.FontWeight,
+                    textBase.FontStretch),
+                textBase.FontSize,
+                textBase.Foreground);
+            return new Size(formattedText.Width, formattedText.Height);
+        }
     }
 }

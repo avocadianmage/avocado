@@ -48,6 +48,7 @@ namespace AvocadoShell.Engine
 
             // Scroll to the bottom when text changes.
             TextBase.TextChanged += (s, e) => TextBase.ScrollToEnd();
+            TextBase.SizeChanged += onSizeChanged;
 
             psEngine.InitEnvironment();
         }
@@ -59,6 +60,15 @@ namespace AvocadoShell.Engine
 
             // Show the next shell prompt.
             await writeShellPrompt();
+        }
+
+        void onSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!e.WidthChanged) return;
+            var bufferWidth = (int)Math.Ceiling(
+                e.NewSize.Width / GetCharDimensions().Width);
+            psEngine.HostRawUI.BufferSize
+                = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
         void terminateExec()

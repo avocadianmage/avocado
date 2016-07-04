@@ -3,6 +3,7 @@ using AvocadoShell.PowerShellService.Runspaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService
@@ -19,6 +20,7 @@ namespace AvocadoShell.PowerShellService
         PowerShellInstance localInstance => instances.First.Value;
         PowerShellInstance activeInstance => instances.Last.Value;
 
+        public PSHostRawUserInterface HostRawUI => activeInstance.HostRawUI;
         public string RemoteComputerName => activeInstance.RemoteComputerName;
         public async Task<string> GetWorkingDirectory()
             => await activeInstance.GetWorkingDirectory();
