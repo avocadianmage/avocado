@@ -24,6 +24,7 @@ namespace AvocadoShell.Engine
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
+        readonly OutputBuffer outputBuffer = new OutputBuffer();
 
         public TerminalTextArea()
         {
@@ -321,8 +322,14 @@ namespace AvocadoShell.Engine
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
-            // Update window title to prompt text, if this is the shell prompt.
-            if (fromShell) Window.GetWindow(this).Title = prompt;
+            // Check if this is the shell prompt.
+            if (fromShell)
+            {
+                outputBuffer.Reset();
+
+                // Update the window title to the prompt text.
+                Window.GetWindow(this).Title = prompt;
+            }
 
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
@@ -370,10 +377,13 @@ namespace AvocadoShell.Engine
         
         void write(string data, Brush foreground, bool newline)
         {
-            var action = newline
-                ? (Action<string, Brush>)WriteLine
-                : (Action<string, Brush>)Write;
-            action(data, foreground);
+            // Run the data through the output buffer to determine if 
+            // anything should be printed right now.
+            var outputData = outputBuffer.ProcessNewOutput(data);
+            if (outputData == null) return;
+
+            var action = newline ? (Action<string, Brush>)WriteLine : Write;
+            action(outputData, foreground);
         }
 
         void writeOutputLineWithANSICodes(string data)

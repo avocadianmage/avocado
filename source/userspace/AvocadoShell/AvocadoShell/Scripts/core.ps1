@@ -1,3 +1,6 @@
+# Import formatting file.
+Update-FormatData -PrependPath $PSHOME\Avocado.format.ps1xml
+
 # Import the user profile.
 $PROFILE = Join-Path `
 	([Environment]::GetFolderPath("MyDocuments")) `

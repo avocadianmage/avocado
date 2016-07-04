@@ -278,7 +278,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The line to be written.</param>
         public override void WriteLine(string value)
-            => writeLineUnlessWhitespace(value);
+            => shellUI.WriteOutputLine(value);
 
         /// <summary>
         /// Writes a progress report to the output display of the host.
