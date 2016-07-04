@@ -27,7 +27,8 @@
                                      TextOptions.TextFormattingMode="Display"
                                      IsTabStop="False"
                                      Cursor="Arrow"
-                                     Foreground="{TemplateBinding Foreground}">
+                                     Foreground="{TemplateBinding Foreground}"
+                                     Padding="-5 0 0 0">
 
                             <RichTextBox.Resources>
                                 <Style TargetType="{x:Type Paragraph}">
