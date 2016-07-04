@@ -401,7 +401,7 @@ namespace AvocadoShell.Engine
             var segments = ANSICode.GetColorSegments(data);
             if (!segments.Any()) return;
             segments
-                .Take(segments.Count - 1)
+                .Take(segments.Count() - 1)
                 .ForEach(seg => writeANSISegment(seg, false));
             writeANSISegment(segments.Last(), true);
         }

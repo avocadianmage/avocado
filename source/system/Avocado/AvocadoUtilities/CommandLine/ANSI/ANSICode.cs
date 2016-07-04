@@ -16,7 +16,7 @@ namespace AvocadoUtilities.CommandLine.ANSI
         public static string GetColorPrefix(Color color)
             => $"{ANSI_PREIX}38;2;{color.R};{color.G};{color.B}m";
 
-        public static ICollection<ANSISegment> GetColorSegments(string line)
+        public static IEnumerable<ANSISegment> GetColorSegments(string line)
         {
             var ret = new List<ANSISegment>();
 
@@ -63,6 +63,19 @@ namespace AvocadoUtilities.CommandLine.ANSI
 
                 // Add the text segment, if it is not empty.
                 if (string.IsNullOrEmpty(text)) continue;
+
+                // If the color of the last segment is the same, just append 
+                // the new text to that segment.
+                if (ret.Any())
+                {
+                    var last = ret.Last();
+                    if (last.Color == color)
+                    {
+                        last.Text += text;
+                        continue;
+                    }
+                }
+
                 ret.Add(new ANSISegment(color, text));
             }
 

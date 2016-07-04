@@ -2,10 +2,10 @@
 
 namespace AvocadoUtilities.CommandLine.ANSI
 {
-    public struct ANSISegment
+    public sealed class ANSISegment
     {
         public Color? Color { get; }
-        public string Text { get; }
+        public string Text { get; set; }
 
         public ANSISegment(Color? color, string text)
         {
