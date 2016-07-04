@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Animation;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace AvocadoShell.Engine.Modules
@@ -12,9 +13,11 @@ namespace AvocadoShell.Engine.Modules
                 Config.TextFadeDuration);
         }
 
+        readonly Dictionary<Color, Brush> animatedBrushLookup
+            = new Dictionary<Color, Brush>();
+
         string newlineBuffer;
         bool hitNonwhitespace;
-        Brush animatedBrush;
 
         public OutputBuffer()
         {
@@ -35,8 +38,12 @@ namespace AvocadoShell.Engine.Modules
                 text = newlineBuffer + text;
                 newlineBuffer = string.Empty;
 
-                brush = animatedBrush = 
-                    animatedBrush ?? CreateTextFadeBrush(brush);
+                var colorKey = (brush as SolidColorBrush).Color;
+                if (!animatedBrushLookup.ContainsKey(colorKey))
+                {
+                    animatedBrushLookup[colorKey] = CreateTextFadeBrush(brush);
+                }
+                brush = animatedBrushLookup[colorKey];
 
                 return true;
             }
@@ -48,7 +55,7 @@ namespace AvocadoShell.Engine.Modules
             {
                 newlineBuffer = string.Empty;
                 hitNonwhitespace = false;
-                animatedBrush = null;
+                animatedBrushLookup.Clear();
             }
         }
     }
