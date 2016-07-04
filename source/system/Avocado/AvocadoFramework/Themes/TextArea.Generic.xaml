@@ -21,6 +21,7 @@
                                      CaretBrush="Transparent"
                                      SelectionBrush="Orange"
                                      VerticalScrollBarVisibility="Visible"
+                                     HorizontalScrollBarVisibility="Disabled"
                                      FontFamily="Consolas"
                                      FontSize="7.25pt"
                                      FontWeight="Bold"
