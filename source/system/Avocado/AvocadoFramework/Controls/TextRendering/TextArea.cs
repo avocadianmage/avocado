@@ -21,6 +21,12 @@ namespace AvocadoFramework.Controls.TextRendering
         protected RichTextBox TextBase => textBase;
         RichTextBox textBase;
 
+        protected TextPointer CaretPointer
+        {
+            get { return textBase.CaretPosition; }
+            set { textBase.CaretPosition = value; }
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -31,7 +37,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void Write(string text, Brush foreground)
         {
-            textBase.CaretPosition = new Run(text, textBase.CaretPosition)
+            CaretPointer = new Run(text, CaretPointer)
             {
                 Foreground = foreground
             }
@@ -42,32 +48,26 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void WriteLine(string text, Brush foreground)
             => Write($"{text.TrimEnd()}\r", foreground);
-        
+
         protected TextPointer StartPointer => paragraph.ContentStart;
         protected TextPointer EndPointer => paragraph.ContentEnd;
         protected TextPointer LineStartPointer 
-            => textBase.CaretPosition.GetLineStartPosition(0);
+            => CaretPointer.GetLineStartPosition(0);
 
         Paragraph paragraph
-            => textBase.CaretPosition.Paragraph
-            ?? textBase.CaretPosition
+            => CaretPointer.Paragraph
+            ?? CaretPointer
                 .GetNextInsertionPosition(LogicalDirection.Backward)
                 .Paragraph;
 
         protected void MoveCaret(TextPointer pointer, bool select)
         {
-            if (select)
-            {
-                textBase.Selection.Select(textBase.CaretPosition, pointer);
-            }
-            else textBase.CaretPosition = pointer;
+            if (select) textBase.Selection.Select(CaretPointer, pointer);
+            else CaretPointer = pointer;
         }
 
         protected void ClearSelection()
-        {
-            textBase.Selection.Select(
-                textBase.CaretPosition, textBase.CaretPosition);
-        }
+            => textBase.Selection.Select(CaretPointer, CaretPointer);
         
         protected Size GetCharDimensions()
         {

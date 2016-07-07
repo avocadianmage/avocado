@@ -94,7 +94,7 @@ namespace AvocadoShell.Engine
 
         bool handleBackAndLeftKeys(Key key)
         {
-            if (!atOrBeforePrompt(TextBase.CaretPosition)) return false;
+            if (!atOrBeforePrompt(CaretPointer)) return false;
 
             // The caret position does not change if text is selected
             // (unless Shift+Left is pressed) so we should not 
@@ -133,7 +133,7 @@ namespace AvocadoShell.Engine
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
-            if (TextBase.Selection.IsEmpty) clearInput();
+            if (TextBase.Selection.IsEmpty) setInput(string.Empty);
             // Otherwise, cancel the selected text.
             else ClearSelection();
 
@@ -257,14 +257,14 @@ namespace AvocadoShell.Engine
             EnableInput(false);
 
             var input = getInput();
-            var index = getInputTextRange(TextBase.CaretPosition).Text.Length;
+            var index = getInputTextRange(CaretPointer).Text.Length;
             var forward = !IsShiftKeyDown;
 
             Task.Run(() => psEngine.GetCompletion(input, index, forward))
                 .ContinueWith(task =>
                 {
                     var completion = task.Result;
-                    if (completion != null) replaceInput(completion);
+                    if (completion != null) setInput(completion);
                     EnableInput(true);
                 }, 
                 TaskScheduler.FromCurrentSynchronizationContext());
@@ -342,8 +342,7 @@ namespace AvocadoShell.Engine
 
             // Update the current prompt object.
             currentPrompt.Update(
-                fromShell, 
-                StartPointer.GetOffsetToPosition(TextBase.CaretPosition));
+                fromShell, StartPointer.GetOffsetToPosition(CaretPointer));
             
             // Enable user input.
             EnableInput(true);
@@ -414,8 +413,6 @@ namespace AvocadoShell.Engine
             DispatcherPriority.Background);
         }
 
-        string getInput() => getInputTextRange(EndPointer).Text;
-
         void inputHistoryLookup(bool forward)
         {
             // Disallow lookup when not at the shell prompt.
@@ -431,16 +428,16 @@ namespace AvocadoShell.Engine
             if (storedInput == null) return;
 
             // Update the display to show the new input.
-            replaceInput(storedInput);
+            setInput(storedInput);
         }
 
-        void replaceInput(string replacement)
+        string getInput() => getInputTextRange(EndPointer).Text;
+
+        void setInput(string text)
         {
-            clearInput();
-            Write(replacement, Foreground);
+            getInputTextRange(EndPointer).Text = text;
+            MoveCaret(EndPointer, false);
         }
-
-        void clearInput() => getInputTextRange(EndPointer).Text = string.Empty;
 
         TextPointer getPromptPointer() 
             => StartPointer.GetPositionAtOffset(currentPrompt.LengthInSymbols);

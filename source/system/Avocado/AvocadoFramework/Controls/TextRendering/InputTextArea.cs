@@ -59,8 +59,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         void updateCaretLocation(UIElement caret)
         {
-            var caretRect = TextBase.CaretPosition.GetCharacterRect(
-                TextBase.CaretPosition.LogicalDirection);
+            var caretRect = CaretPointer.GetCharacterRect(
+                CaretPointer.LogicalDirection);
             Canvas.SetLeft(caret, caretRect.X);
             Canvas.SetTop(caret, caretRect.Y);
         }
