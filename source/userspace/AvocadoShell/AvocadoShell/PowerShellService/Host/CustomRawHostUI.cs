@@ -135,8 +135,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override BufferCell[,] GetBufferContents(Rectangle rectangle)
         {
-            throw new NotImplementedException(
-                     "The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -151,8 +150,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override KeyInfo ReadKey(ReadKeyOptions options)
         {
-            throw new NotImplementedException(
-                      "The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -167,8 +165,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="fill">The character and attributes to be used to fill all cell.</param>
         public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip, BufferCell fill)
         {
-            throw new NotImplementedException(
-                      "The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -180,8 +177,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="contents">The parameter is not used.</param>
         public override void SetBufferContents(Coordinates origin, BufferCell[,] contents)
         {
-            throw new NotImplementedException(
-                      "The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -193,8 +189,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="fill">Defines the fill character.</param>
         public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
         {
-            throw new NotImplementedException(
-                      "The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
     }
 }

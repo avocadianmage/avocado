@@ -25,7 +25,8 @@ namespace AvocadoServer
             if (showMetadata)
             {
                 Logger.WriteLine(
-                    $"Metadata is enabled for this session ({Host.MetadataEndpoint})");
+                    $@"Metadata is enabled for this session ({
+                        Host.MetadataEndpoint})");
             }
 
             // Restart existing jobs.

@@ -141,12 +141,9 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="targetName">The name of the target for which the credential is collected.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override PSCredential PromptForCredential(
-                                                         string caption,
-                                                         string message,
-                                                         string userName,
-                                                         string targetName)
+            string caption, string message, string userName, string targetName)
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -197,7 +194,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <returns>Throws a NotImplemented exception.</returns>
         public override SecureString ReadLineAsSecureString()
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            throw new NotImplementedException();
         }
 
         /// <summary>
