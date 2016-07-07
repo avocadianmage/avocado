@@ -1,11 +1,9 @@
-﻿using AvocadoShell.Engine;
-using AvocadoShell.PowerShellService.Host;
+﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -17,32 +15,24 @@ namespace AvocadoShell.PowerShellService.Runspaces
     sealed class PowerShellInstance
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
-        public event EventHandler ExitRequested;
 
-        readonly IShellUI shellUI;
-        readonly CustomHost psHost;
         readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
 
-        public PowerShellInstance(IShellUI ui) : this(ui, null) { }
+        public PowerShellInstance(CustomHost host) : this(host, null) { }
 
-        public PowerShellInstance(IShellUI ui, string remoteComputerName)
+        public PowerShellInstance(CustomHost host, string remoteComputerName)
         {
-            shellUI = ui;
-
-            // Create PowerShell service objects.
-            psHost = createHost(ui);
             var powershell = createPowershell(
-                ui, createRemoteInfo(remoteComputerName), psHost);
+                host, createRemoteInfo(remoteComputerName));
             executingPipeline = createPipeline(powershell.Runspace);
             autocomplete = new Autocomplete(powershell);
         }
 
-        public PSHostRawUserInterface HostRawUI => psHost.UI.RawUI;
         public string RemoteComputerName 
             => executingPipeline.Runspace.ConnectionInfo?.ComputerName;
-        public async Task<string> GetWorkingDirectory() => 
-            await executingPipeline.GetWorkingDirectory();
+        public async Task<string> GetWorkingDirectory() 
+            => await executingPipeline.GetWorkingDirectory();
 
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
@@ -85,23 +75,15 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 : new WSManConnectionInfo { ComputerName = computerName };
         }
 
-        CustomHost createHost(IShellUI ui)
-        {
-            var host = new CustomHost(ui);
-            host.ExitRequested += (s, e) => ExitRequested(this, e);
-            return host;
-        }
-
         PowerShell createPowershell(
-            IShellUI ui, WSManConnectionInfo remoteInfo, CustomHost host)
+            CustomHost host, WSManConnectionInfo remoteInfo)
         {
             var powershell = PowerShell.Create();
-            powershell.Runspace = createRunspace(ui, remoteInfo, host);
+            powershell.Runspace = createRunspace(host, remoteInfo);
             return powershell;
         }
         
-        Runspace createRunspace(
-            IShellUI ui, WSManConnectionInfo remoteInfo, CustomHost host)
+        Runspace createRunspace(CustomHost host, WSManConnectionInfo remoteInfo)
         {
             var runspace = remoteInfo == null
                 ? RunspaceFactory.CreateRunspace(host)
@@ -115,11 +97,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         {
             var pipeline = new ExecutingPipeline(runspace);
             pipeline.Done += (s, e) => ExecDone(this, e);
-            pipeline.ErrorReceived += onErrorReceived;
             return pipeline;
         }
-
-        void onErrorReceived(object sender, string e)
-            => shellUI.WriteErrorLine(e);
     }
 }

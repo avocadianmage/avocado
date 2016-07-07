@@ -1,4 +1,5 @@
 ﻿using AvocadoShell.Engine;
+using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Runspaces;
 using System;
 using System.Collections.Generic;
@@ -12,31 +13,36 @@ namespace AvocadoShell.PowerShellService
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
         public event EventHandler ExitRequested;
-
-        readonly IShellUI ui;
+        
+        readonly CustomHost psHost;
         readonly LinkedList<PowerShellInstance> instances
             = new LinkedList<PowerShellInstance>();
 
         PowerShellInstance localInstance => instances.First.Value;
         PowerShellInstance activeInstance => instances.Last.Value;
 
-        public PSHostRawUserInterface HostRawUI => activeInstance.HostRawUI;
+        public PSHostRawUserInterface HostRawUI => psHost.UI.RawUI;
         public string RemoteComputerName => activeInstance.RemoteComputerName;
         public async Task<string> GetWorkingDirectory()
             => await activeInstance.GetWorkingDirectory();
 
         public PowerShellEngine(IShellUI ui)
         {
-            this.ui = ui;
-            instances.AddFirst(createInstance(ui, null));
+            psHost = createHost(ui);
+            instances.AddFirst(createInstance(null));
         }
 
-        PowerShellInstance createInstance(
-            IShellUI ui, string remoteComputerName)
+        CustomHost createHost(IShellUI ui)
         {
-            var instance = new PowerShellInstance(ui, remoteComputerName);
+            var host = new CustomHost(ui);
+            host.ExitRequested += onExitRequested;
+            return host;
+        }
+
+        PowerShellInstance createInstance(string remoteComputerName)
+        {
+            var instance = new PowerShellInstance(psHost, remoteComputerName);
             instance.ExecDone += onExecDone;
-            instance.ExitRequested += onExitRequested;
             return instance;
         }
 
@@ -63,7 +69,7 @@ namespace AvocadoShell.PowerShellService
 
         void openRemoteSession(string computerName)
         {
-            instances.AddLast(createInstance(ui, computerName));
+            instances.AddLast(createInstance(computerName));
             activeInstance.InitEnvironment();
         }
         
@@ -84,12 +90,9 @@ namespace AvocadoShell.PowerShellService
 
         void onExitRequested(object sender, EventArgs e)
         {
-            // Only process events from active instance.
-            if (sender != activeInstance) return;
-
             // If we are exiting the original session, let the UI layer handle
             // this.
-            if (sender == localInstance)
+            if (activeInstance == localInstance)
             {
                 ExitRequested(this, e);
                 return;

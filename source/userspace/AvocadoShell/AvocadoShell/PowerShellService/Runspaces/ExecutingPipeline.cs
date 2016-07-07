@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
@@ -11,7 +10,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
     sealed class ExecutingPipeline
     {
         public event EventHandler<ExecDoneEventArgs> Done;
-        public event EventHandler<string> ErrorReceived;
 
         public Runspace Runspace { get; }
 
@@ -100,17 +98,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
         {
-            IEnumerable<PSObject> result = null;
-            try
-            {
-                result = await Task.Run(
-                    () => Runspace.CreatePipeline(command).Invoke());
-            }
-            catch (RuntimeException exc)
-            {
-                ErrorReceived(this, exc.Message);
-            }
-            return result?.Select(l => l.ToString());
+            var result = await Task.Run(
+                () => Runspace.CreatePipeline(command).Invoke());
+            return result.Select(l => l.ToString());
         }
     }
 }
