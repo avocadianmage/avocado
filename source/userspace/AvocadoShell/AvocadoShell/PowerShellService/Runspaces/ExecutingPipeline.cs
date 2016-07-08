@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation.Runspaces;
-using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService.Runspaces
@@ -11,13 +9,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
     {
         public event EventHandler<ExecDoneEventArgs> Done;
 
-        public Runspace Runspace { get; }
-
+        readonly Runspace runspace;
         Pipeline pipeline;
 
         public ExecutingPipeline(Runspace runspace)
         {
-            Runspace = runspace;
+            this.runspace = runspace;
         }
 
         public void Stop()
@@ -31,13 +28,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public void ExecuteCommand(string command)
         {
-            pipeline = Runspace.CreatePipeline(command, true);
+            pipeline = runspace.CreatePipeline(command, true);
             executePipeline();
         }
 
         public void ExecuteScripts(IEnumerable<string> scripts)
         {
-            pipeline = Runspace.CreatePipeline();
+            pipeline = runspace.CreatePipeline();
             scripts.ForEach(pipeline.Commands.AddScript);
             executePipeline();
         }
@@ -74,33 +71,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
             // Fire event indicating execution of the pipeline is finished.
             Done(this, new ExecDoneEventArgs(error));
-        }
-
-        public async Task<string> GetWorkingDirectory()
-        {
-            // SessionStateProxy properties are not supported in remote 
-            // runspaces, so we must manually get the working directory by
-            // running a PowerShell command.
-            if (Runspace.RunspaceIsRemote)
-            {
-                var result = await RunBackgroundCommand(
-                    "$PWD.Path.Replace($HOME, '~')");
-                return result.First();
-            }
-
-            var homeDir = Environment.GetFolderPath(
-                Environment.SpecialFolder.UserProfile);
-            return Runspace.SessionStateProxy
-                .Path.CurrentLocation.Path
-                .Replace(homeDir, "~");
-        }
-
-        public async Task<IEnumerable<string>> RunBackgroundCommand(
-            string command)
-        {
-            var result = await Task.Run(
-                () => Runspace.CreatePipeline(command).Invoke());
-            return result.Select(l => l.ToString());
         }
     }
 }

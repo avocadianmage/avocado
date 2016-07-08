@@ -16,6 +16,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
     {
         public event EventHandler<ExecDoneEventArgs> ExecDone;
 
+        readonly Runspace runspace;
         readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
 
@@ -23,20 +24,32 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public PowerShellInstance(CustomHost host, string remoteComputerName)
         {
-            var powershell = createPowershell(
-                host, createRemoteInfo(remoteComputerName));
-            executingPipeline = createPipeline(powershell.Runspace);
+            var remoteInfo = createRemoteInfo(remoteComputerName);
+            runspace = createRunspace(host, remoteInfo);
+            var powershell = createPowershell(runspace);
+            executingPipeline = createPipeline(runspace);
             autocomplete = new Autocomplete(powershell);
         }
 
         public string RemoteComputerName 
-            => executingPipeline.Runspace.ConnectionInfo?.ComputerName;
-        public async Task<string> GetWorkingDirectory() 
-            => await executingPipeline.GetWorkingDirectory();
+            => runspace.ConnectionInfo?.ComputerName;
+        
+        public async Task<string> GetWorkingDirectory()
+        {
+            var path = await Task.Run(
+                () => runspace.SessionStateProxy.GetVariable("PWD"));
+            var homeDir = Environment.GetFolderPath(
+               Environment.SpecialFolder.UserProfile);
+            return path.ToString().Replace(homeDir, "~");
+        }
 
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
-            => await executingPipeline.RunBackgroundCommand(command);
+        {
+            var result = await Task.Run(
+                () => runspace.CreatePipeline(command).Invoke());
+            return result.Select(l => l.ToString());
+        }
 
         public void InitEnvironment()
         {
@@ -75,22 +88,21 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 : new WSManConnectionInfo { ComputerName = computerName };
         }
 
-        PowerShell createPowershell(
-            CustomHost host, WSManConnectionInfo remoteInfo)
+        PowerShell createPowershell(Runspace runspace)
         {
             var powershell = PowerShell.Create();
-            powershell.Runspace = createRunspace(host, remoteInfo);
+            powershell.Runspace = runspace;
             return powershell;
         }
         
         Runspace createRunspace(CustomHost host, WSManConnectionInfo remoteInfo)
         {
-            var runspace = remoteInfo == null
+            var rs = remoteInfo == null
                 ? RunspaceFactory.CreateRunspace(host)
                 : RunspaceFactory.CreateRunspace(
                     remoteInfo, host, TypeTable.LoadDefaultTypeFiles());
-            runspace.Open();
-            return runspace;
+            rs.Open();
+            return rs;
         }
 
         ExecutingPipeline createPipeline(Runspace runspace)
