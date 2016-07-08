@@ -19,38 +19,48 @@ namespace AvocadoShell.Engine
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        readonly PowerShellEngine psEngine;
         readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
+        readonly Task<PowerShellEngine> psEngineLoaded;
+
+        PowerShellEngine psEngine => psEngineLoaded.Result;
 
         public TerminalTextArea()
         {
-            psEngine = createPowerShellEngine();
+            psEngineLoaded = createPowerShellEngine();
 
             Unloaded += (s, e) => terminateExec();
         }
 
-        PowerShellEngine createPowerShellEngine()
+        async Task<PowerShellEngine> createPowerShellEngine()
         {
-            var psEngine = new PowerShellEngine(this);
-            psEngine.ExecDone += onExecDone;
-            psEngine.ExitRequested += (s, e)
-                => Dispatcher.BeginInvoke((Action)exit);
-            return psEngine;
+            return await Task.Run(() =>
+            {
+                var psEngine = new PowerShellEngine(this);
+                psEngine.ExecDone += onExecDone;
+                psEngine.ExitRequested += (s, e)
+                    => Dispatcher.BeginInvoke((Action)exit);
+                return psEngine;
+            });
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            // Scroll to the bottom when text changes.
-            TextBase.TextChanged += (s, e) => TextBase.ScrollToEnd();
-            TextBase.SizeChanged += onSizeChanged;
+            // Prepare the Powershell engine for user interaction.
+            psEngineLoaded.ContinueWith(t => psEngine.InitEnvironment());
 
-            psEngine.InitEnvironment();
+            psEngineLoaded.ContinueWith(t =>
+            {
+                updateControlBuffer(TextBase.ActualWidth);
+                TextBase.TextChanged += (s, e) => TextBase.ScrollToEnd();
+                TextBase.SizeChanged += onSizeChanged;
+            }, 
+            TaskScheduler.FromCurrentSynchronizationContext());
         }
         
         async void onExecDone(object sender, ExecDoneEventArgs e)
@@ -64,9 +74,13 @@ namespace AvocadoShell.Engine
 
         void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (!e.WidthChanged) return;
+            if (e.WidthChanged) updateControlBuffer(e.NewSize.Width);
+        }
+
+        void updateControlBuffer(double controlWidth)
+        {
             var bufferWidth = (int)Math.Ceiling(
-                e.NewSize.Width / GetCharDimensions().Width);
+                controlWidth / GetCharDimensions().Width);
             psEngine.HostRawUI.BufferSize
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
