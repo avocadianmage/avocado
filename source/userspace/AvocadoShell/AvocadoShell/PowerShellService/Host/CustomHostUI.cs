@@ -36,15 +36,11 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// An instance of the PSRawUserInterface object.
-        /// </summary>
-        readonly CustomRawHostUI myRawUi = new CustomRawHostUI();
-
-        /// <summary>
         /// Gets an instance of the PSRawUserInterface object for this host
         /// application.
         /// </summary>
-        public override PSHostRawUserInterface RawUI => myRawUi;
+        public override PSHostRawUserInterface RawUI { get; } 
+            = new CustomRawHostUI();
 
         /// <summary>
         /// Prompts the user for input. 

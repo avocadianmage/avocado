@@ -16,52 +16,32 @@ namespace AvocadoShell.PowerShellService.Host
     {
         public event EventHandler ExitRequested;
 
-        readonly IShellUI shellUI;
-
         public CustomHost(IShellUI shellUI)
         {
-            this.shellUI = shellUI;
-            myHostUserInterface = new CustomHostUI(shellUI);
+            UI = new CustomHostUI(shellUI);
         }
-
-        /// <summary>
-        /// The culture information of the thread that created
-        /// this object.
-        /// </summary>
-        readonly CultureInfo originalCultureInfo 
-            = Thread.CurrentThread.CurrentCulture;
-
-        /// <summary>
-        /// The UI culture information of the thread that created
-        /// this object.
-        /// </summary>
-        readonly CultureInfo originalUICultureInfo 
-            = Thread.CurrentThread.CurrentUICulture;
-
-        /// <summary>
-        /// The identifier of this PSHost implementation.
-        /// </summary>
-        readonly static Guid instanceId = Guid.NewGuid();
 
         /// <summary>
         /// Gets the culture information to use. This implementation 
         /// returns a snapshot of the culture information of the thread 
         /// that created this object.
         /// </summary>
-        public override CultureInfo CurrentCulture => originalCultureInfo;
+        public override CultureInfo CurrentCulture { get; }
+            = Thread.CurrentThread.CurrentCulture;
 
         /// <summary>
         /// Gets the UI culture information to use. This implementation 
         /// returns a snapshot of the UI culture information of the thread 
         /// that created this object.
         /// </summary>
-        public override CultureInfo CurrentUICulture => originalUICultureInfo;
+        public override CultureInfo CurrentUICulture { get; }
+            = Thread.CurrentThread.CurrentUICulture;
 
         /// <summary>
         /// Gets an identifier for this host. This implementation always 
         /// returns the GUID allocated at instantiation time.
         /// </summary>
-        public override Guid InstanceId => instanceId;
+        public override Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
         /// Gets a string that contains the name of this host implementation. 
@@ -75,19 +55,13 @@ namespace AvocadoShell.PowerShellService.Host
         /// class for this application. This instance is allocated once at startup time
         /// and returned every time thereafter.
         /// </summary>
-        public override PSHostUserInterface UI => myHostUserInterface;
+        public override PSHostUserInterface UI { get; }
 
         /// <summary>
         /// Gets the version object for this application. Typically this 
         /// should match the version resource in the application.
         /// </summary>
         public override Version Version => Config.Version;
-
-        /// <summary>
-        /// Creates an instance of the PSHostUserInterface object for this
-        /// application.
-        /// </summary>
-        readonly CustomHostUI myHostUserInterface;
 
         /// <summary>
         /// This API Instructs the host to interrupt the currently running 
