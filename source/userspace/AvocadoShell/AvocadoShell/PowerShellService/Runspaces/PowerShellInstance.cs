@@ -33,15 +33,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public string RemoteComputerName 
             => runspace.ConnectionInfo?.ComputerName;
-        
-        public async Task<string> GetWorkingDirectory()
-        {
-            var path = await Task.Run(
-                () => runspace.SessionStateProxy.GetVariable("PWD"));
-            var homeDir = Environment.GetFolderPath(
-               Environment.SpecialFolder.UserProfile);
-            return path.ToString().Replace(homeDir, "~");
-        }
 
         public async Task<IEnumerable<string>> RunBackgroundCommand(
             string command)
@@ -49,6 +40,20 @@ namespace AvocadoShell.PowerShellService.Runspaces
             var result = await Task.Run(
                 () => runspace.CreatePipeline(command).Invoke());
             return result.Select(l => l.ToString());
+        }
+
+        public async Task<string> GetWorkingDirectory()
+        {
+            var path = await getPSVariable("PWD");
+            var homeDir = Environment.GetFolderPath(
+               Environment.SpecialFolder.UserProfile);
+            return path.ToString().Replace(homeDir, "~");
+        }
+
+        async Task<object> getPSVariable(string name)
+        {
+            return await Task.Run(
+                () => runspace.SessionStateProxy.GetVariable(name));
         }
 
         public void InitEnvironment()
