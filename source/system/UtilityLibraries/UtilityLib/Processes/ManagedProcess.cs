@@ -31,11 +31,11 @@ namespace UtilityLib.Processes
             proc.Start();
         }
 
-        public async Task<string> RunBackground()
+        public Task<string> RunBackground()
         {
             applyBackgroundProperties(proc.StartInfo);
             proc.Start();
-            return await proc.StandardOutput.ReadToEndAsync();
+            return proc.StandardOutput.ReadToEndAsync();
         }
 
         public void RunBackgroundLive()

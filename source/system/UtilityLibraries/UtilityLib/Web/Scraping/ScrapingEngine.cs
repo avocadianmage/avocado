@@ -10,11 +10,11 @@ namespace UtilityLib.Web.Scraping
     {
         public Task<string> GetSource(string url) => GetSource(url, false);
 
-        public async Task<string> GetSource(string url, bool onlyDynamic)
+        public Task<string> GetSource(string url, bool onlyDynamic)
         {
-            return await (onlyDynamic
+            return onlyDynamic
                 ? new DynamicScaper().GetSource(url)
-                : dispatchGetSource(url));
+                : dispatchGetSource(url);
         }
 
         async Task<string> dispatchGetSource(string url)
