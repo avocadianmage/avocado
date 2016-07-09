@@ -16,7 +16,7 @@ namespace UtilityLib.Processes.NamedPipes
             using (var server = createServerStream(name))
             {
                 // Wait for client connection.
-                await server.WaitForConnectionAsync();
+                await server.WaitForConnectionAsync().ConfigureAwait(false);
 
                 // A client has connected, so spawn another server instance for 
                 // the next client.
@@ -27,7 +27,8 @@ namespace UtilityLib.Processes.NamedPipes
                 while (!reader.EndOfStream)
                 {
                     // Each line is an individual message.
-                    var msg = await reader.ReadLineAsync();
+                    var msg 
+                        = await reader.ReadLineAsync().ConfigureAwait(false);
                     MessageReceived?.Invoke(this, new MessageEventArgs(msg));
                 }
             }

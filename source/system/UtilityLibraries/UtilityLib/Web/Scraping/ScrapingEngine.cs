@@ -26,11 +26,12 @@ namespace UtilityLib.Web.Scraping
             while (tasks.Any())
             {
                 // Get the result of the first task to complete.
-                var task = await Task.WhenAny(tasks.ToArray());
+                var task 
+                    = await Task.WhenAny(tasks.ToArray()).ConfigureAwait(false);
 
                 // If the task was successful (the result is not null) then 
                 // return the data.
-                var result = await task;
+                var result = await task.ConfigureAwait(false);
                 if (result != null) return result;
 
                 // Otherwise, remove the failed task and continue.

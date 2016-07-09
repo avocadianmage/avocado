@@ -14,15 +14,15 @@ namespace UtilityLib.Processes.NamedPipes
             client = new NamedPipeClientStream(name);
         }
 
-        public async Task Connect() => await client.ConnectAsync();
+        public Task Connect() => client.ConnectAsync();
 
         public void Dispose() => client?.Dispose();
 
         public async Task Send(string message)
         {
             var writer = new StreamWriter(client);
-            await writer.WriteLineAsync(message);
-            await writer.FlushAsync();
+            await writer.WriteLineAsync(message).ConfigureAwait(false);
+            await writer.FlushAsync().ConfigureAwait(false);
         }
     }
 }

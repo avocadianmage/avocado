@@ -29,19 +29,20 @@ namespace UtilityLib.Web.Scraping
             {
                 // Return the content of the response as a string, or null if 
                 // the request was unsuccessful (ex: HTTP 503).
-                var resp = await client.GetAsync(url);
+                var resp = await client.GetAsync(url).ConfigureAwait(false);
                 return resp.IsSuccessStatusCode
-                    ? await resp.Content.ReadAsStringAsync()
+                    ? await resp.Content
+                        .ReadAsStringAsync().ConfigureAwait(false)
                     : null;
             }
         }
 
         // Downloads the content at the specified URL and saves it to the 
         // specified filepath.
-        public async Task Download(string url, string savePath)
+        public Task Download(string url, string savePath)
         {
             downloadWebClient.DownloadProgressChanged += ProgressUpdated;
-            await downloadWebClient.DownloadFileTaskAsync(url, savePath);
+            return downloadWebClient.DownloadFileTaskAsync(url, savePath);
         }
         
         public void CancelDownload() => downloadWebClient.CancelAsync();

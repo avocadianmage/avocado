@@ -42,7 +42,7 @@ namespace AvocadoServer.Jobs
 
                 // Wait for the specified interval between dispatches.
                 const int MsInSec = 1000;
-                await Task.Delay(secInterval * MsInSec);
+                await Task.Delay(secInterval * MsInSec).ConfigureAwait(false);
             }
         }
 
