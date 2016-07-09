@@ -18,13 +18,13 @@ namespace AvocadoFramework.Controls.TextRendering
                 new FrameworkPropertyMetadata(type));
         }
 
-        protected RichTextBox TextBase => textBase;
-        RichTextBox textBase;
+        protected RichTextBox TextBase { get; private set; }
+        protected Size CharDimensions { get; private set; }
 
         protected TextPointer CaretPointer
         {
-            get { return textBase.CaretPosition; }
-            set { textBase.CaretPosition = value; }
+            get { return TextBase.CaretPosition; }
+            set { TextBase.CaretPosition = value; }
         }
 
         public override void OnApplyTemplate()
@@ -32,7 +32,8 @@ namespace AvocadoFramework.Controls.TextRendering
             base.OnApplyTemplate();
 
             // Cache any template child controls.
-            textBase = this.GetTemplateElement<RichTextBox>("textBase");
+            TextBase = this.GetTemplateElement<RichTextBox>("textBase");
+            CharDimensions = getCharDimensions();
         }
 
         protected void Write(string text, Brush foreground)
@@ -62,26 +63,26 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void MoveCaret(TextPointer pointer, bool select)
         {
-            if (select) textBase.Selection.Select(CaretPointer, pointer);
+            if (select) TextBase.Selection.Select(CaretPointer, pointer);
             else CaretPointer = pointer;
         }
 
         protected void ClearSelection()
-            => textBase.Selection.Select(CaretPointer, CaretPointer);
+            => TextBase.Selection.Select(CaretPointer, CaretPointer);
         
-        protected Size GetCharDimensions()
+        Size getCharDimensions()
         {
             var formattedText = new FormattedText(
                 default(char).ToString(),
                 CultureInfo.CurrentUICulture,
-                textBase.FlowDirection,
+                TextBase.FlowDirection,
                 new Typeface(
-                    textBase.FontFamily,
-                    textBase.FontStyle,
-                    textBase.FontWeight,
-                    textBase.FontStretch),
-                textBase.FontSize,
-                textBase.Foreground);
+                    TextBase.FontFamily,
+                    TextBase.FontStyle,
+                    TextBase.FontWeight,
+                    TextBase.FontStretch),
+                TextBase.FontSize,
+                TextBase.Foreground);
             return new Size(formattedText.Width, formattedText.Height);
         }
     }

@@ -38,9 +38,8 @@ namespace AvocadoFramework.Controls.TextRendering
                 Config.CaretBrush, Config.CaretBlinkDuration, true); 
 
             // Set size.
-            var charDimensions = GetCharDimensions();
-            caret.Width = charDimensions.Width + 1;
-            caret.Height = charDimensions.Height + 1;
+            caret.Width = CharDimensions.Width + 1;
+            caret.Height = CharDimensions.Height + 1;
 
             // RichTextBox events.
             TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);

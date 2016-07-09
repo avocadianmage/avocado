@@ -79,8 +79,8 @@ namespace AvocadoShell.Engine
 
         void updateControlBuffer(double controlWidth)
         {
-            var bufferWidth = (int)Math.Ceiling(
-                controlWidth / GetCharDimensions().Width);
+            var bufferWidth = 
+                (int)Math.Ceiling(controlWidth / CharDimensions.Width);
             psEngine.HostRawUI.BufferSize
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
