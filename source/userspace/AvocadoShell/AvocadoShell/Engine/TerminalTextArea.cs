@@ -156,7 +156,7 @@ namespace AvocadoShell.Engine
 
         bool handleTabKey()
         {
-            performAutocomplete();
+            performAutocomplete().RunAsync();
             return true;
         }
 
@@ -254,7 +254,7 @@ namespace AvocadoShell.Engine
         public async Task<bool> RunNativeCommand(string message)
             => (await psEngineAsync).RunNativeCommand(message);
 
-        void performAutocomplete()
+        async Task performAutocomplete()
         {
             EnableInput(false);
 
@@ -262,18 +262,12 @@ namespace AvocadoShell.Engine
             var index = getInputTextRange(CaretPointer).Text.Length;
             var forward = !IsShiftKeyDown;
 
-            Task.Run(async () =>
-                {
-                    return (await psEngineAsync)
-                        .GetCompletion(input, index, forward);
-                })
-                .ContinueWith(task =>
-                {
-                    var completion = task.Result;
-                    if (completion != null) setInput(completion);
-                    EnableInput(true);
-                }, 
-                TaskScheduler.FromCurrentSynchronizationContext());
+            var psEngine = await psEngineAsync;
+            var completion = await Task.Run(
+                () => psEngine.GetCompletion(input, index, forward));
+            if (completion != null) setInput(completion);
+
+            EnableInput(true);
         }
 
         void exit()
