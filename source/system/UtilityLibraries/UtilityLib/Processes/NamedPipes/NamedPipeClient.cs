@@ -14,7 +14,7 @@ namespace UtilityLib.Processes.NamedPipes
             client = new NamedPipeClientStream(name);
         }
 
-        public Task Connect() => client.ConnectAsync();
+        public async Task Connect() => await client.ConnectAsync();
 
         public void Dispose() => client?.Dispose();
 
