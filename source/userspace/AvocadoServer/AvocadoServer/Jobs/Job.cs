@@ -35,7 +35,7 @@ namespace AvocadoServer.Jobs
             while (!tokenSource.Token.IsCancellationRequested)
             {
                 // Dispatch an execution of the job.
-                dispatchedThread().RunAsync();
+                Task.Run(() => dispatchedThread()).RunAsync();
 
                 // If no interval is specified, only execute the job once.
                 if (secInterval <= 0) break;
@@ -47,7 +47,7 @@ namespace AvocadoServer.Jobs
         }
 
         //TODO: terminate running process?
-        async Task dispatchedThread()
+        void dispatchedThread()
         {
             // Initialize the process.
             var proc = new ManagedProcess("PowerShell", filename);
@@ -57,7 +57,7 @@ namespace AvocadoServer.Jobs
 
             // Run the process, catching any failures.
             Logger.WriteLine(this, "Starting instance.");
-            try { await proc.RunBackgroundLive(); }
+            try { proc.RunBackgroundLive(); }
             catch (Win32Exception exc)
             {
                 Logger.WriteErrorLine(this, exc.Message);

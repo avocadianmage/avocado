@@ -20,7 +20,7 @@ namespace UtilityLib.Processes.NamedPipes
 
                 // A client has connected, so spawn another server instance for 
                 // the next client.
-                Task.Run(() => Start(name)).RunAsync();
+                Start(name).RunAsync();
 
                 // Read data from client.
                 var reader = new StreamReader(server);

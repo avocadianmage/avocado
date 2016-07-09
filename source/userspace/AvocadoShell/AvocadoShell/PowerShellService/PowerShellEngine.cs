@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation.Host;
-using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService
 {
@@ -23,8 +22,8 @@ namespace AvocadoShell.PowerShellService
 
         public PSHostRawUserInterface HostRawUI => psHost.UI.RawUI;
         public string RemoteComputerName => activeInstance.RemoteComputerName;
-        public async Task<string> GetWorkingDirectory()
-            => await activeInstance.GetWorkingDirectory();
+        public string GetWorkingDirectory()
+            => activeInstance.GetWorkingDirectory();
 
         public PowerShellEngine(IShellUI ui)
         {
@@ -48,7 +47,7 @@ namespace AvocadoShell.PowerShellService
 
         public void InitEnvironment() => activeInstance.InitEnvironment();
 
-        public async Task<bool> RunNativeCommand(string message)
+        public bool RunNativeCommand(string message)
         {
             const string AVOCADO_PREFX = "avocado:";
             if (!message.StartsWith(AVOCADO_PREFX)) return false;
@@ -61,7 +60,7 @@ namespace AvocadoShell.PowerShellService
                     openRemoteSession(arg);
                     break;
                 case "Download-Remote":
-                    await downloadRemote(arg);
+                    downloadRemote(arg);
                     break;
             }
             return true;
@@ -73,10 +72,10 @@ namespace AvocadoShell.PowerShellService
             activeInstance.InitEnvironment();
         }
         
-        async Task downloadRemote(string paths)
+        void downloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
-            await localInstance.RunBackgroundCommand(
+            localInstance.RunBackgroundCommand(
                 $"SendToLocal {computerName} {paths}");
         }
 
@@ -110,8 +109,7 @@ namespace AvocadoShell.PowerShellService
 
         public void Stop() => activeInstance.Stop();
 
-        public async Task<string> GetCompletion(
-            string input, int index, bool forward)
-            => await activeInstance.GetCompletion(input, index, forward);
+        public string GetCompletion(string input, int index, bool forward)
+            => activeInstance.GetCompletion(input, index, forward);
     }
 }

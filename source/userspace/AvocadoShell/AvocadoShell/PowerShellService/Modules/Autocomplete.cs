@@ -1,5 +1,4 @@
 ﻿using System.Management.Automation;
-using System.Threading.Tasks;
 
 namespace AvocadoShell.PowerShellService.Modules
 {
@@ -18,8 +17,7 @@ namespace AvocadoShell.PowerShellService.Modules
             this.ps = ps;
         }
         
-        public async Task<string> GetCompletion(
-            string input, int index, bool forward)
+        public string GetCompletion(string input, int index, bool forward)
         {
             // Suggest a file if the input is blank.
             if (string.IsNullOrWhiteSpace(input))
@@ -34,13 +32,11 @@ namespace AvocadoShell.PowerShellService.Modules
             // completion list.
             if (completionListNeedsUpdate(input, index))
             {
-                cachedCompletions = await Task.Run(
-                    () => CommandCompletion.CompleteInput(
-                        input, index, null, ps));
+                cachedCompletions 
+                    = CommandCompletion.CompleteInput(input, index, null, ps);
             }
 
-            var result = await Task.Run(
-                () => cachedCompletions.GetNextResult(forward));
+            var result = cachedCompletions.GetNextResult(forward);
             if (result == null) return null;
 
             expectedInput = input.Substring(

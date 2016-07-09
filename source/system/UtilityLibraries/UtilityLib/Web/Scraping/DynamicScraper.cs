@@ -9,15 +9,13 @@ namespace UtilityLib.Web.Scraping
         string source;
         bool showBrowser;
 
-        public virtual async Task<string> GetSource(string url)
-        {
-            return await GetSource(url, false);
-        }
+        public virtual Task<string> GetSource(string url) 
+            => Task.Run(() => GetSource(url, false));
 
-        public async Task<string> GetSource(string url, bool showBrowser)
+        public string GetSource(string url, bool showBrowser)
         {
             reset(showBrowser);
-            return await Task.Run(() => performBrowsing(url));
+            return performBrowsing(url);
         }
 
         void reset(bool showBrowser)

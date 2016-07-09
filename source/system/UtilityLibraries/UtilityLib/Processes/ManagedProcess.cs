@@ -38,7 +38,7 @@ namespace UtilityLib.Processes
             return await proc.StandardOutput.ReadToEndAsync();
         }
 
-        public async Task RunBackgroundLive()
+        public void RunBackgroundLive()
         {
             applyBackgroundProperties(proc.StartInfo);
             proc.OutputDataReceived += OutputReceived;
@@ -46,7 +46,7 @@ namespace UtilityLib.Processes
             proc.Start();
             proc.BeginOutputReadLine();
             proc.BeginErrorReadLine();
-            await Task.Run(() => proc.WaitForExit());
+            proc.WaitForExit();
         }
 
         static void applyBackgroundProperties(ProcessStartInfo startInfo)

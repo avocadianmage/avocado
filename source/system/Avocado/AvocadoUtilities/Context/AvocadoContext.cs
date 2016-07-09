@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace AvocadoUtilities.Context
 {
@@ -13,8 +12,7 @@ namespace AvocadoUtilities.Context
             Directory.SetCurrentDirectory(Path.GetDirectoryName(asm.Location));
         }
 
-        public async Task<string> GetConfigValue(
-            string prop, string defaultVal)
-            => await configData.GetValue(prop, defaultVal);
+        public string GetConfigValue(string prop, string defaultVal)
+            => configData.GetValue(prop, defaultVal);
     }
 }

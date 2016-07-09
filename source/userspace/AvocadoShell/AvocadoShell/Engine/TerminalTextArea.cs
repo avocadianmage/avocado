@@ -28,21 +28,18 @@ namespace AvocadoShell.Engine
 
         public TerminalTextArea()
         {
-            psEngineAsync = createPowerShellEngine();
+            psEngineAsync = Task.Run(() => createPowerShellEngine());
 
             Unloaded += async (s, e) => await terminateExec();
         }
 
-        async Task<PowerShellEngine> createPowerShellEngine()
+        PowerShellEngine createPowerShellEngine()
         {
-            return await Task.Run(() =>
-            {
-                var psEngine = new PowerShellEngine(this);
-                psEngine.ExecDone += onExecDone;
-                psEngine.ExitRequested += (s, e)
-                    => Dispatcher.BeginInvoke((Action)exit);
-                return psEngine;
-            });
+            var psEngine = new PowerShellEngine(this);
+            psEngine.ExecDone += onExecDone;
+            psEngine.ExitRequested += (s, e)
+                => Dispatcher.BeginInvoke((Action)exit);
+            return psEngine;
         }
 
         public override void OnApplyTemplate()
@@ -255,7 +252,7 @@ namespace AvocadoShell.Engine
         }
         
         public async Task<bool> RunNativeCommand(string message)
-            => await (await psEngineAsync).RunNativeCommand(message);
+            => (await psEngineAsync).RunNativeCommand(message);
 
         void performAutocomplete()
         {
@@ -267,7 +264,7 @@ namespace AvocadoShell.Engine
 
             Task.Run(async () =>
                 {
-                    return await (await psEngineAsync)
+                    return (await psEngineAsync)
                         .GetCompletion(input, index, forward);
                 })
                 .ContinueWith(task =>
@@ -320,7 +317,7 @@ namespace AvocadoShell.Engine
             }
 
             // Add working directory.
-            prompt += $"{await psEngine.GetWorkingDirectory()} ";
+            prompt += $"{psEngine.GetWorkingDirectory()} ";
 
             return prompt;
         }

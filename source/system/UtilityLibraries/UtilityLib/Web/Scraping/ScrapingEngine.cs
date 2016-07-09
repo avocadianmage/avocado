@@ -8,23 +8,16 @@ namespace UtilityLib.Web.Scraping
 {
     public sealed class ScrapingEngine
     {
-        public async Task<string> GetSource(string url)
-        {
-            return await GetSource(url, false);
-        }
+        public Task<string> GetSource(string url) => GetSource(url, false);
 
         public async Task<string> GetSource(string url, bool onlyDynamic)
         {
-            if (onlyDynamic)
-            {
-                var scraper = new DynamicScaper();
-                return await scraper.GetSource(url);
-            }
-
-            return await Task.Run(() => dispatchGetSource(url));
+            return await (onlyDynamic
+                ? new DynamicScaper().GetSource(url)
+                : dispatchGetSource(url));
         }
 
-        string dispatchGetSource(string url)
+        async Task<string> dispatchGetSource(string url)
         {
             var tasks = getScraperTypes()
                 .Select(type => getSourceTask(type, url))
@@ -33,15 +26,15 @@ namespace UtilityLib.Web.Scraping
             while (tasks.Any())
             {
                 // Get the result of the first task to complete.
-                var index = Task.WaitAny(tasks.ToArray());
-                var result = tasks[index].Result;
+                var task = await Task.WhenAny(tasks.ToArray());
 
                 // If the task was successful (the result is not null) then 
                 // return the data.
+                var result = await task;
                 if (result != null) return result;
 
                 // Otherwise, remove the failed task and continue.
-                tasks.RemoveAt(index);
+                tasks.Remove(task);
             }
 
             // Throw an exception if all of the tasks failed.
@@ -61,9 +54,6 @@ namespace UtilityLib.Web.Scraping
         }
 
         Task<string> getSourceTask(Type type, string url)
-        {
-            var scraper = Activator.CreateInstance(type) as IScraper;
-            return Task.Run(() => scraper.GetSource(url));
-        }
+            => (Activator.CreateInstance(type) as IScraper).GetSource(url);
     }
 }

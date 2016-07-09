@@ -3,7 +3,6 @@ using AvocadoServer.ServerAPI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 
 namespace AvocadoServer.Jobs
@@ -33,8 +32,7 @@ namespace AvocadoServer.Jobs
             });
         }
 
-        void saveJobs()
-            => Task.Run(() => new JobSerializer().Save(jobTable.Values));
+        void saveJobs() => new JobSerializer().Save(jobTable.Values);
         
         public void StartJob(
             string workingDirectory, string filename, int secInterval)

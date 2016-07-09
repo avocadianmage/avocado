@@ -20,9 +20,7 @@ namespace AvocadoUtilities.Cmdlet
             => cmdlet.Terminate(string.Empty);
 
         public static T DoOperation<T>(
-            this PSCmdlet cmdlet,  
-            string msg, 
-            Func<T> work)
+            this PSCmdlet cmdlet, string msg, Func<T> work)
         {
             cmdlet.Host.UI.Write($"{msg}...");
 

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
@@ -34,26 +33,18 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public string RemoteComputerName 
             => runspace.ConnectionInfo?.ComputerName;
 
-        public async Task<IEnumerable<string>> RunBackgroundCommand(
-            string command)
+        public IEnumerable<string> RunBackgroundCommand(string command)
         {
-            var result = await Task.Run(
-                () => runspace.CreatePipeline(command).Invoke());
-            return result.Select(l => l.ToString());
+            return runspace.CreatePipeline(command).Invoke()
+                .Select(l => l.ToString());
         }
 
-        public async Task<string> GetWorkingDirectory()
+        public string GetWorkingDirectory()
         {
-            var path = await getPSVariable("PWD");
             var homeDir = Environment.GetFolderPath(
                Environment.SpecialFolder.UserProfile);
-            return path.ToString().Replace(homeDir, "~");
-        }
-
-        async Task<object> getPSVariable(string name)
-        {
-            return await Task.Run(
-                () => runspace.SessionStateProxy.GetVariable(name));
+            return runspace.SessionStateProxy.GetVariable("PWD").ToString()
+                .Replace(homeDir, "~");
         }
 
         public void InitEnvironment()
@@ -82,9 +73,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public void Stop() => executingPipeline.Stop();
 
-        public async Task<string> GetCompletion(
-            string input, int index, bool forward)
-            => await autocomplete.GetCompletion(input, index, forward);
+        public string GetCompletion(string input, int index, bool forward)
+            => autocomplete.GetCompletion(input, index, forward);
         
         WSManConnectionInfo createRemoteInfo(string computerName)
         {
