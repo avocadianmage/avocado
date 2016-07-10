@@ -1,10 +1,10 @@
 # PowerShell remoting interactive session support.
 function Edit-File
 {
-	Param([Parameter(Mandatory = $true)][string]$File)
+	Param([Parameter(Mandatory = $true)][string]$FileName)
 
 	# Run native command.
-	RunNativeCommand "Edit-File $file"
+	RunNativeCommand "Edit-File $FileName"
 }
 
 # Shortcut.

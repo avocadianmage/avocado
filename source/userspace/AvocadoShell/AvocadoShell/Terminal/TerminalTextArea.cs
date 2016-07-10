@@ -271,13 +271,28 @@ namespace AvocadoShell.Terminal
             // Otherwise, use PowerShell to interpret the command.
             (await psEngineAsync.ConfigureAwait(false)).ExecuteCommand(input);
         }
-
+        
         public async Task<bool> RunNativeCommand(string message)
         {
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
-            return psEngine.RunNativeCommand(message);
-        }
+            const string AVOCADO_PREFX = "avocado:";
+            if (!message.StartsWith(AVOCADO_PREFX)) return false;
 
+            var psEngine = await psEngineAsync.ConfigureAwait(false);
+
+            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
+            var arg = string.Join(" ", pieces.Skip(1));
+            switch (pieces.First())
+            {
+                case "Enter-PSSession":
+                    psEngine.OpenRemoteSession(arg);
+                    break;
+                case "Download-Remote":
+                    psEngine.DownloadRemote(arg);
+                    break;
+            }
+            return true;
+        }
+        
         async Task performAutocomplete()
         {
             var input = getInput();

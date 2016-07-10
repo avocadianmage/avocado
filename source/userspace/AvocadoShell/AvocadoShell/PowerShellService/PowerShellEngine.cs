@@ -47,33 +47,14 @@ namespace AvocadoShell.PowerShellService
         }
 
         public void InitEnvironment() => activeInstance.InitEnvironment();
-
-        public bool RunNativeCommand(string message)
-        {
-            const string AVOCADO_PREFX = "avocado:";
-            if (!message.StartsWith(AVOCADO_PREFX)) return false;
-
-            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
-            var arg = string.Join(" ", pieces.Skip(1));
-            switch (pieces.First())
-            {
-                case "Enter-PSSession":
-                    openRemoteSession(arg);
-                    break;
-                case "Download-Remote":
-                    downloadRemote(arg);
-                    break;
-            }
-            return true;
-        }
-
-        void openRemoteSession(string computerName)
+        
+        public void OpenRemoteSession(string computerName)
         {
             instances.AddLast(createInstance(computerName));
             activeInstance.InitEnvironment();
         }
         
-        void downloadRemote(string paths)
+        public void DownloadRemote(string paths)
         {
             var computerName = activeInstance.RemoteComputerName;
             localInstance.RunBackgroundCommand(
