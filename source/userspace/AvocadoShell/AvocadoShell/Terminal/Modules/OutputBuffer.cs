@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace AvocadoShell.Engine.Modules
+namespace AvocadoShell.Terminal.Modules
 {
     sealed class OutputBuffer
     {

@@ -1,5 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
-using AvocadoShell.Engine.Modules;
+using AvocadoShell.Terminal.Modules;
 using AvocadoShell.PowerShellService;
 using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoUtilities.CommandLine.ANSI;
@@ -15,7 +15,7 @@ using System.Windows.Threading;
 using UtilityLib.MiscTools;
 using UtilityLib.Processes;
 
-namespace AvocadoShell.Engine
+namespace AvocadoShell.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {

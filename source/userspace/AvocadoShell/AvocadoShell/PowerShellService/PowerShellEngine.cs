@@ -1,4 +1,4 @@
-﻿using AvocadoShell.Engine;
+﻿using AvocadoShell.Terminal;
 using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Runspaces;
 using System;

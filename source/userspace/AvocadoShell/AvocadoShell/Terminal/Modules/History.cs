@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UtilityLib.MiscTools;
 
-namespace AvocadoShell.Engine.Modules
+namespace AvocadoShell.Terminal.Modules
 {
     sealed class History
     {

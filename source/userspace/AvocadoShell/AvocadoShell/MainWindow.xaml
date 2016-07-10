@@ -2,7 +2,7 @@
     x:Class="AvocadoShell.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:avocadoShell="clr-namespace:AvocadoShell.Engine"
+    xmlns:avocadoShell="clr-namespace:AvocadoShell.Terminal"
     xmlns:avocadoFramework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
     Width="640" Height="460">
 

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace AvocadoShell.Engine
+namespace AvocadoShell.Terminal
 {
     interface IShellUI
     {

@@ -110,10 +110,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\Modules\OutputBuffer.cs" />
-    <Compile Include="Engine\Modules\Prompt.cs" />
-    <Compile Include="Engine\IShellUI.cs" />
-    <Compile Include="Engine\TerminalTextArea.cs" />
+    <Compile Include="Terminal\Modules\OutputBuffer.cs" />
+    <Compile Include="Terminal\Modules\Prompt.cs" />
+    <Compile Include="Terminal\IShellUI.cs" />
+    <Compile Include="Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\PowerShellEngine.cs" />
     <Compile Include="PowerShellService\Runspaces\ExecDoneEventArgs.cs" />
     <Compile Include="PowerShellService\Runspaces\ExecutingPipeline.cs" />
@@ -123,7 +123,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="PowerShellService\Modules\Autocomplete.cs" />
     <Compile Include="PowerShellService\Runspaces\PowerShellInstance.cs" />
-    <Compile Include="Engine\Modules\History.cs" />
+    <Compile Include="Terminal\Modules\History.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
