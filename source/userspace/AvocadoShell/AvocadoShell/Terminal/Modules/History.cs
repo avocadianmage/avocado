@@ -3,20 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using UtilityLib.MiscTools;
 
 namespace AvocadoShell.Terminal.Modules
 {
     sealed class History
     {
-        readonly int maxHistoryCount;
         readonly LinkedList<string> buffer;
         LinkedListNode<string> currentNode;
 
         public History(int maxHistoryCount)
         {
-            this.maxHistoryCount = maxHistoryCount;
-            buffer = getHistoryFromDisk();
+            buffer = prepareHistoryFromDisk(maxHistoryCount);
             reset();
         }
 
@@ -29,12 +26,19 @@ namespace AvocadoShell.Terminal.Modules
                 "ConsoleHost_history.txt");
         }
 
-        LinkedList<string> getHistoryFromDisk()
+        LinkedList<string> prepareHistoryFromDisk(int maxHistoryCount)
         {
             var filePath = getFilePath();
-            return File.Exists(filePath)
-                ? new LinkedList<string>(File.ReadAllLines(filePath))
-                : new LinkedList<string>();
+            if (!File.Exists(filePath)) return new LinkedList<string>();
+
+            // Truncate the history to the maximum history count.
+            var truncatedHistory = File.ReadLines(filePath)
+                .Reverse().Take(maxHistoryCount).Reverse().ToList();
+
+            // Save the truncated history back to disk.
+            Task.Run(() => File.WriteAllLines(filePath, truncatedHistory));
+
+            return new LinkedList<string>(truncatedHistory);
         }
 
         public void Add(string input)
@@ -58,16 +62,8 @@ namespace AvocadoShell.Terminal.Modules
         void writeInputToDisk(string input)
         {
             var filePath = getFilePath();
-            var linesToWrite = input.Yield();
-            if (File.Exists(filePath))
-            {
-                var lines = File.ReadAllLines(filePath);
-                linesToWrite = lines
-                    .Skip(lines.Length - maxHistoryCount + 1)
-                    .Concat(linesToWrite);
-            }
-            else Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            File.WriteAllLines(filePath, linesToWrite);
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+            File.AppendAllText(filePath, input);
         }
 
         bool shouldAdd(string input)

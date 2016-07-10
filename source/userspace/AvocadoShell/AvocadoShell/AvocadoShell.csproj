@@ -110,6 +110,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Editor\EditorTextArea.cs" />
     <Compile Include="Terminal\Modules\OutputBuffer.cs" />
     <Compile Include="Terminal\Modules\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
@@ -155,7 +156,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Scripts\core.ps1" />
+    <EmbeddedResource Include="Scripts\startup.ps1" />
     <EmbeddedResource Include="Scripts\NativeCommands\Enter-PSSession.ps1" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -165,6 +166,7 @@
     <EmbeddedResource Include="Scripts\NativeCommands\Download-Remote.ps1" />
     <EmbeddedResource Include="Scripts\utilities.ps1" />
     <None Include="Scripts\Formatting\Avocado.format.ps1xml" />
+    <EmbeddedResource Include="Scripts\NativeCommands\Edit-File.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

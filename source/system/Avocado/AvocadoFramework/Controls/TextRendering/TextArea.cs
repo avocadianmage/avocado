@@ -54,7 +54,11 @@ namespace AvocadoFramework.Controls.TextRendering
         }
 
         protected TextPointer StartPointer => CaretPointer.DocumentStart;
-        protected TextPointer EndPointer => CaretPointer.DocumentEnd;
+        protected TextPointer EndPointer
+            => CaretPointer.DocumentEnd
+                // Omit default newline that is at the end of the document.
+                .GetNextInsertionPosition(LogicalDirection.Backward);
+
         protected TextPointer LineStartPointer 
             => CaretPointer.GetLineStartPosition(0);
 
