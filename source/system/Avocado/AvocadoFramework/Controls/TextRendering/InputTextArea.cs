@@ -96,9 +96,7 @@ namespace AvocadoFramework.Controls.TextRendering
                 // Disallow other styling when pasting.
                 case Key.V:
                     if (!IsControlKeyDown) break;
-                    var text = Clipboard.GetText(TextDataFormat.Text)
-                        .Replace(Environment.NewLine, "\r");
-                    Write(text, Foreground);
+                    Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
                     e.Handled = true;
                     break;
             }

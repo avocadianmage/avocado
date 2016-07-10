@@ -48,18 +48,15 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void WriteLine() => WriteLine(string.Empty, Foreground);
 
         protected void WriteLine(string text, Brush foreground)
-            => Write($"{text.TrimEnd()}\r", foreground);
+        {
+            text = $"{text.TrimEnd()}{System.Environment.NewLine}";
+            Write(text, foreground);
+        }
 
-        protected TextPointer StartPointer => paragraph.ContentStart;
-        protected TextPointer EndPointer => paragraph.ContentEnd;
+        protected TextPointer StartPointer => CaretPointer.DocumentStart;
+        protected TextPointer EndPointer => CaretPointer.DocumentEnd;
         protected TextPointer LineStartPointer 
             => CaretPointer.GetLineStartPosition(0);
-
-        Paragraph paragraph
-            => CaretPointer.Paragraph
-            ?? CaretPointer
-                .GetNextInsertionPosition(LogicalDirection.Backward)
-                .Paragraph;
 
         protected void MoveCaret(TextPointer pointer, bool select)
         {

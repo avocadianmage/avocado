@@ -110,8 +110,8 @@ namespace AvocadoShell.Engine
 
         bool handleBackAndLeftKeys(Key key)
         {
-            if (!atOrBeforePrompt(CaretPointer)) return false;
-
+            if (!atOrBeforePrompt()) return false;
+            
             // The caret position does not change if text is selected
             // (unless Shift+Left is pressed) so we should not 
             // suppress that case.
@@ -123,9 +123,11 @@ namespace AvocadoShell.Engine
         {
             // Allow native handling if we are on separate line from the prompt
             // and Ctrl was not pressed.
-            if (!IsControlKeyDown && !atOrBeforePrompt(LineStartPointer))
+            if (!IsControlKeyDown)
             {
-                return false;
+                var lineStartOffset
+                    = LineStartPointer.GetOffsetToPosition(getPromptPointer());
+                if (lineStartOffset <= 0) return false;
             }
 
             // If we are on the same line as the prompt (or Ctrl is pressed), 
@@ -477,11 +479,8 @@ namespace AvocadoShell.Engine
 
         TextRange getInputTextRange(TextPointer end)
             => new TextRange(getPromptPointer(), end);
-
-        bool atOrBeforePrompt(TextPointer pointer)
-        {
-            return StartPointer.GetOffsetToPosition(pointer)
-                <= currentPrompt.LengthInSymbols;
-        }
+        
+        bool atOrBeforePrompt()
+            => string.IsNullOrEmpty(getInputTextRange(CaretPointer).Text);
     }
 }
