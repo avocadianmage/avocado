@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using UtilityLib.MiscTools;
 
 namespace AvocadoShell.Terminal.Modules
 {
     sealed class History
     {
+        const string LINE_CONNECTOR = "`";
+
         readonly LinkedList<string> buffer;
         LinkedListNode<string> currentNode;
 
@@ -34,11 +37,33 @@ namespace AvocadoShell.Terminal.Modules
             // Truncate the history to the maximum history count.
             var truncatedHistory = File.ReadLines(filePath)
                 .Reverse().Take(maxHistoryCount).Reverse().ToList();
-
+            
             // Save the truncated history back to disk.
             Task.Run(() => File.WriteAllLines(filePath, truncatedHistory));
 
-            return new LinkedList<string>(truncatedHistory);
+            return joinLines(truncatedHistory);
+        }
+
+        LinkedList<string> joinLines(List<string> lines)
+        {
+            var output = new LinkedList<string>();
+            for (var i = 0; i < lines.Count; i++)
+            {
+                var line = lines[i];
+                output.AddLast(line);
+                if (!line.EndsWith(LINE_CONNECTOR)) continue;
+
+                do
+                {
+                    line = lines[++i];
+                    var currentText = output.Last.Value;
+                    output.Last.Value
+                        = currentText.Remove(currentText.Length - 1)
+                        + Environment.NewLine + line;
+                }
+                while (line.EndsWith(LINE_CONNECTOR));
+            }
+            return output;
         }
 
         public void Add(string input)
@@ -61,9 +86,13 @@ namespace AvocadoShell.Terminal.Modules
 
         void writeInputToDisk(string input)
         {
+            // Format newlines.
+            input = input.Replace(
+                Environment.NewLine, LINE_CONNECTOR + Environment.NewLine);
+
             var filePath = getFilePath();
             Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-            File.AppendAllText(filePath, input);
+            File.AppendAllLines(filePath, input.Yield());
         }
 
         bool shouldAdd(string input)
