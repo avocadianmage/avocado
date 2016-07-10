@@ -309,7 +309,13 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteVerboseLine(string message)
         {
             // Check for native command.
-            if (shellUI.RunNativeCommand(message).Result) return;
+            const string AVOCADO_PREFX = "avocado:";
+            if (message.StartsWith(AVOCADO_PREFX))
+            {
+                message = message.Substring(AVOCADO_PREFX.Length);
+                shellUI.RunNativeCommand(message).Wait();
+                return;
+            }
 
             shellUI.WriteCustom(
                 $"[Verbose] {message}", Brushes.DarkGoldenrod, true);

@@ -1,9 +1,8 @@
-﻿using AvocadoShell.Terminal;
-using AvocadoShell.PowerShellService.Host;
+﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Runspaces;
+using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation.Host;
 
 namespace AvocadoShell.PowerShellService
@@ -56,9 +55,8 @@ namespace AvocadoShell.PowerShellService
         
         public void DownloadRemote(string paths)
         {
-            var computerName = activeInstance.RemoteComputerName;
             localInstance.RunBackgroundCommand(
-                $"SendToLocal {computerName} {paths}");
+                $"SendToLocal {activeInstance.RemoteComputerName} {paths}");
         }
 
         void onExecDone(object sender, ExecDoneEventArgs e)

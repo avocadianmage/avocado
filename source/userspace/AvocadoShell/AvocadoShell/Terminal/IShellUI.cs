@@ -13,6 +13,6 @@ namespace AvocadoShell.Terminal
         string WritePrompt(string prompt);
         SecureString WriteSecurePrompt(string prompt);
 
-        Task<bool> RunNativeCommand(string message);
+        Task RunNativeCommand(string message);
     }
 }

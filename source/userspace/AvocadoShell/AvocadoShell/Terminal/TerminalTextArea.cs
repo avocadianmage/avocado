@@ -272,25 +272,21 @@ namespace AvocadoShell.Terminal
             (await psEngineAsync.ConfigureAwait(false)).ExecuteCommand(input);
         }
         
-        public async Task<bool> RunNativeCommand(string message)
+        public async Task RunNativeCommand(string message)
         {
-            const string AVOCADO_PREFX = "avocado:";
-            if (!message.StartsWith(AVOCADO_PREFX)) return false;
-
             var psEngine = await psEngineAsync.ConfigureAwait(false);
-
-            var pieces = message.Substring(AVOCADO_PREFX.Length).Split(' ');
+            var pieces = message.Split(' ');
             var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
             {
                 case "Enter-PSSession":
                     psEngine.OpenRemoteSession(arg);
                     break;
+
                 case "Download-Remote":
                     psEngine.DownloadRemote(arg);
                     break;
             }
-            return true;
         }
         
         async Task performAutocomplete()
