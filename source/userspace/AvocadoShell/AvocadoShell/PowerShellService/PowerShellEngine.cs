@@ -24,6 +24,7 @@ namespace AvocadoShell.PowerShellService
         public string RemoteComputerName => activeInstance.RemoteComputerName;
         public string GetWorkingDirectory()
             => activeInstance.GetWorkingDirectory();
+        public int GetMaxHistoryCount() => activeInstance.GetMaxHistoryCount();
 
         public PowerShellEngine(IShellUI ui)
         {

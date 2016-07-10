@@ -312,9 +312,7 @@ namespace AvocadoShell.PowerShellService.Host
             if (shellUI.RunNativeCommand(message).Result) return;
 
             shellUI.WriteCustom(
-                $"[Verbose] {message}", 
-                Brushes.DarkGoldenrod, 
-                true);
+                $"[Verbose] {message}", Brushes.DarkGoldenrod, true);
         }
 
         /// <summary>

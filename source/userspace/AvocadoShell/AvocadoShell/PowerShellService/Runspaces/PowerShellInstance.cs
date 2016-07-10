@@ -32,19 +32,17 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public string RemoteComputerName 
             => runspace.ConnectionInfo?.ComputerName;
+        public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
+        public int GetMaxHistoryCount()
+            => (int)getPSVariable("MaximumHistoryCount");
+
+        object getPSVariable(string name)
+            => runspace.SessionStateProxy.GetVariable(name);
 
         public IEnumerable<string> RunBackgroundCommand(string command)
         {
             return runspace.CreatePipeline(command).Invoke()
                 .Select(l => l.ToString());
-        }
-
-        public string GetWorkingDirectory()
-        {
-            var homeDir = Environment.GetFolderPath(
-               Environment.SpecialFolder.UserProfile);
-            return runspace.SessionStateProxy.GetVariable("PWD").ToString()
-                .Replace(homeDir, "~");
         }
 
         public void InitEnvironment()

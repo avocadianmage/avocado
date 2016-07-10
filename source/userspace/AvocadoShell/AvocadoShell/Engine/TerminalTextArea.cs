@@ -19,16 +19,17 @@ namespace AvocadoShell.Engine
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        readonly InputHistory inputHistory = new InputHistory();
         readonly ResetEventWithData<string> resetEvent
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly Task<PowerShellEngine> psEngineAsync;
+        readonly Task<History> historyAsync;
 
         public TerminalTextArea()
         {
             psEngineAsync = Task.Run(() => createPowerShellEngine());
+            historyAsync = Task.Run(createHistory);
 
             Unloaded += async (s, e) 
                 => await terminateExec().ConfigureAwait(false);
@@ -38,9 +39,15 @@ namespace AvocadoShell.Engine
         {
             var psEngine = new PowerShellEngine(this);
             psEngine.ExecDone += onExecDone;
-            psEngine.ExitRequested += (s, e)
+            psEngine.ExitRequested += (s, e) 
                 => Dispatcher.BeginInvoke((Action)exit);
             return psEngine;
+        }
+
+        async Task<History> createHistory()
+        {
+            var psEngine = await psEngineAsync.ConfigureAwait(false);
+            return new History(psEngine.GetMaxHistoryCount());
         }
 
         public override void OnApplyTemplate()
@@ -157,14 +164,19 @@ namespace AvocadoShell.Engine
 
         bool handleUpAndDownKeys(Key key)
         {
-            inputHistoryLookup(key == Key.Down);
+            EnableInput(false);
+            historyLookup(key == Key.Down)
+                .ContinueWith(t => EnableInput(true));
+
             return true;
         }
 
         bool handleTabKey()
         {
             EnableInput(false);
-            performAutocomplete().RunAsync();
+            performAutocomplete()
+                .ContinueWith(t => EnableInput(true));
+
             return true;
         }
 
@@ -176,6 +188,7 @@ namespace AvocadoShell.Engine
             // Otherwise, execute the input.
             EnableInput(false);
             execute().RunAsync();
+
             return true;
         }
 
@@ -251,7 +264,7 @@ namespace AvocadoShell.Engine
         async Task executeCommand(string input)
         {
             // Add command to history.
-            inputHistory.Add(input);
+            (await historyAsync.ConfigureAwait(false)).Add(input);
 
             // Otherwise, use PowerShell to interpret the command.
             (await psEngineAsync.ConfigureAwait(false)).ExecuteCommand(input);
@@ -273,8 +286,6 @@ namespace AvocadoShell.Engine
             var completion = await Task.Run(
                 () => psEngine.GetCompletion(input, index, forward));
             if (completion != null) setInput(completion);
-
-            EnableInput(true);
         }
 
         void exit()
@@ -321,9 +332,18 @@ namespace AvocadoShell.Engine
             }
 
             // Add working directory.
-            prompt += $"{psEngine.GetWorkingDirectory()} ";
+            var workingDir 
+                = formatPathForDisplay(psEngine.GetWorkingDirectory());
+            prompt += $"{workingDir} ";
 
             return prompt;
+        }
+
+        string formatPathForDisplay(string path)
+        {
+            var homeDir = Environment.GetFolderPath(
+               Environment.SpecialFolder.UserProfile);
+            return path.Replace(homeDir, "~");
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
@@ -424,16 +444,18 @@ namespace AvocadoShell.Engine
             DispatcherPriority.Background);
         }
 
-        void inputHistoryLookup(bool forward)
+        async Task historyLookup(bool forward)
         {
             // Disallow lookup when not at the shell prompt.
             if (!currentPrompt.FromShell) return;
 
-            // Save the current user input to the buffer.
-            inputHistory.SaveInput(getInput());
+            var history = await historyAsync;
+
+            // Cache the current user input to the buffer.
+            history.CacheInput(getInput());
 
             // Look up the stored input to display from the buffer.
-            var storedInput = inputHistory.Cycle(forward);
+            var storedInput = history.Cycle(forward);
 
             // Return if no command was found.
             if (storedInput == null) return;
