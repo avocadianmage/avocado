@@ -110,7 +110,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Editor\EditorTextArea.cs" />
     <Compile Include="Terminal\Modules\OutputBuffer.cs" />
     <Compile Include="Terminal\Modules\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
@@ -166,7 +165,6 @@
     <EmbeddedResource Include="Scripts\NativeCommands\Download-Remote.ps1" />
     <EmbeddedResource Include="Scripts\utilities.ps1" />
     <None Include="Scripts\Formatting\Avocado.format.ps1xml" />
-    <EmbeddedResource Include="Scripts\NativeCommands\Edit-File.ps1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

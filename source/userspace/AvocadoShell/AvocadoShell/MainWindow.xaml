@@ -4,12 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:framework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
     xmlns:terminal="clr-namespace:AvocadoShell.Terminal"
-    xmlns:editor="clr-namespace:AvocadoShell.Editor"
     Width="640" Height="460">
 
     <Grid>
         <terminal:TerminalTextArea Foreground="SkyBlue" />
-        <editor:EditorTextArea Foreground="White" Visibility="Hidden" />
     </Grid>
 
 </framework:GlassPane>
