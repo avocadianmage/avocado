@@ -6,28 +6,15 @@ namespace UtilityLib.Web.Scraping
 {
     public class DynamicScaper : IScraper
     {
-        string source;
-        bool showBrowser;
-
         public virtual Task<string> GetSource(string url) 
             => Task.Run(() => GetSource(url, false));
 
         public string GetSource(string url, bool showBrowser)
         {
-            reset(showBrowser);
-            return performBrowsing(url);
-        }
+            string source = null;
 
-        void reset(bool showBrowser)
-        {
-            source = null;
-            this.showBrowser = showBrowser;
-        }
-
-        string performBrowsing(string url)
-        {
             // Start the browsing operation on a STA thread.
-            var thread = new Thread(() => navigate(url));
+            var thread = new Thread(() => source = navigate(url, showBrowser));
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
 
@@ -38,61 +25,61 @@ namespace UtilityLib.Web.Scraping
             return source;
         }
 
-        void navigate(string url)
+        string navigate(string url, bool showBrowser)
         {
+            string source = null;
+
             var browser = new WebBrowser
             {
                 ScriptErrorsSuppressed = true,
-                Dock = DockStyle.Fill,
+                Dock = DockStyle.Fill
             };
-            browser.DocumentCompleted += documentCompleted;
-            browser.Navigate(url);
-
-            if (showBrowser)
+            var frm = new Form
             {
-                var frm = new Form
-                {
-                    Width = 600,
-                    Height = 600,
-                };
-                frm.Controls.Add(browser);
-                frm.FormClosing += (sender, e) =>
-                {
-                    source = getSourceFromBrowser(browser);
-                };
+                Width = 800,
+                Height = 600,
 
-                Application.Run(frm);
-            }
+                // Prevent background browser from stealing focus.
+                Enabled = showBrowser
+            };
+            frm.Controls.Add(browser);
+
+            // Retrieve source before application exit.
+            frm.FormClosing += (s, e) => source = getSourceFromBrowser(browser);
+            frm.FormClosed += (s, e) => Application.Exit();
+
+            if (showBrowser) frm.Show();
             else
             {
-                var timer = new System.Windows.Forms.Timer
+                browser.DocumentCompleted += (s, e) =>
                 {
-                    Interval = 10000,
+                    // Wait for main document to load.
+                    if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
+                    
+                    // Grab the source and exit the application.
+                    source = getSourceFromBrowser(browser);
+                    Application.Exit();
                 };
+
+                // Show browser if no result is returned in 10 seconds.
+                var timer = new System.Windows.Forms.Timer { Interval = 10000 };
                 timer.Tick += (sender, e) =>
                 {
-                    Application.ExitThread();
+                    timer.Stop();
+                    frm.Enabled = true;
+                    frm.Show();
                 };
                 timer.Start();
-
-                Application.Run();
             }
-        }
-        void documentCompleted(
-            object sender, 
-            WebBrowserDocumentCompletedEventArgs e)
-        {
-            var browser = sender as WebBrowser;
-            if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
+            
+            // Navigate to the URL and block until the application exits.
+            browser.Navigate(url);
+            Application.Run();
 
-            // Retrieve the document object once it has finished loading.
-            source = getSourceFromBrowser(browser);
-
-            if (showBrowser) return;
-            Application.ExitThread();
+            return source;
         }
 
-        static string getSourceFromBrowser(WebBrowser browser)
+        string getSourceFromBrowser(WebBrowser browser)
         {
             dynamic dom = browser.Document?.DomDocument;
             return dom?.documentElement?.innerHTML;
