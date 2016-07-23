@@ -52,21 +52,19 @@ namespace UtilityLib.Web.Scraping
                 {
                     // Wait for main document to load.
                     if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
-                    
+
                     // Grab the source and exit the application.
                     source = getSourceFromBrowser(browser);
                     Application.Exit();
                 };
 
                 // Show browser if no result is returned in 10 seconds.
-                var timer = new System.Windows.Forms.Timer { Interval = 10000 };
-                timer.Tick += (sender, e) =>
+                Task.Run(async () =>
                 {
-                    timer.Stop();
+                    await Task.Delay(10000);
                     frm.Enabled = true;
                     frm.Show();
-                };
-                timer.Start();
+                });
             }
             
             // Navigate to the URL and block until the application exits.
