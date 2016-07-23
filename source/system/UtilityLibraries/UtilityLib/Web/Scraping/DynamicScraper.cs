@@ -7,22 +7,19 @@ namespace UtilityLib.Web.Scraping
     public class DynamicScaper : IScraper
     {
         public virtual Task<string> GetSource(string url) 
-            => Task.Run(() => GetSource(url, false));
+            => GetSource(url, false);
 
-        public string GetSource(string url, bool showBrowser)
+        public Task<string> GetSource(string url, bool showBrowser)
         {
-            string source = null;
+            var tcs = new TaskCompletionSource<string>();
 
             // Start the browsing operation on a STA thread.
-            var thread = new Thread(() => source = navigate(url, showBrowser));
+            var thread = new Thread(
+                () => tcs.SetResult(navigate(url, showBrowser)));
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
 
-            // Wait until the operation is complete.
-            thread.Join();
-
-            // Return the result.
-            return source;
+            return tcs.Task;
         }
 
         string navigate(string url, bool showBrowser)
