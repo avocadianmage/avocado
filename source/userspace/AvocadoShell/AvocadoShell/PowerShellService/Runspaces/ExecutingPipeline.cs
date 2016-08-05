@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 using UtilityLib.MiscTools;
 
@@ -7,7 +6,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecutingPipeline
     {
-        public event EventHandler<ExecDoneEventArgs> Done;
+        readonly ResetEventWithData<string> mutex 
+            = new ResetEventWithData<string>();
 
         readonly Runspace runspace;
         Pipeline pipeline;
@@ -26,20 +26,20 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
         }
 
-        public void ExecuteCommand(string command)
+        public string ExecuteCommand(string command)
         {
             pipeline = runspace.CreatePipeline(command, true);
-            executePipeline();
+            return executePipeline();
         }
 
-        public void ExecuteScripts(IEnumerable<string> scripts)
+        public string ExecuteScripts(IEnumerable<string> scripts)
         {
             pipeline = runspace.CreatePipeline();
             scripts.ForEach(pipeline.Commands.AddScript);
-            executePipeline();
+            return executePipeline();
         }
 
-        void executePipeline()
+        string executePipeline()
         {
             // Have the our host format the output.
             pipeline.Commands.Add("Out-Default");
@@ -49,6 +49,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
             // Execute the pipeline.
             pipeline.InvokeAsync();
+
+            // Wait for the pipeline to finish and return any error output.
+            return mutex.Block();
         }
 
         void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
@@ -70,7 +73,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline = null;
 
             // Fire event indicating execution of the pipeline is finished.
-            Done(this, new ExecDoneEventArgs(error));
+            mutex.Signal(error);
         }
     }
 }

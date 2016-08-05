@@ -1,7 +1,6 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
-using AvocadoShell.Terminal.Modules;
-using AvocadoShell.PowerShellService;
 using AvocadoShell.PowerShellService.Runspaces;
+using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
@@ -38,7 +37,6 @@ namespace AvocadoShell.Terminal
         PowerShellEngine createPowerShellEngine()
         {
             var psEngine = new PowerShellEngine(this);
-            psEngine.ExecDone += onExecDone;
             psEngine.ExitRequested += (s, e) 
                 => Dispatcher.BeginInvoke((Action)exit);
             return psEngine;
@@ -64,14 +62,6 @@ namespace AvocadoShell.Terminal
         {
             var psEngine = await psEngineAsync.ConfigureAwait(false);
             psEngine.InitEnvironment();
-        }
-        
-        async void onExecDone(object sender, ExecDoneEventArgs e)
-        {
-            // Display error, if any.
-            if (!string.IsNullOrWhiteSpace(e.Error)) WriteErrorLine(e.Error);
-
-            // Show the next shell prompt.
             await writeShellPrompt().ConfigureAwait(false);
         }
 
@@ -268,8 +258,14 @@ namespace AvocadoShell.Terminal
             // Add command to history.
             (await historyAsync.ConfigureAwait(false)).Add(input);
 
-            // Otherwise, use PowerShell to interpret the command.
-            (await psEngineAsync.ConfigureAwait(false)).ExecuteCommand(input);
+            // Execute the command.
+            var psEngine = (await psEngineAsync.ConfigureAwait(false));
+            var error = await Task.Run(() => psEngine.ExecuteCommand(input))
+                .ConfigureAwait(false);
+            writeErrorIfExists(error);
+
+            // Show the next shell prompt.
+            await writeShellPrompt().ConfigureAwait(false);
         }
         
         public async Task RunNativeCommand(string message)
@@ -284,11 +280,17 @@ namespace AvocadoShell.Terminal
                     break;
 
                 case "Download-Remote":
-                    psEngine.DownloadRemote(arg);
+                    var error = psEngine.DownloadRemote(arg);
+                    writeErrorIfExists(error);
                     break;
             }
         }
-        
+
+        void writeErrorIfExists(string error)
+        {
+            if (!string.IsNullOrWhiteSpace(error)) WriteErrorLine(error);
+        }
+
         async Task performAutocomplete()
         {
             var input = getInput();

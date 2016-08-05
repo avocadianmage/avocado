@@ -13,8 +13,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class PowerShellInstance
     {
-        public event EventHandler<ExecDoneEventArgs> ExecDone;
-
         readonly Runspace runspace;
         readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
@@ -26,7 +24,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             var remoteInfo = createRemoteInfo(remoteComputerName);
             runspace = createRunspace(host, remoteInfo);
             var powershell = createPowershell(runspace);
-            executingPipeline = createPipeline(runspace);
+            executingPipeline = new ExecutingPipeline(runspace);
             autocomplete = new Autocomplete(powershell);
         }
 
@@ -39,17 +37,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
         object getPSVariable(string name)
             => runspace.SessionStateProxy.GetVariable(name);
 
-        public IEnumerable<string> RunBackgroundCommand(string command)
-        {
-            return runspace.CreatePipeline(command).Invoke()
-                .Select(l => l.ToString());
-        }
-
         public void InitEnvironment()
         {
             var startupScripts = getSystemStartupScripts()
                 .Concat(getUserStartupScripts());
             executingPipeline.ExecuteScripts(startupScripts);
+            //ckg: TODO return error
         }
 
         IEnumerable<string> getSystemStartupScripts()
@@ -66,7 +59,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Join(" ", Environment.GetCommandLineArgs().Skip(1))
                 .Yield();
         
-        public void ExecuteCommand(string cmd) 
+        public string ExecuteCommand(string cmd) 
             => executingPipeline.ExecuteCommand(cmd);
 
         public void Stop() => executingPipeline.Stop();
@@ -96,13 +89,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
                     remoteInfo, host, TypeTable.LoadDefaultTypeFiles());
             rs.Open();
             return rs;
-        }
-
-        ExecutingPipeline createPipeline(Runspace runspace)
-        {
-            var pipeline = new ExecutingPipeline(runspace);
-            pipeline.Done += (s, e) => ExecDone(this, e);
-            return pipeline;
         }
     }
 }

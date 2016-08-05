@@ -114,8 +114,7 @@
     <Compile Include="Terminal\Modules\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />
-    <Compile Include="PowerShellService\PowerShellEngine.cs" />
-    <Compile Include="PowerShellService\Runspaces\ExecDoneEventArgs.cs" />
+    <Compile Include="PowerShellService\Runspaces\PowerShellEngine.cs" />
     <Compile Include="PowerShellService\Runspaces\ExecutingPipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />

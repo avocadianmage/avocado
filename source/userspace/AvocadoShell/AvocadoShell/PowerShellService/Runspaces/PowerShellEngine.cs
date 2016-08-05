@@ -1,15 +1,13 @@
 ﻿using AvocadoShell.PowerShellService.Host;
-using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Management.Automation.Host;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class PowerShellEngine
     {
-        public event EventHandler<ExecDoneEventArgs> ExecDone;
         public event EventHandler ExitRequested;
         
         readonly CustomHost psHost;
@@ -39,11 +37,7 @@ namespace AvocadoShell.PowerShellService
         }
 
         PowerShellInstance createInstance(string remoteComputerName)
-        {
-            var instance = new PowerShellInstance(psHost, remoteComputerName);
-            instance.ExecDone += onExecDone;
-            return instance;
-        }
+            => new PowerShellInstance(psHost, remoteComputerName);
 
         public void InitEnvironment() => activeInstance.InitEnvironment();
         
@@ -53,18 +47,10 @@ namespace AvocadoShell.PowerShellService
             activeInstance.InitEnvironment();
         }
         
-        public void DownloadRemote(string paths)
+        public string DownloadRemote(string paths)
         {
-            localInstance.RunBackgroundCommand(
+            return localInstance.ExecuteCommand(
                 $"SendToLocal {activeInstance.RemoteComputerName} {paths}");
-        }
-
-        void onExecDone(object sender, ExecDoneEventArgs e)
-        {
-            // Only process events from active instance.
-            if (sender != activeInstance) return;
-
-            ExecDone(this, e);
         }
 
         void onExitRequested(object sender, EventArgs e)
@@ -79,12 +65,9 @@ namespace AvocadoShell.PowerShellService
 
             // Pop the active instance.
             instances.RemoveLast();
-
-            // Retrigger local prompt.
-            ExecDone(this, new ExecDoneEventArgs());
         }
 
-        public void ExecuteCommand(string cmd)
+        public string ExecuteCommand(string cmd)
             => activeInstance.ExecuteCommand(cmd);
 
         public void Stop() => activeInstance.Stop();
