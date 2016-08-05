@@ -61,8 +61,7 @@ namespace AvocadoShell.Terminal
         async Task startPowershell()
         {
             var psEngine = await psEngineAsync.ConfigureAwait(false);
-            var error = psEngine.InitEnvironment();
-            writeErrorIfExists(error);
+            psEngine.InitEnvironment();
 
             await writeShellPrompt().ConfigureAwait(false);
         }
@@ -83,6 +82,9 @@ namespace AvocadoShell.Terminal
         {
             // Terminate the powershell process.
             (await psEngineAsync.ConfigureAwait(false)).Stop();
+
+            // Output indication that the process was successfully terminated.
+            WriteErrorLine("[break]");
 
             // Ensure the powershell thread is unblocked.
             resetEvent.Signal(null);
@@ -262,9 +264,8 @@ namespace AvocadoShell.Terminal
 
             // Execute the command.
             var psEngine = (await psEngineAsync.ConfigureAwait(false));
-            var error = await Task.Run(() => psEngine.ExecuteCommand(input))
+            await Task.Run(() => psEngine.ExecuteCommand(input))
                 .ConfigureAwait(false);
-            writeErrorIfExists(error);
 
             // Show the next shell prompt.
             await writeShellPrompt().ConfigureAwait(false);
@@ -272,28 +273,19 @@ namespace AvocadoShell.Terminal
         
         public async Task RunNativeCommand(string message)
         {
-            string error = null;
-
             var psEngine = await psEngineAsync.ConfigureAwait(false);
             var pieces = message.Split(' ');
             var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
             {
                 case "Enter-PSSession":
-                    error = psEngine.OpenRemoteSession(arg);
+                    psEngine.OpenRemoteSession(arg);
                     break;
 
                 case "Download-Remote":
-                    error = psEngine.DownloadRemote(arg);
+                    psEngine.DownloadRemote(arg);
                     break;
             }
-
-            writeErrorIfExists(error);
-        }
-
-        void writeErrorIfExists(string error)
-        {
-            if (!string.IsNullOrWhiteSpace(error)) WriteErrorLine(error);
         }
 
         async Task performAutocomplete()

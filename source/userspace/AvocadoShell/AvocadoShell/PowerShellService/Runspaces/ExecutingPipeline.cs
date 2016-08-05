@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
+using System.Threading;
 using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecutingPipeline
     {
-        readonly ResetEventWithData<string> mutex 
-            = new ResetEventWithData<string>();
+        readonly AutoResetEvent mutex = new AutoResetEvent(false);
 
         readonly Runspace runspace;
         Pipeline pipeline;
@@ -26,20 +26,20 @@ namespace AvocadoShell.PowerShellService.Runspaces
             }
         }
 
-        public string ExecuteCommand(string command)
+        public void ExecuteCommand(string command)
         {
             pipeline = runspace.CreatePipeline(command, true);
-            return executePipeline();
+            executePipeline();
         }
 
-        public string ExecuteScripts(IEnumerable<string> scripts)
+        public void ExecuteScripts(IEnumerable<string> scripts)
         {
             pipeline = runspace.CreatePipeline();
             scripts.ForEach(pipeline.Commands.AddScript);
-            return executePipeline();
+            executePipeline();
         }
 
-        string executePipeline()
+        void executePipeline()
         {
             // Have the our host format the output.
             pipeline.Commands.Add("Out-Default");
@@ -51,21 +51,18 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline.InvokeAsync();
 
             // Wait for the pipeline to finish and return any error output.
-            return mutex.Block();
+            mutex.WaitOne();
         }
 
         void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
         {
-            string error;
             switch (e.PipelineStateInfo.State)
             {
                 case PipelineState.Completed:
                 case PipelineState.Failed:
-                    error = e.PipelineStateInfo.Reason?.Message;
-                    break;
                 case PipelineState.Stopped:
-                    error = "[break]";
                     break;
+
                 default: return;
             }
 
@@ -73,7 +70,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline = null;
 
             // Fire event indicating execution of the pipeline is finished.
-            mutex.Signal(error);
+            mutex.Set();
         }
     }
 }

@@ -37,11 +37,11 @@ namespace AvocadoShell.PowerShellService.Runspaces
         object getPSVariable(string name)
             => runspace.SessionStateProxy.GetVariable(name);
 
-        public string InitEnvironment()
+        public void InitEnvironment()
         {
             var startupScripts = getSystemStartupScripts()
                 .Concat(getUserStartupScripts());
-            return executingPipeline.ExecuteScripts(startupScripts);
+            executingPipeline.ExecuteScripts(startupScripts);
         }
 
         IEnumerable<string> getSystemStartupScripts()
@@ -58,7 +58,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 .Join(" ", Environment.GetCommandLineArgs().Skip(1))
                 .Yield();
         
-        public string ExecuteCommand(string cmd) 
+        public void ExecuteCommand(string cmd) 
             => executingPipeline.ExecuteCommand(cmd);
 
         public void Stop() => executingPipeline.Stop();

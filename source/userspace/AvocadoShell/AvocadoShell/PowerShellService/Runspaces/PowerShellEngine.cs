@@ -39,17 +39,17 @@ namespace AvocadoShell.PowerShellService.Runspaces
         PowerShellInstance createInstance(string remoteComputerName)
             => new PowerShellInstance(psHost, remoteComputerName);
 
-        public string InitEnvironment() => activeInstance.InitEnvironment();
+        public void InitEnvironment() => activeInstance.InitEnvironment();
         
-        public string OpenRemoteSession(string computerName)
+        public void OpenRemoteSession(string computerName)
         {
             instances.AddLast(createInstance(computerName));
-            return activeInstance.InitEnvironment();
+            activeInstance.InitEnvironment();
         }
         
-        public string DownloadRemote(string paths)
+        public void DownloadRemote(string paths)
         {
-            return localInstance.ExecuteCommand(
+            localInstance.ExecuteCommand(
                 $"SendToLocal {activeInstance.RemoteComputerName} {paths}");
         }
 
@@ -67,7 +67,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             instances.RemoveLast();
         }
 
-        public string ExecuteCommand(string cmd)
+        public void ExecuteCommand(string cmd)
             => activeInstance.ExecuteCommand(cmd);
 
         public void Stop() => activeInstance.Stop();
