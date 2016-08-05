@@ -37,12 +37,11 @@ namespace AvocadoShell.PowerShellService.Runspaces
         object getPSVariable(string name)
             => runspace.SessionStateProxy.GetVariable(name);
 
-        public void InitEnvironment()
+        public string InitEnvironment()
         {
             var startupScripts = getSystemStartupScripts()
                 .Concat(getUserStartupScripts());
-            executingPipeline.ExecuteScripts(startupScripts);
-            //ckg: TODO return error
+            return executingPipeline.ExecuteScripts(startupScripts);
         }
 
         IEnumerable<string> getSystemStartupScripts()

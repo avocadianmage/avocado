@@ -61,7 +61,9 @@ namespace AvocadoShell.Terminal
         async Task startPowershell()
         {
             var psEngine = await psEngineAsync.ConfigureAwait(false);
-            psEngine.InitEnvironment();
+            var error = psEngine.InitEnvironment();
+            writeErrorIfExists(error);
+
             await writeShellPrompt().ConfigureAwait(false);
         }
 
@@ -270,20 +272,23 @@ namespace AvocadoShell.Terminal
         
         public async Task RunNativeCommand(string message)
         {
+            string error = null;
+
             var psEngine = await psEngineAsync.ConfigureAwait(false);
             var pieces = message.Split(' ');
             var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
             {
                 case "Enter-PSSession":
-                    psEngine.OpenRemoteSession(arg);
+                    error = psEngine.OpenRemoteSession(arg);
                     break;
 
                 case "Download-Remote":
-                    var error = psEngine.DownloadRemote(arg);
-                    writeErrorIfExists(error);
+                    error = psEngine.DownloadRemote(arg);
                     break;
             }
+
+            writeErrorIfExists(error);
         }
 
         void writeErrorIfExists(string error)
