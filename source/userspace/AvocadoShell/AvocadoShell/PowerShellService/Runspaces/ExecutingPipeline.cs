@@ -61,16 +61,10 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 case PipelineState.Completed:
                 case PipelineState.Failed:
                 case PipelineState.Stopped:
+                    // Fire event indicating execution of the pipeline is finished.
+                    mutex.Set();
                     break;
-
-                default: return;
             }
-
-            // Reset the pipeline.
-            pipeline = null;
-
-            // Fire event indicating execution of the pipeline is finished.
-            mutex.Set();
         }
     }
 }
