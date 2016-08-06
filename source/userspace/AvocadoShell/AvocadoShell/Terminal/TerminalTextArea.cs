@@ -30,8 +30,7 @@ namespace AvocadoShell.Terminal
             psEngineAsync = Task.Run(() => createPowerShellEngine());
             historyAsync = Task.Run(createHistory);
 
-            Unloaded += async (s, e) 
-                => await terminateExec().ConfigureAwait(false);
+            Unloaded += async (s, e) => await terminateExec();
         }
 
         PowerShellEngine createPowerShellEngine()
@@ -44,8 +43,8 @@ namespace AvocadoShell.Terminal
 
         async Task<History> createHistory()
         {
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
-            return new History(psEngine.GetMaxHistoryCount());
+            var maxHistoryCount = (await psEngineAsync).GetMaxHistoryCount();
+            return new History(maxHistoryCount);
         }
 
         public override void OnApplyTemplate()
@@ -60,10 +59,9 @@ namespace AvocadoShell.Terminal
 
         async Task startPowershell()
         {
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
-            psEngine.InitEnvironment();
-
-            await writeShellPrompt().ConfigureAwait(false);
+            var psEngine = await psEngineAsync;
+            await Task.Run(() => psEngine.InitEnvironment());
+            await writeShellPrompt();
         }
 
         async void onSizeChanged(object sender, SizeChangedEventArgs e)
@@ -73,15 +71,14 @@ namespace AvocadoShell.Terminal
             // Set the character buffer width of the PowerShell host.
             var bufferWidth =
                 (int)Math.Ceiling(e.NewSize.Width / CharDimensions.Width);
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
-            psEngine.HostRawUI.BufferSize
+            (await psEngineAsync).HostRawUI.BufferSize
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
         async Task terminateExec()
         {
             // Terminate the powershell process.
-            (await psEngineAsync.ConfigureAwait(false)).Stop();
+            (await psEngineAsync).Stop();
 
             // Output indication that the process was successfully terminated.
             WriteErrorLine("[break]");
@@ -254,26 +251,25 @@ namespace AvocadoShell.Terminal
             // executing process.
             if (!currentPrompt.FromShell) return;
 
-            await executeCommand(input).ConfigureAwait(false);
+            await executeCommand(input);
         }
 
         async Task executeCommand(string input)
         {
             // Add command to history.
-            (await historyAsync.ConfigureAwait(false)).Add(input);
+            (await historyAsync).Add(input);
 
             // Execute the command.
-            var psEngine = (await psEngineAsync.ConfigureAwait(false));
-            await Task.Run(() => psEngine.ExecuteCommand(input))
-                .ConfigureAwait(false);
+            var psEngine = (await psEngineAsync);
+            await Task.Run(() => psEngine.ExecuteCommand(input));
 
             // Show the next shell prompt.
-            await writeShellPrompt().ConfigureAwait(false);
+            await writeShellPrompt();
         }
         
         public async Task RunNativeCommand(string message)
         {
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
+            var psEngine = await psEngineAsync;
             var pieces = message.Split(' ');
             var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
@@ -294,7 +290,7 @@ namespace AvocadoShell.Terminal
             var index = getInputTextRange(CaretPointer).Text.Length;
             var forward = !IsShiftKeyDown;
 
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
+            var psEngine = await psEngineAsync;
             var completion = await Task.Run(
                 () => psEngine.GetCompletion(input, index, forward));
             if (completion != null) setInput(completion);
@@ -324,10 +320,7 @@ namespace AvocadoShell.Terminal
         }
 
         async Task writeShellPrompt()
-        {
-            var prompt = await getShellPromptString().ConfigureAwait(false);
-            safeWritePromptCore(prompt, true, false);
-        }
+            => safeWritePromptCore(await getShellPromptString(), true, false);
 
         async Task<string> getShellPromptString()
         {
@@ -337,7 +330,7 @@ namespace AvocadoShell.Terminal
             if (EnvUtils.IsAdmin) prompt += "(root) ";
 
             // Add remote computer name.
-            var psEngine = await psEngineAsync.ConfigureAwait(false);
+            var psEngine = await psEngineAsync;
             if (psEngine.RemoteComputerName != null)
             {
                 prompt += $"[{psEngine.RemoteComputerName}] ";
