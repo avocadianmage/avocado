@@ -18,7 +18,7 @@ namespace AvocadoShell.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        readonly ResetEventWithData<string> resetEvent
+        readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
@@ -78,13 +78,13 @@ namespace AvocadoShell.Terminal
         async Task terminateExec()
         {
             // Terminate the powershell process.
-            (await psEngineAsync).Stop();
+            if (!(await psEngineAsync).Stop()) return;
 
             // Output indication that the process was successfully terminated.
             WriteErrorLine("[break]");
 
             // Ensure the powershell thread is unblocked.
-            resetEvent.Signal(null);
+            nonShellPromptDone.Signal(null);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -245,7 +245,7 @@ namespace AvocadoShell.Terminal
 
             // Signal to the powershell process that the we are done entering
             // input.
-            resetEvent.Signal(input);
+            nonShellPromptDone.Signal(input);
 
             // Quit if the input was entered due to a custom prompt in an 
             // executing process.
@@ -316,7 +316,7 @@ namespace AvocadoShell.Terminal
         string writePrompt(string prompt, bool secure)
         {
             safeWritePromptCore(prompt, false, secure);
-            return resetEvent.Block();
+            return nonShellPromptDone.Block();
         }
 
         async Task writeShellPrompt()

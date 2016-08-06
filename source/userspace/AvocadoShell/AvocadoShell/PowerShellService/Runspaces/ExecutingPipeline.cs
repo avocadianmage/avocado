@@ -7,7 +7,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecutingPipeline
     {
-        readonly AutoResetEvent mutex = new AutoResetEvent(false);
+        readonly AutoResetEvent executionDone = new AutoResetEvent(false);
 
         readonly Runspace runspace;
         Pipeline pipeline;
@@ -17,13 +17,19 @@ namespace AvocadoShell.PowerShellService.Runspaces
             this.runspace = runspace;
         }
 
-        public void Stop()
+        /// <summary>
+        /// Asynchronous request to stop the running pipeline.
+        /// </summary>
+        /// <returns>True if the pipeline is being stopped. False otherwise
+        /// (ex: the pipeline wasn't running).</returns>
+        public bool Stop()
         {
-            // Only stop the pipeline if it is running.
             if (pipeline?.PipelineStateInfo.State == PipelineState.Running)
             {
                 pipeline.StopAsync();
+                return true;
             }
+            return false;
         }
 
         public void ExecuteCommand(string command)
@@ -51,7 +57,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline.InvokeAsync();
 
             // Wait for the pipeline to finish and return any error output.
-            mutex.WaitOne();
+            executionDone.WaitOne();
         }
 
         void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
@@ -62,7 +68,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 case PipelineState.Failed:
                 case PipelineState.Stopped:
                     // Fire event indicating execution of the pipeline is finished.
-                    mutex.Set();
+                    executionDone.Set();
                     break;
             }
         }

@@ -61,7 +61,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public void ExecuteCommand(string cmd) 
             => executingPipeline.ExecuteCommand(cmd);
 
-        public void Stop() => executingPipeline.Stop();
+        public bool Stop() => executingPipeline.Stop();
 
         public string GetCompletion(string input, int index, bool forward)
             => autocomplete.GetCompletion(input, index, forward);

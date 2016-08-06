@@ -70,7 +70,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public void ExecuteCommand(string cmd)
             => activeInstance.ExecuteCommand(cmd);
 
-        public void Stop() => activeInstance.Stop();
+        public bool Stop() => activeInstance.Stop();
 
         public string GetCompletion(string input, int index, bool forward)
             => activeInstance.GetCompletion(input, index, forward);
