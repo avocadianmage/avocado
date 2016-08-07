@@ -8,16 +8,16 @@ namespace AvocadoShell.PowerShellService.Modules
 
         readonly PowerShell ps;
 
-        CommandCompletion cachedCompletions;
+        CommandCompletion completions;
         string expectedInput;
-        int expectedInputIndex;
+        int expectedIndex;
 
         public Autocomplete(PowerShell ps)
         {
             this.ps = ps;
         }
         
-        public string GetCompletion(string input, int index, bool forward)
+        public bool GetCompletion(ref string input, ref int index, bool forward)
         {
             // Suggest a file if the input is blank.
             if (string.IsNullOrWhiteSpace(input))
@@ -26,32 +26,51 @@ namespace AvocadoShell.PowerShellService.Modules
                 index = PATH_BEGIN.Length;
             }
 
-            if (index == 0) return null;
+            if (index == 0) return false;
 
             // Check the user has altered the input and we need to update our
             // completion list.
             if (completionListNeedsUpdate(input, index))
             {
-                cachedCompletions 
+                completions 
                     = CommandCompletion.CompleteInput(input, index, null, ps);
             }
 
-            var result = cachedCompletions.GetNextResult(forward);
-            if (result == null) return null;
+            // Determine the length of the text to replace with the new
+            // completion.
+            var replacementLength = getCurrentReplacementLength(completions);
 
-            expectedInput = input.Substring(
-                0, cachedCompletions.ReplacementIndex);
-            expectedInput += result.CompletionText;
-            expectedInputIndex = expectedInput.Length;
-            return expectedInput;
+            // Get the completion data.
+            var result = completions.GetNextResult(forward);
+            if (result == null) return false;
+            
+            // Set input and index of the new completion.
+            var replacementIndex = completions.ReplacementIndex;
+            var completionText = result.CompletionText;
+            expectedInput = input
+                .Remove(replacementIndex, replacementLength)
+                .Insert(replacementIndex, completionText);
+            expectedIndex = replacementIndex + completionText.Length;
+
+            input = expectedInput;
+            index = expectedIndex;
+            return true;
         }
 
-        bool completionListNeedsUpdate(string input, int inputIndex)
+        int getCurrentReplacementLength(CommandCompletion completions)
         {
-            if (cachedCompletions == null) return true;
-            if (expectedInput != input) return true;
-            if (expectedInputIndex != inputIndex) return true;
-            return false;
+            var matchIndex = completions.CurrentMatchIndex;
+            return matchIndex == -1
+                ? completions.ReplacementLength
+                : completions.CompletionMatches[matchIndex]
+                    .CompletionText.Length;
+        }
+
+        bool completionListNeedsUpdate(string input, int index)
+        {
+            return completions == null
+                || expectedInput != input
+                || expectedIndex != index;
         }
     }
 }

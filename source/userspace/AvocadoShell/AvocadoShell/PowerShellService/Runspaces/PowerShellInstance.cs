@@ -63,8 +63,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public bool Stop() => executingPipeline.Stop();
 
-        public string GetCompletion(string input, int index, bool forward)
-            => autocomplete.GetCompletion(input, index, forward);
+        public bool GetCompletion(ref string input, ref int index, bool forward)
+            => autocomplete.GetCompletion(ref input, ref index, forward);
         
         WSManConnectionInfo createRemoteInfo(string computerName)
         {

@@ -286,14 +286,20 @@ namespace AvocadoShell.Terminal
 
         async Task performAutocomplete()
         {
+            // Get data needed for the completion.
             var input = getInput();
             var index = getInputTextRange(CaretPointer).Text.Length;
             var forward = !IsShiftKeyDown;
 
+            // Perform the completion.
             var psEngine = await psEngineAsync;
-            var completion = await Task.Run(
-                () => psEngine.GetCompletion(input, index, forward));
-            if (completion != null) setInput(completion);
+            var hasCompletion = await Task.Run(
+                () => psEngine.GetCompletion(ref input, ref index, forward));
+            if (!hasCompletion) return;
+
+            // Update the input (UI) with the result of the completion.
+            setInput(input);
+            MoveCaret(getPromptPointer().GetPositionAtOffset(index), false);
         }
 
         void exit()
@@ -471,11 +477,7 @@ namespace AvocadoShell.Terminal
 
         string getInput() => getInputTextRange(EndPointer).Text;
 
-        void setInput(string text)
-        {
-            getInputTextRange(EndPointer).Text = text;
-            MoveCaret(EndPointer, false);
-        }
+        void setInput(string text) => getInputTextRange(EndPointer).Text = text;
 
         TextPointer getPromptPointer() 
             => StartPointer.GetPositionAtOffset(currentPrompt.LengthInSymbols);

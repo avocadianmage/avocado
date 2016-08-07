@@ -72,7 +72,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public bool Stop() => activeInstance.Stop();
 
-        public string GetCompletion(string input, int index, bool forward)
-            => activeInstance.GetCompletion(input, index, forward);
+        public bool GetCompletion(ref string input, ref int index, bool forward)
+            => activeInstance.GetCompletion(ref input, ref index, forward);
     }
 }
