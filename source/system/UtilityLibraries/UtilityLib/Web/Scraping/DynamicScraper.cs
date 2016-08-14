@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -59,12 +60,13 @@ namespace UtilityLib.Web.Scraping
                 };
 
                 // Show browser if no result is returned in 10 seconds.
-                Task.Run(async () =>
-                {
-                    await Task.Delay(10000);
-                    frm.Enabled = true;
-                    frm.Show();
-                });
+                Task.Run(async () => await Task.Delay(10000)).ContinueWith(
+                    t => 
+                    {
+                        frm.Enabled = true;
+                        frm.Show();
+                    }, 
+                    TaskScheduler.FromCurrentSynchronizationContext());
             }
             
             // Navigate to the URL and block until the application exits.

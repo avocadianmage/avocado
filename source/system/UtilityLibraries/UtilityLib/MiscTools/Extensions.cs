@@ -26,15 +26,24 @@ namespace UtilityLib.MiscTools
         // Format this string so that it can be used in URIs.
         public static string ToUriCompatible(this string str)
         {
-            return str
-                .ToLower()
-                .Replace(":", string.Empty)
-                .Replace("*", string.Empty)
-                .Replace(' ', '-')
-                .Replace('/', '-')
-                .Replace('(', '-')
-                .Replace(')', '-')
-                .Trim('-');
+            const char SEPARATOR = '-';
+            var specialChars = new char[] { ' ', ':', '*', '/', '(', ')' };
+
+            // Set to lowercase.
+            str = str.ToLower();
+
+            // Replace special characters with the URL-friendly separator.
+            specialChars.ForEach(c => str = str.Replace(c, SEPARATOR));
+
+            // Eliminate any duplicate, adjacent separators.
+            for (var i = 0; i < str.Length - 1; i++)
+            {
+                if (str[i] == SEPARATOR && str[i] != str[i + 1]) continue;
+                str = str.Remove(i--, 1);
+            }
+
+            // Remove separators at the ends and return.
+            return str.Trim(SEPARATOR);
         }
 
         // Displays a number with a fixed number of decimal places.
