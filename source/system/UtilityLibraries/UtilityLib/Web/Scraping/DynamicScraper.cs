@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -46,19 +45,21 @@ namespace UtilityLib.Web.Scraping
             frm.FormClosing += (s, e) => source = getSourceFromBrowser(browser);
             frm.FormClosed += (s, e) => Application.Exit();
 
+            // Retrieve the source once it has loaded.
+            browser.DocumentCompleted += (s, e) =>
+            {
+                // Wait for main document to load.
+                if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
+
+                // Grab the source and exit the application.
+                source = getSourceFromBrowser(browser);
+                Application.Exit();
+            };
+
+            // Handle showing the browser.
             if (showBrowser) frm.Show();
             else
             {
-                browser.DocumentCompleted += (s, e) =>
-                {
-                    // Wait for main document to load.
-                    if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
-
-                    // Grab the source and exit the application.
-                    source = getSourceFromBrowser(browser);
-                    Application.Exit();
-                };
-
                 // Show browser if no result is returned in 10 seconds.
                 Task.Run(async () => await Task.Delay(10000)).ContinueWith(
                     t => 
