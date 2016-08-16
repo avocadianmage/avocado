@@ -60,7 +60,7 @@ namespace AvocadoShell.Terminal
         async Task startPowershell()
         {
             var psEngine = await psEngineAsync;
-            await Task.Run(() => psEngine.InitEnvironment());
+            await Task.Run(() => WriteErrorLine(psEngine.InitEnvironment()));
             await writeShellPrompt();
         }
 
@@ -261,7 +261,8 @@ namespace AvocadoShell.Terminal
 
             // Execute the command.
             var psEngine = (await psEngineAsync);
-            await Task.Run(() => psEngine.ExecuteCommand(input));
+            await Task.Run(
+                () => WriteErrorLine(psEngine.ExecuteCommand(input)));
 
             // Show the next shell prompt.
             await writeShellPrompt();
@@ -269,19 +270,22 @@ namespace AvocadoShell.Terminal
         
         public async Task RunNativeCommand(string message)
         {
+            string error = null;
             var psEngine = await psEngineAsync;
             var pieces = message.Split(' ');
             var arg = string.Join(" ", pieces.Skip(1));
             switch (pieces.First())
             {
                 case "Enter-PSSession":
-                    psEngine.OpenRemoteSession(arg);
+                    error = psEngine.OpenRemoteSession(arg);
                     break;
 
                 case "Download-Remote":
-                    psEngine.DownloadRemote(arg);
+                    error = psEngine.DownloadRemote(arg);
                     break;
             }
+
+            WriteErrorLine(error);
         }
 
         async Task performAutocomplete()

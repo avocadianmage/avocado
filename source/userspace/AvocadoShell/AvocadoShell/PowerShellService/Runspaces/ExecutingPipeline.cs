@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
-using System.Threading;
 using UtilityLib.MiscTools;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class ExecutingPipeline
     {
-        readonly AutoResetEvent executionDone = new AutoResetEvent(false);
+        readonly ResetEventWithData<string> executionDone 
+            = new ResetEventWithData<string>();
 
         readonly Runspace runspace;
         Pipeline pipeline;
@@ -32,20 +32,20 @@ namespace AvocadoShell.PowerShellService.Runspaces
             return false;
         }
 
-        public void ExecuteCommand(string command)
+        public string ExecuteCommand(string command)
         {
             pipeline = runspace.CreatePipeline(command, true);
-            executePipeline();
+            return executePipeline();
         }
 
-        public void ExecuteScripts(IEnumerable<string> scripts)
+        public string ExecuteScripts(IEnumerable<string> scripts)
         {
             pipeline = runspace.CreatePipeline();
             scripts.ForEach(pipeline.Commands.AddScript);
-            executePipeline();
+            return executePipeline();
         }
 
-        void executePipeline()
+        string executePipeline()
         {
             // Have the our host format the output.
             pipeline.Commands.Add("Out-Default");
@@ -57,7 +57,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
             pipeline.InvokeAsync();
 
             // Wait for the pipeline to finish and return any error output.
-            executionDone.WaitOne();
+            return executionDone.Block();
         }
 
         void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
@@ -67,8 +67,9 @@ namespace AvocadoShell.PowerShellService.Runspaces
                 case PipelineState.Completed:
                 case PipelineState.Failed:
                 case PipelineState.Stopped:
-                    // Fire event indicating execution of the pipeline is finished.
-                    executionDone.Set();
+                    // Fire event indicating execution of the pipeline is 
+                    // finished.
+                    executionDone.Signal(e.PipelineStateInfo.Reason?.Message);
                     break;
             }
         }
