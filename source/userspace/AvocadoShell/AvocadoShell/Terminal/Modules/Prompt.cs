@@ -1,6 +1,4 @@
-﻿using System.Windows.Documents;
-
-namespace AvocadoShell.Terminal.Modules
+﻿namespace AvocadoShell.Terminal.Modules
 {
     sealed class Prompt
     {
