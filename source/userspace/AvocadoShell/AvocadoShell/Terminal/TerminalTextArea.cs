@@ -80,9 +80,6 @@ namespace AvocadoShell.Terminal
             // Terminate the powershell process.
             if (!(await psEngineAsync).Stop()) return;
 
-            // Output indication that the process was successfully terminated.
-            WriteErrorLine("[break]");
-
             // Ensure the powershell thread is unblocked.
             nonShellPromptDone.Signal(null);
         }
