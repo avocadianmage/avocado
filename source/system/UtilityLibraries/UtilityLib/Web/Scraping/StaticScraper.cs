@@ -1,7 +1,9 @@
-﻿using System;
+﻿using FileDownloader;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UtilityLib.Web.Scraping
@@ -9,10 +11,12 @@ namespace UtilityLib.Web.Scraping
     public sealed class StaticScraper : IScraper
     {
         readonly CookieContainer cookies = new CookieContainer();
-        readonly WebClient downloadWebClient = new WebClient();
+        readonly IFileDownloader fileDownloader
+            = new FileDownloader.FileDownloader(new DownloadCache());
 
         // Fires when there is a progress update on the current download.
-        public event DownloadProgressChangedEventHandler ProgressUpdated;
+        public event EventHandler<DownloadFileProgressChangedArgs> 
+            ProgressUpdated;
 
         public void AddCookie(string url, string name, string content)
         {
@@ -41,11 +45,14 @@ namespace UtilityLib.Web.Scraping
         // specified filepath.
         public Task Download(string url, string savePath)
         {
-            downloadWebClient.DownloadProgressChanged += ProgressUpdated;
-            return downloadWebClient.DownloadFileTaskAsync(url, savePath);
+            var resetEvent = new AutoResetEvent(false);
+            fileDownloader.DownloadProgressChanged += ProgressUpdated;
+            fileDownloader.DownloadFileCompleted += (s, e) => resetEvent.Set();
+            fileDownloader.DownloadFileAsync(new Uri(url), savePath);
+            return Task.Run(() => resetEvent.WaitOne());
         }
-        
-        public void CancelDownload() => downloadWebClient.CancelAsync();
+
+        public void CancelDownload() => fileDownloader.CancelDownloadAsync();
 
         HttpClientHandler clientHandler 
             => new HttpClientHandler { CookieContainer = cookies, };
