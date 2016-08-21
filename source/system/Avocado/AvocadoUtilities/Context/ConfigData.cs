@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UtilityLib.MiscTools;
 
@@ -12,9 +13,11 @@ namespace AvocadoUtilities.Context
         
         readonly string path;
 
-        public ConfigData(string path)
+        public ConfigData(string name)
         {
-            this.path = path;
+            var appDataPath = Environment.GetFolderPath(
+                    Environment.SpecialFolder.ApplicationData);
+            path = Path.Combine(appDataPath, "Avocado", $"{name}.ini");
         }
 
         public string GetValue(string prop, string defaultVal)
@@ -28,6 +31,7 @@ namespace AvocadoUtilities.Context
             // Otherwise, the config file did not exist, or the property was
             // not found. Create a new file if needed and add the property with
             // its default value.
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.AppendAllLines(path, $"{prop}{DELIM}{defaultVal}".Yield());
 
             // Cache the property/value for fast subsequent access.

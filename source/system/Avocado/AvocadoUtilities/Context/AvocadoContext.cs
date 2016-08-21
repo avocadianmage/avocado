@@ -5,10 +5,11 @@ namespace AvocadoUtilities.Context
 {
     public sealed class AvocadoContext
     {
-        readonly ConfigData configData = new ConfigData("config.ini");
+        readonly ConfigData configData;
 
-        public void Establish(Assembly asm)
+        public AvocadoContext(Assembly asm, string commonName)
         {
+            configData = new ConfigData(commonName);
             Directory.SetCurrentDirectory(Path.GetDirectoryName(asm.Location));
         }
 
