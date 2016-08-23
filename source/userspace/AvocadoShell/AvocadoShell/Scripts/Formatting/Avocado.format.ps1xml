@@ -23,7 +23,7 @@
                 <WideEntries>
                     <WideEntry>
                         <WideItem>
-                            <ScriptBlock>"$([char]27)[38;2;255;255;255m$_"</ScriptBlock>
+                            <ScriptBlock>"$([char]27)[38;2;211;211;211m$_"</ScriptBlock>
                         </WideItem>
                     </WideEntry>
                     <WideEntry>
