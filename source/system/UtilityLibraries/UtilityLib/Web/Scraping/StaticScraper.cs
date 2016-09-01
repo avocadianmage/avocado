@@ -43,13 +43,13 @@ namespace UtilityLib.Web.Scraping
 
         // Downloads the content at the specified URL and saves it to the 
         // specified filepath.
-        public Task Download(string url, string savePath)
+        public void Download(string url, string savePath)
         {
             var resetEvent = new AutoResetEvent(false);
             fileDownloader.DownloadProgressChanged += ProgressUpdated;
             fileDownloader.DownloadFileCompleted += (s, e) => resetEvent.Set();
             fileDownloader.DownloadFileAsync(new Uri(url), savePath);
-            return Task.Run(() => resetEvent.WaitOne());
+            resetEvent.WaitOne();
         }
 
         public void CancelDownload() => fileDownloader.CancelDownloadAsync();
