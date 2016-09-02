@@ -38,9 +38,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FileDownloader">
-      <HintPath>..\packages\dotNetFileDownloader\FileDownloader.dll</HintPath>
-    </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
@@ -65,7 +62,6 @@
     <Compile Include="Processes\NamedPipes\NamedPipeClient.cs" />
     <Compile Include="Processes\NamedPipes\NamedPipeServer.cs" />
     <Compile Include="Processes\ManagedProcess.cs" />
-    <Compile Include="Web\Scraping\DownloadCache.cs" />
     <Compile Include="WPF\WPFExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web\Scraping\Parsing\LinkParser.cs" />
