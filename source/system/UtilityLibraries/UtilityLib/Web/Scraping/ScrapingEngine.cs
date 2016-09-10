@@ -44,10 +44,9 @@ namespace UtilityLib.Web.Scraping
 
         IEnumerable<Type> getScraperTypes()
         {
-            Func<Type, bool> isScraperType = t =>
-            {
-                return typeof(IScraper).IsAssignableFrom(t) && !t.IsInterface;
-            };
+            Func<Type, bool> isScraperType = t 
+                => typeof(IScraper).IsAssignableFrom(t) && !t.IsInterface;
+            
             return Assembly
                 .GetExecutingAssembly()
                 .GetTypes()

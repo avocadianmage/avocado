@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -6,6 +7,11 @@ namespace UtilityLib.Web.Scraping
 {
     public class DynamicScaper : IScraper
     {
+        static readonly int MsBeforeShowBrowser
+            = new TimeSpan(0, 0, 10).Milliseconds;
+        static readonly int MsBeforeTimeout
+            = new TimeSpan(0, 3, 0).Milliseconds;
+
         public virtual Task<string> GetSource(string url) 
             => GetSource(url, false);
 
@@ -46,7 +52,21 @@ namespace UtilityLib.Web.Scraping
             frm.FormClosed += (s, e) => Application.Exit();
 
             // Handle showing the browser.
-            if (showBrowser) frm.Show();
+            if (showBrowser)
+            {
+                frm.Show();
+
+                // If timeout is reached without the user taking action, close
+                // the browser.
+                Task.Run(async () => await Task.Delay(MsBeforeTimeout))
+                    .ContinueWith(t =>
+                    {
+                        // Grab the source and exit the application.
+                        source = getSourceFromBrowser(browser);
+                        Application.Exit();
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
             else
             {
                 // Retrieve the source once it has loaded.
@@ -60,13 +80,13 @@ namespace UtilityLib.Web.Scraping
                     Application.Exit();
                 };
 
-                // Show browser if no result is returned in 10 seconds.
-                Task.Run(async () => await Task.Delay(10000)).ContinueWith(
-                    t => 
+                // Show browser if no result is returned in a timely manner.
+                Task.Run(async () => await Task.Delay(MsBeforeShowBrowser))
+                    .ContinueWith(t =>
                     {
                         frm.Enabled = true;
                         frm.Show();
-                    }, 
+                    },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }
             
