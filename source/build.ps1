@@ -9,12 +9,12 @@ function build($path)
 }
 
 # Build system solutions.
-build system/UtilityLibraries/UtilityLibraries.sln
-build system/Avocado/Avocado.sln
+build $PSScriptRoot/system/UtilityLibraries/UtilityLibraries.sln
+build $PSScriptRoot/system/Avocado/Avocado.sln
 
 # Build userspace solutions.
-build userspace/AvocadoShell/AvocadoShell.sln
-build userspace/AvocadoServer/AvocadoServer.sln
+build $PSScriptRoot/userspace/AvocadoShell/AvocadoShell.sln
+build $PSScriptRoot/userspace/AvocadoServer/AvocadoServer.sln
 
 # Ensure shortcut path is included in environment path variable.
 if (-not $env:PATH.Split(";").Contains($shortcutPath))
