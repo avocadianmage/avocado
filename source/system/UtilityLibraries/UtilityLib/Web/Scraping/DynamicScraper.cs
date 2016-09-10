@@ -8,9 +8,9 @@ namespace UtilityLib.Web.Scraping
     public class DynamicScaper : IScraper
     {
         static readonly int MsBeforeShowBrowser
-            = new TimeSpan(0, 0, 10).Milliseconds;
+            = (int)new TimeSpan(0, 0, 10).TotalMilliseconds;
         static readonly int MsBeforeTimeout
-            = new TimeSpan(0, 3, 0).Milliseconds;
+            = (int)new TimeSpan(0, 3, 0).TotalMilliseconds;
 
         public virtual Task<string> GetSource(string url) 
             => GetSource(url, false);
@@ -58,14 +58,14 @@ namespace UtilityLib.Web.Scraping
 
                 // If timeout is reached without the user taking action, close
                 // the browser.
-                Task.Run(async () => await Task.Delay(MsBeforeTimeout))
-                    .ContinueWith(t =>
+                Task.Run(
+                    () => Task.Delay(MsBeforeTimeout).ContinueWith(t =>
                     {
                         // Grab the source and exit the application.
                         source = getSourceFromBrowser(browser);
                         Application.Exit();
                     },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskScheduler.FromCurrentSynchronizationContext()));
             }
             else
             {
@@ -81,13 +81,13 @@ namespace UtilityLib.Web.Scraping
                 };
 
                 // Show browser if no result is returned in a timely manner.
-                Task.Run(async () => await Task.Delay(MsBeforeShowBrowser))
-                    .ContinueWith(t =>
+                Task.Run(
+                    () => Task.Delay(MsBeforeShowBrowser).ContinueWith(t =>
                     {
                         frm.Enabled = true;
                         frm.Show();
                     },
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskScheduler.FromCurrentSynchronizationContext()));
             }
             
             // Navigate to the URL and block until the application exits.
