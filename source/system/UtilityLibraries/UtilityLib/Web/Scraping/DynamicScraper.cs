@@ -61,9 +61,7 @@ namespace UtilityLib.Web.Scraping
                 Task.Run(
                     () => Task.Delay(MsBeforeTimeout).ContinueWith(t =>
                     {
-                        // Grab the source and exit the application.
-                        source = getSourceFromBrowser(browser);
-                        Application.Exit();
+                        frm.Close();
                     },
                     TaskScheduler.FromCurrentSynchronizationContext()));
             }
