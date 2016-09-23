@@ -18,7 +18,7 @@ function Download-Remote
 	Copy-Item `
 		-ToSession $sess `
 		-Path $Path `
-		-Destination "D:\User\Documents\junk" `
+		-Destination "~\Downloads" `
 		-Recurse
 }
 
