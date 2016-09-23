@@ -1,16 +1,25 @@
 # Download a file from a remote PowerShell session.
 function Download-Remote
 {
-	Param([Parameter(Mandatory = $true)][string[]]$Path)
-
-	# Throw error if this was called from a remote session.
+	Param(
+		[Parameter(Mandatory = $true)][string]$ComputerName,
+		[Parameter(Mandatory = $true)][string[]]$Path)
+	
+	# Throw error if we are not in a remote session.
 	if (-not (IsRemoteSession)) { Throw "No remote session found." }
 
-	# Get full paths.
-	$Path = ($Path | foreach { Get-Item $_ }) -join ","
+	# Collect login credentials.
+	$cred = Get-Credential
 
-	# Run native command.
-	RunNativeCommand "Download-Remote $Path"
+	# Establish target session.
+	$sess = New-PSSession -ComputerName $ComputerName -Credential $cred
+
+	# Perform the download.
+	Copy-Item `
+		-ToSession $sess `
+		-Path $Path `
+		-Destination "D:\User\Documents\junk" `
+		-Recurse
 }
 
 # Shortcut.

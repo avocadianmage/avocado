@@ -17,11 +17,12 @@ namespace AvocadoShell.PowerShellService.Runspaces
         readonly ExecutingPipeline executingPipeline;
         readonly Autocomplete autocomplete;
 
-        public PowerShellInstance(CustomHost host) : this(host, null) { }
+        public PowerShellInstance(CustomHost host) : this(host, null, null) { }
 
-        public PowerShellInstance(CustomHost host, string remoteComputerName)
+        public PowerShellInstance(
+            CustomHost host, string computerName, PSCredential cred)
         {
-            var remoteInfo = createRemoteInfo(remoteComputerName);
+            var remoteInfo = createRemoteInfo(computerName, cred);
             runspace = createRunspace(host, remoteInfo);
             var powershell = createPowershell(runspace);
             executingPipeline = new ExecutingPipeline(runspace);
@@ -66,11 +67,15 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public bool GetCompletion(ref string input, ref int index, bool forward)
             => autocomplete.GetCompletion(ref input, ref index, forward);
         
-        WSManConnectionInfo createRemoteInfo(string computerName)
+        WSManConnectionInfo createRemoteInfo(
+            string computerName, PSCredential cred)
         {
-            return computerName == null
-                ? null
-                : new WSManConnectionInfo { ComputerName = computerName };
+            if (computerName == null) return null;
+            return new WSManConnectionInfo
+            {
+                ComputerName = computerName,
+                Credential = cred
+            };
         }
 
         PowerShell createPowershell(Runspace runspace)

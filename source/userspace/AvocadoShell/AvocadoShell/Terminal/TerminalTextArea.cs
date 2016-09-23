@@ -4,6 +4,7 @@ using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
+using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -265,23 +266,11 @@ namespace AvocadoShell.Terminal
             await writeShellPrompt();
         }
         
-        public async Task RunNativeCommand(string message)
+        public async Task OpenRemoteSession(
+            string computerName, PSCredential cred)
         {
-            string error = null;
-            var psEngine = await psEngineAsync;
-            var pieces = message.Split(' ');
-            var arg = string.Join(" ", pieces.Skip(1));
-            switch (pieces.First())
-            {
-                case "Enter-PSSession":
-                    error = psEngine.OpenRemoteSession(arg);
-                    break;
-
-                case "Download-Remote":
-                    error = psEngine.DownloadRemote(arg);
-                    break;
-            }
-
+            var error = (await psEngineAsync)
+                .OpenRemoteSession(computerName, cred);
             WriteErrorLine(error);
         }
 

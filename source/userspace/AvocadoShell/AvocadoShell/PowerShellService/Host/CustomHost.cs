@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Threading;
+using System.Management.Automation;
 
 namespace AvocadoShell.PowerShellService.Host
 {
@@ -16,10 +17,20 @@ namespace AvocadoShell.PowerShellService.Host
     {
         public event EventHandler ExitRequested;
 
+        readonly IShellUI shellUI;
+
         public CustomHost(IShellUI shellUI)
         {
+            this.shellUI = shellUI;
             UI = new CustomHostUI(shellUI);
         }
+        
+        // Stores CustomHost object for invoking native commands.
+        public override PSObject PrivateData => new PSObject(this);
+        
+        // Native command for interactive remoting.
+        public void OpenRemoteSession(string computerName, PSCredential cred)
+            => shellUI.OpenRemoteSession(computerName, cred).Wait();
 
         /// <summary>
         /// Gets the culture information to use. This implementation 

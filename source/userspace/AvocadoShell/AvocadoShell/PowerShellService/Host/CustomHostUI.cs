@@ -216,22 +216,6 @@ namespace AvocadoShell.PowerShellService.Host
             shellUI.WriteCustom(value, brush, false);
         }
 
-        /// <summary>
-        /// Writes a line of characters to the output display of the host 
-        /// with foreground and background colors and appends a newline (carriage return). 
-        /// </summary>
-        /// <param name="foregroundColor">The forground color of the display. </param>
-        /// <param name="backgroundColor">The background color of the display. </param>
-        /// <param name="value">The line to be written.</param>
-        public override void WriteLine(
-            ConsoleColor foregroundColor,
-            ConsoleColor backgroundColor,
-            string value)
-        {
-            var brush = consoleColorToBrush(foregroundColor);
-            shellUI.WriteCustom(value, brush, true);
-        }
-
         static Brush consoleColorToBrush(ConsoleColor consoleColor)
         {
             // Recognize default system color.
@@ -246,7 +230,7 @@ namespace AvocadoShell.PowerShellService.Host
             {
                 return Brushes.DarkGoldenrod;
             }
-
+            
             var colorStr = consoleColor.ToString();
             return new BrushConverter().ConvertFromString(colorStr) as Brush;
         }
@@ -257,13 +241,6 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="value">The error message that is displayed.</param>
         public override void WriteErrorLine(string value)
             => shellUI.WriteErrorLine(value);
-
-        /// <summary>
-        /// Writes a newline character (carriage return) 
-        /// to the output display of the host. 
-        /// </summary>
-        public override void WriteLine() 
-            => shellUI.WriteOutputLine(string.Empty);
 
         /// <summary>
         /// Writes a line of characters to the output display of the host 
@@ -308,15 +285,6 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
         {
-            // Check for native command.
-            const string AVOCADO_PREFX = "avocado:";
-            if (message.StartsWith(AVOCADO_PREFX))
-            {
-                message = message.Substring(AVOCADO_PREFX.Length);
-                shellUI.RunNativeCommand(message).Wait();
-                return;
-            }
-
             shellUI.WriteCustom(
                 $"[Verbose] {message}", Brushes.DarkGoldenrod, true);
         }

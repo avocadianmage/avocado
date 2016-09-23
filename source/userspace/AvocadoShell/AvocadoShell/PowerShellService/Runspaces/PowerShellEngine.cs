@@ -2,6 +2,7 @@
 using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 
 namespace AvocadoShell.PowerShellService.Runspaces
@@ -26,7 +27,7 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public PowerShellEngine(IShellUI ui)
         {
             psHost = createHost(ui);
-            instances.AddFirst(createInstance(null));
+            instances.AddFirst(new PowerShellInstance(psHost));
         }
 
         CustomHost createHost(IShellUI ui)
@@ -36,21 +37,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
             return host;
         }
 
-        PowerShellInstance createInstance(string remoteComputerName)
-            => new PowerShellInstance(psHost, remoteComputerName);
-
         public string InitEnvironment() => activeInstance.InitEnvironment();
         
-        public string OpenRemoteSession(string computerName)
+        public string OpenRemoteSession(string computerName, PSCredential cred)
         {
-            instances.AddLast(createInstance(computerName));
+            instances.AddLast(
+                new PowerShellInstance(psHost, computerName, cred));
             return activeInstance.InitEnvironment();
-        }
-        
-        public string DownloadRemote(string paths)
-        {
-            return localInstance.ExecuteCommand(
-                $"SendToLocal {activeInstance.RemoteComputerName} {paths}");
         }
 
         void onExitRequested(object sender, EventArgs e)

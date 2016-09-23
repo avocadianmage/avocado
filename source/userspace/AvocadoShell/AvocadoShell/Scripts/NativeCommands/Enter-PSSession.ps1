@@ -6,13 +6,16 @@ function Enter-PSSession
 	# Throw error if this was called from a remote session.
 	if (IsRemoteSession) { Throw "Nested remoting is not supported." }
 
+	# Collect login credentials.
+	$cred = Get-Credential
+
 	# Verify the connection is valid.
-	New-PSSession $ComputerName | Out-Null
+	New-PSSession -ComputerName $ComputerName -Credential $cred | Out-Null
 	if (-not $?) { Return }
 	Remove-PSSession $ComputerName
 
 	# Run native command.
-	RunNativeCommand "Enter-PSSession $ComputerName"
+	$Host.PrivateData.OpenRemoteSession($ComputerName, $cred)
 }
 
 # Shortcut.
