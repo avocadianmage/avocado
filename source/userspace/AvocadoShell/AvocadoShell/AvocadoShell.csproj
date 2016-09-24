@@ -159,8 +159,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <EmbeddedResource Include="Scripts\NativeCommands\Download-Remote.ps1" />
-    <EmbeddedResource Include="Scripts\utilities.ps1" />
     <None Include="Scripts\Formatting\Avocado.format.ps1xml" />
   </ItemGroup>
   <ItemGroup>
