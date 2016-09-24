@@ -121,7 +121,6 @@ namespace AvocadoShell.Terminal
             // move the cursor to the end of the prompt instead of the beginning 
             // of the line.
             MoveCaret(getPromptPointer(), IsShiftKeyDown);
-
             return true;
         }
 
@@ -131,7 +130,6 @@ namespace AvocadoShell.Terminal
 
             // Ctrl+A will select all text after the prompt.
             TextBase.Selection.Select(getPromptPointer(), EndPointer);
-
             return true;
         }
 
@@ -141,7 +139,6 @@ namespace AvocadoShell.Terminal
             if (TextBase.Selection.IsEmpty) setInput(string.Empty);
             // Otherwise, cancel the selected text.
             else ClearSelection();
-
             return true;
         }
 
@@ -156,16 +153,17 @@ namespace AvocadoShell.Terminal
             EnableInput(false);
             historyLookup(key == Key.Down)
                 .ContinueWith(t => EnableInput(true));
-
             return true;
         }
 
         bool handleTabKey()
         {
+            // Handle normally if not at the shell prompt.
+            if (!currentPrompt.FromShell) return false;
+
             EnableInput(false);
             performAutocomplete()
                 .ContinueWith(t => EnableInput(true));
-
             return true;
         }
 
@@ -177,7 +175,6 @@ namespace AvocadoShell.Terminal
             // Otherwise, execute the input.
             EnableInput(false);
             execute().RunAsync();
-
             return true;
         }
 
@@ -265,7 +262,7 @@ namespace AvocadoShell.Terminal
         }
 
         async Task performAutocomplete()
-        {
+        { 
             // Get data needed for the completion.
             var input = getInput();
             var index = getInputTextRange(CaretPointer).Text.Length;

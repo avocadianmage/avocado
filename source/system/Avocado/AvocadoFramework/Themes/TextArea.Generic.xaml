@@ -27,6 +27,7 @@
                                      FontWeight="Bold"
                                      TextOptions.TextFormattingMode="Display"
                                      IsTabStop="False"
+                                     AcceptsTab="True"
                                      Cursor="Arrow"
                                      Foreground="{TemplateBinding Foreground}"
                                      Padding="-5 0 0 0">
