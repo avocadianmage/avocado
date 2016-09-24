@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 
 namespace AvocadoShell.PowerShellService.Modules
 {
@@ -6,17 +7,18 @@ namespace AvocadoShell.PowerShellService.Modules
     {
         const string PATH_BEGIN = ".\\";
 
-        readonly PowerShell ps;
+        readonly PowerShell powerShell;
 
         CommandCompletion completions;
         string expectedInput;
         int expectedIndex;
 
-        public Autocomplete(PowerShell ps)
+        public Autocomplete(Runspace runspace)
         {
-            this.ps = ps;
+            powerShell = PowerShell.Create();
+            powerShell.Runspace = runspace;
         }
-        
+
         public bool GetCompletion(ref string input, ref int index, bool forward)
         {
             // Suggest a file if the input is blank.
@@ -32,8 +34,8 @@ namespace AvocadoShell.PowerShellService.Modules
             // completion list.
             if (completionListNeedsUpdate(input, index))
             {
-                completions 
-                    = CommandCompletion.CompleteInput(input, index, null, ps);
+                completions = CommandCompletion.CompleteInput(
+                    input, index, null, powerShell);
             }
 
             // Determine the length of the text to replace with the new

@@ -4,7 +4,6 @@ using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using System;
 using System.Linq;
-using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,7 +60,6 @@ namespace AvocadoShell.Terminal
         async Task startPowershell()
         {
             var psEngine = await psEngineAsync;
-            await Task.Run(() => WriteErrorLine(psEngine.InitEnvironment()));
             await writeShellPrompt();
         }
 
@@ -264,14 +262,6 @@ namespace AvocadoShell.Terminal
 
             // Show the next shell prompt.
             await writeShellPrompt();
-        }
-        
-        public async Task OpenRemoteSession(
-            string computerName, PSCredential cred)
-        {
-            var error = (await psEngineAsync)
-                .OpenRemoteSession(computerName, cred);
-            WriteErrorLine(error);
         }
 
         async Task performAutocomplete()

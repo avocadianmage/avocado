@@ -1,21 +1,50 @@
-﻿using System.Collections.Generic;
+﻿using AvocadoShell.PowerShellService.Modules;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using UtilityLib.MiscTools;
+using UtilityLib.Processes;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {
-    sealed class ExecutingPipeline
+    sealed class RunspacePipeline
     {
         readonly ResetEventWithData<string> executionDone 
             = new ResetEventWithData<string>();
 
-        readonly Runspace runspace;
         Pipeline pipeline;
 
-        public ExecutingPipeline(Runspace runspace)
+        public Runspace Runspace { get; }
+        public Autocomplete Autocomplete { get; }
+
+        public RunspacePipeline(Runspace runspace)
         {
-            this.runspace = runspace;
+            Runspace = runspace;
+            Autocomplete = new Autocomplete(runspace);
         }
+
+        public string InitEnvironment()
+        {
+            var startupScripts = getSystemStartupScripts()
+                .Concat(getUserStartupScripts());
+            return ExecuteScripts(startupScripts);
+        }
+
+        IEnumerable<string> getSystemStartupScripts()
+        {
+            var asm = Assembly.GetExecutingAssembly();
+            return asm
+                .GetManifestResourceNames()
+                .Where(r => r.EndsWith(".ps1"))
+                .Select(r => EnvUtils.GetEmbeddedText(asm, r));
+        }
+
+        IEnumerable<string> getUserStartupScripts()
+            => string
+                .Join(" ", Environment.GetCommandLineArgs().Skip(1))
+                .Yield();
 
         /// <summary>
         /// Asynchronous request to stop the running pipeline.
@@ -34,13 +63,13 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public string ExecuteCommand(string command)
         {
-            pipeline = runspace.CreatePipeline(command, true);
+            pipeline = Runspace.CreatePipeline(command, true);
             return executePipeline();
         }
 
         public string ExecuteScripts(IEnumerable<string> scripts)
         {
-            pipeline = runspace.CreatePipeline();
+            pipeline = Runspace.CreatePipeline();
             scripts.ForEach(pipeline.Commands.AddScript);
             return executePipeline();
         }

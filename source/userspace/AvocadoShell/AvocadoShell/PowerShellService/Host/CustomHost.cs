@@ -1,9 +1,11 @@
-﻿using AvocadoShell.Terminal;
+﻿using AvocadoShell.PowerShellService.Runspaces;
+using AvocadoShell.Terminal;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
 using System.Threading;
-using System.Management.Automation;
 
 namespace AvocadoShell.PowerShellService.Host
 {
@@ -13,24 +15,19 @@ namespace AvocadoShell.PowerShellService.Host
     /// are not implemented throw a NotImplementedException exception or 
     /// return nothing.
     /// </summary>
-    class CustomHost : PSHost
+    class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public event EventHandler ExitRequested;
 
         readonly IShellUI shellUI;
+        readonly Stack<RunspacePipeline> pipelines
+            = new Stack<RunspacePipeline>();
 
         public CustomHost(IShellUI shellUI)
         {
             this.shellUI = shellUI;
             UI = new CustomHostUI(shellUI);
         }
-        
-        // Stores CustomHost object for invoking native commands.
-        public override PSObject PrivateData => new PSObject(this);
-        
-        // Native command for interactive remoting.
-        public void OpenRemoteSession(string computerName, PSCredential cred)
-            => shellUI.OpenRemoteSession(computerName, cred).Wait();
 
         /// <summary>
         /// Gets the culture information to use. This implementation 
@@ -73,6 +70,35 @@ namespace AvocadoShell.PowerShellService.Host
         /// should match the version resource in the application.
         /// </summary>
         public override Version Version => Config.Version;
+
+        public RunspacePipeline Pipeline => pipelines.Peek();
+
+        /// <summary>
+        /// Gets a value indicating whether a request 
+        /// to open a PSSession has been made.
+        /// </summary>
+        public bool IsRunspacePushed => pipelines.Count > 1;
+
+        /// <summary>
+        /// Gets or sets the runspace used by the PSSession.
+        /// </summary>
+        public Runspace Runspace => Pipeline.Runspace;
+
+        /// <summary>
+        /// Requests to close a PSSession.
+        /// </summary>
+        public void PopRunspace() => pipelines.Pop();
+
+        /// <summary>
+        /// Requests to open a PSSession.
+        /// </summary>
+        /// <param name="runspace">Runspace to use.</param>
+        public void PushRunspace(Runspace runspace)
+        {
+            var pipeline = new RunspacePipeline(runspace);
+            pipelines.Push(pipeline);
+            shellUI.WriteErrorLine(pipeline.InitEnvironment());
+        }
 
         /// <summary>
         /// This API Instructs the host to interrupt the currently running 
@@ -117,7 +143,6 @@ namespace AvocadoShell.PowerShellService.Host
         {
             // Empty implementation.
         }
-
 
         /// <summary>
         /// Indicate to the host application that exit has

@@ -1,9 +1,8 @@
 ﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.Terminal;
 using System;
-using System.Collections.Generic;
-using System.Management.Automation;
 using System.Management.Automation.Host;
+using System.Management.Automation.Runspaces;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {
@@ -11,61 +10,45 @@ namespace AvocadoShell.PowerShellService.Runspaces
     {
         public event EventHandler ExitRequested;
         
-        readonly CustomHost psHost;
-        readonly LinkedList<PowerShellInstance> instances
-            = new LinkedList<PowerShellInstance>();
+        readonly CustomHost host;
 
-        PowerShellInstance localInstance => instances.First.Value;
-        PowerShellInstance activeInstance => instances.Last.Value;
+        public PSHostRawUserInterface HostRawUI => host.UI.RawUI;
+        public string RemoteComputerName
+            => host.Runspace.ConnectionInfo?.ComputerName;
+        public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
+        public int GetMaxHistoryCount()
+            => (int)getPSVariable("MaximumHistoryCount");
 
-        public PSHostRawUserInterface HostRawUI => psHost.UI.RawUI;
-        public string RemoteComputerName => activeInstance.RemoteComputerName;
-        public string GetWorkingDirectory()
-            => activeInstance.GetWorkingDirectory();
-        public int GetMaxHistoryCount() => activeInstance.GetMaxHistoryCount();
+        object getPSVariable(string name)
+            => host.Runspace.SessionStateProxy.GetVariable(name);
 
         public PowerShellEngine(IShellUI ui)
         {
-            psHost = createHost(ui);
-            instances.AddFirst(new PowerShellInstance(psHost));
-        }
-
-        CustomHost createHost(IShellUI ui)
-        {
-            var host = new CustomHost(ui);
+            host = new CustomHost(ui);
             host.ExitRequested += onExitRequested;
-            return host;
+            createRunspace(host);
         }
 
-        public string InitEnvironment() => activeInstance.InitEnvironment();
-        
-        public string OpenRemoteSession(string computerName, PSCredential cred)
+        void createRunspace(CustomHost host)
         {
-            instances.AddLast(
-                new PowerShellInstance(psHost, computerName, cred));
-            return activeInstance.InitEnvironment();
+            var runspace = RunspaceFactory.CreateRunspace(host);
+            runspace.Open();
+            host.PushRunspace(runspace);
         }
 
         void onExitRequested(object sender, EventArgs e)
         {
-            // If we are exiting the original session, let the UI layer handle
-            // this.
-            if (activeInstance == localInstance)
-            {
-                ExitRequested(this, e);
-                return;
-            }
-
-            // Pop the active instance.
-            instances.RemoveLast();
+            if (host.IsRunspacePushed) host.PopRunspace();
+            else ExitRequested(this, EventArgs.Empty);
         }
 
         public string ExecuteCommand(string cmd)
-            => activeInstance.ExecuteCommand(cmd);
+            => host.Pipeline.ExecuteCommand(cmd);
 
-        public bool Stop() => activeInstance.Stop();
+        public bool Stop() => host.Pipeline.Stop();
 
         public bool GetCompletion(ref string input, ref int index, bool forward)
-            => activeInstance.GetCompletion(ref input, ref index, forward);
+            => host.Pipeline.Autocomplete.GetCompletion(
+                ref input, ref index, forward);
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Management.Automation;
-using System.Security;
-using System.Threading.Tasks;
+﻿using System.Security;
 using System.Windows.Media;
 
 namespace AvocadoShell.Terminal
@@ -12,8 +10,5 @@ namespace AvocadoShell.Terminal
         void WriteCustom(string data, Brush foreground, bool newline);
         string WritePrompt(string prompt);
         SecureString WriteSecurePrompt(string prompt);
-        
-        // Native commands.
-        Task OpenRemoteSession(string computerName, PSCredential cred);
     }
 }

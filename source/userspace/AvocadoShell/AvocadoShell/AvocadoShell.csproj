@@ -115,13 +115,12 @@
     <Compile Include="Terminal\IShellUI.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\Runspaces\PowerShellEngine.cs" />
-    <Compile Include="PowerShellService\Runspaces\ExecutingPipeline.cs" />
+    <Compile Include="PowerShellService\Runspaces\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
     <Compile Include="PowerShellService\Host\CustomRawHostUI.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="PowerShellService\Modules\Autocomplete.cs" />
-    <Compile Include="PowerShellService\Runspaces\PowerShellInstance.cs" />
     <Compile Include="Terminal\Modules\History.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -155,7 +154,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Scripts\startup.ps1" />
-    <EmbeddedResource Include="Scripts\NativeCommands\Enter-PSSession.ps1" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
