@@ -42,6 +42,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
             else ExitRequested(this, EventArgs.Empty);
         }
 
+        public string InitEnvironment() => host.Pipeline.InitEnvironment();
+
         public string ExecuteCommand(string cmd)
             => host.Pipeline.ExecuteCommand(cmd);
 

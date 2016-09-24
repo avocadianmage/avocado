@@ -60,6 +60,7 @@ namespace AvocadoShell.Terminal
         async Task startPowershell()
         {
             var psEngine = await psEngineAsync;
+            await Task.Run(() => WriteErrorLine(psEngine.InitEnvironment()));
             await writeShellPrompt();
         }
 
