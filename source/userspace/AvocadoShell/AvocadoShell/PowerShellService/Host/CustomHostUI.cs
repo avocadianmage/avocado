@@ -165,6 +165,9 @@ namespace AvocadoShell.PowerShellService.Host
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
+            // Quit if no username was specified.
+            if (string.IsNullOrWhiteSpace(userName)) return null;
+
             var prompt = $"Password for {userName}: ";
             var password = shellUI.WriteSecurePrompt(prompt);
             return new PSCredential(userName, password);
@@ -176,10 +179,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// (carriage return) is encountered.
         /// </summary>
         /// <returns>The characters that are entered by the user.</returns>
-        public override string ReadLine()
-        {
-            throw new NotImplementedException();
-        }
+        public override string ReadLine() => shellUI.WritePrompt("Prompt: ");
 
         /// <summary>
         /// Reads characters entered by the user until a newline (carriage return) 
@@ -189,9 +189,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <returns>Throws a NotImplemented exception.</returns>
         public override SecureString ReadLineAsSecureString()
-        {
-            throw new NotImplementedException();
-        }
+            => shellUI.WriteSecurePrompt("Secure prompt: ");
 
         /// <summary>
         /// Writes characters to the output display of the host.
