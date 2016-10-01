@@ -184,6 +184,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\remoting.ps1" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>%25windir%25\sysnative\cmd.exe /C "copy /Y $(ProjectDir)Scripts\Formatting\Avocado.format.ps1xml C:\Windows\System32\WindowsPowerShell\v1.0\Avocado.format.ps1xml"
