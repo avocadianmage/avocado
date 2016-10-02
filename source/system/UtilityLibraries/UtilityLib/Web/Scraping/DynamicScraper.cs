@@ -58,12 +58,12 @@ namespace UtilityLib.Web.Scraping
 
                 // If timeout is reached without the user taking action, close
                 // the browser.
-                Task.Run(
-                    () => Task.Delay(MsBeforeTimeout).ContinueWith(t =>
+                Task.Run(() => Task.Delay(MsBeforeTimeout))
+                    .ContinueWith(t =>
                     {
                         frm.Close();
                     },
-                    TaskScheduler.FromCurrentSynchronizationContext()));
+                    TaskScheduler.FromCurrentSynchronizationContext());
             }
             else
             {
@@ -79,13 +79,13 @@ namespace UtilityLib.Web.Scraping
                 };
 
                 // Show browser if no result is returned in a timely manner.
-                Task.Run(
-                    () => Task.Delay(MsBeforeShowBrowser).ContinueWith(t =>
+                Task.Run(() => Task.Delay(MsBeforeShowBrowser))
+                    .ContinueWith(t =>
                     {
                         frm.Enabled = true;
                         frm.Show();
                     },
-                    TaskScheduler.FromCurrentSynchronizationContext()));
+                    TaskScheduler.FromCurrentSynchronizationContext());
             }
             
             // Navigate to the URL and block until the application exits.
