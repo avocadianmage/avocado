@@ -253,6 +253,9 @@ namespace AvocadoShell.Terminal
             // Add command to history.
             (await historyAsync).Add(input);
 
+            // Reset the buffer for command output.
+            outputBuffer.Reset();
+
             // Execute the command.
             var psEngine = (await psEngineAsync);
             await Task.Run(
@@ -344,14 +347,8 @@ namespace AvocadoShell.Terminal
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
-            // Check if this is the shell prompt.
-            if (fromShell)
-            {
-                outputBuffer.Reset();
-
-                // Update the window title to the prompt text.
-                Window.GetWindow(this).Title = prompt;
-            }
+            // Update the window title to the shell prompt text.
+            if (fromShell) Window.GetWindow(this).Title = prompt;
 
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
