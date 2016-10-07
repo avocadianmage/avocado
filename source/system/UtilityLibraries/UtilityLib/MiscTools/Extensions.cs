@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace UtilityLib.MiscTools
@@ -52,6 +53,12 @@ namespace UtilityLib.MiscTools
             var formatter = $"0.{ new string('0', decimals) }";
             return Math.Round(num, decimals).ToString(formatter);
         }
+
+        public static string Base64Encode(this string str)
+            => Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
+
+        public static string Base64Decode(this string str)
+            => Encoding.UTF8.GetString(Convert.FromBase64String(str));
 
         public static void RunAsync(this Task task)
         {

@@ -29,23 +29,36 @@ namespace AvocadoFramework.Engine
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            hookDragMove();
-            initFocus();
+            hookMouseEvents();
+            applyFocus();
         }
 
-        void hookDragMove()
+        ContentPresenter getContentArea()
+            => this.GetTemplateElement<ContentPresenter>("ContentArea");
+
+        void hookMouseEvents()
         {
-            var contentArea
+            var contentArea 
                 = this.GetTemplateElement<ContentPresenter>("ContentArea");
             contentArea.PreviewMouseDown += (s, e) =>
             {
+                // Prevent the mouse from interacting with other controls.
                 e.Handled = true;
-                if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+
+                if (e.LeftButton != MouseButtonState.Pressed) return;
+                // Double-click to toggle maximize.
+                if (e.ClickCount == 2)
+                {
+                    WindowState = WindowState == WindowState.Maximized
+                        ? WindowState.Normal : WindowState.Maximized;
+                }
+                // Otherwise, drag the window around.
+                else DragMove();
             };
             contentArea.PreviewMouseUp += (s, e) => e.Handled = true;
         }
 
-        void initFocus()
+        void applyFocus()
             => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
         // UI startup code.
