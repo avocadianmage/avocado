@@ -33,29 +33,37 @@ namespace AvocadoFramework.Engine
             applyFocus();
         }
 
-        ContentPresenter getContentArea()
-            => this.GetTemplateElement<ContentPresenter>("ContentArea");
-
         void hookMouseEvents()
         {
             var contentArea 
                 = this.GetTemplateElement<ContentPresenter>("ContentArea");
-            contentArea.PreviewMouseDown += (s, e) =>
-            {
-                // Prevent the mouse from interacting with other controls.
-                e.Handled = true;
+            contentArea.PreviewMouseDown += onContentAreaPreviewMouseDown;
+            contentArea.PreviewMouseUp += onContentAreaPreviewMouseUp;
+        }
 
-                if (e.LeftButton != MouseButtonState.Pressed) return;
-                // Double-click to toggle maximize.
-                if (e.ClickCount == 2)
-                {
-                    WindowState = WindowState == WindowState.Maximized
-                        ? WindowState.Normal : WindowState.Maximized;
-                }
-                // Otherwise, drag the window around.
-                else DragMove();
-            };
-            contentArea.PreviewMouseUp += (s, e) => e.Handled = true;
+        void onContentAreaPreviewMouseDown(
+            object sender, MouseButtonEventArgs e)
+        {
+            // Prevent the mouse from interacting with other controls.
+            e.Handled = true;
+
+            if (e.LeftButton != MouseButtonState.Pressed) return;
+
+            // Double-click to toggle maximize.
+            if (e.ClickCount == 2)
+            {
+                WindowState = WindowState == WindowState.Maximized
+                    ? WindowState.Normal : WindowState.Maximized;
+            }
+
+            // Otherwise, drag the window around.
+            else DragMove();
+        }
+
+        void onContentAreaPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            // Prevent the mouse from interacting with other controls.
+            e.Handled = true;
         }
 
         void applyFocus()
