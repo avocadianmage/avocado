@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Animation;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,7 +48,7 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             CaretPointer = new Run(text, CaretPointer)
             {
-                Foreground = foreground
+                Foreground = CreateTextFadeBrush(foreground)
             }
             .ContentEnd;
         }
@@ -56,7 +57,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void WriteLine(string text, Brush foreground)
         {
-            text = $"{text.TrimEnd()}{System.Environment.NewLine}";
+            text = $"{text.TrimEnd()}{Environment.NewLine}";
             Write(text, foreground);
         }
 
