@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using AvocadoFramework.Animation;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -16,6 +17,12 @@ namespace AvocadoFramework.Controls.TextRendering
             DefaultStyleKeyProperty.OverrideMetadata(
                 type,
                 new FrameworkPropertyMetadata(type));
+        }
+
+        public static Brush CreateTextFadeBrush(Brush baseBrush)
+        {
+            return new BrushAnimation()
+                .GetFadingBrush(baseBrush, Config.TextFadeDuration);
         }
 
         protected RichTextBox TextBase { get; private set; }

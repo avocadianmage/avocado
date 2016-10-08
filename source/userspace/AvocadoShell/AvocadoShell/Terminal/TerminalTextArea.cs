@@ -352,7 +352,7 @@ namespace AvocadoShell.Terminal
 
             // Write prompt text.
             var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
-            Write(prompt.TrimEnd(), OutputBuffer.CreateTextFadeBrush(brush));
+            Write(prompt.TrimEnd(), CreateTextFadeBrush(brush));
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
             clearUndoBuffer();

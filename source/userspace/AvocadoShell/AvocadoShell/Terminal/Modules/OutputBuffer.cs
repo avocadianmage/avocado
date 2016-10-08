@@ -1,4 +1,4 @@
-﻿using AvocadoFramework.Animation;
+﻿using AvocadoFramework.Controls.TextRendering;
 using System.Collections.Generic;
 using System.Windows.Media;
 
@@ -6,13 +6,6 @@ namespace AvocadoShell.Terminal.Modules
 {
     sealed class OutputBuffer
     {
-        public static Brush CreateTextFadeBrush(Brush baseBrush)
-        {
-            return new BrushAnimation().GetFadingBrush(
-                baseBrush,
-                Config.TextFadeDuration);
-        }
-
         readonly Dictionary<Color, Brush> animatedBrushLookup
             = new Dictionary<Color, Brush>();
 
@@ -41,7 +34,8 @@ namespace AvocadoShell.Terminal.Modules
                 var colorKey = (brush as SolidColorBrush).Color;
                 if (!animatedBrushLookup.ContainsKey(colorKey))
                 {
-                    animatedBrushLookup[colorKey] = CreateTextFadeBrush(brush);
+                    animatedBrushLookup[colorKey] 
+                        = TextArea.CreateTextFadeBrush(brush);
                 }
                 brush = animatedBrushLookup[colorKey];
 
