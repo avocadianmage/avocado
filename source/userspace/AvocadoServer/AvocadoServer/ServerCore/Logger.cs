@@ -51,7 +51,7 @@ namespace AvocadoServer.ServerCore
                 .GetParameters()
                 .Select(p => $"{p.Name}: {valueQueue.Dequeue()}");
             var argListStr = $"{{ {string.Join(", ", keyValueStrs)} }}";
-            var msg = $"Command: {method.Name} {argListStr}";
+            var msg = $"Submitted {method.Name} {argListStr}";
 
             logLine(error, color, ClientIdentifier.GetIP(), msg);
         }
@@ -66,8 +66,6 @@ namespace AvocadoServer.ServerCore
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
 
             // Format source display text.
-            source = string.IsNullOrWhiteSpace(source)
-                ? string.Empty : $"({source}) ";
             if (!error && color.HasValue)
             {
                 source
@@ -75,6 +73,8 @@ namespace AvocadoServer.ServerCore
                     + source
                     + ANSICode.GetColorPrefix(systemColor);
             }
+            source = string.IsNullOrWhiteSpace(source)
+                ? string.Empty : $"({source}) ";
 
             // Use the specified TextWriter to perform the write.
             var writer = error ? Console.Error : Console.Out;
