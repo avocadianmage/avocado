@@ -21,10 +21,10 @@ namespace AvocadoServer.ServerCore
             };
 
         public static void WriteLine(string msg)
-            => logLine(false, null, "sys", msg);
+            => logLine(false, null, null, msg);
 
         public static void WriteErrorLine(string msg)
-            => logLine(true, null, "sys", msg);
+            => logLine(true, null, null, msg);
 
         public static void WriteLine(Job job, string msg)
             => logLine(false, jobColor, job.ToString(), msg);
@@ -64,8 +64,10 @@ namespace AvocadoServer.ServerCore
 
             // Get timestamp.
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
-            
-            // Set text color depending on source (job, IP, etc.)
+
+            // Format source display text.
+            source = string.IsNullOrWhiteSpace(source)
+                ? string.Empty : $"({source}) ";
             if (!error && color.HasValue)
             {
                 source
@@ -76,7 +78,7 @@ namespace AvocadoServer.ServerCore
 
             // Use the specified TextWriter to perform the write.
             var writer = error ? Console.Error : Console.Out;
-            writer.WriteLine($"{timestamp} [{source}] {msg}");
+            writer.WriteLine($"[{timestamp}] {source}{msg}");
         }
 
         public static void Log(this Pipeline pipeline)
