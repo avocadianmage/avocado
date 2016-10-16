@@ -274,7 +274,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message)
         {
-            shellUI.WriteCustom($"[Debug] {message}", Brushes.Magenta, true);
+            shellUI.WriteCustom($"[Debug] {message}", Brushes.Cyan, true);
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteVerboseLine(string message)
         {
             shellUI.WriteCustom(
-                $"[Verbose] {message}", Brushes.DarkGoldenrod, true);
+                $"[Verbose] {message}", Brushes.DimGray, true);
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="message">The warning message that is displayed.</param>
         public override void WriteWarningLine(string message)
         {
-            shellUI.WriteCustom($"[Warning] {message}", Brushes.Yellow, true);
+            shellUI.WriteCustom($"[Warning] {message}", Brushes.Orange, true);
         }
 
         /// <summary>
