@@ -6,23 +6,20 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type text:TextLabel}">
         
-        <Setter Property="IsTabStop" Value="False" />
-        
+        <!-- Properties. -->
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="FontSize" Value="7.25pt" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Padding" Value="0" />
+
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type text:TextLabel}">
 
                     <!-- Layout. -->
-                    <TextBlock 
-                        Text="{TemplateBinding Content}"
-                        Background="Transparent"
-                        FontFamily="Consolas"
-                        FontSize="7.25pt"
-                        FontWeight="Bold"
-                        TextOptions.TextFormattingMode="Display"
-                        Padding="0"
-                        Foreground="{TemplateBinding Foreground}" />
+                    <ContentPresenter />
 
                 </ControlTemplate>
             </Setter.Value>
