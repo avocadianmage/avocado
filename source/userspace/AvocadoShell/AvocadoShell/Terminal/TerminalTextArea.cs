@@ -2,6 +2,9 @@
 using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
+using StandardLibrary.Extensions;
+using StandardLibrary.Processes;
+using StandardLibrary.Utilities;
 using System;
 using System.Linq;
 using System.Security;
@@ -11,9 +14,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
-using UtilityLib.Extensions;
-using UtilityLib.Processes;
-using UtilityLib.Utilities;
 
 namespace AvocadoShell.Terminal
 {

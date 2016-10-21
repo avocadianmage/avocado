@@ -69,13 +69,13 @@
     <Reference Include="AvocadoUtilities">
       <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="StandardLibrary">
+      <HintPath>..\..\..\system\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLib">
-      <HintPath>..\..\..\system\UtilityLibraries\UtilityLib\bin\Release\UtilityLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

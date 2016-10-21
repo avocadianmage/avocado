@@ -9,7 +9,7 @@ function build($path)
 }
 
 # Build system solutions.
-build $PSScriptRoot/system/UtilityLibraries/UtilityLibraries.sln
+build $PSScriptRoot/system/StandardLibrary/StandardLibrary.sln
 build $PSScriptRoot/system/Avocado/Avocado.sln
 
 # Build userspace solutions.

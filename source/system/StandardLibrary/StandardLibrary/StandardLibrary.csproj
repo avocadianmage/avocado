@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BA3C2E8-74DE-4165-8E6C-41B8E40688A1}</ProjectGuid>
+    <ProjectGuid>{E23E0083-6204-4862-9334-C775159BD75A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvocadoUtilities</RootNamespace>
-    <AssemblyName>AvocadoUtilities</AssemblyName>
+    <RootNamespace>StandardLibrary</RootNamespace>
+    <AssemblyName>StandardLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -38,27 +38,46 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Cmdlet\Extensions.cs" />
-    <Compile Include="Cmdlet\Prompts.cs" />
-    <Compile Include="CommandLine\ANSI\ANSISegment.cs" />
-    <Compile Include="CommandLine\ANSI\ANSICode.cs" />
-    <Compile Include="CommandLine\Subcommand.cs" />
-    <Compile Include="CommandLine\SubcommandAttribute.cs" />
-    <Compile Include="Context\AvocadoContext.cs" />
-    <Compile Include="Context\ConfigData.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="StandardLibrary">
-      <HintPath>..\..\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\WindowsPowerShell\3.0\System.Management.Automation.dll</HintPath>
-    </Reference>
+    <Compile Include="Extensions\AsyncExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Processes\Arguments.cs" />
+    <Compile Include="Processes\ConsoleProc.cs" />
+    <Compile Include="Processes\EnvUtils.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Utilities\ResetEventWithData.cs" />
+    <Compile Include="Processes\NamedPipes\MessageEventArgs.cs" />
+    <Compile Include="Processes\NamedPipes\NamedPipeClient.cs" />
+    <Compile Include="Processes\NamedPipes\NamedPipeServer.cs" />
+    <Compile Include="Processes\ManagedProcess.cs" />
+    <Compile Include="Extensions\WPFExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\Scraping\Parsing\LinkParser.cs" />
+    <Compile Include="Web\Scraping\DynamicScraper.cs" />
+    <Compile Include="Web\Scraping\IScraper.cs" />
+    <Compile Include="Web\Scraping\ScrapeUtils.cs" />
+    <Compile Include="Web\Scraping\ScrapingEngine.cs" />
+    <Compile Include="Web\Scraping\StaticScraper.cs" />
+    <Compile Include="Web\Scraping\Parsing\TextParser.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -1,12 +1,11 @@
 ﻿using AvocadoClient.ServerAPIReference;
 using AvocadoUtilities.CommandLine;
+using StandardLibrary.Extensions;
+using StandardLibrary.Processes;
 using System;
 using System.Diagnostics;
 using System.IO;
-using UtilityLib.Extensions;
-using UtilityLib.Processes;
 using static AvocadoClient.WCF;
-using static UtilityLib.Processes.ConsoleProc;
 
 namespace AvocadoClient
 {
@@ -57,6 +56,11 @@ namespace AvocadoClient
 
             // Execute command on server.
             RunCommand(() => CreateClient().KillJob(id.Value));
+        }
+
+        private static void TerminatingError(string v)
+        {
+            throw new NotImplementedException();
         }
 
         [Subcommand]

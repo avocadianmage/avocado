@@ -1,8 +1,8 @@
 ﻿using AvocadoFramework.Animation;
+using StandardLibrary.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UtilityLib.Extensions;
 
 namespace AvocadoFramework.Controls.TextRendering
 {

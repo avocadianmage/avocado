@@ -1,12 +1,12 @@
 ﻿using AvocadoShell.PowerShellService.Modules;
+using StandardLibrary.Extensions;
+using StandardLibrary.Processes;
+using StandardLibrary.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using UtilityLib.Extensions;
-using UtilityLib.Processes;
-using UtilityLib.Utilities;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {

@@ -1,12 +1,12 @@
 ﻿using AvocadoFramework.Animation;
+using StandardLibrary.Extensions;
+using StandardLibrary.Processes;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using UtilityLib.Extensions;
-using UtilityLib.Processes;
 
 namespace AvocadoFramework.Engine
 {

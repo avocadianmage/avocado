@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{14C7D740-7FC8-4205-8E79-8247169AFEE2}</ProjectGuid>
+    <ProjectGuid>{6B99E831-2E0E-460C-B401-B33E4FD4C368}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AvocadoServer</RootNamespace>
-    <AssemblyName>Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>StandardLibraryTest</RootNamespace>
+    <AssemblyName>StandardLibraryTest</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -36,40 +37,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Jobs\JobList.cs" />
-    <Compile Include="Jobs\Serialization\JobSerializer.cs" />
-    <Compile Include="Jobs\Serialization\XmlJob.cs" />
-    <Compile Include="ServerAPI\AllowedClient.cs" />
-    <Compile Include="ServerAPI\IServerAPI.cs" />
-    <Compile Include="ServerAPI\Pipeline.cs" />
-    <Compile Include="ServerAPI\ServerAPIService.cs" />
-    <Compile Include="EntryPoint.cs" />
-    <Compile Include="Jobs\Job.cs" />
-    <Compile Include="ServerCore\ClientIdentifier.cs" />
-    <Compile Include="ServerCore\CommandContext.cs" />
-    <Compile Include="ServerCore\Logger.cs" />
-    <Compile Include="ServerCore\Host.cs" />
+    <Compile Include="ScraperTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AvocadoUtilities">
-      <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="StandardLibrary">
-      <HintPath>..\..\..\system\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Serialization" />
+    <ProjectReference Include="..\StandardLibrary\StandardLibrary.csproj">
+      <Project>{e23e0083-6204-4862-9334-c775159bd75a}</Project>
+      <Name>StandardLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
