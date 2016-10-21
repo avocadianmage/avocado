@@ -71,6 +71,10 @@ namespace AvocadoShell.PowerShellService.Host
                 // Prompt the user for input and store it in the return
                 // dictionary.
                 var input = promptFunc($"{desc.Name}: ");
+
+                // The only way input can be null is if execution was stppped.
+                if (input == null) continue;
+
                 results[desc.Name] = PSObject.AsPSObject(input);
             }
             return results;

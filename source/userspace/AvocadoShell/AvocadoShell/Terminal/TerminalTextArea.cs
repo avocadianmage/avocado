@@ -82,7 +82,7 @@ namespace AvocadoShell.Terminal
             if (!(await psEngineAsync).Stop()) return;
 
             // Ensure the powershell thread is unblocked.
-            nonShellPromptDone.Signal(null);
+            if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -238,18 +238,13 @@ namespace AvocadoShell.Terminal
             MoveCaret(EndPointer, false);
             WriteLine();
 
-            // Signal to the powershell process that the we are done entering
-            // input.
-            nonShellPromptDone.Signal(input);
-
-            // Quit if the input was entered due to a custom prompt in an 
-            // executing process.
-            if (!currentPrompt.FromShell) return;
-
-            await executeCommand(input);
+            // If this is the shell prompt, execute the input.
+            if (currentPrompt.FromShell) await executeInput(input);
+            // Otherwise, signal that the we are done entering input.
+            else nonShellPromptDone.Signal(input);
         }
 
-        async Task executeCommand(string input)
+        async Task executeInput(string input)
         {
             // Add command to history.
             (await historyAsync).Add(input);

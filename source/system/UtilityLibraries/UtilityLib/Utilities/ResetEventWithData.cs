@@ -3,22 +3,20 @@
 namespace UtilityLib.Utilities
 {
     public class ResetEventWithData<T>
-    {        
-        readonly ManualResetEvent mre = new ManualResetEvent(false);
+    {
+        readonly AutoResetEvent resetEvent = new AutoResetEvent(false);
         T data;
 
         public T Block()
         {
-            mre.Reset();
-            mre.WaitOne();
-            mre.Reset();
+            resetEvent.WaitOne();
             return data;
         }
 
         public void Signal(T data)
         {
             this.data = data;
-            mre.Set();
+            resetEvent.Set();
         }
     }
 }
