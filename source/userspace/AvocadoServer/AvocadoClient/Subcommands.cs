@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using UtilityLib.Extensions;
+using UtilityLib.Processes;
 using static AvocadoClient.WCF;
 using static UtilityLib.Processes.ConsoleProc;
 

@@ -2,29 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AvocadoUtilities.CommandLine
+namespace UtilityLib.Processes
 {
     public sealed class Arguments
     {
         IEnumerable<string> remainingArgs;
-        
-        public Arguments(string argsString) 
+
+        public Arguments(string argsString)
             : this(argsString.Split(
                 new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
         { }
-        
+
         public Arguments(IEnumerable<string> args)
         {
             remainingArgs = args;
         }
-        
+
         public string PopArg()
         {
             var arg = remainingArgs.FirstOrDefault();
             remainingArgs = remainingArgs.Skip(1);
             return arg;
         }
-        
+
         public T? PopArg<T>() where T : struct, IConvertible
         {
             // Retrieve the argument.

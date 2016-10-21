@@ -42,7 +42,6 @@
     <Compile Include="Cmdlet\Prompts.cs" />
     <Compile Include="CommandLine\ANSI\ANSISegment.cs" />
     <Compile Include="CommandLine\ANSI\ANSICode.cs" />
-    <Compile Include="CommandLine\Arguments.cs" />
     <Compile Include="CommandLine\Subcommand.cs" />
     <Compile Include="CommandLine\SubcommandAttribute.cs" />
     <Compile Include="Context\AvocadoContext.cs" />

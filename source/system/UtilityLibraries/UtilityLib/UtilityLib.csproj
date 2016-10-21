@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Extensions\AsyncExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Processes\Arguments.cs" />
     <Compile Include="Processes\ConsoleProc.cs" />
     <Compile Include="Processes\EnvUtils.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
