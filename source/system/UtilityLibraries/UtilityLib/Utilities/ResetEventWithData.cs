@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace UtilityLib.MiscTools
+namespace UtilityLib.Utilities
 {
     public class ResetEventWithData<T>
     {        

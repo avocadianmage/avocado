@@ -5,8 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using UtilityLib.Extensions;
 using UtilityLib.Processes;
-using UtilityLib.WPF;
 
 namespace AvocadoFramework.Engine
 {

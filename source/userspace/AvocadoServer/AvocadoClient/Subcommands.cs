@@ -3,7 +3,7 @@ using AvocadoUtilities.CommandLine;
 using System;
 using System.Diagnostics;
 using System.IO;
-using UtilityLib.MiscTools;
+using UtilityLib.Extensions;
 using static AvocadoClient.WCF;
 using static UtilityLib.Processes.ConsoleProc;
 

@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using UtilityLib.WPF;
+using UtilityLib.Extensions;
 
 namespace AvocadoFramework.Controls.TextRendering
 {

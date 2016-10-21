@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.Pipes;
 using System.Threading.Tasks;
-using UtilityLib.MiscTools;
+using UtilityLib.Extensions;
 
 namespace UtilityLib.Processes.NamedPipes
 {

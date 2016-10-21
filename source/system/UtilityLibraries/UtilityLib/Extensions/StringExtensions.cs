@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace UtilityLib.MiscTools
+namespace UtilityLib.Extensions
 {
-    public static class Extensions
+    public static class StringExtensions
     {
         // Returns the common substring of the start of the two strings.
         public static string CommonStart(this string str, string strToCompare)
@@ -59,22 +57,5 @@ namespace UtilityLib.MiscTools
 
         public static string Base64Decode(this string str)
             => Encoding.UTF8.GetString(Convert.FromBase64String(str));
-
-        public static void RunAsync(this Task task)
-        {
-            if (task.Status == TaskStatus.Created) task.Start();
-        }
-
-        public static IEnumerable<T> ForEach<T>(
-            this IEnumerable<T> enumerable, Action<T> action)
-        {
-            foreach (var i in enumerable) action(i);
-            return enumerable;
-        }
-
-        public static IEnumerable<T> Yield<T>(this T item)
-        {
-            yield return item;
-        }
     }
 }

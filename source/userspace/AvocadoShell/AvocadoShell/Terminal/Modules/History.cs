@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using UtilityLib.MiscTools;
+using UtilityLib.Extensions;
 
 namespace AvocadoShell.Terminal.Modules
 {

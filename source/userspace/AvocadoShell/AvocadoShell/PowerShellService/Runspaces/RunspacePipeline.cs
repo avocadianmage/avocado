@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
-using UtilityLib.MiscTools;
+using UtilityLib.Extensions;
 using UtilityLib.Processes;
+using UtilityLib.Utilities;
 
 namespace AvocadoShell.PowerShellService.Runspaces
 {

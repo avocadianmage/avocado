@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace UtilityLib.WPF
+namespace UtilityLib.Extensions
 {
     public static class WPFExtensions
     {
