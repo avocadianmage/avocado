@@ -36,7 +36,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\DataSources\UtilityLib.WCF.WCFMessage.datasource" />
     <None Include="Service References\ServerAPIReference\AvocadoClient.ServerAPIReference.Pipeline.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
