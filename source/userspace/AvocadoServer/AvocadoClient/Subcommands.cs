@@ -51,16 +51,11 @@ namespace AvocadoClient
             var id = args.PopArg<int>();
             if (id == null)
             {
-                TerminatingError("Expected: Client KillJob <id>");
+                ConsoleProc.TerminatingError("Expected: Client KillJob <id>");
             }
 
             // Execute command on server.
             RunCommand(() => CreateClient().KillJob(id.Value));
-        }
-
-        private static void TerminatingError(string v)
-        {
-            throw new NotImplementedException();
         }
 
         [Subcommand]
@@ -73,7 +68,7 @@ namespace AvocadoClient
             var secInterval = args.PopArg<int>();
             if (secInterval == null)
             {
-                TerminatingError(string.Format(
+                ConsoleProc.TerminatingError(string.Format(
                     ERROR_FORMAT,
                     "Missing <interval> parameter.",
                     nameof(RunJob)));
@@ -83,7 +78,7 @@ namespace AvocadoClient
             var filename = string.Join(" ", args.PopRemainingArgs());
             if (string.IsNullOrWhiteSpace(filename))
             {
-                TerminatingError(string.Format(
+                ConsoleProc.TerminatingError(string.Format(
                     ERROR_FORMAT,
                     "Missing <filename> parameter.",
                     nameof(RunJob)));
@@ -101,7 +96,8 @@ namespace AvocadoClient
             var filename = string.Join(" ", args.PopRemainingArgs());
             if (string.IsNullOrWhiteSpace(filename))
             {
-                TerminatingError($"Expected: Client {nameof(Run)} <filename>");
+                ConsoleProc.TerminatingError(
+                    $"Expected: Client {nameof(Run)} <filename>");
             }
 
             // Execute command on server.
