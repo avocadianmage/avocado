@@ -11,6 +11,7 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
+        static readonly Color errorColor = Colors.Salmon;
         static readonly Color jobColor = Colors.SkyBlue;
         static readonly Dictionary<ClientType, Color> clientTypeColorMapping
             = new Dictionary<ClientType, Color>() {
@@ -65,15 +66,16 @@ namespace AvocadoServer.ServerCore
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
 
             // Format source display text.
-            if (!error && sourceColor.HasValue)
+            if (sourceColor.HasValue)
             {
                 source = ANSICode.GetColoredText(sourceColor.Value, source);
                 source = $"({source}) ";
             }
 
-            // Use the specified TextWriter to perform the write.
-            var writer = error ? Console.Error : Console.Out;
-            writer.WriteLine($"[{timestamp}] {source}{msg}");
+            // Color the message text if it is an error.
+            if (error) msg = ANSICode.GetColoredText(errorColor, msg);
+
+            Console.WriteLine($"[{timestamp}] {source}{msg}");
         }
 
         public static void Log(this Pipeline pipeline)
