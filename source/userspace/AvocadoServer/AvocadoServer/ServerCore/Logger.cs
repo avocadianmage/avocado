@@ -11,7 +11,6 @@ namespace AvocadoServer.ServerCore
 {
     static class Logger
     {
-        static readonly Color systemColor = Colors.LightGray;
         static readonly Color jobColor = Colors.SkyBlue;
         static readonly Dictionary<ClientType, Color> clientTypeColorMapping
             = new Dictionary<ClientType, Color>() {
@@ -43,7 +42,7 @@ namespace AvocadoServer.ServerCore
         static void logLine(
             bool error, MethodBase method, params object[] values)
         {
-            var color 
+            var sourceColor 
                 = clientTypeColorMapping[ClientIdentifier.GetClientType()];
 
             var valueQueue = new Queue<object>(values);
@@ -53,11 +52,11 @@ namespace AvocadoServer.ServerCore
             var argListStr = $"{{ {string.Join(", ", keyValueStrs)} }}";
             var msg = $"Submitted {method.Name} {argListStr}";
 
-            logLine(error, color, ClientIdentifier.GetIP(), msg);
+            logLine(error, sourceColor, ClientIdentifier.GetIP(), msg);
         }
 
         static void logLine(
-            bool error, Color? color, string source, string msg)
+            bool error, Color? sourceColor, string source, string msg)
         {
             // Don't log an empty message.
             if (string.IsNullOrWhiteSpace(msg)) return;
@@ -66,15 +65,11 @@ namespace AvocadoServer.ServerCore
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss");
 
             // Format source display text.
-            if (!error && color.HasValue)
+            if (!error && sourceColor.HasValue)
             {
-                source
-                    = ANSICode.GetColorPrefix(color.Value)
-                    + source
-                    + ANSICode.GetColorPrefix(systemColor);
+                source = ANSICode.GetColoredText(sourceColor.Value, source);
+                source = $"({source}) ";
             }
-            source = string.IsNullOrWhiteSpace(source)
-                ? string.Empty : $"({source}) ";
 
             // Use the specified TextWriter to perform the write.
             var writer = error ? Console.Error : Console.Out;

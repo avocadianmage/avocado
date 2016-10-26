@@ -9,12 +9,16 @@ namespace AvocadoUtilities.CommandLine.ANSI
     public static class ANSICode
     {
         const string ANSI_PREIX = "\x1b[";
+        static readonly string RESET_COLOR_SEQ = $"{ANSI_PREIX}39;49m";
+
+        static string getColorSequence(Color color)
+            => $"{ANSI_PREIX}38;2;{color.R};{color.G};{color.B}m";
 
         public static bool ContainsANSICodes(string str)
             => str.Contains(ANSI_PREIX);
 
-        public static string GetColorPrefix(Color color)
-            => $"{ANSI_PREIX}38;2;{color.R};{color.G};{color.B}m";
+        public static string GetColoredText(Color color, string text)
+            => $"{getColorSequence(color)}{text}{RESET_COLOR_SEQ}";
 
         public static IEnumerable<ANSISegment> GetColorSegments(string line)
         {
@@ -93,15 +97,14 @@ namespace AvocadoUtilities.CommandLine.ANSI
                 // Quit if there are not enough pieces left to make a valid,
                 // supported code.
                 if (codeIdx + 4 >= codes.Length) return null;
-
-                // Skip if the code is not supported (only code '38' is
-                // supported).
+                
+                // Only extended set foreground color is supported (code '38').
                 byte n;
                 var foregroundRule = new Predicate<byte>(x => x == 38);
                 if (!tryParsePiece(codes[codeIdx], out n, foregroundRule))
                 { continue; }
 
-                // Skip if malformed (the next piece must be '2').
+                // Only RGB is supported (the next piece must be '2').
                 var rgbPrefixRule = new Predicate<byte>(x => x == 2);
                 if (!tryParsePiece(codes[codeIdx + 1], out n, rgbPrefixRule))
                 { continue; }
