@@ -101,7 +101,7 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
 
             // Format the overall choice prompt string to display.
-            var promptData = BuildHotkeysAndPlainLabels(choices);
+            var promptData = buildHotkeysAndPlainLabels(choices);
             var sb = new StringBuilder();
             for (var i = 0; i < choices.Count; i++)
             {
@@ -142,7 +142,12 @@ namespace AvocadoShell.PowerShellService.Host
         public override PSCredential PromptForCredential(
             string caption, string message, string userName, string targetName)
         {
-            throw new NotImplementedException();
+            // Quit if no username was specified.
+            if (string.IsNullOrWhiteSpace(userName)) return null;
+
+            var prompt = $"Password for {userName}: ";
+            var password = shellUI.WriteSecurePrompt(prompt);
+            return new PSCredential(userName, password);
         }
 
         /// <summary>
@@ -168,12 +173,7 @@ namespace AvocadoShell.PowerShellService.Host
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            // Quit if no username was specified.
-            if (string.IsNullOrWhiteSpace(userName)) return null;
-
-            var prompt = $"Password for {userName}: ";
-            var password = shellUI.WriteSecurePrompt(prompt);
-            return new PSCredential(userName, password);
+            return PromptForCredential(caption, message, userName, targetName);
         }
 
 
@@ -254,7 +254,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <summary>
         /// Writes a progress report to the output display of the host.
         /// </summary>
-        /// <param name="sourceId">Unique identifier of the source of the record. </param>
+        /// <param name="sourceId">Unique identifier of the source of the record.</param>
         /// <param name="record">A ProgressReport object.</param>
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
@@ -302,7 +302,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <summary>
         /// This is a private worker function splits out the
         /// accelerator keys from the menu and builds a two
-        /// dimentional array with the first access containing the
+        /// dimensional array with the first access containing the
         /// accelerator and the second containing the label string
         /// with the &amp; removed.
         /// </summary>
@@ -310,14 +310,14 @@ namespace AvocadoShell.PowerShellService.Host
         /// <returns>
         /// A two dimensional array containing the accelerator characters
         /// and the cleaned-up labels</returns>
-        static string[,] BuildHotkeysAndPlainLabels(
+        static string[,] buildHotkeysAndPlainLabels(
             Collection<ChoiceDescription> choices)
         {
             // Allocate the result array.
-            string[,] hotkeysAndPlainLabels = new string[2, choices.Count];
-            for (int i = 0; i < choices.Count; ++i)
+            var hotkeysAndPlainLabels = new string[2, choices.Count];
+            for (var i = 0; i < choices.Count; ++i)
             {
-                string[] hotkeyAndLabel = GetHotkeyAndLabel(choices[i].Label);
+                var hotkeyAndLabel = getHotkeyAndLabel(choices[i].Label);
                 hotkeysAndPlainLabels[0, i] = hotkeyAndLabel[0];
                 hotkeysAndPlainLabels[1, i] = hotkeyAndLabel[1];
             }
@@ -336,10 +336,10 @@ namespace AvocadoShell.PowerShellService.Host
         /// <returns>
         /// A two dimensional array containing the parsed components.
         /// </returns>
-        static string[] GetHotkeyAndLabel(string input)
+        static string[] getHotkeyAndLabel(string input)
         {
-            string[] result = new string[] { string.Empty, string.Empty };
-            string[] fragments = input.Split('&');
+            var result = new string[] { string.Empty, string.Empty };
+            var fragments = input.Split('&');
             if (fragments.Length == 2)
             {
                 if (fragments[1].Length > 0)
@@ -350,10 +350,7 @@ namespace AvocadoShell.PowerShellService.Host
 
                 result[1] = (fragments[0] + fragments[1]).Trim();
             }
-            else
-            {
-                result[1] = input;
-            }
+            else result[1] = input;
 
             return result;
         }

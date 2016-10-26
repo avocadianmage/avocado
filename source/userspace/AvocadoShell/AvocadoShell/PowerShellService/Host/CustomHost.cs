@@ -71,43 +71,6 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Version Version => Config.Version;
 
-        public RunspacePipeline Pipeline => pipelines.Peek();
-
-        /// <summary>
-        /// Gets a value indicating whether a request 
-        /// to open a PSSession has been made.
-        /// </summary>
-        public bool IsRunspacePushed => pipelines.Count > 1;
-
-        /// <summary>
-        /// Gets or sets the runspace used by the PSSession.
-        /// </summary>
-        public Runspace Runspace => Pipeline.Runspace;
-
-        /// <summary>
-        /// Requests to close a PSSession.
-        /// </summary>
-        public void PopRunspace() => pipelines.Pop();
-
-        /// <summary>
-        /// Requests to open a PSSession.
-        /// </summary>
-        /// <param name="runspace">Runspace to use.</param>
-        public void PushRunspace(Runspace runspace)
-        {
-            var pipeline = new RunspacePipeline(runspace);
-            pipelines.Push(pipeline);
-
-            // Only call InitEnviroment immediately if this is not the initial
-            // runspace. This is because the inital runspace will be created
-            // while the UI thread has not been fully loaded. Thus there is a 
-            // separate call to InitEnviroment from the UI thread after startup.
-            if (IsRunspacePushed)
-            {
-                shellUI.WriteErrorLine(pipeline.InitEnvironment());
-            }
-        }
-
         /// <summary>
         /// This API Instructs the host to interrupt the currently running 
         /// pipeline and start a new nested input loop. In this example this 
@@ -161,5 +124,46 @@ namespace AvocadoShell.PowerShellService.Host
         /// host application should use.</param>
         public override void SetShouldExit(int exitCode)
             => ExitRequested(this, new EventArgs());
+
+        #region IHostSupportsInteractiveSession implementation.
+
+        public RunspacePipeline Pipeline => pipelines.Peek();
+
+        /// <summary>
+        /// Gets a value indicating whether a request 
+        /// to open a PSSession has been made.
+        /// </summary>
+        public bool IsRunspacePushed => pipelines.Count > 1;
+
+        /// <summary>
+        /// Gets or sets the runspace used by the PSSession.
+        /// </summary>
+        public Runspace Runspace => Pipeline.Runspace;
+
+        /// <summary>
+        /// Requests to close a PSSession.
+        /// </summary>
+        public void PopRunspace() => pipelines.Pop();
+
+        /// <summary>
+        /// Requests to open a PSSession.
+        /// </summary>
+        /// <param name="runspace">Runspace to use.</param>
+        public void PushRunspace(Runspace runspace)
+        {
+            var pipeline = new RunspacePipeline(runspace);
+            pipelines.Push(pipeline);
+
+            // Only call InitEnviroment immediately if this is not the initial
+            // runspace. This is because the inital runspace will be created
+            // while the UI thread has not been fully loaded. Thus there is a 
+            // separate call to InitEnviroment from the UI thread after startup.
+            if (IsRunspacePushed)
+            {
+                shellUI.WriteErrorLine(pipeline.InitEnvironment());
+            }
+        }
+
+        #endregion
     }
 }

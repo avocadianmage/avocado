@@ -17,8 +17,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override ConsoleColor BackgroundColor
         {
-            get { return Console.BackgroundColor; }
-            set { Console.BackgroundColor = value; }
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace AvocadoShell.PowerShellService.Host
         public override int CursorSize
         {
             get { return default(int); } // Not implemented.
-            set { Console.CursorSize = value; }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -64,17 +64,17 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override bool KeyAvailable
         {
-            get { return Console.KeyAvailable; }
+            get { throw new NotImplementedException(); }
         }
 
         /// <summary>
         /// Gets the maximum physical size of the window adapted from the  
-        ///  Console.LargestWindowWidth and Console.LargestWindowHeight 
-        ///  properties.
+        /// Console.LargestWindowWidth and Console.LargestWindowHeight 
+        /// properties.
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
-            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -84,17 +84,17 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Size MaxWindowSize
         {
-            get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
+            get { throw new NotImplementedException(); }
         }
 
         /// <summary>
-        /// Gets or sets the window position adapted from the Console window position 
-        /// members.
+        /// Gets or sets the window position adapted from the Console window 
+        /// position members.
         /// </summary>
         public override Coordinates WindowPosition
         {
             get { return default(Coordinates); } // Not implemented.
-            set { Console.SetWindowPosition(value.X, value.Y); }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace AvocadoShell.PowerShellService.Host
         public override Size WindowSize
         {
             get { return default(Size); } // Not implemented.
-            set { Console.SetWindowSize(value.Width, value.Height); }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace AvocadoShell.PowerShellService.Host
         public override string WindowTitle
         {
             get { return default(string); } // Not implemented.
-            set { Console.Title = value; }
+            set { throw new NotImplementedException(); }
         }
 
         /// <summary>
@@ -163,7 +163,11 @@ namespace AvocadoShell.PowerShellService.Host
         /// source region contents.</param>
         /// <param name="clip">The region of the screen to include in the operation.</param>
         /// <param name="fill">The character and attributes to be used to fill all cell.</param>
-        public override void ScrollBufferContents(Rectangle source, Coordinates destination, Rectangle clip, BufferCell fill)
+        public override void ScrollBufferContents(
+            Rectangle source, 
+            Coordinates destination, 
+            Rectangle clip, 
+            BufferCell fill)
         {
             throw new NotImplementedException();
         }
@@ -175,7 +179,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="origin">The parameter is not used.</param>
         /// <param name="contents">The parameter is not used.</param>
-        public override void SetBufferContents(Coordinates origin, BufferCell[,] contents)
+        public override void SetBufferContents(
+            Coordinates origin, BufferCell[,] contents)
         {
             throw new NotImplementedException();
         }
@@ -187,7 +192,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// NotImplementException exception./// </summary>
         /// <param name="rectangle">Defines the area to be filled. </param>
         /// <param name="fill">Defines the fill character.</param>
-        public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
+        public override void SetBufferContents(
+            Rectangle rectangle, BufferCell fill)
         {
             throw new NotImplementedException();
         }
