@@ -102,26 +102,31 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
 
             // Format the overall choice prompt string to display.
-            var promptData = choices.Select(c => new Choice(c)).ToArray();
-            var sb = new StringBuilder();
-            promptData.ForEach(l => sb.Append($"[{l.Hotkey}] {l.Text}  "));
-            sb.Append($"[?] Help (default is \"{promptData[defaultChoice].Hotkey}\"): ");
+            var choiceList = new ChoiceList(choices);
+            var promptText = choiceList.GetPromptText(defaultChoice);
 
             // Read prompts until a match is made or the default is chosen.
             while (true)
             {
-                var input = shellUI.WritePrompt(sb.ToString());
+                var input = shellUI.WritePrompt(promptText);
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
 
+                // Parse selection.
+                input = input.Trim();
+
+                // Check for help text selection.
+                if (input == "?")
+                {
+                    shellUI.WriteOutputLine(choiceList.GetHelpText());
+                    continue;
+                }
+
                 // See if the selection matched and return the corresponding
                 // index if it did.
-                input = input.Trim().ToUpper();
-                for (var i = 0; i < choices.Count; i++)
-                {
-                    if (promptData[i].Hotkey == input) return i;
-                }
+                var index = choiceList.FindMatch(input.ToUpper());
+                if (index.HasValue) return index.Value;
             }
         }
 
@@ -133,21 +138,44 @@ namespace AvocadoShell.PowerShellService.Host
 
             public Choice(ChoiceDescription desc)
             {
+                Text = desc.Label.Replace("&", string.Empty);
+                Hotkey = desc.Label.Split('&')[1].First().ToString().ToUpper();
                 HelpMessage = desc.HelpMessage;
-                Text = desc.Label;
-                var pieces = Text.Split('&');
+            }
+        }
 
-                // If hotkey is not available or cannot be determined, just return
-                // the input as the label.
-                if (pieces.Length != 2) return;
+        sealed class ChoiceList
+        {
+            readonly Choice[] choiceArray;
 
-                // Return the input string without the ampersand.
-                Text = string.Join(string.Empty, pieces);
+            public ChoiceList(Collection<ChoiceDescription> choices)
+            {
+                choiceArray = choices.Select(c => new Choice(c)).ToArray();
+            }
 
-                // Set the hotkey as the first character after the ampersand.
-                var hotkeyPiece = pieces[1];
-                if (!string.IsNullOrWhiteSpace(hotkeyPiece))
-                    Hotkey = hotkeyPiece.First().ToString().ToUpper();
+            public string GetPromptText(int defaultChoice)
+            {
+                var builder = new StringBuilder();
+                choiceArray.ForEach(
+                    c => builder.Append($"[{c.Hotkey}] {c.Text}  "));
+                builder.Append(
+                    $"[?] Help (default is \"{choiceArray[defaultChoice].Hotkey}\"): ");
+                return builder.ToString();
+            }
+
+            public string GetHelpText()
+            {
+                var builder = new StringBuilder();
+                choiceArray.ForEach(
+                    c => builder.AppendLine($"{c.Hotkey} - {c.HelpMessage}"));
+                return builder.ToString();
+            }
+
+            public int? FindMatch(string input)
+            {
+                for (var i = 0; i < choiceArray.Length; i++)
+                    if (choiceArray[i].Hotkey == input) return i;
+                return null;
             }
         }
 
