@@ -113,7 +113,6 @@ namespace AvocadoShell.PowerShellService.Host
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
 
-                // Parse selection.
                 input = input.Trim();
 
                 // Check for help text selection.
