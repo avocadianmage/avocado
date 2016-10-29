@@ -157,8 +157,8 @@ namespace AvocadoShell.PowerShellService.Host
                 var builder = new StringBuilder();
                 choiceArray.ForEach(
                     c => builder.Append($"[{c.Hotkey}] {c.Text}  "));
-                builder.Append(
-                    $"[?] Help (default is \"{choiceArray[defaultChoice].Hotkey}\"): ");
+                var defaultHotkey = choiceArray[defaultChoice].Hotkey;
+                builder.Append($"[?] Help (default is \"{defaultHotkey}\"): ");
                 return builder.ToString();
             }
 
