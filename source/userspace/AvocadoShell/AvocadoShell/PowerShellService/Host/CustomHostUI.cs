@@ -80,6 +80,8 @@ namespace AvocadoShell.PowerShellService.Host
             return results;
         }
 
+        #region Choice prompt
+
         /// <summary>
         /// Provides a set of choices that enable the user to choose a 
         /// single option from a set of options. 
@@ -177,6 +179,8 @@ namespace AvocadoShell.PowerShellService.Host
                 return null;
             }
         }
+
+        #endregion
 
         /// <summary>
         /// Prompts the user for credentials with a specified prompt window caption, 
