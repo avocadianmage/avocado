@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StandardLibrary.Processes;
+using System;
 using System.Reflection;
 using System.Windows.Media;
 
@@ -9,7 +10,8 @@ namespace AvocadoShell
         public static Version Version
             => Assembly.GetExecutingAssembly().GetName().Version;
 
-        public static Brush PromptBrush => Brushes.LightGreen;
+        public static Brush PromptBrush => 
+            EnvUtils.IsAdmin ? Brushes.Yellow : Brushes.LightGreen;
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
 

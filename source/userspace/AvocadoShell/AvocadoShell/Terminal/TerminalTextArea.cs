@@ -309,9 +309,6 @@ namespace AvocadoShell.Terminal
         {
             var prompt = string.Empty;
 
-            // Add root indication.
-            if (EnvUtils.IsAdmin) prompt += "(root) ";
-
             // Add remote computer name.
             var psEngine = await psEngineAsync;
             if (psEngine.RemoteComputerName != null)

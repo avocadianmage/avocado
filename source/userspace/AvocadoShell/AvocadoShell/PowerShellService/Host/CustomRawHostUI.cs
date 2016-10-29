@@ -17,7 +17,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override ConsoleColor BackgroundColor
         {
-            get { throw new NotImplementedException(); }
+            get { return default(ConsoleColor); } // Not implemented.
             set { throw new NotImplementedException(); }
         }
 
@@ -74,7 +74,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
-            get { throw new NotImplementedException(); }
+            get { return default(Size); } // Not implemented.
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override Size MaxWindowSize
         {
-            get { throw new NotImplementedException(); }
+            get { return default(Size); } // Not implemented.
         }
 
         /// <summary>
