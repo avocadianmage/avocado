@@ -1,8 +1,9 @@
 ﻿using AvocadoShell.Terminal;
+using StandardLibrary.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
@@ -101,16 +102,12 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
 
             // Format the overall choice prompt string to display.
-            var promptData = buildHotkeysAndPlainLabels(choices);
+            var promptData = choices.Select(c => new Choice(c)).ToArray();
             var sb = new StringBuilder();
-            for (var i = 0; i < choices.Count; i++)
-            {
-                sb.Append($"[{promptData[0, i]}] {promptData[1, i]}  ");
-            }
-            sb.Append($"(Default is \"{promptData[0, defaultChoice]}\"): ");
+            promptData.ForEach(l => sb.Append($"[{l.Hotkey}] {l.Text}  "));
+            sb.Append($"[?] Help (default is \"{promptData[defaultChoice].Hotkey}\"): ");
 
-            // Read prompts until a match is made, the default is
-            // chosen, or the loop is interrupted with ctrl-C.
+            // Read prompts until a match is made or the default is chosen.
             while (true)
             {
                 var input = shellUI.WritePrompt(sb.ToString());
@@ -123,8 +120,34 @@ namespace AvocadoShell.PowerShellService.Host
                 input = input.Trim().ToUpper();
                 for (var i = 0; i < choices.Count; i++)
                 {
-                    if (promptData[0, i] == input) return i;
+                    if (promptData[i].Hotkey == input) return i;
                 }
+            }
+        }
+
+        sealed class Choice
+        {
+            public string HelpMessage { get; }
+            public string Text { get; }
+            public string Hotkey { get; }
+
+            public Choice(ChoiceDescription desc)
+            {
+                HelpMessage = desc.HelpMessage;
+                Text = desc.Label;
+                var pieces = Text.Split('&');
+
+                // If hotkey is not available or cannot be determined, just return
+                // the input as the label.
+                if (pieces.Length != 2) return;
+
+                // Return the input string without the ampersand.
+                Text = string.Join(string.Empty, pieces);
+
+                // Set the hotkey as the first character after the ampersand.
+                var hotkeyPiece = pieces[1];
+                if (!string.IsNullOrWhiteSpace(hotkeyPiece))
+                    Hotkey = hotkeyPiece.First().ToString().ToUpper();
             }
         }
 
@@ -297,62 +320,6 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteWarningLine(string message)
         {
             shellUI.WriteCustom($"[Warning] {message}", Brushes.Orange, true);
-        }
-
-        /// <summary>
-        /// This is a private worker function splits out the
-        /// accelerator keys from the menu and builds a two
-        /// dimensional array with the first access containing the
-        /// accelerator and the second containing the label string
-        /// with the &amp; removed.
-        /// </summary>
-        /// <param name="choices">The choice collection to process</param>
-        /// <returns>
-        /// A two dimensional array containing the accelerator characters
-        /// and the cleaned-up labels</returns>
-        static string[,] buildHotkeysAndPlainLabels(
-            Collection<ChoiceDescription> choices)
-        {
-            // Allocate the result array.
-            var hotkeysAndPlainLabels = new string[2, choices.Count];
-            for (var i = 0; i < choices.Count; ++i)
-            {
-                var hotkeyAndLabel = getHotkeyAndLabel(choices[i].Label);
-                hotkeysAndPlainLabels[0, i] = hotkeyAndLabel[0];
-                hotkeysAndPlainLabels[1, i] = hotkeyAndLabel[1];
-            }
-
-            return hotkeysAndPlainLabels;
-        }
-
-        /// <summary>
-        /// Parse a string containing a hotkey character.
-        /// Take a string of the form
-        ///    Yes to &amp;all
-        /// and returns a two-dimensional array split out as
-        ///    "A", "Yes to all".
-        /// </summary>
-        /// <param name="input">The string to process</param>
-        /// <returns>
-        /// A two dimensional array containing the parsed components.
-        /// </returns>
-        static string[] getHotkeyAndLabel(string input)
-        {
-            var result = new string[] { string.Empty, string.Empty };
-            var fragments = input.Split('&');
-            if (fragments.Length == 2)
-            {
-                if (fragments[1].Length > 0)
-                {
-                    result[0] = fragments[1][0].ToString()
-                        .ToUpper(CultureInfo.CurrentCulture);
-                }
-
-                result[1] = (fragments[0] + fragments[1]).Trim();
-            }
-            else result[1] = input;
-
-            return result;
         }
     }
 }
