@@ -275,16 +275,12 @@ namespace AvocadoShell.PowerShellService.Host
         {
             // Recognize default system color.
             if (consoleColor == Config.DefaultConsoleColor)
-            {
                 return Config.SystemFontBrush;
-            }
 
             // Handle 'DarkYellow' which does not have a brush with a matching
             // name.
             if (consoleColor == ConsoleColor.DarkYellow)
-            {
                 return Brushes.DarkGoldenrod;
-            }
             
             var colorStr = consoleColor.ToString();
             return new BrushConverter().ConvertFromString(colorStr) as Brush;
@@ -340,8 +336,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
         {
-            shellUI.WriteCustom(
-                $"[Verbose] {message}", Brushes.DimGray, true);
+            shellUI.WriteCustom($"[Verbose] {message}", Brushes.DimGray, true);
         }
 
         /// <summary>
