@@ -7,11 +7,11 @@ namespace AvocadoShell
 {
     sealed class Config
     {
-        public static Version Version
-            => Assembly.GetExecutingAssembly().GetName().Version;
+        public static Version Version { get; }
+            = Assembly.GetExecutingAssembly().GetName().Version;
 
-        public static Brush PromptBrush => 
-            EnvUtils.IsAdmin ? Brushes.Yellow : Brushes.LightGreen;
+        public static Brush PromptBrush { get; } 
+            = EnvUtils.IsAdmin ? Brushes.Yellow : Brushes.LightGreen;
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
 
