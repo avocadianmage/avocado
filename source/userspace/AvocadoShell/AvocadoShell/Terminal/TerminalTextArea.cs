@@ -344,8 +344,7 @@ namespace AvocadoShell.Terminal
             if (fromShell) Window.GetWindow(this).Title = prompt;
 
             // Write prompt text.
-            var brush = fromShell ? Config.PromptBrush : Config.SystemFontBrush;
-            Write(prompt.TrimEnd(), brush);
+            Write(prompt.TrimEnd(), Config.PromptBrush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
             clearUndoBuffer();
