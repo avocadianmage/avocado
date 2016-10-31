@@ -104,31 +104,48 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
 
             // Format the overall choice prompt string to display.
-            var choiceList = new ChoiceList(choices);
-            var promptText = choiceList.GetPromptText(defaultChoice);
+            var choiceArray = choices.Select(c => new Choice(c)).ToArray();
 
             // Read prompts until a match is made or the default is chosen.
             while (true)
             {
-                var input = shellUI.WritePrompt(promptText);
+                choiceArray.ForEach(c => writeChoice(c));
+
+                // Write help choice.
+                var defaultHotkey = choiceArray[defaultChoice].Hotkey;
+                writeChoice("?", $"Help (default is \"{defaultHotkey}\"):");
+                
+                var input = shellUI.WritePrompt(" ");
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
 
-                input = input.Trim();
+                input = input.Trim().ToUpper();
 
-                // Check for help text selection.
+                // Check for help selection.
                 if (input == "?")
                 {
-                    shellUI.WriteOutputLine(choiceList.GetHelpText());
+                    var builder = new StringBuilder();
+                    choiceArray.ForEach(c => builder.AppendLine(c.HelpLine));
+                    shellUI.WriteOutputLine(builder.ToString());
                     continue;
                 }
 
                 // See if the selection matched and return the corresponding
                 // index if it did.
-                var index = choiceList.FindMatch(input.ToUpper());
-                if (index.HasValue) return index.Value;
+                for (var i = 0; i < choiceArray.Length; i++)
+                    if (choiceArray[i].Hotkey == input) return i;
             }
+        }
+
+        void writeChoice(Choice choice) 
+            => writeChoice(choice.Hotkey, $"{choice.Text}  ");
+
+        void writeChoice(string hotkey, string text)
+        {
+            shellUI.WriteCustom("[", Config.PromptBrush, false);
+            shellUI.WriteCustom(hotkey, Config.InputBrush, false);
+            shellUI.WriteCustom($"] {text}", Config.PromptBrush, false);
         }
 
         sealed class Choice
@@ -137,46 +154,13 @@ namespace AvocadoShell.PowerShellService.Host
             public string Text { get; }
             public string Hotkey { get; }
 
+            public string HelpLine => $"{Hotkey} - {HelpMessage}";
+
             public Choice(ChoiceDescription desc)
             {
                 Text = desc.Label.Replace("&", string.Empty);
                 Hotkey = desc.Label.Split('&')[1].First().ToString().ToUpper();
                 HelpMessage = desc.HelpMessage;
-            }
-        }
-
-        sealed class ChoiceList
-        {
-            readonly Choice[] choiceArray;
-
-            public ChoiceList(Collection<ChoiceDescription> choices)
-            {
-                choiceArray = choices.Select(c => new Choice(c)).ToArray();
-            }
-
-            public string GetPromptText(int defaultChoice)
-            {
-                var builder = new StringBuilder();
-                choiceArray.ForEach(
-                    c => builder.Append($"[{c.Hotkey}] {c.Text}  "));
-                var defaultHotkey = choiceArray[defaultChoice].Hotkey;
-                builder.Append($"[?] Help (default is \"{defaultHotkey}\"): ");
-                return builder.ToString();
-            }
-
-            public string GetHelpText()
-            {
-                var builder = new StringBuilder();
-                choiceArray.ForEach(
-                    c => builder.AppendLine($"{c.Hotkey} - {c.HelpMessage}"));
-                return builder.ToString();
-            }
-
-            public int? FindMatch(string input)
-            {
-                for (var i = 0; i < choiceArray.Length; i++)
-                    if (choiceArray[i].Hotkey == input) return i;
-                return null;
             }
         }
 

@@ -7,7 +7,7 @@
     Width="640" Height="460">
 
     <Grid>
-        <terminal:TerminalTextArea Foreground="SkyBlue" />
+        <terminal:TerminalTextArea />
     </Grid>
 
 </framework:GlassPane>

@@ -3,7 +3,6 @@ using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Extensions;
-using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using System;
 using System.Linq;
@@ -30,6 +29,8 @@ namespace AvocadoShell.Terminal
         {
             psEngineAsync = Task.Run(() => createPowerShellEngine());
             historyAsync = Task.Run(createHistory);
+
+            Foreground = Config.InputBrush;
 
             Unloaded += async (s, e) => await terminateExec();
         }
