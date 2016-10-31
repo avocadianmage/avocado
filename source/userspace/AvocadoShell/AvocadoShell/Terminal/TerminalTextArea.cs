@@ -440,6 +440,7 @@ namespace AvocadoShell.Terminal
 
             // Update the display to show the new input.
             setInput(storedInput);
+            MoveCaret(EndPointer, false);
         }
 
         string getInput() => getInputTextRange(EndPointer).Text;
