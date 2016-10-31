@@ -30,8 +30,6 @@ namespace AvocadoShell.Terminal
             psEngineAsync = Task.Run(() => createPowerShellEngine());
             historyAsync = Task.Run(createHistory);
 
-            Foreground = Config.InputBrush;
-
             Unloaded += async (s, e) => await terminateExec();
         }
 

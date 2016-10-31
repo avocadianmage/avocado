@@ -3,11 +3,17 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:framework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
+    xmlns:local="clr-namespace:AvocadoShell"
     xmlns:terminal="clr-namespace:AvocadoShell.Terminal"
     Width="640" Height="460">
 
+    <framework:GlassPane.Resources>
+        <local:Config x:Key="Config"/>
+    </framework:GlassPane.Resources>
+    
     <Grid>
-        <terminal:TerminalTextArea />
+        <terminal:TerminalTextArea 
+            Foreground="{Binding Source={StaticResource Config},Path=InputBrush}"/>
     </Grid>
 
 </framework:GlassPane>
