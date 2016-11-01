@@ -18,6 +18,9 @@ namespace AvocadoShell.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
+        const DispatcherPriority OUTPUT_PRIORITY 
+            = DispatcherPriority.Background;
+
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
@@ -334,7 +337,7 @@ namespace AvocadoShell.Terminal
         {
             Dispatcher.BeginInvoke(
                 (Action)(() => writePromptCore(prompt, fromShell, secure)),
-                DispatcherPriority.Background);
+                OUTPUT_PRIORITY);
         }
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
@@ -382,7 +385,7 @@ namespace AvocadoShell.Terminal
         {
             Dispatcher.BeginInvoke(
                 (Action<string, Brush, bool>)write,
-                DispatcherPriority.Background,
+                OUTPUT_PRIORITY,
                 data, foreground, newline);
         }
         
@@ -418,7 +421,7 @@ namespace AvocadoShell.Terminal
                         : Config.SystemFontBrush;
                 write(segment.Text, brush, newline);
             }),
-            DispatcherPriority.Background);
+            OUTPUT_PRIORITY);
         }
 
         async Task historyLookup(bool forward)

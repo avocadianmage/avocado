@@ -115,7 +115,7 @@ namespace AvocadoShell.PowerShellService.Host
                 var defaultHotkey = choiceArray[defaultChoice].Hotkey;
                 writeChoice("?", $"Help (default is \"{defaultHotkey}\"):");
                 
-                var input = shellUI.WritePrompt(" ");
+                var input = shellUI.WritePrompt(string.Empty);
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
