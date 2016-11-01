@@ -104,7 +104,8 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
             
             var choiceList = choices.Select(c => new Choice(c)).ToArray();
-            var choicePrompt = getChoicePromptText(choiceList, defaultChoice);
+            var choicePrompt = getChoicePromptText(
+                choiceList, choiceList[defaultChoice].Hotkey);
 
             // Read prompts until a match is made or the default is chosen.
             while (true)
@@ -130,17 +131,12 @@ namespace AvocadoShell.PowerShellService.Host
             }
         }
 
-        string getChoicePromptText(Choice[] choiceList, int defaultChoice)
+        string getChoicePromptText(
+            IEnumerable<Choice> choiceList, string defaultHotkey)
         {
             var builder = new StringBuilder();
-
-            // Append choice selections.
             choiceList.ForEach(c => builder.Append(c));
-
-            // Append help selection and default information.
-            var defaultHotkey = choiceList[defaultChoice].Hotkey;
             builder.Append($"[?] Help  (default is \"{defaultHotkey}\"): ");
-
             return builder.ToString();
         }
 
