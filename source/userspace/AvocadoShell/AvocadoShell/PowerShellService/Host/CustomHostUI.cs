@@ -102,20 +102,14 @@ namespace AvocadoShell.PowerShellService.Host
         {
             writeLineUnlessWhitespace(caption);
             writeLineUnlessWhitespace(message);
-
-            // Format the overall choice prompt string to display.
-            var choiceArray = choices.Select(c => new Choice(c)).ToArray();
+            
+            var choiceList = choices.Select(c => new Choice(c)).ToArray();
+            var choicePrompt = getChoicePromptText(choiceList, defaultChoice);
 
             // Read prompts until a match is made or the default is chosen.
             while (true)
             {
-                choiceArray.ForEach(c => writeChoice(c));
-
-                // Write help choice.
-                var defaultHotkey = choiceArray[defaultChoice].Hotkey;
-                writeChoice("?", $"Help (default is \"{defaultHotkey}\"):");
-                
-                var input = shellUI.WritePrompt(string.Empty);
+                var input = shellUI.WritePrompt(choicePrompt);
 
                 // If the choice string was empty, use the default selection.
                 if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
@@ -125,27 +119,36 @@ namespace AvocadoShell.PowerShellService.Host
                 // Check for help selection.
                 if (input == "?")
                 {
-                    var builder = new StringBuilder();
-                    choiceArray.ForEach(c => builder.AppendLine(c.HelpLine));
-                    shellUI.WriteOutputLine(builder.ToString());
+                    shellUI.WriteOutputLine(getChoiceHelpText(choiceList));
                     continue;
                 }
 
                 // See if the selection matched and return the corresponding
                 // index if it did.
-                for (var i = 0; i < choiceArray.Length; i++)
-                    if (choiceArray[i].Hotkey == input) return i;
+                for (var i = 0; i < choiceList.Length; i++)
+                    if (choiceList[i].Hotkey == input) return i;
             }
         }
 
-        void writeChoice(Choice choice) 
-            => writeChoice(choice.Hotkey, $"{choice.Text}  ");
-
-        void writeChoice(string hotkey, string text)
+        string getChoicePromptText(Choice[] choiceList, int defaultChoice)
         {
-            shellUI.WriteCustom("[", Config.PromptBrush, false);
-            shellUI.WriteCustom(hotkey, Config.InputBrush, false);
-            shellUI.WriteCustom($"] {text}", Config.PromptBrush, false);
+            var builder = new StringBuilder();
+
+            // Append choice selections.
+            choiceList.ForEach(c => builder.Append(c));
+
+            // Append help selection and default information.
+            var defaultHotkey = choiceList[defaultChoice].Hotkey;
+            builder.Append($"[?] Help  (default is \"{defaultHotkey}\"): ");
+
+            return builder.ToString();
+        }
+
+        string getChoiceHelpText(IEnumerable<Choice> choiceList)
+        {
+            var builder = new StringBuilder();
+            choiceList.ForEach(c => builder.AppendLine(c.HelpLine));
+            return builder.ToString();
         }
 
         sealed class Choice
@@ -154,14 +157,16 @@ namespace AvocadoShell.PowerShellService.Host
             public string Text { get; }
             public string Hotkey { get; }
 
-            public string HelpLine => $"{Hotkey} - {HelpMessage}";
-
             public Choice(ChoiceDescription desc)
             {
                 Text = desc.Label.Replace("&", string.Empty);
                 Hotkey = desc.Label.Split('&')[1].First().ToString().ToUpper();
                 HelpMessage = desc.HelpMessage;
             }
+
+            public string HelpLine => $"{Hotkey} - {HelpMessage}";
+
+            public override string ToString() => $"[{Hotkey}] {Text}  ";
         }
 
         #endregion
