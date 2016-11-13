@@ -1,66 +1,37 @@
-﻿using StandardLibrary.Extensions;
+﻿using StandardLibrary.Utilities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace AvocadoUtilities.Context
 {
-    sealed class ConfigData
+    public sealed class ConfigData
     {
-        const string DELIM = "=";
+        const string SECTION = "General";
 
-        Dictionary<string, string> cache;
-        
-        readonly string path;
+        readonly ConfigFile configFile;
 
         public ConfigData(string name)
         {
             var appDataPath = Environment.GetFolderPath(
                     Environment.SpecialFolder.ApplicationData);
-            path = Path.Combine(appDataPath, "Avocado", $"{name}.ini");
+            var path = Path.Combine(appDataPath, "Avocado", $"{name}.ini");
+            configFile = new ConfigFile(path);
         }
 
-        public string GetValue(string prop, string defaultVal)
+        public string Read(string key) => Read(key, string.Empty);
+
+        public string Read(string key, string defaultValue)
         {
-            // Initialize cache, if needed.
-            cache = cache ?? getPropertyDict();
+            // Attempt to retrieve the value with no defaulting.
+            var result = configFile.Read(SECTION, key, string.Empty);
+            if (result != string.Empty) return result;
 
-            // Check if the value is already cached.
-            if (cache.ContainsKey(prop)) return cache[prop];
-
-            // Otherwise, the config file did not exist, or the property was
-            // not found. Create a new file if needed and add the property with
-            // its default value.
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.AppendAllLines(path, $"{prop}{DELIM}{defaultVal}".Yield());
-
-            // Cache the property/value for fast subsequent access.
-            cache[prop] = defaultVal;
-
-            return defaultVal;
+            // If it does not exist, write the default to file and return it.
+            configFile.Write(SECTION, key, defaultValue);
+            return defaultValue;
         }
 
-        Dictionary<string, string> getPropertyDict()
-        {
-            var ret = new Dictionary<string, string>();
-
-            if (!File.Exists(path)) return ret;
-            
-            foreach (var line in File.ReadLines(path))
-            {
-                var index = line.IndexOf(DELIM);
-                if (index == -1) continue;
-
-                var property = line.Substring(0, index);
-                if (string.IsNullOrWhiteSpace(property)) continue;
-
-                var val = line.Substring(index + DELIM.Length);
-                if (string.IsNullOrWhiteSpace(val)) continue;
-
-                ret[property] = val;
-            }
-
-            return ret;
-        }
+        public void Write(string key, string value)
+            => configFile.Write(SECTION, key, value);
     }
 }
