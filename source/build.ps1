@@ -2,10 +2,9 @@ $shortcutPath = Join-Path $env:APPDATA "Avocado"
 
 function build($path)
 {
-    & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" $path `
-        /t:Rebuild /p:Configuration=Release
-    & "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe" $path `
-        /t:Rebuild /p:Configuration=Release /p:OutputPath=$shortcutPath
+    $msbuild = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
+    & $msbuild $path /t:Rebuild /p:Configuration=Release
+    & $msbuild $path /t:Rebuild /p:Configuration=Release /p:OutputPath=$shortcutPath
 }
 
 # Build system solutions.
