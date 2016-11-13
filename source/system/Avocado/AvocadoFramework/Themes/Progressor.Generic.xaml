@@ -48,7 +48,7 @@
                                 Margin="4,2,4,2" />
                             <text:TextLabel 
                                 Content="{TemplateBinding Status}"
-                                Foreground="Yellow"
+                                Foreground="White"
                                 HorizontalAlignment="Right"
                                 Margin="4,2,4,2" />
                             

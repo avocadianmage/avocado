@@ -10,8 +10,8 @@ namespace StandardLibrary.Extensions
     {
         // Get the element with the specified name from the template of this
         // control.
-        public static T GetTemplateElement<T>(
-            this Control control, string name) where T : FrameworkElement
+        public static T GetTemplateElement<T>(this Control control, string name) 
+            where T : FrameworkElement
         {
             return (T)control.Template.FindName(name, control);
         }

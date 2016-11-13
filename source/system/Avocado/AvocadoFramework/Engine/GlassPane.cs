@@ -50,7 +50,7 @@ namespace AvocadoFramework.Engine
             if (e.LeftButton != MouseButtonState.Pressed) return;
 
             // Double-click to toggle maximize.
-            if (e.ClickCount == 2)
+            if (e.ClickCount == 2 && ResizeMode != ResizeMode.NoResize)
             {
                 WindowState = WindowState == WindowState.Maximized
                     ? WindowState.Normal : WindowState.Maximized;
