@@ -70,8 +70,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         public string ExecuteScripts(IEnumerable<string> scripts)
         {
-            pipeline = Runspace.CreatePipeline();
-            scripts.ForEach(pipeline.Commands.AddScript);
+            var scriptStr = string.Join(Environment.NewLine, scripts);
+            pipeline = Runspace.CreatePipeline(scriptStr);
             return executePipeline();
         }
 
