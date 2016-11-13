@@ -293,17 +293,10 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="record">A ProgressReport object.</param>
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            if (record.RecordType == ProgressRecordType.Completed)
-            {
-                actionsInProgress.Remove(record);
-                return;
-            }
-            
-            if (actionsInProgress.Contains(record)) return;
-
-            actionsInProgress.Add(record);
+            if (record.RecordType == ProgressRecordType.Completed) return;
             shellUI.WriteOutputLine(
-                $"{record.Activity} - {record.StatusDescription}");
+                $@"{record.Activity} {record.StatusDescription} ({
+                    record.PercentComplete}%)");
         }
 
         /// <summary>
