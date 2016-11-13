@@ -12,12 +12,7 @@
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo x:Name="taskbarItemInfo" ProgressState="Normal" />
     </Window.TaskbarItemInfo>
-    
-    <!--ckgtest-->
-    <!--<ScrollViewer VerticalScrollBarVisibility="Visible">
-        <StackPanel x:Name="GrouperList" Margin="4 2 5 6" />
-    </ScrollViewer>-->
-    
+
     <ItemsControl ItemsSource="{Binding Groupers}" Focusable="False">
         <ItemsControl.ItemTemplate>
             <DataTemplate>

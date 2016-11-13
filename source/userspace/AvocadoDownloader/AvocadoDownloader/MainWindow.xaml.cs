@@ -13,14 +13,6 @@ namespace AvocadoDownloader
         {
             InitializeComponent();
             DataContext = dataModel;
-
-            //ckgtest
-            dataModel.AddGrouper("Angel Beats!",
-                new List<string> { "Episode-001" });
-            dataModel.AddGrouper("Puella Magi Madoka Magica",
-                new List<string> { "Episode-004", "Episode-005" });
-            dataModel.AddGrouper("One Punch Man",
-                new List<string> { "Episode-002" });
         }
     }
 
