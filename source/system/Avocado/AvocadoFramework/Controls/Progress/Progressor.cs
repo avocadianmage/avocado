@@ -85,7 +85,7 @@ namespace AvocadoFramework.Controls.Progress
                 Config.ProgressorColor,
                 Config.ProgressorSelectedColor,
                 Config.ProgressorFadeDuration,
-                this.GetTemplateElement<Border>("border").BorderBrush);
+                this.GetTemplateElement<ProgressBar>("progress").BorderBrush);
 
             textColorAnimator = new ReversibleAnimator<Color>(
                 SolidColorBrush.ColorProperty,
