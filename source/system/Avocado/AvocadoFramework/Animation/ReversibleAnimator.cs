@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Animation;
 
@@ -9,7 +10,7 @@ namespace AvocadoFramework.Animation
         public event EventHandler StartReached;
         public event EventHandler EndReached;
 
-        readonly dynamic targetObj;
+        readonly IEnumerable<dynamic> targetObjs;
         readonly DependencyProperty property;
         readonly T start;
         readonly T end;
@@ -17,25 +18,25 @@ namespace AvocadoFramework.Animation
         readonly ReversibleClock reversibleClock;
 
         public ReversibleAnimator(
-            UIElement targetObj,
             DependencyProperty property, 
             T start, 
             T end, 
-            double msDuration)
+            double msDuration,
+            params UIElement[] targetObjs)
             : this(property, start, end, msDuration)
         {
-            this.targetObj = targetObj;
+            this.targetObjs = targetObjs;
         }
 
         public ReversibleAnimator(
-            Animatable targetObj,
             DependencyProperty property,
             T start,
             T end,
-            double msDuration)
+            double msDuration,
+            params Animatable[] targetObjs)
             : this(property, start, end, msDuration)
         {
-            this.targetObj = targetObj;
+            this.targetObjs = targetObjs;
         }
 
         ReversibleAnimator(
@@ -66,7 +67,8 @@ namespace AvocadoFramework.Animation
             };
 
             // Run animation.
-            targetObj.ApplyAnimationClock(property, clock);
+            foreach (var obj in targetObjs)
+                obj.ApplyAnimationClock(property, clock);
         }
 
         static AnimationTimeline createTimelineInstance()

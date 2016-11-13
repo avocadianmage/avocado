@@ -113,11 +113,11 @@ namespace AvocadoFramework.Engine
         void initializeWindowFading()
         {
             windowFadeAnimator = new ReversibleAnimator<double>(
-                this,
                 OpacityProperty,
                 0,
                 1,
-                Config.WindowFadeDuration);
+                Config.WindowFadeDuration,
+                this);
             windowFadeAnimator.StartReached += onWindowFadeOut;
             windowFadeAnimator.EndReached += onWindowFadeIn;
         }
@@ -145,11 +145,11 @@ namespace AvocadoFramework.Engine
                 ? Config.ActiveBorderColorElevated : Config.ActiveBorderColor;
 
             borderFadeAnimator = new ReversibleAnimator<Color>(
-                BorderBrush,
                 SolidColorBrush.ColorProperty,
                 Config.InactiveBorderColor,
                 activeBorderColor,
-                Config.BorderFadeDuration);
+                Config.BorderFadeDuration,
+                BorderBrush);
         }
 
         void fadeBorder(bool fadeIn)

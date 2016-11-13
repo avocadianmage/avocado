@@ -9,6 +9,7 @@ namespace AvocadoFramework.Controls.Progress
     public class Progressor : Control
     {
         ReversibleAnimator<Color> borderColorAnimator;
+        ReversibleAnimator<Color> textColorAnimator;
 
         static Progressor()
         {
@@ -61,8 +62,8 @@ namespace AvocadoFramework.Controls.Progress
         public Progressor()
         {
             FocusVisualStyle = null;
-            GotFocus += (sender, e) => borderColorAnimator.Animate(true);
-            LostFocus += (sender, e) => borderColorAnimator.Animate(false);
+            GotFocus += (sender, e) => animateSelection(true);
+            LostFocus += (sender, e) => animateSelection(false);
         }
 
         public override void OnApplyTemplate()
@@ -71,15 +72,28 @@ namespace AvocadoFramework.Controls.Progress
             initAnimation();
         }
 
+        void animateSelection(bool selected)
+        {
+            borderColorAnimator.Animate(selected);
+            textColorAnimator.Animate(selected);
+        }
+
         void initAnimation()
         {
-            var border = this.GetTemplateElement<Border>("border");
             borderColorAnimator = new ReversibleAnimator<Color>(
-                border.BorderBrush,
                 SolidColorBrush.ColorProperty,
                 Config.ProgressorColor,
                 Config.ProgressorSelectedColor,
-                Config.ProgressorFadeDuration);
+                Config.ProgressorFadeDuration,
+                this.GetTemplateElement<Border>("border").BorderBrush);
+
+            textColorAnimator = new ReversibleAnimator<Color>(
+                SolidColorBrush.ColorProperty,
+                Config.ProgressorTextColor,
+                Config.ProgressorSelectedColor,
+                Config.ProgressorFadeDuration,
+                this.GetTemplateElement<Label>("title").Foreground,
+                this.GetTemplateElement<Label>("status").Foreground);
         }
     }
 }
