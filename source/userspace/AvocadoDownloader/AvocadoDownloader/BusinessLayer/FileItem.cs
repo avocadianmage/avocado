@@ -1,16 +1,42 @@
 ﻿using StandardLibrary.Extensions;
 using StandardLibrary.Web.Scraping;
 using System;
+using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace AvocadoDownloader.BusinessLayer
 {
-    public class FileItem
+    public class FileItem : INotifyPropertyChanged
     {
+        string status;
+        double progressValue;
+
         public string FilePath { get; }
-        public string Status { get; set; }
-        public double Value { get; private set; }
+        public string Status
+        {
+            get { return status; }
+            set
+            {
+                if (status == value) return;
+                status = value;
+                PropertyChanged?.Invoke(
+                    this, new PropertyChangedEventArgs(nameof(Status)));
+            }
+        }
+        public double ProgressValue
+        {
+            get { return progressValue; }
+            set
+            {
+                if (progressValue == value) return;
+                progressValue = value;
+                PropertyChanged?.Invoke(
+                    this, new PropertyChangedEventArgs(nameof(ProgressValue)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         readonly StaticScraper scraper = new StaticScraper();
 
@@ -50,7 +76,7 @@ namespace AvocadoDownloader.BusinessLayer
         void updateProgress(double percent, string downloadBytesStr)
         {
             // Set progress bar value.
-            Value = percent;
+            ProgressValue = percent;
 
             // Update status text.
             var status = $"{percent.ToRoundedString(2)}%";

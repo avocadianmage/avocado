@@ -31,7 +31,7 @@
                                 <local:FileProgressor 
                                     SaveFilePath="{Binding FilePath}"
                                     Status="{Binding Status}"
-                                    Value="{Binding Value}"
+                                    Value="{Binding ProgressValue}"
                                     Margin="2"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
