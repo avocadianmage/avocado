@@ -52,16 +52,17 @@ namespace AvocadoDownloader
 
         void processMessage(string message)
         {
+            if (message.StartsWith(ProtocolConfig.MessageDelimiter))
+                processProtocolMessage(message);
             // If the message did not start with an expected delimiter, process
             // it as coming from the commandline.
-            if (!message.StartsWith(ProtocolConfig.MessageDelimiter))
-            {
-                processCommandlineArgs(EnvUtils.SplitArgStr(message));
-                return;
-            }
+            else processCommandlineArgs(EnvUtils.SplitArgStr(message));
+        }
 
+        void processProtocolMessage(string message)
+        {
             var pieces = message.Split(
-                ProtocolConfig.MessageDelimiter.Yield().ToArray(), 
+                ProtocolConfig.MessageDelimiter.Yield().ToArray(),
                 StringSplitOptions.RemoveEmptyEntries);
             var messageType = (MessageType)int.Parse(pieces[0]);
             string title = pieces[1], filePath = pieces[2], data = pieces[3];
