@@ -1,5 +1,6 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Engine;
+using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
 using StandardLibrary.Processes.NamedPipes;
 using System;
@@ -22,7 +23,7 @@ namespace AvocadoDownloader
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            Task.Run(initServer);
+            initServer().RunAsync();
             processCommandlineArgs(EnvUtils.GetArgs());
         }
 
@@ -47,5 +48,8 @@ namespace AvocadoDownloader
 
             dataModel.AddGrouper(title, filePaths);
         }
+
+        void downloadFromUrl(string title, string filePath, string url)
+            => dataModel[title][filePath].DownloadFromUrl(url).RunAsync();
     }
 }
