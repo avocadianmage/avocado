@@ -9,7 +9,7 @@ namespace AvocadoDownloader.BusinessLayer
     public class FileItem
     {
         public string FilePath { get; }
-        public string Status { get; private set; }
+        public string Status { get; set; }
         public double Value { get; private set; }
 
         readonly StaticScraper scraper = new StaticScraper();

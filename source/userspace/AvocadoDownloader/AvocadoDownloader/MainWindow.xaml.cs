@@ -1,5 +1,6 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Engine;
+using DownloaderProtocol;
 using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
 using StandardLibrary.Processes.NamedPipes;
@@ -30,9 +31,8 @@ namespace AvocadoDownloader
         async Task initServer()
         {
             var server = new NamedPipeServer();
-            server.MessageReceived += (s, e) 
-                => processCommandlineArgs(EnvUtils.SplitArgStr(e.Message));
-            await server.Start(Config.PipeName);
+            server.MessageReceived += (s, e) => processMessage(e.Message);
+            await server.Start(ProtocolConfig.PipeName);
         }
 
         void processCommandlineArgs(IEnumerable<string> args)
@@ -47,6 +47,34 @@ namespace AvocadoDownloader
             if (!filePaths.Any()) return;
 
             dataModel.AddGrouper(title, filePaths);
+            Activate();
+        }
+
+        void processMessage(string message)
+        {
+            // If the message did not start with an expected delimiter, process
+            // it as coming from the commandline.
+            if (!message.StartsWith(ProtocolConfig.MessageDelimiter))
+            {
+                processCommandlineArgs(EnvUtils.SplitArgStr(message));
+                return;
+            }
+
+            var pieces = message.Split(
+                ProtocolConfig.MessageDelimiter.Yield().ToArray(), 
+                StringSplitOptions.RemoveEmptyEntries);
+            var messageType = (MessageType)int.Parse(pieces[0]);
+            string title = pieces[1], filePath = pieces[2], data = pieces[3];
+            switch (messageType)
+            {
+                case MessageType.SetStatus:
+                    dataModel.GetFileItem(title, filePath).Status = data;
+                    break;
+
+                case MessageType.DownloadFromUrl:
+                    downloadFromUrl(title, filePath, data);
+                    break;
+            }
         }
 
         void downloadFromUrl(string title, string filePath, string url)

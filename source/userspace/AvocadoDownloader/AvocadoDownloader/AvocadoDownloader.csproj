@@ -38,6 +38,9 @@
   <PropertyGroup>
     <StartupObject>AvocadoDownloader.EntryPoint</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>download.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvocadoFramework">
       <HintPath>..\..\..\system\Avocado\AvocadoFramework\bin\Release\AvocadoFramework.dll</HintPath>
@@ -104,6 +107,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="download.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DownloaderProtocol\DownloaderProtocol.csproj">
+      <Project>{8e2f0f67-b3da-4435-a095-553a4b820628}</Project>
+      <Name>DownloaderProtocol</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

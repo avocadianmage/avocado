@@ -1,4 +1,5 @@
-﻿using StandardLibrary.Processes;
+﻿using DownloaderProtocol;
+using StandardLibrary.Processes;
 using StandardLibrary.Processes.NamedPipes;
 using System;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace AvocadoDownloader
 
         static async Task sendDataToFirstInstance()
         {
-            using (var client = new NamedPipeClient(Config.PipeName))
+            using (var client = new NamedPipeClient(ProtocolConfig.PipeName))
             {
                 await client.Connect();
                 await client.Send(EnvUtils.BuildArgStr());
