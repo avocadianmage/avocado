@@ -26,6 +26,8 @@ namespace StandardLibrary.Processes
         public static string GetArg(int index)
             => Environment.GetCommandLineArgs().ElementAtOrDefault(index + 1);
 
+        public static IEnumerable<string> GetArgs() => GetArgs(0);
+
         public static IEnumerable<string> GetArgs(int startIndex)
             => Environment.GetCommandLineArgs().Skip(startIndex + 1);
 
