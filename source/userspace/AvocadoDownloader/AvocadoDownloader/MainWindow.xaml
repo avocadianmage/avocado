@@ -13,7 +13,9 @@
         <TaskbarItemInfo x:Name="taskbarItemInfo" ProgressState="Normal" />
     </Window.TaskbarItemInfo>
 
-    <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" Focusable="False">
+    <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" 
+                  Focusable="False"
+                  Margin="0 -2 0 0">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel Margin="4">

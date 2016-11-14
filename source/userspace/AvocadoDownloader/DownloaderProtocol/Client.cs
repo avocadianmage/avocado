@@ -1,9 +1,10 @@
 ﻿using StandardLibrary.Processes.NamedPipes;
+using System;
 using System.Threading.Tasks;
 
 namespace DownloaderProtocol
 {
-    public sealed class Client
+    public sealed class Client : IDisposable
     {
         readonly NamedPipeClient pipeClient;
 
@@ -19,16 +20,19 @@ namespace DownloaderProtocol
             this.pipeClient = pipeClient;
         }
 
-        public void SendMessage(
+        public Task SendMessage(
             MessageType messageType, string title, string filePath, string data)
         {
-            sendMessage(((int)messageType).ToString(), title, filePath, data);
+            var type = ((int)messageType).ToString();
+            return sendMessage(type, title, filePath, data);
         }
 
-        void sendMessage(params string[] args)
+        Task sendMessage(params string[] args)
         {
             var message = string.Join(ProtocolConfig.MessageDelimiter, args);
-            pipeClient.Send(ProtocolConfig.MessageDelimiter + message);
+            return pipeClient.Send(ProtocolConfig.MessageDelimiter + message);
         }
+
+        public void Dispose() => pipeClient.Dispose();
     }
 }
