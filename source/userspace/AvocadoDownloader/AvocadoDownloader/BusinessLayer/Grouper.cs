@@ -13,10 +13,7 @@ namespace AvocadoDownloader.BusinessLayer
         {
             Title = title;
             foreach (var filePath in filePaths)
-            {
-                var fileItem = new FileItem(filePath);
-                FileItems.Add(filePath, fileItem);
-            }
+                FileItems.Add(filePath, new FileItem(filePath));
         }
     }
 }
