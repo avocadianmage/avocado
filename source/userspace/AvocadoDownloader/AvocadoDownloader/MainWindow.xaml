@@ -28,6 +28,8 @@
                             <DataTemplate>
                                 <local:FileProgressor 
                                     SaveFilePath="{Binding FilePath}"
+                                    Status="{Binding Status}"
+                                    Value="{Binding Value}"
                                     Margin="2"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
