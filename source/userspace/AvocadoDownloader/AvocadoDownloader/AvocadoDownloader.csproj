@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>AvocadoDownloader.EntryPoint</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvocadoFramework">
       <HintPath>..\..\..\system\Avocado\AvocadoFramework\bin\Release\AvocadoFramework.dll</HintPath>
@@ -68,6 +71,7 @@
     <Compile Include="BusinessLayer\Grouper.cs" />
     <Compile Include="BusinessLayer\FileItem.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="EntryPoint.cs" />
     <Compile Include="FileProgressor.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
