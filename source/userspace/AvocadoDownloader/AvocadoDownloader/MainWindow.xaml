@@ -13,32 +13,34 @@
         <TaskbarItemInfo x:Name="taskbarItemInfo" ProgressState="Normal" />
     </Window.TaskbarItemInfo>
 
-    <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" 
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" 
                   Focusable="False"
                   Margin="0 -2 0 0">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Margin="4">
-                    <AvocadoControls:TextLabel Foreground="Yellow" 
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="4">
+                        <AvocadoControls:TextLabel Foreground="Yellow" 
                                                Content="{Binding Title}"
                                                Margin="0 0 0 2"/>
-                    <ItemsControl ItemsSource="{Binding FileItems.EnumerableData}"
+                        <ItemsControl ItemsSource="{Binding FileItems.EnumerableData}"
                                   BorderBrush="Yellow"
                                   BorderThickness="2 0 0 0"
                                   Margin="2 0 0 0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <local:FileProgressor 
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:FileProgressor 
                                     SaveFilePath="{Binding FilePath}"
                                     Status="{Binding Status}"
                                     Value="{Binding ProgressValue}"
                                     Margin="2"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 
 </AvocadoEngine:GlassPane>
