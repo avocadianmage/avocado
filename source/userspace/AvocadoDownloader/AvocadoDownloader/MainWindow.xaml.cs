@@ -47,7 +47,11 @@ namespace AvocadoDownloader
                 processProtocolMessage(message);
             // If the message did not start with an expected delimiter, process
             // it as coming from the commandline.
-            else processCommandlineArgs(EnvUtils.SplitArgStr(message));
+            else
+            {
+                Dispatcher.BeginInvoke((Action)(() => 
+                    processCommandlineArgs(EnvUtils.SplitArgStr(message))));
+            }
         }
 
         void processProtocolMessage(string message)
