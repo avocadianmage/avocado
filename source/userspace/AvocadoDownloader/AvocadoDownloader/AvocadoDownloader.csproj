@@ -64,6 +64,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BusinessLayer\DataModel.cs" />
+    <Compile Include="BusinessLayer\Grouper.cs" />
+    <Compile Include="BusinessLayer\FileItem.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="FileProgressor.cs" />
     <Compile Include="MainWindow.xaml.cs">
