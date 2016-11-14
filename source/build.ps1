@@ -14,6 +14,7 @@ build $PSScriptRoot/system/Avocado/Avocado.sln
 # Build userspace solutions.
 build $PSScriptRoot/userspace/AvocadoShell/AvocadoShell.sln
 build $PSScriptRoot/userspace/AvocadoServer/AvocadoServer.sln
+build $PSScriptRoot/userspace/AvocadoDownloader/AvocadoDownloader.sln
 
 # Ensure shortcut path is included in environment path variable.
 if (-not $env:PATH.Split(";").Contains($shortcutPath))
