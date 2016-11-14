@@ -15,48 +15,48 @@
                     TargetType="{x:Type progress:Progressor}">
 
                     <!-- Layout. -->
-                    <Grid Width="400" Height="18">
+                    <Border Name="border" BorderThickness="1">
+                        <Border.BorderBrush>
+                            <SolidColorBrush Color="{Binding Source=
+                                {x:Static local:Config.ProgressorColor}}" />
+                        </Border.BorderBrush>
+                        <Grid Width="400" Height="16">
 
-                        <ProgressBar 
+                            <ProgressBar 
                                 Name="progress"
                                 Background="Transparent"
-                                BorderThickness="1"
+                                BorderThickness="0"
                                 Minimum="0" 
                                 Maximum="100" 
                                 Value="{TemplateBinding Value}">
-                            <ProgressBar.Foreground>
-                                <SolidColorBrush Color="{Binding Source=
+                                <ProgressBar.Foreground>
+                                    <SolidColorBrush Color="{Binding Source=
                                         {x:Static local:Config.ProgressorColor}}" />
-                            </ProgressBar.Foreground>
-                            <ProgressBar.BorderBrush>
-                                <SolidColorBrush Color="{Binding Source=
-                                        {x:Static local:Config.ProgressorColor}}" />
-                            </ProgressBar.BorderBrush>
-                        </ProgressBar>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
 
-                        <text:TextLabel 
-                                Name="title"
+                            <text:TextLabel 
                                 Content="{TemplateBinding Title}"
                                 VerticalAlignment="Center"
                                 Margin="4 0 0 1">
-                            <text:TextLabel.Foreground>
-                                <SolidColorBrush Color="{Binding Source=
+                                <text:TextLabel.Foreground>
+                                    <SolidColorBrush Color="{Binding Source=
                                         {x:Static local:Config.ProgressorTextColor}}" />
-                            </text:TextLabel.Foreground>
-                        </text:TextLabel>
-                        <text:TextLabel
-                                Name="status"
+                                </text:TextLabel.Foreground>
+                            </text:TextLabel>
+                            <text:TextLabel
                                 Content="{TemplateBinding Status}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
                                 Margin="0 0 4 1">
-                            <text:TextLabel.Foreground>
-                                <SolidColorBrush Color="{Binding Source=
+                                <text:TextLabel.Foreground>
+                                    <SolidColorBrush Color="{Binding Source=
                                         {x:Static local:Config.ProgressorTextColor}}" />
-                            </text:TextLabel.Foreground>
-                        </text:TextLabel>
+                                </text:TextLabel.Foreground>
+                            </text:TextLabel>
 
-                    </Grid>
+                        </Grid>
+                    </Border>
 
                 </ControlTemplate>
             </Setter.Value>
