@@ -37,7 +37,16 @@ namespace AvocadoDownloader
 
         void processCommandlineArgs(IEnumerable<string> args)
         {
-            dataModel.AddGrouper(args.First(), args.Skip(1));
+            // Title is the first argument. Quit if it was not sent.
+            var title = args.FirstOrDefault();
+            if (title == null) return;
+
+            // Subsequent arguments are file paths grouped under the title.
+            // Quit if this set is empty.
+            var filePaths = args.Skip(1);
+            if (!filePaths.Any()) return;
+
+            dataModel.AddGrouper(title, filePaths);
             Activate();
         }
 
