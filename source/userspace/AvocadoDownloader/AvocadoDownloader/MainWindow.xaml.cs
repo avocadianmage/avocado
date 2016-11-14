@@ -50,6 +50,7 @@ namespace AvocadoDownloader
         }
 
         void downloadFromUrl(string title, string filePath, string url)
-            => dataModel[title][filePath].DownloadFromUrl(url).RunAsync();
+            => dataModel.GetFileItem(title, filePath)
+                .DownloadFromUrl(url).RunAsync();
     }
 }

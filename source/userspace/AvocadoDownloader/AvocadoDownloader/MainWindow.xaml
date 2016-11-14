@@ -13,14 +13,14 @@
         <TaskbarItemInfo x:Name="taskbarItemInfo" ProgressState="Normal" />
     </Window.TaskbarItemInfo>
 
-    <ItemsControl ItemsSource="{Binding Groupers}" Focusable="False">
+    <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" Focusable="False">
         <ItemsControl.ItemTemplate>
             <DataTemplate>
                 <StackPanel Margin="4">
                     <AvocadoControls:TextLabel Foreground="Yellow" 
                                                Content="{Binding Title}"
                                                Margin="0 0 0 2"/>
-                    <ItemsControl ItemsSource="{Binding FileItems}"
+                    <ItemsControl ItemsSource="{Binding FileItems.EnumerableData}"
                                   BorderBrush="Yellow"
                                   BorderThickness="2 0 0 0"
                                   Margin="2 0 0 0">

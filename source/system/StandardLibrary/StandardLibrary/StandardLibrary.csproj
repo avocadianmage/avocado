@@ -60,6 +60,7 @@
     <Compile Include="Processes\EnvUtils.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Utilities\ConfigFile.cs" />
+    <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\ResetEventWithData.cs" />
     <Compile Include="Processes\NamedPipes\MessageEventArgs.cs" />
     <Compile Include="Processes\NamedPipes\NamedPipeClient.cs" />
