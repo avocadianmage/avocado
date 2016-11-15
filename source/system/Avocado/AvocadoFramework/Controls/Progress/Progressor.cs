@@ -60,7 +60,6 @@ namespace AvocadoFramework.Controls.Progress
 
         public Progressor()
         {
-            FocusVisualStyle = null;
             GotFocus += (sender, e) => borderColorAnimator.Animate(true);
             LostFocus += (sender, e) => borderColorAnimator.Animate(false);
         }
