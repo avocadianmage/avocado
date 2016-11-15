@@ -8,6 +8,9 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type progress:Progressor}">
 
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="18" />
+
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
@@ -20,7 +23,7 @@
                             <SolidColorBrush Color="{Binding Source=
                                 {x:Static local:Config.ProgressorColor}}" />
                         </Border.BorderBrush>
-                        <Grid Width="400" Height="16">
+                        <Grid>
 
                             <ProgressBar 
                                 Name="progress"

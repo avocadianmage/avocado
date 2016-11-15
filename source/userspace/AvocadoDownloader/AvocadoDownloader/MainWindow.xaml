@@ -5,38 +5,62 @@
         xmlns:AvocadoEngine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
         xmlns:AvocadoControls="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
         ResizeMode="NoResize"
-        SizeToContent="WidthAndHeight"
+        Width="420" SizeToContent="Height"
+        MinHeight="48"
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         Title="Avocado Downloader">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" 
-                  Focusable="False"
-                  Margin="0 -2 0 0">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="4">
-                        <AvocadoControls:TextLabel Foreground="Yellow" 
-                                               Content="{Binding Title}"
-                                               Margin="0 0 0 2"/>
-                        <ItemsControl ItemsSource="{Binding FileItems.EnumerableData}"
-                                  BorderBrush="Yellow"
-                                  BorderThickness="2 0 0 0"
-                                  Margin="2 0 0 0">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <local:FileProgressor 
-                                    SaveFilePath="{Binding FilePath}"
-                                    Status="{Binding Status}"
-                                    Value="{Binding ProgressValue}"
-                                    Margin="2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </ScrollViewer>
+    <Grid>
+        
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ItemsControl Name="GrouperList"
+                          ItemsSource="{Binding Groupers.EnumerableData}" 
+                          Focusable="False"
+                          Margin="0 -2 0 0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="4">
+                            <AvocadoControls:TextLabel Foreground="Yellow" 
+                                                       Content="{Binding Title}"
+                                                       Margin="0 0 0 2"/>
+                            <ItemsControl 
+                                ItemsSource="{Binding FileItems.EnumerableData}"
+                                BorderBrush="Yellow"
+                                BorderThickness="2 0 0 0"
+                                Margin="2 0 0 0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <local:FileProgressor 
+                                            SaveFilePath="{Binding FilePath}"
+                                            Status="{Binding Status}"
+                                            Value="{Binding ProgressValue}"
+                                            Margin="2"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        
+        <AvocadoControls:TextLabel Foreground="White" 
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Content="The downloader is empty.">
+            <AvocadoControls:TextLabel.Style>
+                <Style TargetType="{x:Type AvocadoControls:TextLabel}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=GrouperList, Path=Items.Count}" 
+                                     Value="0">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </AvocadoControls:TextLabel.Style>
+        </AvocadoControls:TextLabel>
+        
+    </Grid>
 
 </AvocadoEngine:GlassPane>
