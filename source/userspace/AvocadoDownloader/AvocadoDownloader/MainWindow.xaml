@@ -9,10 +9,6 @@
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         Title="Avocado Downloader">
 
-    <Window.TaskbarItemInfo>
-        <TaskbarItemInfo x:Name="taskbarItemInfo" ProgressState="Normal" />
-    </Window.TaskbarItemInfo>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <ItemsControl ItemsSource="{Binding Groupers.EnumerableData}" 
                   Focusable="False"
