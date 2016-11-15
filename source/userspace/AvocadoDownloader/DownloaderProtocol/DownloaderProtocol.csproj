@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="MessageType.cs" />
     <Compile Include="ProtocolConfig.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="DownloaderClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="StandardLibrary">

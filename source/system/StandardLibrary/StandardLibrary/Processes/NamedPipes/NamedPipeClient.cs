@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace StandardLibrary.Processes.NamedPipes
 {
-    public sealed class NamedPipeClient : IDisposable
+    public class NamedPipeClient : IDisposable
     {
         readonly NamedPipeClientStream client;
 
@@ -15,7 +15,7 @@ namespace StandardLibrary.Processes.NamedPipes
         }
 
         public Task Connect() => client.ConnectAsync();
-
+        
         public void Dispose() => client?.Dispose();
 
         public async Task Send(string message)
