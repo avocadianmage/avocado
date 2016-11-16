@@ -8,7 +8,7 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type progress:Progressor}">
 
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <!-- Properties. -->
         <Setter Property="Height" Value="18" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
 
