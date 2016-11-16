@@ -1,5 +1,5 @@
-﻿using AvocadoFramework.Controls.Progress;
-using System.Diagnostics;
+﻿using AvocadoDownloader.BusinessLayer;
+using AvocadoFramework.Controls.Progress;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -31,18 +31,14 @@ namespace AvocadoDownloader
         {
             base.OnKeyDown(e);
 
+            var fileItem = (FileItem)DataContext;
             switch (e.Key)
             {
                 case Key.Enter:
                 case Key.Space:
-                    runFile();
+                    fileItem.Run();
                     break;
             }
-        }
-
-        void runFile()
-        {
-            if (File.Exists(SaveFilePath)) Process.Start(SaveFilePath);
         }
     }
 }

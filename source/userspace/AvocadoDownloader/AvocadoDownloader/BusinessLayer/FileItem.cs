@@ -2,6 +2,8 @@
 using StandardLibrary.Web.Scraping;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -103,6 +105,11 @@ namespace AvocadoDownloader.BusinessLayer
 
             var prefix = metricPrefixes[index];
             return $"{numDisp}/{totalNumDisp} {prefix}B";
+        }
+
+        public void Run()
+        {
+            if (File.Exists(FilePath)) Process.Start(FilePath);
         }
     }
 }
