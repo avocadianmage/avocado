@@ -16,8 +16,9 @@ namespace AvocadoDownloader.BusinessLayer
             if (Groupers.ContainsKey(title))
             {
                 Groupers[title].AddFileItems(filePaths);
+                return;
             }
-            else Groupers.Add(title, new Grouper(title, filePaths));
+            Groupers.Add(title, new Grouper(title, filePaths));
         }
     }
 }
