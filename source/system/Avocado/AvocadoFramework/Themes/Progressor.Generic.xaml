@@ -11,6 +11,13 @@
         <!-- Properties. -->
         <Setter Property="Height" Value="18" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush">
+            <Setter.Value>
+                <SolidColorBrush Color="{Binding Source=
+                    {x:Static local:Config.ProgressorColor}}" />
+            </Setter.Value>
+        </Setter>
 
         <!-- Template. -->
         <Setter Property="Template">
@@ -18,11 +25,8 @@
                 <ControlTemplate TargetType="{x:Type progress:Progressor}">
 
                     <!-- Layout. -->
-                    <Border Name="border" BorderThickness="1">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="{Binding Source=
-                                {x:Static local:Config.ProgressorColor}}" />
-                        </Border.BorderBrush>
+                    <Border BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
                         <Grid>
 
                             <ProgressBar 

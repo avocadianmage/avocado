@@ -1,5 +1,4 @@
 ﻿using AvocadoFramework.Animation;
-using StandardLibrary.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -60,8 +59,8 @@ namespace AvocadoFramework.Controls.Progress
 
         public Progressor()
         {
-            GotFocus += (sender, e) => borderColorAnimator.Animate(true);
-            LostFocus += (sender, e) => borderColorAnimator.Animate(false);
+            GotFocus += (s, e) => borderColorAnimator.Animate(true);
+            LostFocus += (s, e) => borderColorAnimator.Animate(false);
         }
 
         public override void OnApplyTemplate()
@@ -77,7 +76,7 @@ namespace AvocadoFramework.Controls.Progress
                 Config.ProgressorColor,
                 Config.ProgressorSelectedColor,
                 Config.ProgressorFadeDuration,
-                this.GetTemplateElement<Border>("border").BorderBrush);
+                BorderBrush);
         }
     }
 }
