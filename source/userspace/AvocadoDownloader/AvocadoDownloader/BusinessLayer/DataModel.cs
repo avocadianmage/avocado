@@ -12,6 +12,12 @@ namespace AvocadoDownloader.BusinessLayer
             => Groupers[title].FileItems[filePath];
 
         public void AddGrouper(string title, IEnumerable<string> filePaths)
-            => Groupers.Add(title, new Grouper(title, filePaths));
+        {
+            if (Groupers.ContainsKey(title))
+            {
+                Groupers[title].AddFileItems(filePaths);
+            }
+            else Groupers.Add(title, new Grouper(title, filePaths));
+        }
     }
 }

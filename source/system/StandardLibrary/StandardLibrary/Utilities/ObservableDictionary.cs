@@ -13,6 +13,7 @@ namespace StandardLibrary.Utilities
             = new Dictionary<TKey, TValue>();
 
         public TValue this[TKey key] => dictionary[key];
+        public bool ContainsKey(TKey key) => dictionary.ContainsKey(key);
 
         public void Add(TKey key, TValue value)
         {
