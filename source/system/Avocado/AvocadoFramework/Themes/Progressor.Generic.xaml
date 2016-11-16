@@ -78,7 +78,7 @@
                                 Foreground="{StaticResource TextColor}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                Margin="4 0 0 1" />
+                                Margin="0 0 4 1" />
 
                         </Grid>
                     </Border>

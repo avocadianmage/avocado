@@ -10,6 +10,15 @@
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         Title="Avocado Downloader">
 
+    <!-- Resources. -->
+    <AvocadoEngine:GlassPane.Resources>
+        <Color x:Key="PrimaryColor">LightGreen</Color>
+        <SolidColorBrush x:Key="PrimaryBrush" 
+                         Color="{StaticResource PrimaryColor}" />
+        <Color x:Key="SelectedColor">Orange</Color>
+    </AvocadoEngine:GlassPane.Resources>
+    
+    <!-- Layout. -->
     <Grid>
         
         <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -20,24 +29,60 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="4">
-                            <AvocadoControls:TextLabel Foreground="Yellow" 
-                                                       Content="{Binding Title}"
-                                                       Margin="0 0 0 2"/>
+                            <AvocadoControls:TextLabel 
+                                Foreground="{Binding BorderBrush, ElementName=GrouperItem}" 
+                                Content="{Binding Title}"
+                                Margin="0 0 0 2"/>
                             <ItemsControl 
+                                x:Name="GrouperItem"
                                 ItemsSource="{Binding FileItems.EnumerableData}"
                                 FocusVisualStyle="{x:Null}"
-                                BorderBrush="Yellow"
                                 BorderThickness="2 0 0 0"
                                 Margin="2 0 0 0">
+                                
+                                <!-- Grouper inner contents layout. -->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <local:FileProgressor 
                                             SaveFilePath="{Binding FilePath}"
                                             Status="{Binding Status}"
                                             Value="{Binding ProgressValue}"
-                                            Margin="2"/>
+                                            Margin="4 2 2 2"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
+                                
+                                <!-- Grouper selection animation. -->
+                                <ItemsControl.Style>
+                                    <Style TargetType="ItemsControl">
+                                        <Setter Property="BorderBrush" 
+                                                Value="{StaticResource PrimaryBrush}" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Trigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation 
+                                                                To="{StaticResource SelectedColor}" 
+                                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                                Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.EnterActions>
+                                                <Trigger.ExitActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation 
+                                                                To="{StaticResource PrimaryColor}" 
+                                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                                Duration="0:0:0.2" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </Trigger.ExitActions>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ItemsControl.Style>
+                                
                             </ItemsControl>
                         </StackPanel>
                     </DataTemplate>
