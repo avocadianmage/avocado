@@ -10,7 +10,7 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type engine:GlassPane}">
 
-        <!-- Resources -->
+        <!-- Resources. -->
         <Style.Resources>
             <Thickness x:Key="WindowMargin">10</Thickness>
         </Style.Resources>
@@ -42,7 +42,7 @@
                     
                     <ControlTemplate.Resources>
                         
-                        <!--Scrollbar Thumbs-->
+                        <!-- Scrollbar thumbs. -->
                         <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -62,7 +62,7 @@
                             </Setter>
                         </Style>
 
-                        <!--ScrollBars-->
+                        <!-- Scrollbars. -->
                         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
                             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
                             <Setter Property="Foreground" Value="Gray" />

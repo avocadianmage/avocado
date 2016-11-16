@@ -1,24 +1,33 @@
-$shortcutPath = Join-Path $env:APPDATA "Avocado"
+#
+# Install avocado.
+#
+
+$buildFunc = 
+{
+    param($path, $outputPath, $buildAsRef = $TRUE)
+    $msbuild = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
+
+    # Build the project as a reference.
+    if ($buildAsRef) { & $msbuild $path /t:Rebuild /p:Configuration=Release }
+
+    # Build the project as an application.
+    else { & $msbuild $path /t:Rebuild /p:Configuration=Release /p:OutputPath=$outputPath }
+}
 
 # Ensure shortcut path is included in environment path variable.
+$shortcutPath = Join-Path $env:APPDATA "Avocado"
 if (-not $env:PATH.Split(";").Contains($shortcutPath))
 {
     [Environment]::SetEnvironmentVariable( `
         "Path", $env:PATH + ";$shortcutPath", [EnvironmentVariableTarget]::Machine)
 }
 
-function build($path)
-{
-    $msbuild = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
-    & $msbuild $path /t:Rebuild /p:Configuration=Release
-    & $msbuild $path /t:Rebuild /p:Configuration=Release /p:OutputPath=$shortcutPath
-}
-
 # Build system solutions.
-build $PSScriptRoot/system/StandardLibrary/StandardLibrary.sln
-build $PSScriptRoot/system/Avocado/Avocado.sln
+& $buildFunc $PSScriptRoot/system/StandardLibrary/StandardLibrary.sln $shortcutPath
+& $buildFunc $PSScriptRoot/system/Avocado/Avocado.sln $shortcutPath
 
 # Build userspace solutions.
-build $PSScriptRoot/userspace/AvocadoShell/AvocadoShell.sln
-build $PSScriptRoot/userspace/AvocadoServer/AvocadoServer.sln
-build $PSScriptRoot/userspace/AvocadoDownloader/AvocadoDownloader.sln
+Get-ChildItem -Recurse $PSScriptRoot\userspace *.sln | ForEach-Object {
+    Start-Job -ScriptBlock $buildFunc -ArgumentList $_.FullName, $shortcutPath, $FALSE
+}
+Get-Job | ForEach-Object { Wait-Job $_.Id; Receive-Job $_.Id; Remove-Job $_.Id }
