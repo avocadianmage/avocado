@@ -30,7 +30,6 @@
                         <Grid>
 
                             <ProgressBar 
-                                Name="progress"
                                 Background="Transparent"
                                 BorderThickness="0"
                                 Minimum="0" 
