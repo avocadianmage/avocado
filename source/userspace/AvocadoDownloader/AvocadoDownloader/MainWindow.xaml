@@ -1,7 +1,7 @@
 ﻿<AvocadoEngine:GlassPane x:Class="AvocadoDownloader.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:AvocadoDownloader"
+        xmlns:uiLayer="clr-namespace:AvocadoDownloader.UILayer"
         xmlns:AvocadoEngine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
         xmlns:AvocadoControls="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
         ResizeMode="NoResize"
@@ -45,7 +45,7 @@
                                 <!-- Grouper inner contents layout. -->
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <local:FileProgressor 
+                                        <uiLayer:FileItemUI 
                                             SaveFilePath="{Binding FilePath}"
                                             Status="{Binding Status}"
                                             Value="{Binding ProgressValue}"

@@ -4,15 +4,15 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-namespace AvocadoDownloader
+namespace AvocadoDownloader.UILayer
 {
-    class FileProgressor : Progressor
+    class FileItemUI : Progressor
     {
         public static readonly DependencyProperty SaveFilePathProperty
             = DependencyProperty.Register(
                 "SaveFilePath",
                 typeof(string),
-                typeof(FileProgressor),
+                typeof(FileItemUI),
                 new FrameworkPropertyMetadata(onSaveFilePathChanged));
 
         public string SaveFilePath
