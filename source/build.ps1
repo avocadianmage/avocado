@@ -4,14 +4,17 @@
 
 $buildFunc = 
 {
-    param($path, $outputPath, $buildAsRef = $TRUE)
+    param($path, $outputPath, $buildAsApp = $FALSE)
     $msbuild = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
 
     # Build the project as a reference.
-    if ($buildAsRef) { & $msbuild $path /t:Rebuild /p:Configuration=Release }
+    & $msbuild $path /t:Rebuild /p:Configuration=Release
 
     # Build the project as an application.
-    else { & $msbuild $path /t:Rebuild /p:Configuration=Release /p:OutputPath=$outputPath }
+    if ($buildAsApp) 
+    { 
+        & $msbuild $path /t:Rebuild /p:Configuration=Release /p:OutputPath=$outputPath 
+    }
 }
 
 # Ensure shortcut path is included in environment path variable.
@@ -28,6 +31,6 @@ if (-not $env:PATH.Split(";").Contains($shortcutPath))
 
 # Build userspace solutions.
 Get-ChildItem -Recurse $PSScriptRoot\userspace *.sln | ForEach-Object {
-    Start-Job -ScriptBlock $buildFunc -ArgumentList $_.FullName, $shortcutPath, $FALSE
+    Start-Job -ScriptBlock $buildFunc -ArgumentList $_.FullName, $shortcutPath, $TRUE
 }
 Get-Job | ForEach-Object { Wait-Job $_.Id; Receive-Job $_.Id; Remove-Job $_.Id }
