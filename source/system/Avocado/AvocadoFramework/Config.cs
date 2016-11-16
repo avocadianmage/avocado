@@ -20,11 +20,5 @@ namespace AvocadoFramework
         // Caret properties.
         public static Brush CaretBrush => Brushes.Orange;
         public static double CaretBlinkDuration => 750;
-
-        // Progressor properties.
-        public static Color ProgressorColor => Colors.Green;
-        public static Color ProgressorTextColor => Colors.White;
-        public static Color ProgressorSelectedColor => Colors.Orange;
-        public static double ProgressorFadeDuration => 200;
     }
 }

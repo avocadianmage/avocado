@@ -15,6 +15,7 @@
                              Color="{StaticResource PrimaryColor}" />
             <Color x:Key="SelectedColor">Orange</Color>
             <SolidColorBrush x:Key="TextColor" Color="White" />
+            <Duration x:Key="SelectAnimationDuration">0:0:0.2</Duration>
         </Style.Resources>
         
         <!-- Animation. -->
@@ -26,7 +27,7 @@
                             <ColorAnimation 
                                 To="{StaticResource SelectedColor}" 
                                 Storyboard.TargetProperty="BorderBrush.Color"
-                                Duration="0:0:0.2" />
+                                Duration="{StaticResource SelectAnimationDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
@@ -36,7 +37,7 @@
                             <ColorAnimation 
                                 To="{StaticResource PrimaryColor}" 
                                 Storyboard.TargetProperty="BorderBrush.Color"
-                                Duration="0:0:0.2" />
+                                Duration="{StaticResource SelectAnimationDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.ExitActions>
