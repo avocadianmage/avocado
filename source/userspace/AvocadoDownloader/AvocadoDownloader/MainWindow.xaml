@@ -21,6 +21,7 @@
     <!-- Layout. -->
     <Grid>
         
+        <!-- List of downloads. -->
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="GrouperList"
                           ItemsSource="{Binding Groupers.EnumerableData}" 
@@ -90,6 +91,7 @@
             </ItemsControl>
         </ScrollViewer>
         
+        <!-- Text that displays when the downloader is empty. -->
         <AvocadoControls:TextLabel Foreground="White" 
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
