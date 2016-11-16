@@ -1,14 +1,10 @@
-﻿using AvocadoFramework.Animation;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace AvocadoFramework.Controls.Progress
 {
     public class Progressor : Control
     {
-        ReversibleAnimator<Color> borderColorAnimator;
-
         static Progressor()
         {
             // Associate this control with the default theme.
@@ -16,19 +12,6 @@ namespace AvocadoFramework.Controls.Progress
             DefaultStyleKeyProperty.OverrideMetadata(
                 type,
                 new FrameworkPropertyMetadata(type));
-        }
-
-        public static readonly DependencyProperty TitleProperty
-            = DependencyProperty.Register(
-                "Title",
-                typeof(string),
-                typeof(Progressor),
-                new FrameworkPropertyMetadata());
-
-        public string Title
-        {
-            get { return GetValue(TitleProperty) as string; }
-            set { SetValue(TitleProperty, value); }
         }
 
         public static readonly DependencyProperty ValueProperty
@@ -44,6 +27,19 @@ namespace AvocadoFramework.Controls.Progress
             set { SetValue(ValueProperty, value); }
         }
 
+        public static readonly DependencyProperty TitleProperty
+            = DependencyProperty.Register(
+                "Title",
+                typeof(string),
+                typeof(Progressor),
+                new FrameworkPropertyMetadata());
+
+        public string Title
+        {
+            get { return GetValue(TitleProperty) as string; }
+            set { SetValue(TitleProperty, value); }
+        }
+
         public static readonly DependencyProperty StatusProperty
             = DependencyProperty.Register(
                 "Status",
@@ -55,28 +51,6 @@ namespace AvocadoFramework.Controls.Progress
         {
             get { return GetValue(StatusProperty) as string; }
             set { SetValue(StatusProperty, value); }
-        }
-
-        public Progressor()
-        {
-            GotFocus += (s, e) => borderColorAnimator.Animate(true);
-            LostFocus += (s, e) => borderColorAnimator.Animate(false);
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            initAnimation();
-        }
-
-        void initAnimation()
-        {
-            borderColorAnimator = new ReversibleAnimator<Color>(
-                SolidColorBrush.ColorProperty,
-                Config.ProgressorColor,
-                Config.ProgressorSelectedColor,
-                Config.ProgressorFadeDuration,
-                BorderBrush);
         }
     }
 }

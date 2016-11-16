@@ -8,16 +8,46 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type progress:Progressor}">
 
+        <!-- Resources. -->
+        <Style.Resources>
+            <Color x:Key="PrimaryColor">Green</Color>
+            <SolidColorBrush x:Key="PrimaryBrush" 
+                             Color="{StaticResource PrimaryColor}" />
+            <Color x:Key="SelectedColor">Orange</Color>
+            <SolidColorBrush x:Key="TextColor" Color="White" />
+        </Style.Resources>
+        
+        <!-- Animation. -->
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation 
+                                To="{StaticResource SelectedColor}" 
+                                Storyboard.TargetProperty="BorderBrush.Color"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation 
+                                To="{StaticResource PrimaryColor}" 
+                                Storyboard.TargetProperty="BorderBrush.Color"
+                                Duration="0:0:0.2" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+        </Style.Triggers>
+
         <!-- Properties. -->
         <Setter Property="Height" Value="18" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush">
-            <Setter.Value>
-                <SolidColorBrush Color="{Binding Source=
-                    {x:Static local:Config.ProgressorColor}}" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
 
         <!-- Template. -->
         <Setter Property="Template">
@@ -31,35 +61,23 @@
 
                             <ProgressBar 
                                 Background="Transparent"
+                                Foreground="{StaticResource PrimaryBrush}"
                                 BorderThickness="0"
                                 Minimum="0" 
                                 Maximum="100" 
-                                Value="{TemplateBinding Value}">
-                                <ProgressBar.Foreground>
-                                    <SolidColorBrush Color="{Binding Source=
-                                        {x:Static local:Config.ProgressorColor}}" />
-                                </ProgressBar.Foreground>
-                            </ProgressBar>
+                                Value="{TemplateBinding Value}" />
 
                             <text:TextLabel 
                                 Content="{TemplateBinding Title}"
+                                Foreground="{StaticResource TextColor}"
                                 VerticalAlignment="Center"
-                                Margin="4 0 0 1">
-                                <text:TextLabel.Foreground>
-                                    <SolidColorBrush Color="{Binding Source=
-                                        {x:Static local:Config.ProgressorTextColor}}" />
-                                </text:TextLabel.Foreground>
-                            </text:TextLabel>
+                                Margin="4 0 0 1" />
                             <text:TextLabel
                                 Content="{TemplateBinding Status}"
+                                Foreground="{StaticResource TextColor}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
-                                Margin="0 0 4 1">
-                                <text:TextLabel.Foreground>
-                                    <SolidColorBrush Color="{Binding Source=
-                                        {x:Static local:Config.ProgressorTextColor}}" />
-                                </text:TextLabel.Foreground>
-                            </text:TextLabel>
+                                Margin="4 0 0 1" />
 
                         </Grid>
                     </Border>
