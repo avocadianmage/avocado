@@ -9,9 +9,7 @@ namespace StandardLibrary.Web.Scraping
     public sealed class StaticScraper : IScraper
     {
         readonly CookieContainer cookies = new CookieContainer();
-        readonly WebClient downloadWebClient = new WebClient();
 
-        public event DownloadProgressChangedEventHandler ProgressUpdated;
 
         public void AddCookie(string url, string name, string content)
         {
@@ -36,17 +34,7 @@ namespace StandardLibrary.Web.Scraping
             }
         }
 
-        // Downloads the content at the specified URL and saves it to the 
-        // specified filepath.
-        public Task Download(string url, string savePath)
-        {
-            downloadWebClient.DownloadProgressChanged += ProgressUpdated;
-            return downloadWebClient.DownloadFileTaskAsync(url, savePath);
-        }
-
-        public void CancelDownload() => downloadWebClient.CancelAsync();
-
-        HttpClientHandler clientHandler 
+        HttpClientHandler clientHandler
             => new HttpClientHandler { CookieContainer = cookies, };
 
         HttpClient getClient(HttpMessageHandler handler)
@@ -68,8 +56,8 @@ namespace StandardLibrary.Web.Scraping
             get
             {
                 var userAgent = ScrapeUtils.GetUserAgent(Browser.Chrome);
-                return new Dictionary<string, string> 
-                { 
+                return new Dictionary<string, string>
+                {
                     { "User-Agent", userAgent },
                 };
             }

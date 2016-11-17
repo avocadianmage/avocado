@@ -60,6 +60,7 @@
     <Compile Include="Processes\EnvUtils.cs" />
     <Compile Include="Utilities\Extensions\StringExtensions.cs" />
     <Compile Include="Utilities\ConfigFile.cs" />
+    <Compile Include="Utilities\IOUtils.cs" />
     <Compile Include="Utilities\ObservableDictionary.cs" />
     <Compile Include="Utilities\ResetEventWithData.cs" />
     <Compile Include="Processes\NamedPipes\MessageEventArgs.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Web\Scraping\ScrapingEngine.cs" />
     <Compile Include="Web\Scraping\StaticScraper.cs" />
     <Compile Include="Web\Scraping\Parsing\TextParser.cs" />
+    <Compile Include="Web\WebDownloader.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

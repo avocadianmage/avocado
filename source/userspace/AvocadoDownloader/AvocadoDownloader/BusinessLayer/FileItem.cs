@@ -1,5 +1,5 @@
 ﻿using StandardLibrary.Utilities.Extensions;
-using StandardLibrary.Web.Scraping;
+using StandardLibrary.Web;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -42,20 +42,19 @@ namespace AvocadoDownloader.BusinessLayer
             }
         }
 
-        readonly StaticScraper scraper = new StaticScraper();
+        readonly WebDownloader webDownloader = new WebDownloader();
 
         public FileItem(string filePath)
         {
             FilePath = filePath;
             Status = Config.InitialDownloadStatus;
-            scraper.ProgressUpdated += onProgressUpdated;
+            webDownloader.ProgressUpdated += onProgressUpdated;
         }
 
         public async Task DownloadFromUrl(string url)
         {
             NotifyStart();
-            scraper.CancelDownload();
-            await scraper.Download(url, FilePath);
+            await webDownloader.Download(url, FilePath);
             NotifyFinish();
         }
 
@@ -116,11 +115,14 @@ namespace AvocadoDownloader.BusinessLayer
 
         public void Remove(bool deleteFromDisk)
         {
-            // Ensure the download is stopped.
-            scraper.CancelDownload();
+            Task.Run(async () =>
+            {
+                // Ensure the download is stopped.
+                await webDownloader.CancelDownload();
 
-            // If requested, delete the file from disk.
-            if (deleteFromDisk) File.Delete(FilePath);
+                // If requested, delete the file from disk.
+                if (deleteFromDisk) File.Delete(FilePath);
+            });
 
             // Notify listeners (ex: parent grouper) that the item should be 
             // removed.
