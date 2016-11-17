@@ -1,5 +1,5 @@
 ﻿using AvocadoFramework.Animation;
-using StandardLibrary.Extensions;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Globalization;
 using System.Windows;

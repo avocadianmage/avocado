@@ -1,6 +1,6 @@
 ﻿using AvocadoFramework.Animation;
-using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.ComponentModel;
 using System.Windows;

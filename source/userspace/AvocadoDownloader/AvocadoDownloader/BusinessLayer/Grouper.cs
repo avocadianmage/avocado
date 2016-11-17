@@ -37,12 +37,10 @@ namespace AvocadoDownloader.BusinessLayer
             FileItems.Remove(target.FilePath);
 
             // If there are no more items in this grouper, remove it.
-            if (!FileItems.Any()) Remove();
+            if (!FileItems.Any()) Removed(this, EventArgs.Empty);
         }
 
-        public void Remove()
-        {
-            Removed(this, EventArgs.Empty);
-        }
+        public void Remove(bool deleteFromDisk)
+            => FileItems.ToList().ForEach(f => f.Value.Remove(deleteFromDisk));
     }
 }

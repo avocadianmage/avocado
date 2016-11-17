@@ -1,7 +1,7 @@
 ﻿using AvocadoShell.PowerShellService.Modules;
-using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

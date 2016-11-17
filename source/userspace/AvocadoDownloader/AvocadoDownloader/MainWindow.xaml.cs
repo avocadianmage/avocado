@@ -1,9 +1,9 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Engine;
 using DownloaderProtocol;
-using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
 using StandardLibrary.Processes.NamedPipes;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

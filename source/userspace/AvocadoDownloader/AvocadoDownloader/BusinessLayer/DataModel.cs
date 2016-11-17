@@ -26,8 +26,6 @@ namespace AvocadoDownloader.BusinessLayer
         }
 
         void onGrouperRemoved(object sender, EventArgs e)
-        {
-            Groupers.Remove(((Grouper)sender).Title);
-        }
+            => Groupers.Remove(((Grouper)sender).Title);
     }
 }

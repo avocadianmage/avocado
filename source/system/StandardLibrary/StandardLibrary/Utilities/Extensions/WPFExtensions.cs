@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace StandardLibrary.Extensions
+namespace StandardLibrary.Utilities.Extensions
 {
     public static class WPFExtensions
     {
@@ -16,17 +15,7 @@ namespace StandardLibrary.Extensions
             return (T)control.Template.FindName(name, control);
         }
 
-        public static void RegisterPropertyOnChange(
-            this FrameworkElement element,
-            DependencyProperty property,
-            EventHandler handler)
-        {
-            var desc = DependencyPropertyDescriptor.FromProperty(
-                property,
-                element.GetType());
-            desc.AddValueChanged(element, handler);
-        }
-
+        // Get the window handle.
         public static IntPtr GetHandle(this Window window)
             => new WindowInteropHelper(window).Handle;
     }

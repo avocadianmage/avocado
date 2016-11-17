@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace StandardLibrary.Extensions
+namespace StandardLibrary.Utilities.Extensions
 {
     public static class AsyncExtensions
     {

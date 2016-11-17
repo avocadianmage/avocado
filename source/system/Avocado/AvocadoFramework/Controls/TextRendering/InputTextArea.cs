@@ -1,5 +1,6 @@
 ﻿using AvocadoFramework.Animation;
-using StandardLibrary.Extensions;
+using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -8,18 +9,6 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
-        protected bool IsAltKeyDown
-            => isModifierKeyDown(ModifierKeys.Alt);
-
-        protected bool IsControlKeyDown
-            => isModifierKeyDown(ModifierKeys.Control);
-
-        protected bool IsShiftKeyDown
-            => isModifierKeyDown(ModifierKeys.Shift);
-
-        bool isModifierKeyDown(ModifierKeys key)
-            => Keyboard.Modifiers.HasFlag(key);
-
         protected void EnableInput(bool enabled) => inputEnabled = enabled;
 
         bool inputEnabled = false;
@@ -94,7 +83,7 @@ namespace AvocadoFramework.Controls.TextRendering
                     
                 // Disallow other styling when pasting.
                 case Key.V:
-                    if (!IsControlKeyDown) break;
+                    if (!WPF.IsControlKeyDown) break;
                     Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
                     e.Handled = true;
                     break;

@@ -1,7 +1,7 @@
 ﻿using AvocadoClient.ServerAPIReference;
 using AvocadoUtilities.CommandLine;
-using StandardLibrary.Extensions;
 using StandardLibrary.Processes;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Diagnostics;
 using System.IO;

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using StandardLibrary.Utilities.Extensions;
+using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading.Tasks;
-using StandardLibrary.Extensions;
 
 namespace StandardLibrary.Processes.NamedPipes
 {

@@ -1,5 +1,6 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Controls.Progress;
+using StandardLibrary.Utilities;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -40,15 +41,15 @@ namespace AvocadoDownloader.UILayer
                     break;
 
                 case Key.Delete:
-                    remove(fileItem);
+                    remove(fileItem, WPF.IsShiftKeyDown);
                     break;
             }
         }
 
-        void remove(FileItem fileItem)
+        void remove(FileItem fileItem, bool deleteFromDisk)
         {
             MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-            fileItem.Remove();
+            fileItem.Remove(deleteFromDisk);
         }
     }
 }

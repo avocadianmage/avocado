@@ -1,4 +1,4 @@
-﻿using StandardLibrary.Extensions;
+﻿using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.Web.Scraping;
 using System;
 using System.ComponentModel;
@@ -11,12 +11,12 @@ namespace AvocadoDownloader.BusinessLayer
 {
     public class FileItem : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler Removed;
 
-        string status;
-        double progressValue;
-
         public string FilePath { get; }
+
+        string status;
         public string Status
         {
             get { return status; }
@@ -28,6 +28,8 @@ namespace AvocadoDownloader.BusinessLayer
                     this, new PropertyChangedEventArgs(nameof(Status)));
             }
         }
+
+        double progressValue;
         public double ProgressValue
         {
             get { return progressValue; }
@@ -39,8 +41,6 @@ namespace AvocadoDownloader.BusinessLayer
                     this, new PropertyChangedEventArgs(nameof(ProgressValue)));
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         readonly StaticScraper scraper = new StaticScraper();
 
@@ -114,8 +114,16 @@ namespace AvocadoDownloader.BusinessLayer
             if (File.Exists(FilePath)) Process.Start(FilePath);
         }
 
-        public void Remove()
+        public void Remove(bool deleteFromDisk)
         {
+            // Ensure the download is stopped.
+            scraper.CancelDownload();
+
+            // If requested, delete the file from disk.
+            if (deleteFromDisk) File.Delete(FilePath);
+
+            // Notify listeners (ex: parent grouper) that the item should be 
+            // removed.
             Removed(this, EventArgs.Empty);
         }
     }

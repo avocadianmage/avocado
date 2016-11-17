@@ -1,4 +1,4 @@
-﻿using StandardLibrary.Extensions;
+﻿using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace StandardLibrary.Extensions
+namespace StandardLibrary.Utilities.Extensions
 {
     public static class StringExtensions
     {

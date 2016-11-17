@@ -1,4 +1,5 @@
 ﻿using AvocadoDownloader.BusinessLayer;
+using StandardLibrary.Utilities;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -15,15 +16,15 @@ namespace AvocadoDownloader.UILayer
             switch (e.Key)
             {
                 case Key.Delete:
-                    remove((Grouper)DataContext);
+                    remove((Grouper)DataContext, WPF.IsShiftKeyDown);
                     break;
             }
         }
 
-        void remove(Grouper grouper)
+        void remove(Grouper grouper, bool deleteFromDisk)
         {
             MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-            grouper.Remove();
+            grouper.Remove(deleteFromDisk);
         }
     }
 }
