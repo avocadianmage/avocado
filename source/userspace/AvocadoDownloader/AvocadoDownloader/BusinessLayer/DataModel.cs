@@ -21,11 +21,8 @@ namespace AvocadoDownloader.BusinessLayer
             }
 
             var grouper = new Grouper(title, filePaths);
-            grouper.Removed += onGrouperRemoved;
+            grouper.Removed += (s, e) => Groupers.Remove(((Grouper)s).Title);
             Groupers.Add(title, grouper);
         }
-
-        void onGrouperRemoved(object sender, EventArgs e)
-            => Groupers.Remove(((Grouper)sender).Title);
     }
 }
