@@ -75,6 +75,7 @@
     <Compile Include="BusinessLayer\FileItem.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="EntryPoint.cs" />
+    <Compile Include="UILayer\GrouperUI.cs" />
     <Compile Include="UILayer\FileItemUI.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

@@ -34,7 +34,7 @@ namespace AvocadoDownloader.BusinessLayer
         void onFileItemRemoved(object sender, EventArgs e)
         {
             var target = (FileItem)sender;
-            FileItems.Remove(target.FilePath, target);
+            FileItems.Remove(target.FilePath);
 
             // If there are no more items in this grouper, remove it.
             if (!FileItems.Any()) Remove();

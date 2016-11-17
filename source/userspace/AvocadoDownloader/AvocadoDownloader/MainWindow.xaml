@@ -35,7 +35,7 @@
                                 Foreground="{Binding BorderBrush, ElementName=GrouperItem}" 
                                 Content="{Binding Title}"
                                 Margin="0 0 0 2"/>
-                            <ItemsControl 
+                            <uiLayer:GrouperUI 
                                 x:Name="GrouperItem"
                                 ItemsSource="{Binding FileItems.EnumerableData}"
                                 FocusVisualStyle="{x:Null}"
@@ -49,7 +49,7 @@
                                             SaveFilePath="{Binding FilePath}"
                                             Status="{Binding Status}"
                                             Value="{Binding ProgressValue}"
-                                            Margin="4 2 2 2"/>
+                                            Margin="4 2 2 2" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                                 
@@ -85,7 +85,7 @@
                                     </Style>
                                 </ItemsControl.Style>
                                 
-                            </ItemsControl>
+                            </uiLayer:GrouperUI>
                         </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
