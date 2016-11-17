@@ -1,28 +1,28 @@
 ﻿using StandardLibrary.Utilities;
-using System;
 using System.Collections.Generic;
 
 namespace AvocadoDownloader.BusinessLayer
 {
     public class DataModel
     {
-        public ObservableDictionary<string, Grouper> Groupers { get; }
+        public IEnumerable<Grouper> Groupers => grouperDict.EnumerableData;
+
+        readonly ObservableDictionary<string, Grouper> grouperDict
             = new ObservableDictionary<string, Grouper>();
 
-        public FileItem GetFileItem(string title, string filePath)
-            => Groupers[title].FileItems[filePath];
+        public Grouper GetGrouper(string title) => grouperDict[title];
 
         public void AddGrouper(string title, IEnumerable<string> filePaths)
         {
-            if (Groupers.ContainsKey(title))
+            if (grouperDict.ContainsKey(title))
             {
-                Groupers[title].AddFileItems(filePaths);
+                grouperDict[title].AddFileItems(filePaths);
                 return;
             }
 
             var grouper = new Grouper(title, filePaths);
-            grouper.Removed += (s, e) => Groupers.Remove(((Grouper)s).Title);
-            Groupers.Add(title, grouper);
+            grouper.Removed += (s, e) => grouperDict.Remove(((Grouper)s).Title);
+            grouperDict.Add(title, grouper);
         }
     }
 }

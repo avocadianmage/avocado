@@ -10,7 +10,9 @@ namespace AvocadoDownloader.BusinessLayer
         public event EventHandler Removed;
 
         public string Title { get; }
-        public ObservableDictionary<string, FileItem> FileItems { get; }
+        public IEnumerable<FileItem> FileItems => fileItemDict.EnumerableData;
+
+        readonly ObservableDictionary<string, FileItem> fileItemDict
             = new ObservableDictionary<string, FileItem>();
 
         public Grouper(string title, IEnumerable<string> filePaths)
@@ -19,28 +21,30 @@ namespace AvocadoDownloader.BusinessLayer
             AddFileItems(filePaths);
         }
 
+        public FileItem GetFileItem(string filePath) => fileItemDict[filePath];
+
         public void AddFileItems(IEnumerable<string> filePaths)
         {
             foreach (var filePath in filePaths)
             {
-                if (FileItems.ContainsKey(filePath)) continue;
+                if (fileItemDict.ContainsKey(filePath)) continue;
 
                 var fileItem = new FileItem(filePath);
                 fileItem.Removed += onFileItemRemoved;
-                FileItems.Add(filePath, fileItem);
+                fileItemDict.Add(filePath, fileItem);
             }
         }
 
         void onFileItemRemoved(object sender, EventArgs e)
         {
             var target = (FileItem)sender;
-            FileItems.Remove(target.FilePath);
+            fileItemDict.Remove(target.FilePath);
 
             // If there are no more items in this grouper, remove it.
             if (!FileItems.Any()) Removed(this, EventArgs.Empty);
         }
 
         public void Remove(bool deleteFromDisk)
-            => FileItems.ToList().ForEach(f => f.Value.Remove(deleteFromDisk));
+            => FileItems.ToList().ForEach(f => f.Remove(deleteFromDisk));
     }
 }

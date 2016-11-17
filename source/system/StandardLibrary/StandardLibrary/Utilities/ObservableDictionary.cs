@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace StandardLibrary.Utilities
 {
-    public sealed class ObservableDictionary<TKey, TValue> 
-        : IEnumerable<KeyValuePair<TKey, TValue>>
+    public sealed class ObservableDictionary<TKey, TValue>
     {
         public IEnumerable<TValue> EnumerableData => observableCollection;
 
@@ -28,10 +26,5 @@ namespace StandardLibrary.Utilities
             observableCollection.Remove(dictionary[key]);
             dictionary.Remove(key);
         }
-
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() 
-            => dictionary.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => dictionary.GetEnumerator();
     }
 }

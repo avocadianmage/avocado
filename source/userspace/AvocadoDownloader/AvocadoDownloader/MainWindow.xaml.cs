@@ -70,20 +70,17 @@ namespace AvocadoDownloader
                 StringSplitOptions.RemoveEmptyEntries);
             var messageType = (MessageType)int.Parse(pieces[0]);
             string title = pieces[1], filePath = pieces[2], data = pieces[3];
+            var fileItem = dataModel.GetGrouper(title).GetFileItem(filePath);
             switch (messageType)
             {
                 case MessageType.SetStatus:
-                    dataModel.GetFileItem(title, filePath).Status = data;
+                    fileItem.Status = data;
                     break;
 
                 case MessageType.DownloadFromUrl:
-                    downloadFromUrl(title, filePath, data);
+                    fileItem.DownloadFromUrl(data).RunAsync();
                     break;
             }
         }
-
-        void downloadFromUrl(string title, string filePath, string url)
-            => dataModel.GetFileItem(title, filePath)
-                .DownloadFromUrl(url).RunAsync();
     }
 }
