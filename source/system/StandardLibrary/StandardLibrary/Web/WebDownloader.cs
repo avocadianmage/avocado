@@ -4,26 +4,29 @@ using System.Threading.Tasks;
 
 namespace StandardLibrary.Web
 {
-    public sealed class WebDownloader
+    public sealed class WebDownload
     {
         public event DownloadProgressChangedEventHandler ProgressUpdated;
 
         readonly WebClient downloadWebClient = new WebClient();
-        string savePath;
+        readonly string savePath;
+
+        public WebDownload(string savePath)
+        {
+            this.savePath = savePath;
+        }
 
         // Downloads the content at the specified URL and saves it to the 
         // specified filepath.
-        public async Task Download(string url, string savePath)
+        public Task Start(string url)
         {
-            await CancelDownload();
-
-            this.savePath = savePath;
             downloadWebClient.DownloadProgressChanged += ProgressUpdated;
-            await downloadWebClient.DownloadFileTaskAsync(url, savePath);
+            return downloadWebClient.DownloadFileTaskAsync(url, savePath);
         }
 
-        public async Task CancelDownload()
+        public async Task Cancel()
         {
+            downloadWebClient.DownloadProgressChanged -= ProgressUpdated;
             downloadWebClient.CancelAsync();
 
             // Wait until the download operation releases the lock on the file.

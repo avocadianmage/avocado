@@ -2,7 +2,7 @@
 {
     public enum MessageType
     {
-        SetStatus,
+        PrepareForDownload,
         DownloadFromUrl
     }
 }

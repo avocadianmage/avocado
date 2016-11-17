@@ -42,20 +42,29 @@ namespace AvocadoDownloader.BusinessLayer
             }
         }
 
-        readonly WebDownloader webDownloader = new WebDownloader();
+        WebDownload webDownload;
 
         public FileItem(string filePath)
         {
             FilePath = filePath;
             Status = Config.InitialDownloadStatus;
-            webDownloader.ProgressUpdated += onProgressUpdated;
         }
 
         public async Task DownloadFromUrl(string url)
         {
             NotifyStart();
-            await webDownloader.Download(url, FilePath);
+
+            webDownload = new WebDownload(FilePath);
+            webDownload.ProgressUpdated += onProgressUpdated;
+            await webDownload.Start(url);
+
             NotifyFinish();
+        }
+
+        public async Task PrepareForDownload(string status)
+        {
+            if (webDownload != null) await webDownload.Cancel();
+            Status = status;
         }
 
         public void NotifyStart() => Status = Config.StartDownloadStatus;
@@ -118,7 +127,7 @@ namespace AvocadoDownloader.BusinessLayer
             Task.Run(async () =>
             {
                 // Ensure the download is stopped.
-                await webDownloader.CancelDownload();
+                if (webDownload != null) await webDownload.Cancel();
 
                 // If requested, delete the file from disk.
                 if (deleteFromDisk) File.Delete(FilePath);

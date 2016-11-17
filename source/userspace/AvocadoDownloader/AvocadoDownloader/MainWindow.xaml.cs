@@ -31,7 +31,8 @@ namespace AvocadoDownloader
         async Task initServer()
         {
             var server = new NamedPipeServer();
-            server.MessageReceived += (s, e) => processMessage(e.Message);
+            server.MessageReceived += (s, e) 
+                => processMessage(e.Message);
             await server.Start(ProtocolConfig.PipeName);
         }
 
@@ -73,8 +74,8 @@ namespace AvocadoDownloader
             var fileItem = dataModel.GetGrouper(title).GetFileItem(filePath);
             switch (messageType)
             {
-                case MessageType.SetStatus:
-                    fileItem.Status = data;
+                case MessageType.PrepareForDownload:
+                    fileItem.PrepareForDownload(data).RunAsync();
                     break;
 
                 case MessageType.DownloadFromUrl:
