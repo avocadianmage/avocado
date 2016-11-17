@@ -38,7 +38,17 @@ namespace AvocadoDownloader.UILayer
                 case Key.Space:
                     fileItem.Run();
                     break;
+
+                case Key.Delete:
+                    remove(fileItem);
+                    break;
             }
+        }
+
+        void remove(FileItem fileItem)
+        {
+            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            fileItem.Remove();
         }
     }
 }

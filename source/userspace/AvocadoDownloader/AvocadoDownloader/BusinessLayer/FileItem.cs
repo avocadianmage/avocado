@@ -11,6 +11,8 @@ namespace AvocadoDownloader.BusinessLayer
 {
     public class FileItem : INotifyPropertyChanged
     {
+        public event EventHandler Removed;
+
         string status;
         double progressValue;
 
@@ -110,6 +112,11 @@ namespace AvocadoDownloader.BusinessLayer
         public void Run()
         {
             if (File.Exists(FilePath)) Process.Start(FilePath);
+        }
+
+        public void Remove()
+        {
+            Removed(this, EventArgs.Empty);
         }
     }
 }

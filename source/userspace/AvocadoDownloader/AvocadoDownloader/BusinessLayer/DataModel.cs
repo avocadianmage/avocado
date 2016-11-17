@@ -1,4 +1,5 @@
 ﻿using StandardLibrary.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace AvocadoDownloader.BusinessLayer
@@ -18,7 +19,16 @@ namespace AvocadoDownloader.BusinessLayer
                 Groupers[title].AddFileItems(filePaths);
                 return;
             }
-            Groupers.Add(title, new Grouper(title, filePaths));
+
+            var grouper = new Grouper(title, filePaths);
+            grouper.Removed += onGrouperRemoved;
+            Groupers.Add(title, grouper);
+        }
+
+        void onGrouperRemoved(object sender, EventArgs e)
+        {
+            var target = (Grouper)sender;
+            Groupers.Remove(target.Title, target);
         }
     }
 }

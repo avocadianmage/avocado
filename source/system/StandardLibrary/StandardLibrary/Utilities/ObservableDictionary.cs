@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace StandardLibrary.Utilities
 {
-    public sealed class ObservableDictionary<TKey, TValue>
+    public sealed class ObservableDictionary<TKey, TValue> 
     {
         public IEnumerable<TValue> EnumerableData => observableCollection;
 
@@ -19,6 +19,12 @@ namespace StandardLibrary.Utilities
         {
             observableCollection.Add(value);
             dictionary.Add(key, value);
+        }
+
+        public void Remove(TKey key, TValue value)
+        {
+            observableCollection.Remove(value);
+            dictionary.Remove(key);
         }
     }
 }
