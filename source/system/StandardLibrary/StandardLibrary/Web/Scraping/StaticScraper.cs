@@ -10,7 +10,6 @@ namespace StandardLibrary.Web.Scraping
     {
         readonly CookieContainer cookies = new CookieContainer();
 
-
         public void AddCookie(string url, string name, string content)
         {
             var uri = new Uri(url);
