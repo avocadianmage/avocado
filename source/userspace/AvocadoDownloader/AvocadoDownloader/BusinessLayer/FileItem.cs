@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -129,12 +130,20 @@ namespace AvocadoDownloader.BusinessLayer
                 await webDownload.Cancel();
 
                 // If requested, delete the file from disk.
-                if (deleteFromDisk) File.Delete(FilePath);
+                if (!deleteFromDisk) return;
+                File.Delete(FilePath);
+                deleteDirectoryIfEmpty(Path.GetDirectoryName(FilePath));
             });
 
             // Notify listeners (ex: parent grouper) that the item should be 
             // removed.
             Removed(this, EventArgs.Empty);
+        }
+
+        void deleteDirectoryIfEmpty(string path)
+        {
+            if (Directory.EnumerateFileSystemEntries(path).Any()) return;
+            Directory.Delete(path);
         }
     }
 }
