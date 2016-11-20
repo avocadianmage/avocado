@@ -75,6 +75,7 @@
     </Page>
     <Compile Include="Controls\Progress\Progressor.cs" />
     <Compile Include="Controls\TextRendering\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\TextConfig.cs" />
     <Compile Include="Controls\TextRendering\TextLabel.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
     <Compile Include="Engine\GlassPane.cs">

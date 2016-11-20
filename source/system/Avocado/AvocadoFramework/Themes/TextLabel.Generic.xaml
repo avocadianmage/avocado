@@ -7,10 +7,14 @@
     <Style TargetType="{x:Type text:TextLabel}">
         
         <!-- Properties. -->
-        <Setter Property="FontFamily" Value="Consolas" />
-        <Setter Property="FontSize" Value="7.25pt" />
-        <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="FontFamily" 
+                Value="{x:Static text:TextConfig.FontFamily}" />
+        <Setter Property="FontSize" 
+                Value="{x:Static text:TextConfig.FontSize}" />
+        <Setter Property="FontWeight" 
+                Value="{x:Static text:TextConfig.FontWeight}" />
+        <Setter Property="TextOptions.TextFormattingMode" 
+                Value="{x:Static text:TextConfig.TextFormattingMode}" />
 
         <!-- Template. -->
         <Setter Property="Template">
