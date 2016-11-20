@@ -53,9 +53,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animation\BrushAnimation.cs" />
-    <Compile Include="Animation\ReversibleClock.cs" />
-    <Compile Include="Animation\ReversibleAnimator.cs" />
+    <Compile Include="Controls\TextRendering\TextAnimation.cs" />
     <Compile Include="Config.cs" />
     <Page Include="Themes\Progressor.Generic.xaml">
       <SubType>Designer</SubType>

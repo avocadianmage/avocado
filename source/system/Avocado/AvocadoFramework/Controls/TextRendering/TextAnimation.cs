@@ -2,14 +2,14 @@
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace AvocadoFramework.Animation
+namespace AvocadoFramework.Controls.TextRendering
 {
-    public sealed class BrushAnimation
+    static class TextAnimation
     {
-        public Brush GetFadingBrush(Brush baseBrush, double duration)
+        public static Brush GetFadingBrush(Brush baseBrush, double duration)
             => GetFadingBrush(baseBrush, duration, false);
 
-        public Brush GetFadingBrush(
+        public static Brush GetFadingBrush(
             Brush baseBrush, double duration, bool oscillating)
         {
             var brush = getZeroOpacityBrush(baseBrush);

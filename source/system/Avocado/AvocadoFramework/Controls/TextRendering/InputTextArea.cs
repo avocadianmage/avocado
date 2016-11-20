@@ -1,5 +1,4 @@
-﻿using AvocadoFramework.Animation;
-using StandardLibrary.Utilities;
+﻿using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,7 +21,7 @@ namespace AvocadoFramework.Controls.TextRendering
         void initCaret()
         {
             var caret = this.GetTemplateElement<Border>("Caret");
-            caret.BorderBrush = new BrushAnimation().GetFadingBrush(
+            caret.BorderBrush = TextAnimation.GetFadingBrush(
                 Config.CaretBrush, Config.CaretBlinkDuration, true); 
 
             // Set size.

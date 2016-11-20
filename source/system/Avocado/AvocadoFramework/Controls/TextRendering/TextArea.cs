@@ -1,5 +1,4 @@
-﻿using AvocadoFramework.Animation;
-using StandardLibrary.Utilities.Extensions;
+﻿using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Globalization;
 using System.Windows;
@@ -11,6 +10,8 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class TextArea : Control
     {
+        const double TEXT_FADE_DURATION = 200;
+
         static TextArea()
         {
             // Associate this control with the default theme.
@@ -18,12 +19,6 @@ namespace AvocadoFramework.Controls.TextRendering
             DefaultStyleKeyProperty.OverrideMetadata(
                 type,
                 new FrameworkPropertyMetadata(type));
-        }
-
-        public static Brush CreateTextFadeBrush(Brush baseBrush)
-        {
-            return new BrushAnimation()
-                .GetFadingBrush(baseBrush, Config.TextFadeDuration);
         }
 
         protected RichTextBox TextBase { get; private set; }
@@ -48,7 +43,8 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             CaretPointer = new Run(text, CaretPointer)
             {
-                Foreground = CreateTextFadeBrush(foreground)
+                Foreground = TextAnimation.GetFadingBrush(
+                    foreground, TEXT_FADE_DURATION)
             }
             .ContentEnd;
         }
