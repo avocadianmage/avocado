@@ -12,8 +12,8 @@ namespace AvocadoFramework.Controls.TextRendering
         public static Brush GetFadingBrush(
             Brush baseBrush, double duration, bool oscillating)
         {
-            var brush = getZeroOpacityBrush(baseBrush);
-            var animation = getAnimation(duration, oscillating);
+            var brush = baseBrush.Clone();
+            var animation = createAnimation(duration, oscillating);
 
             // Start animation.
             brush.BeginAnimation(Brush.OpacityProperty, animation);
@@ -21,17 +21,12 @@ namespace AvocadoFramework.Controls.TextRendering
             return brush;
         }
 
-        static Brush getZeroOpacityBrush(Brush baseBrush)
-        {
-            var brush = baseBrush.Clone();
-            brush.Opacity = 0;
-            return brush;
-        }
-
-        static DoubleAnimation getAnimation(double duration, bool oscillating)
+        static DoubleAnimation createAnimation(
+            double duration, bool oscillating)
         {
             var animation = new DoubleAnimation
             {
+                From = 0,
                 To = 1,
                 Duration = TimeSpan.FromMilliseconds(duration)
             };
