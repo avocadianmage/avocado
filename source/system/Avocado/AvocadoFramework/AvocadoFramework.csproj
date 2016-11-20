@@ -53,8 +53,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\TextRendering\TextAnimation.cs" />
-    <Compile Include="Config.cs" />
     <Page Include="Themes\Progressor.Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

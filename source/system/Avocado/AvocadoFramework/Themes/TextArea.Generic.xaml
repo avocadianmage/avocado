@@ -43,8 +43,25 @@
                         <!-- Caret. -->
                         <Canvas>
                             <Border x:Name="Caret" 
+                                    BorderBrush="Orange"
                                     BorderThickness="0 0 0 1"
-                                    SnapsToDevicePixels="True" />
+                                    SnapsToDevicePixels="True">
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="Border.Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="Caret"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="0" To="1"
+                                                    Duration="0:0:0.75"
+                                                    AutoReverse="True"
+                                                    RepeatBehavior="Forever" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
+                            </Border>
                         </Canvas>
 
                     </Grid>

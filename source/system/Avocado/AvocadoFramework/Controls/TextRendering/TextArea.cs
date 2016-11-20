@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
@@ -39,12 +40,23 @@ namespace AvocadoFramework.Controls.TextRendering
             CharDimensions = getCharDimensions();
         }
 
+        Brush createFadingBrush(Brush baseBrush, double duration)
+        {
+            var brush = baseBrush.Clone();
+            brush.BeginAnimation(Brush.OpacityProperty, new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(duration)
+            });
+            return brush;
+        }
+
         protected void Write(string text, Brush foreground)
         {
             CaretPointer = new Run(text, CaretPointer)
             {
-                Foreground = TextAnimation.GetFadingBrush(
-                    foreground, TEXT_FADE_DURATION)
+                Foreground = createFadingBrush(foreground, TEXT_FADE_DURATION)
             }
             .ContentEnd;
         }

@@ -21,8 +21,6 @@ namespace AvocadoFramework.Controls.TextRendering
         void initCaret()
         {
             var caret = this.GetTemplateElement<Border>("Caret");
-            caret.BorderBrush = TextAnimation.GetFadingBrush(
-                Config.CaretBrush, Config.CaretBlinkDuration, true); 
 
             // Set size.
             caret.Width = CharDimensions.Width + 1;
