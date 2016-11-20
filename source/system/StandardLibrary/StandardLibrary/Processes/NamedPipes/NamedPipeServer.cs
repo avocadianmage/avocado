@@ -2,6 +2,8 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace StandardLibrary.Processes.NamedPipes
@@ -39,7 +41,25 @@ namespace StandardLibrary.Processes.NamedPipes
             return new NamedPipeServerStream(
                 name,
                 PipeDirection.InOut,
-                NamedPipeServerStream.MaxAllowedServerInstances);
+                NamedPipeServerStream.MaxAllowedServerInstances, 
+                PipeTransmissionMode.Message, 
+                PipeOptions.None, 
+                1024, 1024,
+                createPipeSecurity());
+        }
+
+        PipeSecurity createPipeSecurity()
+        {
+            var pipeSecurity = new PipeSecurity();
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                WindowsIdentity.GetCurrent().Owner,
+                PipeAccessRights.FullControl,
+                AccessControlType.Allow));
+            return pipeSecurity;
         }
     }
 }
