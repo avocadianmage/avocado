@@ -15,6 +15,12 @@ namespace StandardLibrary.Utilities.Extensions
             return (T)control.Template.FindName(name, control);
         }
 
+        public static T GetResource<T>(
+            this FrameworkElement element, string name)
+        {
+            return (T)element.FindResource(name);
+        }
+
         // Get the window handle.
         public static IntPtr GetHandle(this Window window)
             => new WindowInteropHelper(window).Handle;

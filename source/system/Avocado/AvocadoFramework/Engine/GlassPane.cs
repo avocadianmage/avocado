@@ -1,5 +1,4 @@
-﻿using AvocadoFramework.Animation;
-using StandardLibrary.Processes;
+﻿using StandardLibrary.Processes;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.ComponentModel;
@@ -7,13 +6,17 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace AvocadoFramework.Engine
 {
     public abstract class GlassPane : Window
     {
-        ReversibleAnimator<double> windowFadeAnimator;
-        ReversibleAnimator<Color> borderFadeAnimator;
+        public static Color ActiveOutlineColor { get; }
+            = EnvUtils.IsAdmin ? Colors.Salmon : Colors.CornflowerBlue;
+
+        Border paneUI => this.GetTemplateElement<Border>("Pane");
+        
         bool closeImmediately = false;
         
         static GlassPane()
@@ -55,7 +58,7 @@ namespace AvocadoFramework.Engine
                 WindowState = WindowState == WindowState.Maximized
                     ? WindowState.Normal : WindowState.Maximized;
             }
-
+            
             // Otherwise, drag the window around.
             else DragMove();
         }
@@ -69,99 +72,38 @@ namespace AvocadoFramework.Engine
         void applyFocus()
             => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
-        // UI startup code.
-        protected override void OnContentRendered(EventArgs e)
+        void applyCloseAnimation()
         {
-            base.OnContentRendered(e);
-
-            // Show the window.
-            initializeWindowFading();
-            windowFadeAnimator.Animate(true);
+            var storyboard = paneUI.GetResource<Storyboard>("WindowFadeOut");
+            storyboard.Completed += onCloseAnimationComplete;
+            storyboard.Begin();
         }
 
-        protected override void OnActivated(EventArgs e)
+        void onCloseAnimationComplete(object sender, EventArgs e)
         {
-            base.OnActivated(e);
-
-            // Transition to active border color.
-            fadeBorder(true);
-        }
-
-        protected override void OnDeactivated(EventArgs e)
-        {
-            base.OnDeactivated(e);
-            
-            // Transition to inactive border color.
-            fadeBorder(false);
+            closeImmediately = true;
+            Close();
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
 
-            // If the window can close immediately, have it proceed 
-            // unhindered.
             if (closeImmediately) return;
-
-            // Otherwise, cancel the close operation.
             e.Cancel = true;
-
-            // Start the fade out animation.
-            windowFadeAnimator.Animate(false);
+            applyCloseAnimation();
         }
 
-        void initializeWindowFading()
+        protected override void OnActivated(EventArgs e)
         {
-            windowFadeAnimator = new ReversibleAnimator<double>(
-                OpacityProperty,
-                0,
-                1,
-                Config.WindowFadeDuration,
-                this);
-            windowFadeAnimator.StartReached += onWindowFadeOut;
-            windowFadeAnimator.EndReached += onWindowFadeIn;
+            base.OnActivated(e);
+            paneUI.GetResource<Storyboard>("OutlineFadeIn").Begin();
         }
 
-        void onWindowFadeOut(object sender, EventArgs e)
+        protected override void OnDeactivated(EventArgs e)
         {
-            // Actually close the window.
-            closeImmediately = true;
-            Close();
-        }
-
-        void onWindowFadeIn(object sender, EventArgs e)
-        {
-            initializeBorderFading();
-
-            // Transition to active border color.
-            fadeBorder(true);
-        }
-
-        void initializeBorderFading()
-        {
-            // Use different active border color based on whether the program
-            // has elevated permissions.
-            var activeBorderColor = EnvUtils.IsAdmin
-                ? Config.ActiveBorderColorElevated : Config.ActiveBorderColor;
-
-            borderFadeAnimator = new ReversibleAnimator<Color>(
-                SolidColorBrush.ColorProperty,
-                Config.InactiveBorderColor,
-                activeBorderColor,
-                Config.BorderFadeDuration,
-                BorderBrush);
-        }
-
-        void fadeBorder(bool fadeIn)
-        {
-            // Quit if the animator is not yet initialized.
-            if (borderFadeAnimator == null) return;
-
-            // Quit if the fade operation does not align with the active
-            // property of the window.
-            if (fadeIn != IsActive) return;
-
-            borderFadeAnimator.Animate(fadeIn);
+            base.OnDeactivated(e);
+            paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
         }
     }
 }

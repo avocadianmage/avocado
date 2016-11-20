@@ -3,10 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:AvocadoFramework"
     xmlns:engine="clr-namespace:AvocadoFramework.Engine">
-    
-    <!-- Configuration settings. -->
-    <local:Config x:Key="Config" />
-    
+
     <!-- Styling. -->
     <Style TargetType="{x:Type engine:GlassPane}">
 
@@ -14,7 +11,7 @@
         <Style.Resources>
             <Thickness x:Key="WindowMargin">10</Thickness>
         </Style.Resources>
-        
+
         <!-- Area for resizing. -->
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
@@ -22,26 +19,17 @@
             </Setter.Value>
         </Setter>
 
-        <!-- Properties. -->
+        <!-- GlassPane properties. -->
         <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="BorderBrush">
-            <Setter.Value>
-                <SolidColorBrush 
-                    Color="{Binding 
-                        Source={StaticResource Config}, 
-                        Path=InactiveBorderColor}" />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Opacity" Value="0" />
         <Setter Property="WindowStyle" Value="None" />
         
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type engine:GlassPane}">
-                    
+
                     <ControlTemplate.Resources>
-                        
+
                         <!-- Scrollbar thumbs. -->
                         <Style x:Key="ScrollThumbs" TargetType="{x:Type Thumb}">
                             <Setter Property="Template">
@@ -123,30 +111,69 @@
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                        
-                    </ControlTemplate.Resources>
-                    
-                    <!-- Layout. -->
-                    <Grid>
-                        
-                        <!-- Border. -->
-                        <Border BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="1">
-                            <Border.Background>
-                                <SolidColorBrush Color="Black" Opacity="0.85" />
-                            </Border.Background>
-                        </Border>
-                        
-                        <!-- Content. -->
-                        <ContentPresenter x:Name="ContentArea" 
-                                          Margin="{StaticResource WindowMargin}" />
 
-                    </Grid>
+                    </ControlTemplate.Resources>
+
+                    <!-- Layout. -->
+                    <Border x:Name="Pane" 
+                            BorderBrush="Transparent" 
+                            BorderThickness="1" 
+                            Background="Black">
+                        <Border.Resources>
+                            <Color x:Key="InactiveOutlineColor">Gray</Color>
+                            <Duration x:Key="WindowFadeDuration">
+                                0:0:0.2
+                            </Duration>
+                            <Duration x:Key="OutlineFadeDuration">
+                                0:0:0.3
+                            </Duration>
+                            <Storyboard x:Key="WindowFadeOut">
+                                <DoubleAnimation 
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0"
+                                    Duration="{StaticResource WindowFadeDuration}" />
+                            </Storyboard>
+                            <Storyboard x:Key="OutlineFadeIn">
+                                <ColorAnimation 
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                    From="{StaticResource InactiveOutlineColor}" 
+                                    To="{x:Static engine:GlassPane.ActiveOutlineColor}"
+                                    Duration="{StaticResource OutlineFadeDuration}" />
+                            </Storyboard>
+                            <Storyboard x:Key="OutlineFadeOut">
+                                <ColorAnimation 
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="BorderBrush.Color"
+                                    To="{StaticResource InactiveOutlineColor}"
+                                    Duration="{StaticResource OutlineFadeDuration}" />
+                            </Storyboard>
+                        </Border.Resources>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="Border.Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="Pane"
+                                            Storyboard.TargetProperty="Opacity"
+                                            From="0" To="0.9"
+                                            Duration="{StaticResource WindowFadeDuration}" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
+                        
+                        <ContentPresenter 
+                            x:Name="ContentArea" 
+                            Margin="{StaticResource WindowMargin}" />
+                        
+                    </Border>
 
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        
+
     </Style>
     
 </ResourceDictionary>
