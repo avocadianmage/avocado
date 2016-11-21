@@ -16,6 +16,7 @@ namespace AvocadoDownloader.BusinessLayer
         public event EventHandler Removed;
 
         public string FilePath { get; }
+        public bool FinishedDownloading { get; private set; }
 
         string status;
         public string Status
@@ -71,12 +72,14 @@ namespace AvocadoDownloader.BusinessLayer
         {
             Status = Config.StartDownloadStatus;
             ProgressValue = 0;
+            FinishedDownloading = false;
         }
 
         public void NotifyFinish()
         {
             Status = Config.FinishDownloadStatus;
             ProgressValue = 100;
+            FinishedDownloading = true;
         }
 
         public void NotifyProgress(double percent)

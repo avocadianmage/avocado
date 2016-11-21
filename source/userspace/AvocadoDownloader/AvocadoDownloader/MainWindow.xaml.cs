@@ -83,5 +83,22 @@ namespace AvocadoDownloader
                     break;
             }
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            deleteIncompleteFileItems();
+        }
+
+        // Delete file items that have not finished downloading.
+        void deleteIncompleteFileItems()
+        {
+            foreach (var grouper in dataModel.Groupers.ToList())
+                foreach (var fileItem in grouper.FileItems.ToList())
+                {
+                    if (fileItem.FinishedDownloading) continue;
+                    fileItem.Remove(true);
+                }
+        }
     }
 }
