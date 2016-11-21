@@ -5,7 +5,8 @@
     xmlns:framework="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
     xmlns:local="clr-namespace:AvocadoShell"
     xmlns:terminal="clr-namespace:AvocadoShell.Terminal"
-    Width="640" Height="460">
+    Width="640" Height="460"
+    FocusManager.FocusedElement="{Binding ElementName=Terminal}">
 
     <framework:GlassPane.Resources>
         <local:Config x:Key="Config"/>
@@ -13,6 +14,7 @@
     
     <Grid>
         <terminal:TerminalTextArea 
+            x:Name="Terminal"
             Foreground="{Binding Source={StaticResource Config},Path=InputBrush}"/>
     </Grid>
 

@@ -1,5 +1,6 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -23,7 +24,7 @@ namespace AvocadoDownloader.UILayer
 
         void remove(Grouper grouper, bool deleteFromDisk)
         {
-            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            this.MoveNextFocus();
             grouper.Remove(deleteFromDisk);
         }
     }

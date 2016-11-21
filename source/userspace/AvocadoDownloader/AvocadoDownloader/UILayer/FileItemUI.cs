@@ -1,6 +1,7 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Controls.Progress;
 using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -48,7 +49,7 @@ namespace AvocadoDownloader.UILayer
 
         void remove(FileItem fileItem, bool deleteFromDisk)
         {
-            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+            this.MoveNextFocus();
             fileItem.Remove(deleteFromDisk);
         }
     }

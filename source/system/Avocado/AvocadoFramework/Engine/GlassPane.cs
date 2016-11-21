@@ -33,7 +33,6 @@ namespace AvocadoFramework.Engine
         {
             base.OnSourceInitialized(e);
             hookMouseEvents();
-            applyFocus();
         }
 
         void hookMouseEvents()
@@ -68,9 +67,6 @@ namespace AvocadoFramework.Engine
             // Prevent the mouse from interacting with other controls.
             e.Handled = true;
         }
-
-        void applyFocus()
-            => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
 
         void applyCloseAnimation()
         {
