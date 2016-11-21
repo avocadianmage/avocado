@@ -14,7 +14,6 @@ namespace AvocadoShell
             = EnvUtils.IsAdmin ? Brushes.Yellow : Brushes.LightGreen;
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
-        public static Brush InputBrush => Brushes.SkyBlue;
 
         public static ConsoleColor DefaultConsoleColor => ConsoleColor.Gray;
     }

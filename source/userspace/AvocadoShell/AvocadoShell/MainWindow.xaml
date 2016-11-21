@@ -8,14 +8,6 @@
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
 
-    <framework:GlassPane.Resources>
-        <local:Config x:Key="Config"/>
-    </framework:GlassPane.Resources>
-    
-    <Grid>
-        <terminal:TerminalTextArea 
-            x:Name="Terminal"
-            Foreground="{Binding Source={StaticResource Config},Path=InputBrush}"/>
-    </Grid>
+    <terminal:TerminalTextArea x:Name="Terminal" Foreground="SkyBlue"/>
 
 </framework:GlassPane>
