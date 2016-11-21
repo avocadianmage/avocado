@@ -6,11 +6,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace AvocadoDownloader.BusinessLayer
 {
-    public class FileItem : INotifyPropertyChanged
+    [Serializable]
+    public class FileItem : INotifyPropertyChanged, ISerializable
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler Removed;
@@ -66,6 +68,7 @@ namespace AvocadoDownloader.BusinessLayer
         {
             await webDownload.Cancel();
             Status = status;
+            ProgressValue = 0;
         }
 
         public void NotifyStart()
@@ -157,6 +160,26 @@ namespace AvocadoDownloader.BusinessLayer
         {
             if (Directory.EnumerateFileSystemEntries(path).Any()) return;
             Directory.Delete(path);
+        }
+
+        public void GetObjectData(
+            SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Removed", Removed);
+            info.AddValue("FilePath", FilePath);
+            info.AddValue("FinishedDownloading", FinishedDownloading);
+            info.AddValue("Status", Status);
+            info.AddValue("ProgressValue", ProgressValue);
+        }
+
+        FileItem(SerializationInfo info, StreamingContext context)
+            : this(info.GetString("FilePath"))
+        {
+            Removed += (EventHandler)info.GetValue(
+                "Removed", typeof(EventHandler));
+            FinishedDownloading = info.GetBoolean("FinishedDownloading");
+            Status = info.GetString("Status");
+            ProgressValue = info.GetDouble("ProgressValue");
         }
     }
 }

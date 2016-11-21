@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace StandardLibrary.Utilities
 {
+    [Serializable]
     public sealed class ObservableDictionary<TKey, TValue>
     {
         public IEnumerable<TValue> EnumerableData => observableCollection;

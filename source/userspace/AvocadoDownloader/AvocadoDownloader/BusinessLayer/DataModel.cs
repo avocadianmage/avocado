@@ -1,8 +1,10 @@
 ﻿using StandardLibrary.Utilities;
+using System;
 using System.Collections.Generic;
 
 namespace AvocadoDownloader.BusinessLayer
 {
+    [Serializable]
     public class DataModel
     {
         public IEnumerable<Grouper> Groupers => grouperDict.EnumerableData;

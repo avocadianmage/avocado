@@ -45,6 +45,9 @@
     <Reference Include="AvocadoFramework">
       <HintPath>..\..\..\system\Avocado\AvocadoFramework\bin\Release\AvocadoFramework.dll</HintPath>
     </Reference>
+    <Reference Include="AvocadoUtilities">
+      <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
+    </Reference>
     <Reference Include="StandardLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\system\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>

@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace AvocadoDownloader.BusinessLayer
 {
+    [Serializable]
     public class Grouper
     {
         public event EventHandler Removed;

@@ -1,24 +1,51 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Engine;
+using AvocadoUtilities.Context;
 using DownloaderProtocol;
 using StandardLibrary.Processes;
 using StandardLibrary.Processes.NamedPipes;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
 namespace AvocadoDownloader
 {
     public partial class MainWindow : GlassPane
     {
-        readonly DataModel dataModel = new DataModel();
+        string serializationPath { get; }
+            = Path.Combine(AvocadoContext.AppDataPath, "downloads.bin");
+
+        readonly DataModel dataModel;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            dataModel = createDataModel();
             DataContext = dataModel;
+        }
+
+        DataModel createDataModel()
+        {
+            if (!File.Exists(serializationPath)) return new DataModel();
+            using (var stream = new FileStream(
+                serializationPath, FileMode.Open))
+            {
+                return (DataModel)new BinaryFormatter().Deserialize(stream);
+            }
+        }
+
+        void serializeData()
+        {
+            using (var stream = new FileStream(
+                serializationPath, FileMode.Create))
+            {
+                new BinaryFormatter().Serialize(stream, dataModel);
+            }
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -31,7 +58,7 @@ namespace AvocadoDownloader
         async Task initServer()
         {
             var server = new NamedPipeServer();
-            server.MessageReceived += (s, e) 
+            server.MessageReceived += (s, e)
                 => processMessage(e.Message);
             await server.Start(ProtocolConfig.PipeName);
         }
@@ -59,7 +86,7 @@ namespace AvocadoDownloader
             // it as coming from the commandline.
             else
             {
-                Dispatcher.BeginInvoke((Action)(() => 
+                Dispatcher.BeginInvoke((Action)(() =>
                     processCommandlineArgs(EnvUtils.SplitArgStr(message))));
             }
         }
@@ -88,6 +115,7 @@ namespace AvocadoDownloader
         {
             base.OnClosed(e);
             deleteIncompleteFileItems();
+            serializeData();
         }
 
         // Delete file items that have not finished downloading.

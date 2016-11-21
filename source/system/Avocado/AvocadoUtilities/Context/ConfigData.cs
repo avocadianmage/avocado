@@ -1,5 +1,4 @@
 ﻿using StandardLibrary.Utilities;
-using System;
 using System.IO;
 
 namespace AvocadoUtilities.Context
@@ -12,9 +11,7 @@ namespace AvocadoUtilities.Context
 
         public ConfigData(string name)
         {
-            var appDataPath = Environment.GetFolderPath(
-                    Environment.SpecialFolder.ApplicationData);
-            var path = Path.Combine(appDataPath, "Avocado", $"{name}.ini");
+            var path = Path.Combine(AvocadoContext.AppDataPath, $"{name}.ini");
             configFile = new ConfigFile(path);
         }
 
