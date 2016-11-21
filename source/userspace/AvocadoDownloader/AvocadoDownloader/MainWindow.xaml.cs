@@ -16,8 +16,8 @@ namespace AvocadoDownloader
 {
     public partial class MainWindow : GlassPane
     {
-        string serializationPath { get; }
-            = Path.Combine(AvocadoContext.AppDataPath, "downloads.bin");
+        string serializationPath 
+            => Path.Combine(AvocadoContext.AppDataPath, "downloads.bin");
 
         readonly DataModel dataModel;
 
