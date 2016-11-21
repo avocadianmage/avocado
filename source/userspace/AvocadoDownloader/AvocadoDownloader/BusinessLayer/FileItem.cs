@@ -67,8 +67,18 @@ namespace AvocadoDownloader.BusinessLayer
             Status = status;
         }
 
-        public void NotifyStart() => Status = Config.StartDownloadStatus;
-        public void NotifyFinish() => Status = Config.FinishDownloadStatus;
+        public void NotifyStart()
+        {
+            Status = Config.StartDownloadStatus;
+            ProgressValue = 0;
+        }
+
+        public void NotifyFinish()
+        {
+            Status = Config.FinishDownloadStatus;
+            ProgressValue = 100;
+        }
+
         public void NotifyProgress(double percent)
              => updateProgress(percent, null);
 

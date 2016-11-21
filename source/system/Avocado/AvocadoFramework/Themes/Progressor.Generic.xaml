@@ -64,8 +64,8 @@
                                 Background="Transparent"
                                 Foreground="{StaticResource PrimaryBrush}"
                                 BorderThickness="0"
-                                Minimum="0" 
-                                Maximum="100" 
+                                Minimum="{TemplateBinding Minimum}" 
+                                Maximum="{TemplateBinding Maximum}" 
                                 Value="{TemplateBinding Value}" />
 
                             <text:TextLabel 

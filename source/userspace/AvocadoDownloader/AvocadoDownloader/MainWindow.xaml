@@ -49,6 +49,7 @@
                                             SaveFilePath="{Binding FilePath}"
                                             Status="{Binding Status}"
                                             Value="{Binding ProgressValue}"
+                                            Maximum="100"
                                             Margin="4 2 2 2" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

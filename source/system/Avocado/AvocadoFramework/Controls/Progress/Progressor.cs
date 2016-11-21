@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace AvocadoFramework.Controls.Progress
 {
-    public class Progressor : Control
+    public class Progressor : ProgressBar
     {
         static Progressor()
         {
@@ -12,19 +12,6 @@ namespace AvocadoFramework.Controls.Progress
             DefaultStyleKeyProperty.OverrideMetadata(
                 type,
                 new FrameworkPropertyMetadata(type));
-        }
-
-        public static readonly DependencyProperty ValueProperty
-            = DependencyProperty.Register(
-                "Value",
-                typeof(double),
-                typeof(Progressor),
-                new FrameworkPropertyMetadata());
-
-        public double Value
-        {
-            get { return (double)GetValue(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
         }
 
         public static readonly DependencyProperty TitleProperty
