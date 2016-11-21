@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Threading;
 
 namespace AvocadoShell.PowerShellService.Host
@@ -69,7 +70,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// Gets the version object for this application. Typically this 
         /// should match the version resource in the application.
         /// </summary>
-        public override Version Version => Config.Version;
+        public override Version Version
+            => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// This API Instructs the host to interrupt the currently running 
