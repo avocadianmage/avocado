@@ -95,10 +95,7 @@ namespace AvocadoDownloader
         {
             foreach (var grouper in dataModel.Groupers.ToList())
                 foreach (var fileItem in grouper.FileItems.ToList())
-                {
-                    if (fileItem.FinishedDownloading) continue;
-                    fileItem.Remove(true);
-                }
+                    if (!fileItem.FinishedDownloading) fileItem.Remove(true);
         }
     }
 }
