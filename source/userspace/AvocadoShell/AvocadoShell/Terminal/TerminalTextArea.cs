@@ -2,6 +2,7 @@
 using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
+using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
@@ -13,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using static AvocadoShell.Config;
 using static StandardLibrary.Utilities.WPF;
 
 namespace AvocadoShell.Terminal
@@ -310,28 +312,10 @@ namespace AvocadoShell.Terminal
 
         async Task<string> getShellPromptString()
         {
-            var prompt = string.Empty;
-
-            // Add remote computer name.
             var psEngine = await psEngineAsync;
-            if (psEngine.RemoteComputerName != null)
-            {
-                prompt += $"[{psEngine.RemoteComputerName}] ";
-            }
-
-            // Add working directory.
-            var workingDir 
-                = formatPathForDisplay(psEngine.GetWorkingDirectory());
-            prompt += $"{workingDir} ";
-
-            return prompt;
-        }
-
-        string formatPathForDisplay(string path)
-        {
-            var homeDir = Environment.GetFolderPath(
-               Environment.SpecialFolder.UserProfile);
-            return path.Replace(homeDir, "~");
+            return Prompt.GetShellPromptString(
+                psEngine.GetWorkingDirectory(),
+                psEngine.RemoteComputerName);
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
@@ -343,11 +327,19 @@ namespace AvocadoShell.Terminal
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
-            // Update the window title to the shell prompt text.
-            if (fromShell) Window.GetWindow(this).Title = prompt;
+            if (fromShell)
+            {
+                // Update the window title to the shell prompt text.
+                Window.GetWindow(this).Title 
+                    = $"{Prompt.ElevatedPrefix}{prompt}";
 
+                // Write elevated prefix at shell prompt.
+                if (!string.IsNullOrWhiteSpace(Prompt.ElevatedPrefix))
+                    Write(Prompt.ElevatedPrefix, ElevatedBrush);
+            }
+            
             // Write prompt text.
-            Write(prompt.TrimEnd(), Config.PromptBrush);
+            Write(prompt.TrimEnd(), PromptBrush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
             clearUndoBuffer();
@@ -376,11 +368,11 @@ namespace AvocadoShell.Terminal
             {
                 writeOutputLineWithANSICodes(data);
             }
-            else safeWrite(data, Config.SystemFontBrush, true);
+            else safeWrite(data, SystemFontBrush, true);
         }
 
         public void WriteErrorLine(string data)
-            => safeWrite(data, Config.ErrorFontBrush, true);
+            => safeWrite(data, ErrorFontBrush, true);
 
         void safeWrite(string data, Brush foreground, bool newline)
         {
@@ -419,7 +411,7 @@ namespace AvocadoShell.Terminal
             {
                 var brush = segment.Color.HasValue
                         ? new SolidColorBrush(segment.Color.Value)
-                        : Config.SystemFontBrush;
+                        : SystemFontBrush;
                 write(segment.Text, brush, newline);
             }),
             OUTPUT_PRIORITY);

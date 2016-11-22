@@ -1,4 +1,8 @@
-﻿namespace AvocadoShell.Terminal.Modules
+﻿using StandardLibrary.Processes;
+using System;
+using System.Text;
+
+namespace AvocadoShell.Terminal.Modules
 {
     sealed class Prompt
     {
@@ -9,6 +13,26 @@
         {
             FromShell = fromShell;
             LengthInSymbols = lengthInSymbols;
+        }
+
+        public static string ElevatedPrefix
+            => EnvUtils.IsAdmin ? "root " : string.Empty;
+
+        public static string GetShellPromptString(
+            string workingDirectory, string remoteComputerName)
+        {
+            var sb = new StringBuilder();
+            if (remoteComputerName != null)
+                sb.Append($"[{remoteComputerName}] ");
+            sb.Append(formatPathForDisplay(workingDirectory));
+            return sb.ToString();
+        }
+
+        static string formatPathForDisplay(string path)
+        {
+            var homeDir = Environment.GetFolderPath(
+               Environment.SpecialFolder.UserProfile);
+            return path.Replace(homeDir, "~");
         }
     }
 }
