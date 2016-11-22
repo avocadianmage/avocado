@@ -59,9 +59,9 @@ namespace AvocadoDownloader.BusinessLayer
 
         public async Task DownloadFromUrl(string url)
         {
-            NotifyStart();
+            notifyStart();
             await webDownload.Start(url);
-            NotifyFinish();
+            notifyFinish();
         }
 
         public async Task PrepareForDownload(string status)
@@ -71,22 +71,19 @@ namespace AvocadoDownloader.BusinessLayer
             ProgressValue = 0;
         }
 
-        public void NotifyStart()
+        void notifyStart()
         {
             Status = Config.StartDownloadStatus;
             ProgressValue = 0;
             FinishedDownloading = false;
         }
 
-        public void NotifyFinish()
+        void notifyFinish()
         {
             Status = Config.FinishDownloadStatus;
             ProgressValue = 100;
             FinishedDownloading = true;
         }
-
-        public void NotifyProgress(double percent)
-             => updateProgress(percent, null);
 
         void onProgressUpdated(
             object sender, DownloadProgressChangedEventArgs e)
@@ -96,21 +93,14 @@ namespace AvocadoDownloader.BusinessLayer
 
         void updateProgress(long bytes, long totalBytes)
         {
-            updateProgress(
-                100D * bytes / totalBytes,
-                getDownloadBytesStr(bytes, totalBytes));
-        }
+            var percent = 100D * bytes / totalBytes;
 
-        void updateProgress(double percent, string downloadBytesStr)
-        {
             // Set progress bar value.
             ProgressValue = percent;
 
             // Update status text.
-            var status = $"{percent.ToRoundedString(2)}%";
-            if (!string.IsNullOrWhiteSpace(downloadBytesStr))
-                status += $" [{downloadBytesStr}]";
-            Status = status;
+            Status = $@"{percent.ToRoundedString(2)}% [{
+                getDownloadBytesStr(bytes, totalBytes)}]";
         }
 
         static string getDownloadBytesStr(long bytes, long totalBytes)
