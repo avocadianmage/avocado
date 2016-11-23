@@ -155,9 +155,9 @@ namespace AvocadoShell.Terminal
 
         bool handleUpAndDownKeys(Key key)
         {
-            EnableInput(false);
+            safeSetReadOnly(true);
             historyLookup(key == Key.Down)
-                .ContinueWith(t => EnableInput(true));
+                .ContinueWith(t => safeSetReadOnly(false));
             return true;
         }
 
@@ -166,9 +166,9 @@ namespace AvocadoShell.Terminal
             // Handle normally if not at the shell prompt.
             if (!currentPrompt.FromShell) return false;
 
-            EnableInput(false);
+            safeSetReadOnly(true);
             performAutocomplete()
-                .ContinueWith(t => EnableInput(true));
+                .ContinueWith(t => safeSetReadOnly(false));
             return true;
         }
 
@@ -178,10 +178,13 @@ namespace AvocadoShell.Terminal
             if (IsShiftKeyDown) return false;
 
             // Otherwise, execute the input.
-            EnableInput(false);
+            safeSetReadOnly(true);
             execute().RunAsync();
             return true;
         }
+
+        void safeSetReadOnly(bool value)
+            => Dispatcher.BeginInvoke((Action)(() => IsReadOnly = value));
 
         protected override void HandleSpecialKeys(KeyEventArgs e)
         {
@@ -284,7 +287,7 @@ namespace AvocadoShell.Terminal
 
         void exit()
         {
-            EnableInput(false);
+            IsReadOnly = true;
             Window.GetWindow(this).Close();
         }
 
@@ -345,9 +348,9 @@ namespace AvocadoShell.Terminal
             // Update the current prompt object.
             currentPrompt.Update(
                 fromShell, StartPointer.GetOffsetToPosition(CaretPosition));
-            
+
             // Enable user input.
-            EnableInput(true);
+            IsReadOnly = false;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)

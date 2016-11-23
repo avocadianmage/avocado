@@ -8,10 +8,6 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
-        protected void EnableInput(bool enabled) => inputEnabled = enabled;
-
-        bool inputEnabled = false;
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -59,7 +55,7 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             // Ignore input if the InputEnabled flag is false.
             // The exception to this is system key handling (ex: Alt+F4).
-            if (!inputEnabled && e.Key != Key.System)
+            if (IsReadOnly && e.Key != Key.System)
             {
                 e.Handled = true;
                 return;
