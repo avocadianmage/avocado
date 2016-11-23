@@ -6,7 +6,7 @@ namespace AvocadoShell
     sealed class Config
     {
         public static Brush PromptBrush => Brushes.LightGreen;
-        public static Brush ElevatedBrush => Brushes.Orange;
+        public static Brush ElevatedBrush => Brushes.Yellow;
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
 

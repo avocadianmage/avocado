@@ -13,6 +13,7 @@
     </SelectionSets>
 
     <ViewDefinitions>
+        
         <View>
             <Name>children</Name>
             <ViewSelectedBy>
@@ -37,6 +38,26 @@
                 </WideEntries>
             </WideControl>
         </View>
+
+        <View>
+            <Name>ErrorInstance</Name>
+            <OutOfBand />
+            <ViewSelectedBy>
+                <TypeName>System.Management.Automation.ErrorRecord</TypeName>
+            </ViewSelectedBy>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <ExpressionBinding>
+                                <ScriptBlock>$_.ToString()</ScriptBlock>
+                            </ExpressionBinding>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </View>
+        
     </ViewDefinitions>
 
 </Configuration>
