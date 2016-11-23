@@ -49,6 +49,12 @@ namespace AvocadoFramework.Controls.TextRendering
             Canvas.SetTop(caret, caretRect.Y);
         }
 
+        protected void ClearUndoBuffer()
+        {
+            IsUndoEnabled = false;
+            IsUndoEnabled = true;
+        }
+
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             // Ignore input if the InputEnabled flag is false.

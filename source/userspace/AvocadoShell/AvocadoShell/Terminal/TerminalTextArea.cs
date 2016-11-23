@@ -340,7 +340,7 @@ namespace AvocadoShell.Terminal
             Write(prompt.TrimEnd(), PromptBrush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
-            clearUndoBuffer();
+            ClearUndoBuffer();
 
             // Update the current prompt object.
             currentPrompt.Update(
@@ -348,12 +348,6 @@ namespace AvocadoShell.Terminal
             
             // Enable user input.
             EnableInput(true);
-        }
-
-        void clearUndoBuffer()
-        {
-            IsUndoEnabled = false;
-            IsUndoEnabled = true;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)
