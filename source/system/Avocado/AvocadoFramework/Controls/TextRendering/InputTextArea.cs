@@ -27,11 +27,11 @@ namespace AvocadoFramework.Controls.TextRendering
             caret.Height = CharDimensions.Height + 1;
 
             // RichTextBox events.
-            TextBase.SelectionChanged += (s, e) => updateCaretLocation(caret);
-            TextBase.TextChanged += (s, e) => updateCaretLocation(caret);
+            SelectionChanged += (s, e) => updateCaretLocation(caret);
+            TextChanged += (s, e) => updateCaretLocation(caret);
             var handler = new ScrollChangedEventHandler(
                 (s, e) => updateCaretLocation(caret));
-            TextBase.AddHandler(ScrollViewer.ScrollChangedEvent, handler);
+            AddHandler(ScrollViewer.ScrollChangedEvent, handler);
 
             // Window events.
             var window = Window.GetWindow(this);
@@ -43,8 +43,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         void updateCaretLocation(UIElement caret)
         {
-            var caretRect = CaretPointer.GetCharacterRect(
-                CaretPointer.LogicalDirection);
+            var caretRect = CaretPosition.GetCharacterRect(
+                CaretPosition.LogicalDirection);
             Canvas.SetLeft(caret, caretRect.X);
             Canvas.SetTop(caret, caretRect.Y);
         }

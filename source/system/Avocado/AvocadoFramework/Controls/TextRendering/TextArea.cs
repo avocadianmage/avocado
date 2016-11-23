@@ -1,5 +1,4 @@
-﻿using StandardLibrary.Utilities.Extensions;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +8,7 @@ using System.Windows.Media.Animation;
 
 namespace AvocadoFramework.Controls.TextRendering
 {
-    public abstract class TextArea : Control
+    public abstract class TextArea : RichTextBox
     {
         const double TEXT_FADE_DURATION = 200;
 
@@ -22,21 +21,11 @@ namespace AvocadoFramework.Controls.TextRendering
                 new FrameworkPropertyMetadata(type));
         }
 
-        protected RichTextBox TextBase { get; private set; }
         protected Size CharDimensions { get; private set; }
-
-        protected TextPointer CaretPointer
-        {
-            get { return TextBase.CaretPosition; }
-            set { TextBase.CaretPosition = value; }
-        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-
-            // Cache any template child controls.
-            TextBase = this.GetTemplateElement<RichTextBox>("textBase");
             CharDimensions = getCharDimensions();
         }
 
@@ -54,7 +43,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void Write(string text, Brush foreground)
         {
-            CaretPointer = new Run(text, CaretPointer)
+            CaretPosition = new Run(text, CaretPosition)
             {
                 Foreground = createFadingBrush(foreground, TEXT_FADE_DURATION)
             }
@@ -69,37 +58,33 @@ namespace AvocadoFramework.Controls.TextRendering
             Write(text, foreground);
         }
 
-        protected TextPointer StartPointer => CaretPointer.DocumentStart;
+        protected TextPointer StartPointer => CaretPosition.DocumentStart;
         protected TextPointer EndPointer
-            => CaretPointer.DocumentEnd
+            => CaretPosition.DocumentEnd
                 // Omit default newline that is at the end of the document.
                 .GetNextInsertionPosition(LogicalDirection.Backward);
 
         protected TextPointer LineStartPointer 
-            => CaretPointer.GetLineStartPosition(0);
+            => CaretPosition.GetLineStartPosition(0);
 
         protected void MoveCaret(TextPointer pointer, bool select)
         {
-            if (select) TextBase.Selection.Select(CaretPointer, pointer);
-            else CaretPointer = pointer;
+            if (select) Selection.Select(CaretPosition, pointer);
+            else CaretPosition = pointer;
         }
 
         protected void ClearSelection()
-            => TextBase.Selection.Select(CaretPointer, CaretPointer);
+            => Selection.Select(CaretPosition, CaretPosition);
         
         Size getCharDimensions()
         {
             var formattedText = new FormattedText(
                 default(char).ToString(),
                 CultureInfo.CurrentUICulture,
-                TextBase.FlowDirection,
-                new Typeface(
-                    TextBase.FontFamily,
-                    TextBase.FontStyle,
-                    TextBase.FontWeight,
-                    TextBase.FontStretch),
-                TextBase.FontSize,
-                TextBase.Foreground);
+                FlowDirection,
+                new Typeface(FontFamily, FontStyle, FontWeight, FontStretch),
+                FontSize,
+                Foreground);
             return new Size(formattedText.Width, formattedText.Height);
         }
     }

@@ -2,7 +2,6 @@
 using AvocadoShell.PowerShellService.Runspaces;
 using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
-using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
@@ -56,11 +55,11 @@ namespace AvocadoShell.Terminal
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            
+
             Task.Run(startPowershell);
 
-            TextBase.TextChanged += (s, e) => TextBase.ScrollToEnd();
-            TextBase.SizeChanged += onSizeChanged;
+            TextChanged += (s, e) => ScrollToEnd();
+            SizeChanged += onSizeChanged;
         }
 
         async Task startPowershell()
@@ -109,8 +108,7 @@ namespace AvocadoShell.Terminal
             // The caret position does not change if text is selected
             // (unless Shift+Left is pressed) so we should not 
             // suppress that case.
-            return TextBase.Selection.IsEmpty
-                || (key == Key.Left && IsShiftKeyDown);
+            return Selection.IsEmpty || (key == Key.Left && IsShiftKeyDown);
         }
 
         bool handleHomeKey()
@@ -136,14 +134,14 @@ namespace AvocadoShell.Terminal
             if (!IsControlKeyDown) return false;
 
             // Ctrl+A will select all text after the prompt.
-            TextBase.Selection.Select(getPromptPointer(), EndPointer);
+            Selection.Select(getPromptPointer(), EndPointer);
             return true;
         }
 
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
-            if (TextBase.Selection.IsEmpty) setInput(string.Empty);
+            if (Selection.IsEmpty) setInput(string.Empty);
             // Otherwise, cancel the selected text.
             else ClearSelection();
             return true;
@@ -270,7 +268,7 @@ namespace AvocadoShell.Terminal
         { 
             // Get data needed for the completion.
             var input = getInput();
-            var index = getInputTextRange(CaretPointer).Text.Length;
+            var index = getInputTextRange(CaretPosition).Text.Length;
             var forward = !IsShiftKeyDown;
 
             // Perform the completion.
@@ -346,7 +344,7 @@ namespace AvocadoShell.Terminal
 
             // Update the current prompt object.
             currentPrompt.Update(
-                fromShell, StartPointer.GetOffsetToPosition(CaretPointer));
+                fromShell, StartPointer.GetOffsetToPosition(CaretPosition));
             
             // Enable user input.
             EnableInput(true);
@@ -354,8 +352,8 @@ namespace AvocadoShell.Terminal
 
         void clearUndoBuffer()
         {
-            TextBase.IsUndoEnabled = false;
-            TextBase.IsUndoEnabled = true;
+            IsUndoEnabled = false;
+            IsUndoEnabled = true;
         }
 
         public void WriteCustom(string data, Brush foreground, bool newline)
@@ -449,6 +447,6 @@ namespace AvocadoShell.Terminal
             => new TextRange(getPromptPointer(), end);
         
         bool atOrBeforePrompt()
-            => string.IsNullOrEmpty(getInputTextRange(CaretPointer).Text);
+            => string.IsNullOrEmpty(getInputTextRange(CaretPosition).Text);
     }
 }

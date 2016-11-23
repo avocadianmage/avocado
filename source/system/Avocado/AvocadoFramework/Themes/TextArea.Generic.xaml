@@ -6,6 +6,25 @@
     <!-- Styling. -->
     <Style TargetType="{x:Type text:TextArea}">
         
+        <!-- Properties. -->
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="CaretBrush" Value="Transparent" />
+        <Setter Property="SelectionBrush" Value="Orange" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="AcceptsTab" Value="True" />
+        <Setter Property="Cursor" Value="Arrow" />
+        <Setter Property="Padding" Value="-5 0 0 0" />
+        <Setter Property="FontFamily" 
+                Value="{x:Static text:TextConfig.FontFamily}" />
+        <Setter Property="FontSize" 
+                Value="{x:Static text:TextConfig.FontSize}" />
+        <Setter Property="FontWeight" 
+                Value="{x:Static text:TextConfig.FontWeight}" />
+        <Setter Property="TextOptions.TextFormattingMode" 
+                Value="{x:Static text:TextConfig.TextFormattingMode}" />
+
         <!-- Template. -->
         <Setter Property="Template">
             <Setter.Value>
@@ -14,31 +33,8 @@
                     <!-- Layout. -->
                     <Grid>
 
-                        <!-- Text input. -->
-                        <RichTextBox x:Name="textBase"
-                                     BorderThickness="0"
-                                     Background="Transparent"
-                                     CaretBrush="Transparent"
-                                     SelectionBrush="Orange"
-                                     VerticalScrollBarVisibility="Visible"
-                                     HorizontalScrollBarVisibility="Disabled"
-                                     FontFamily="{x:Static text:TextConfig.FontFamily}"
-                                     FontSize="{x:Static text:TextConfig.FontSize}"
-                                     FontWeight="{x:Static text:TextConfig.FontWeight}"
-                                     TextOptions.TextFormattingMode="{x:Static text:TextConfig.TextFormattingMode}"
-                                     IsTabStop="False"
-                                     AcceptsTab="True"
-                                     Cursor="Arrow"
-                                     Foreground="{TemplateBinding Foreground}"
-                                     Padding="-5 0 0 0">
-
-                            <RichTextBox.Resources>
-                                <Style TargetType="{x:Type Paragraph}">
-                                    <Setter Property="Margin" Value="0" />
-                                </Style>
-                            </RichTextBox.Resources>
-
-                        </RichTextBox>
+                        <!-- Text content. -->
+                        <ScrollViewer x:Name="PART_ContentHost" />
 
                         <!-- Caret. -->
                         <Canvas>
@@ -63,17 +59,8 @@
                                 </Border.Triggers>
                             </Border>
                         </Canvas>
-
+                        
                     </Grid>
-
-                    <!-- Give the text box focus. -->
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsFocused" Value="True">
-                            <Setter TargetName="textBase" 
-                                    Property="FocusManager.FocusedElement" 
-                                    Value="{Binding ElementName=textBase}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
 
                 </ControlTemplate>
             </Setter.Value>
