@@ -153,22 +153,22 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        bool handleUpAndDownKeys(Key key)
+        async Task<bool> handleUpAndDownKeys(Key key)
         {
-            safeSetReadOnly(true);
-            historyLookup(key == Key.Down)
-                .ContinueWith(t => safeSetReadOnly(false));
+            IsReadOnly = true;
+            await historyLookup(key == Key.Down);
+            IsReadOnly = false;
             return true;
         }
 
-        bool handleTabKey()
+        async Task<bool> handleTabKey()
         {
             // Handle normally if not at the shell prompt.
             if (!currentPrompt.FromShell) return false;
 
-            safeSetReadOnly(true);
-            performAutocomplete()
-                .ContinueWith(t => safeSetReadOnly(false));
+            IsReadOnly = true;
+            await performAutocomplete();
+            IsReadOnly = false;
             return true;
         }
 
@@ -178,15 +178,12 @@ namespace AvocadoShell.Terminal
             if (IsShiftKeyDown) return false;
 
             // Otherwise, execute the input.
-            safeSetReadOnly(true);
+            IsReadOnly = true;
             execute().RunAsync();
             return true;
         }
 
-        void safeSetReadOnly(bool value)
-            => Dispatcher.BeginInvoke((Action)(() => IsReadOnly = value));
-
-        protected override void HandleSpecialKeys(KeyEventArgs e)
+        protected override async void HandleSpecialKeys(KeyEventArgs e)
         {
             if (e.Handled) return;
 
@@ -216,12 +213,12 @@ namespace AvocadoShell.Terminal
                 // Input history.
                 case Key.Up:
                 case Key.Down:
-                    e.Handled = handleUpAndDownKeys(e.Key);
+                    e.Handled = await handleUpAndDownKeys(e.Key);
                     break;
 
                 // Autocompletion.
                 case Key.Tab:
-                    e.Handled = handleTabKey();
+                    e.Handled = await handleTabKey();
                     break;
 
                 // Handle command execution.
