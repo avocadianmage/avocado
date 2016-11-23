@@ -172,14 +172,14 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        bool handleEnterKey()
+        async Task<bool> handleEnterKey()
         {
             // Go to new line if shift is pressed at shell prompt.
             if (IsShiftKeyDown) return false;
 
             // Otherwise, execute the input.
             IsReadOnly = true;
-            execute().RunAsync();
+            await execute();
             return true;
         }
 
@@ -223,7 +223,7 @@ namespace AvocadoShell.Terminal
 
                 // Handle command execution.
                 case Key.Enter:
-                    e.Handled = handleEnterKey();
+                    e.Handled = await handleEnterKey();
                     break;
             }
             
@@ -256,9 +256,8 @@ namespace AvocadoShell.Terminal
             outputBuffer.Reset();
 
             // Execute the command.
-            var psEngine = (await psEngineAsync);
-            await Task.Run(
-                () => WriteErrorLine(psEngine.ExecuteCommand(input)));
+            await Task.Run(async () => 
+                WriteErrorLine((await psEngineAsync).ExecuteCommand(input)));
 
             // Show the next shell prompt.
             await writeShellPrompt();
