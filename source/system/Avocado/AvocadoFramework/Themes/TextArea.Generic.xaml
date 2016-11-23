@@ -40,9 +40,27 @@
                         <!-- Caret. -->
                         <Canvas>
                             <Border x:Name="Caret" 
-                                    BorderBrush="Orange"
                                     BorderThickness="0 0 0 1"
                                     SnapsToDevicePixels="True">
+                                
+                                <!-- Change color based on if the control is readonly. -->
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="BorderBrush" 
+                                                Value="Orange" />
+                                        <Style.Triggers>
+                                            <DataTrigger 
+                                                Binding="{Binding Path=IsReadOnly, 
+                                                    RelativeSource={RelativeSource TemplatedParent}}"
+                                                Value="True">
+                                                <Setter Property="BorderBrush" 
+                                                        Value="Gray" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                
+                                <!-- Fade animation. -->
                                 <Border.Triggers>
                                     <EventTrigger RoutedEvent="Border.Loaded">
                                         <BeginStoryboard>
@@ -58,9 +76,10 @@
                                         </BeginStoryboard>
                                     </EventTrigger>
                                 </Border.Triggers>
+                                
                             </Border>
                         </Canvas>
-                        
+
                     </Grid>
 
                 </ControlTemplate>
