@@ -2,22 +2,14 @@
 
 <Configuration>
 
-    <SelectionSets>
-        <SelectionSet>
-            <Name>FileSystemTypes</Name>
-            <Types>
-                <TypeName>System.IO.DirectoryInfo</TypeName>
-                <TypeName>System.IO.FileInfo</TypeName>
-            </Types>
-        </SelectionSet>
-    </SelectionSets>
-
     <ViewDefinitions>
         
+        <!-- Get-ChildItem (ls). -->
         <View>
             <Name>children</Name>
             <ViewSelectedBy>
-                <SelectionSetName>FileSystemTypes</SelectionSetName>
+                <TypeName>System.IO.DirectoryInfo</TypeName>
+                <TypeName>System.IO.FileInfo</TypeName>
             </ViewSelectedBy>
             <WideControl>
                 <AutoSize/>
@@ -39,6 +31,26 @@
             </WideControl>
         </View>
 
+        <!-- Get-Location (pwd). -->
+        <View>
+            <Name>PathInfo</Name>
+            <ViewSelectedBy>
+                <TypeName>System.Management.Automation.PathInfo</TypeName>
+            </ViewSelectedBy>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <ExpressionBinding>
+                                <PropertyName>Path</PropertyName>
+                            </ExpressionBinding>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </View>
+
+        <!-- Errors. -->
         <View>
             <Name>ErrorInstance</Name>
             <OutOfBand />
