@@ -62,12 +62,11 @@ namespace AvocadoDownloader
             processCommandlineArgs(EnvUtils.GetArgs());
         }
 
-        async Task initServer()
+        Task initServer()
         {
             var server = new NamedPipeServer();
-            server.MessageReceived += (s, e)
-                => processMessage(e.Message);
-            await server.Start(ProtocolConfig.PipeName);
+            server.MessageReceived += (s, e) => processMessage(e.Message);
+            return server.Start(ProtocolConfig.PipeName);
         }
 
         void processCommandlineArgs(IEnumerable<string> args)
