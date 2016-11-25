@@ -16,6 +16,7 @@ namespace AvocadoDownloader.BusinessLayer
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler Removed;
+        public event EventHandler DownloadFinished;
 
         public string FilePath { get; }
         public bool FinishedDownloading { get; private set; }
@@ -83,6 +84,7 @@ namespace AvocadoDownloader.BusinessLayer
             Status = Config.FinishDownloadStatus;
             ProgressValue = 100;
             FinishedDownloading = true;
+            DownloadFinished?.Invoke(this, EventArgs.Empty);
         }
 
         void onProgressUpdated(

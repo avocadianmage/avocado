@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using System.Windows.Shell;
 
 namespace AvocadoDownloader
 {
@@ -19,23 +20,29 @@ namespace AvocadoDownloader
         string serializationPath 
             => Path.Combine(AvocadoContext.AppDataPath, "downloads.bin");
 
-        readonly DataModel dataModel;
+        readonly GrouperList grouperList;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            dataModel = createDataModel();
-            DataContext = dataModel;
+            grouperList = createGrouperList();
+            DataContext = grouperList;
         }
 
-        DataModel createDataModel()
+        IEnumerable<FileItem> getFileItems()
+            => grouperList.Groupers.SelectMany(g => g.FileItems);
+
+        IEnumerable<FileItem> getUnfinishedFileItems()
+            => getFileItems().Where(f => !f.FinishedDownloading);
+
+        GrouperList createGrouperList()
         {
-            if (!File.Exists(serializationPath)) return new DataModel();
+            if (!File.Exists(serializationPath)) return new GrouperList();
             using (var stream = new FileStream(
                 serializationPath, FileMode.Open))
             {
-                return (DataModel)new BinaryFormatter().Deserialize(stream);
+                return (GrouperList)new BinaryFormatter().Deserialize(stream);
             }
         }
 
@@ -44,7 +51,7 @@ namespace AvocadoDownloader
             using (var stream = new FileStream(
                 serializationPath, FileMode.Create))
             {
-                new BinaryFormatter().Serialize(stream, dataModel);
+                new BinaryFormatter().Serialize(stream, grouperList);
             }
         }
 
@@ -71,11 +78,32 @@ namespace AvocadoDownloader
 
             // Subsequent arguments are file paths grouped under the title.
             // Quit if this set is empty.
-            var filePaths = args.Skip(1);
-            if (!filePaths.Any()) return;
+            var fileItems = args.Skip(1).Select(f => new FileItem(f)).ToList();
+            if (!fileItems.Any()) return;
 
-            dataModel.AddGrouper(title, filePaths);
+            // Subscribe to download finished event for each file item.
+            fileItems.ForEach(
+                f => f.DownloadFinished += onFileItemDownloadFinished);
+
+            grouperList.AddGrouper(title, fileItems);
+            notifyDownloadStarted();
+        }
+
+        void notifyDownloadStarted()
+        {
+            TaskbarItemInfo.ProgressState 
+                = TaskbarItemProgressState.Indeterminate;
             Activate();
+        }
+
+        void onFileItemDownloadFinished(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                TaskbarItemInfo.ProgressState = getUnfinishedFileItems().Any()
+                    ? TaskbarItemProgressState.Indeterminate
+                    : TaskbarItemProgressState.None;
+            }));
         }
 
         void processMessage(string message)
@@ -98,7 +126,7 @@ namespace AvocadoDownloader
                 StringSplitOptions.RemoveEmptyEntries);
             var messageType = (MessageType)int.Parse(pieces[0]);
             string title = pieces[1], filePath = pieces[2], data = pieces[3];
-            var fileItem = dataModel.GetGrouper(title).GetFileItem(filePath);
+            var fileItem = grouperList.GetGrouper(title).GetFileItem(filePath);
             switch (messageType)
             {
                 case MessageType.PrepareForDownload:
@@ -114,16 +142,12 @@ namespace AvocadoDownloader
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            deleteIncompleteFileItems();
+            deleteUnfinishedFileItems();
             serializeData();
         }
 
         // Delete file items that have not finished downloading.
-        void deleteIncompleteFileItems()
-        {
-            foreach (var grouper in dataModel.Groupers.ToList())
-                foreach (var fileItem in grouper.FileItems.ToList())
-                    if (!fileItem.FinishedDownloading) fileItem.Remove(true);
-        }
+        void deleteUnfinishedFileItems()
+            => getUnfinishedFileItems().ToList().ForEach(f => f.Remove(true));
     }
 }

@@ -16,21 +16,21 @@ namespace AvocadoDownloader.BusinessLayer
         readonly ObservableDictionary<string, FileItem> fileItemDict
             = new ObservableDictionary<string, FileItem>();
 
-        public Grouper(string title, IEnumerable<string> filePaths)
+        public Grouper(string title, IEnumerable<FileItem> fileItems)
         {
             Title = title;
-            AddFileItems(filePaths);
+            AddFileItems(fileItems);
         }
 
         public FileItem GetFileItem(string filePath) => fileItemDict[filePath];
 
-        public void AddFileItems(IEnumerable<string> filePaths)
+        public void AddFileItems(IEnumerable<FileItem> fileItems)
         {
-            foreach (var filePath in filePaths)
+            foreach (var fileItem in fileItems)
             {
+                var filePath = fileItem.FilePath;
                 if (fileItemDict.ContainsKey(filePath)) continue;
 
-                var fileItem = new FileItem(filePath);
                 fileItem.Removed += onFileItemRemoved;
                 fileItemDict.Add(filePath, fileItem);
             }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace AvocadoDownloader.BusinessLayer
 {
     [Serializable]
-    public class DataModel
+    public class GrouperList
     {
         public IEnumerable<Grouper> Groupers => grouperDict.EnumerableData;
 
@@ -14,15 +14,15 @@ namespace AvocadoDownloader.BusinessLayer
 
         public Grouper GetGrouper(string title) => grouperDict[title];
 
-        public void AddGrouper(string title, IEnumerable<string> filePaths)
+        public void AddGrouper(string title, IEnumerable<FileItem> fileItems)
         {
             if (grouperDict.ContainsKey(title))
             {
-                grouperDict[title].AddFileItems(filePaths);
+                grouperDict[title].AddFileItems(fileItems);
                 return;
             }
 
-            var grouper = new Grouper(title, filePaths);
+            var grouper = new Grouper(title, fileItems);
             grouper.Removed += (s, e) => grouperDict.Remove(((Grouper)s).Title);
             grouperDict.Add(title, grouper);
         }

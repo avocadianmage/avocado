@@ -18,6 +18,11 @@
         <Color x:Key="SelectedColor">Orange</Color>
         <Duration x:Key="SelectAnimationDuration">0:0:0.2</Duration>
     </AvocadoEngine:GlassPane.Resources>
+
+    <!-- Show progress from taskbar item. -->
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo />
+    </Window.TaskbarItemInfo>
     
     <!-- Layout. -->
     <Grid>
