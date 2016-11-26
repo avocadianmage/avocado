@@ -39,13 +39,20 @@ namespace AvocadoShell.Terminal
             Unloaded += async (s, e) => await terminateExec();
             TextChanged += (s, e) => ScrollToEnd();
             SizeChanged += onSizeChanged;
+
+            disableRichTextBoxKeys();
         }
+
+        void disableRichTextBoxKeys() =>
+            new Key[] { Key.B, Key.E, Key.I, Key.J, Key.L, Key.R, Key.U }
+                .ForEach(k => InputBindings.Add(new KeyBinding(
+                    ApplicationCommands.NotACommand, k, ModifierKeys.Control)));
 
         PowerShellEngine createPowerShellEngine()
         {
             var psEngine = new PowerShellEngine(this);
-            psEngine.ExitRequested += (s, e) 
-                => Dispatcher.BeginInvoke((Action)exit);
+            psEngine.ExitRequested += (s, e) =>
+                Dispatcher.BeginInvoke((Action)exit);
             return psEngine;
         }
 
