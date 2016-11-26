@@ -34,8 +34,11 @@ namespace AvocadoShell.Terminal
         {
             psEngineAsync = Task.Run(() => createPowerShellEngine());
             historyAsync = Task.Run(createHistory);
+            Task.Run(startPowershell);
 
             Unloaded += async (s, e) => await terminateExec();
+            TextChanged += (s, e) => ScrollToEnd();
+            SizeChanged += onSizeChanged;
         }
 
         PowerShellEngine createPowerShellEngine()
@@ -52,20 +55,9 @@ namespace AvocadoShell.Terminal
             return new History(maxHistoryCount);
         }
 
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            Task.Run(startPowershell);
-
-            TextChanged += (s, e) => ScrollToEnd();
-            SizeChanged += onSizeChanged;
-        }
-
         async Task startPowershell()
         {
-            var psEngine = await psEngineAsync;
-            await Task.Run(() => WriteErrorLine(psEngine.InitEnvironment()));
+            WriteErrorLine((await psEngineAsync).InitEnvironment());
             await writeShellPrompt();
         }
 
