@@ -21,11 +21,10 @@ namespace AvocadoFramework.Controls.TextRendering
                 new FrameworkPropertyMetadata(type));
         }
 
-        protected Size CharDimensions { get; private set; }
+        protected Size CharDimensions { get; }
 
-        public override void OnApplyTemplate()
+        public TextArea()
         {
-            base.OnApplyTemplate();
             CharDimensions = getCharDimensions();
         }
 
