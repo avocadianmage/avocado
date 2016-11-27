@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Shell;
@@ -25,7 +26,6 @@ namespace AvocadoDownloader
         public MainWindow()
         {
             InitializeComponent();
-
             grouperList = createGrouperList();
             DataContext = grouperList;
         }
@@ -42,7 +42,18 @@ namespace AvocadoDownloader
             using (var stream = new FileStream(
                 serializationPath, FileMode.Open))
             {
-                return (GrouperList)new BinaryFormatter().Deserialize(stream);
+                try
+                {
+                    return (GrouperList)new BinaryFormatter()
+                        .Deserialize(stream);
+                }
+                catch (SerializationException exc)
+                {
+                    // Show error and discard the serialized file if it is 
+                    // corrupt.
+                    new MessagePane(exc.Message).ShowDialog();
+                    return new GrouperList();
+                }
             }
         }
 

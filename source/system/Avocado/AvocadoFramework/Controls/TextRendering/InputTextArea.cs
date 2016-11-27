@@ -74,7 +74,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
             switch (e.Key)
             {
-                // Sanitize linebreak.
+                // Format linebreak.
                 case Key.Enter:
                     WriteLine();
                     e.Handled = true;

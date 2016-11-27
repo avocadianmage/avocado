@@ -28,7 +28,6 @@ namespace AvocadoFramework.Engine
                 new FrameworkPropertyMetadata(frameType));
         }
 
-        // Startup code.
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);

@@ -6,7 +6,6 @@
         xmlns:AvocadoControls="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
         ResizeMode="NoResize"
         Width="420" SizeToContent="Height"
-        MinHeight="48"
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         Title="Avocado Downloader">
 

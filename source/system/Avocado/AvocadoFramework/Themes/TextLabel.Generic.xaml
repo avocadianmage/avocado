@@ -22,7 +22,8 @@
                 <ControlTemplate TargetType="{x:Type text:TextLabel}">
 
                     <!-- Layout. -->
-                    <ContentPresenter />
+                    <TextBlock Text="{TemplateBinding Content}"
+                               TextWrapping="Wrap" />
 
                 </ControlTemplate>
             </Setter.Value>

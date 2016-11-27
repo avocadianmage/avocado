@@ -1,0 +1,30 @@
+﻿<local:GlassPane x:Class="AvocadoFramework.Engine.MessagePane"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AvocadoFramework.Engine"
+        xmlns:text="clr-namespace:AvocadoFramework.Controls.TextRendering"
+        ResizeMode="NoResize"
+        Width="420" SizeToContent="Height"
+        PreviewKeyDown="GlassPane_PreviewKeyDown">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="32" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Image Grid.Row="0" Grid.Column="0"
+               Source="/AvocadoFramework;Component/Assets/error.png" 
+               Width="32" Height="32" 
+               RenderOptions.BitmapScalingMode="HighQuality" />
+        <text:TextLabel Grid.Row="0" Grid.Column="1"
+                        Margin="8 0 0 0"
+                        x:Name="Message"
+                        Foreground="Salmon"
+                        VerticalAlignment="Center" />
+    </Grid>
+
+</local:GlassPane>
