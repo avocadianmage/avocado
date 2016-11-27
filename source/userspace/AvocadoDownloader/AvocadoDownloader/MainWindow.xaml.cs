@@ -26,8 +26,14 @@ namespace AvocadoDownloader
         public MainWindow()
         {
             InitializeComponent();
+
+            // Initialize data context.
             grouperList = createGrouperList();
             DataContext = grouperList;
+
+            // Start server and process command line.
+            initServer().RunAsync();
+            processCommandlineArgs(EnvUtils.GetArgs());
         }
 
         IEnumerable<FileItem> getFileItems()
@@ -64,13 +70,6 @@ namespace AvocadoDownloader
             {
                 new BinaryFormatter().Serialize(stream, grouperList);
             }
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            base.OnSourceInitialized(e);
-            initServer().RunAsync();
-            processCommandlineArgs(EnvUtils.GetArgs());
         }
 
         Task initServer()
@@ -145,15 +144,14 @@ namespace AvocadoDownloader
             }
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            deleteUnfinishedFileItems();
-            serializeData();
-        }
-
         // Delete file items that have not finished downloading.
         void deleteUnfinishedFileItems()
             => getUnfinishedFileItems().ToList().ForEach(f => f.Remove(true));
+
+        void GlassPane_Closed(object sender, EventArgs e)
+        {
+            deleteUnfinishedFileItems();
+            serializeData();
+        }
     }
 }
