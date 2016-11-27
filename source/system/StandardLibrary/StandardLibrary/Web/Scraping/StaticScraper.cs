@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StandardLibrary.Utilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -10,12 +11,8 @@ namespace StandardLibrary.Web.Scraping
     {
         readonly CookieContainer cookies = new CookieContainer();
 
-        public void AddCookie(string url, string name, string content)
-        {
-            var uri = new Uri(url);
-            var cookie = new Cookie(name, content);
-            cookies.Add(uri, cookie);
-        }
+        public void AddCookie(string url, string name, string content) =>
+            cookies.Add(new Uri(url), new Cookie(name, content));
 
         // Returns a source string scraped from the specified URL.
         public async Task<string> GetSource(string url)
@@ -25,16 +22,14 @@ namespace StandardLibrary.Web.Scraping
             {
                 // Return the content of the response as a string, or null if 
                 // the request was unsuccessful (ex: HTTP 503).
-                var resp = await client.GetAsync(url).ConfigureAwait(false);
+                var resp = await client.GetAsync(url);
                 return resp.IsSuccessStatusCode
-                    ? await resp.Content
-                        .ReadAsStringAsync().ConfigureAwait(false)
-                    : null;
+                    ? await resp.Content.ReadAsStringAsync() : null;
             }
         }
 
-        HttpClientHandler clientHandler
-            => new HttpClientHandler { CookieContainer = cookies, };
+        HttpClientHandler clientHandler =>
+            new HttpClientHandler { CookieContainer = cookies };
 
         HttpClient getClient(HttpMessageHandler handler)
         {
@@ -42,24 +37,15 @@ namespace StandardLibrary.Web.Scraping
             var client = new HttpClient(handler);
 
             // Add headers.
-            foreach (var pair in headers)
-            {
-                client.DefaultRequestHeaders.Add(pair.Key, pair.Value);
-            }
+            headers.ForEach(
+                p => client.DefaultRequestHeaders.Add(p.Key, p.Value));
 
             return client;
         }
 
-        IDictionary<string, string> headers
+        IDictionary<string, string> headers => new Dictionary<string, string>
         {
-            get
-            {
-                var userAgent = ScrapeUtils.GetUserAgent(Browser.Chrome);
-                return new Dictionary<string, string>
-                {
-                    { "User-Agent", userAgent },
-                };
-            }
-        }
+            { "User-Agent", ScrapeUtils.GetUserAgent(Browser.Chrome) }
+        };
     }
 }
