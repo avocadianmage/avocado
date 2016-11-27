@@ -10,15 +10,9 @@ namespace StandardLibrary.Processes
 {
     public static class EnvUtils
     {
-        public static bool IsAdmin
-        {
-            get
-            {
-                var identity = WindowsIdentity.GetCurrent();
-                var principal = new WindowsPrincipal(identity);
-                return principal.IsInRole(WindowsBuiltInRole.Administrator);
-            }
-        }
+        public static bool IsAdmin =>
+            new WindowsPrincipal(WindowsIdentity.GetCurrent())
+                .IsInRole(WindowsBuiltInRole.Administrator);
 
         public static string CommandName
             => Process.GetCurrentProcess().ProcessName;
