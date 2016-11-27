@@ -106,15 +106,11 @@ namespace AvocadoDownloader
             Activate();
         }
 
-        void onFileItemDownloadFinished(object sender, EventArgs e)
-        {
+        void onFileItemDownloadFinished(object sender, EventArgs e) =>
             Dispatcher.BeginInvoke((Action)(() =>
-            {
                 TaskbarItemInfo.ProgressState = getUnfinishedFileItems().Any()
                     ? TaskbarItemProgressState.Indeterminate
-                    : TaskbarItemProgressState.None;
-            }));
-        }
+                    : TaskbarItemProgressState.None));
 
         void processMessage(string message)
         {
