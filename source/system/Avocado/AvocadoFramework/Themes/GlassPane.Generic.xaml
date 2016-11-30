@@ -165,7 +165,6 @@
                         </Border.Triggers>
                         
                         <ContentPresenter 
-                            x:Name="ContentArea" 
                             Margin="{StaticResource WindowMargin}" />
                         
                     </Border>

@@ -28,25 +28,23 @@ namespace AvocadoFramework.Engine
                 new FrameworkPropertyMetadata(frameType));
         }
 
-        protected override void OnSourceInitialized(EventArgs e)
+        protected override void OnActivated(EventArgs e)
         {
-            base.OnSourceInitialized(e);
-            hookMouseEvents();
+            base.OnActivated(e);
+            paneUI.GetResource<Storyboard>("OutlineFadeIn").Begin();
         }
 
-        void hookMouseEvents()
+        protected override void OnDeactivated(EventArgs e)
         {
-            var contentArea 
-                = this.GetTemplateElement<ContentPresenter>("ContentArea");
-            contentArea.PreviewMouseDown += onContentAreaPreviewMouseDown;
-            contentArea.PreviewMouseUp += onContentAreaPreviewMouseUp;
+            base.OnDeactivated(e);
+            paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
         }
 
-        void onContentAreaPreviewMouseDown(
-            object sender, MouseButtonEventArgs e)
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             // Prevent the mouse from interacting with other controls.
             e.Handled = true;
+            base.OnPreviewMouseDown(e);
 
             if (e.LeftButton != MouseButtonState.Pressed) return;
 
@@ -56,15 +54,16 @@ namespace AvocadoFramework.Engine
                 WindowState = WindowState == WindowState.Maximized
                     ? WindowState.Normal : WindowState.Maximized;
             }
-            
+
             // Otherwise, drag the window around.
             else DragMove();
         }
 
-        void onContentAreaPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
         {
             // Prevent the mouse from interacting with other controls.
             e.Handled = true;
+            base.OnPreviewMouseUp(e);
         }
 
         void applyCloseAnimation()
@@ -87,18 +86,6 @@ namespace AvocadoFramework.Engine
             if (closeImmediately) return;
             e.Cancel = true;
             applyCloseAnimation();
-        }
-
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-            paneUI.GetResource<Storyboard>("OutlineFadeIn").Begin();
-        }
-
-        protected override void OnDeactivated(EventArgs e)
-        {
-            base.OnDeactivated(e);
-            paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
         }
     }
 }
