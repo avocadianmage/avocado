@@ -12,12 +12,24 @@
         </Style.Resources>
 
         <!-- Area for resizing. -->
+        <Style.Triggers>
+            <DataTrigger 
+                Binding="{Binding RelativeSource={RelativeSource Self}, Path=ResizeMode}" 
+                Value="NoResize">
+                <Setter Property="WindowChrome.WindowChrome">
+                    <Setter.Value>
+                        <WindowChrome ResizeBorderThickness="0" />
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
-                <WindowChrome ResizeBorderThickness="{StaticResource WindowMargin}" />
+                <WindowChrome 
+                    ResizeBorderThickness="{StaticResource WindowMargin}" />
             </Setter.Value>
         </Setter>
-
+        
         <!-- GlassPane properties. -->
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="WindowStyle" Value="None" />
