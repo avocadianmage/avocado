@@ -226,8 +226,6 @@ namespace AvocadoShell.Terminal
                     break;
             }
             
-            // Ensure we are using the input color before processing regular
-            // keys.
             base.HandleSpecialKeys(e);
         }
 
