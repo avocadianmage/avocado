@@ -150,7 +150,8 @@ namespace AvocadoDownloader.BusinessLayer
 
         void deleteDirectoryIfEmpty(string path)
         {
-            if (Directory.EnumerateFileSystemEntries(path).Any()) return;
+            if (string.IsNullOrWhiteSpace(path) 
+                || Directory.EnumerateFileSystemEntries(path).Any()) return;
             Directory.Delete(path);
         }
 
