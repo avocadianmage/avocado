@@ -33,7 +33,7 @@ namespace AvocadoShell.Terminal
         public TerminalTextArea()
         {
             psEngineAsync = Task.Run(() => createPowerShellEngine());
-            historyAsync = Task.Run(() => createHistory());
+            historyAsync = Task.Run(createHistory);
             Task.Run(startPowershell);
 
             Unloaded += async (s, e) => await terminateExec();
