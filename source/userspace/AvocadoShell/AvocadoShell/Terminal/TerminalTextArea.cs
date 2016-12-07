@@ -33,7 +33,7 @@ namespace AvocadoShell.Terminal
         public TerminalTextArea()
         {
             psEngineAsync = Task.Run(() => createPowerShellEngine());
-            historyAsync = Task.Run(createHistory);
+            historyAsync = Task.Run(() => createHistory());
             Task.Run(startPowershell);
 
             Unloaded += async (s, e) => await terminateExec();
@@ -56,11 +56,8 @@ namespace AvocadoShell.Terminal
             return psEngine;
         }
 
-        async Task<History> createHistory()
-        {
-            var maxHistoryCount = (await psEngineAsync).GetMaxHistoryCount();
-            return new History(maxHistoryCount);
-        }
+        async Task<History> createHistory() =>
+            new History((await psEngineAsync).GetMaxHistoryCount());
 
         async Task startPowershell()
         {
@@ -71,7 +68,7 @@ namespace AvocadoShell.Terminal
         async void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!e.WidthChanged) return;
-
+            
             // Set the character buffer width of the PowerShell host.
             var bufferWidth =
                 (int)Math.Ceiling(e.NewSize.Width / CharDimensions.Width);
@@ -301,8 +298,8 @@ namespace AvocadoShell.Terminal
             return nonShellPromptDone.Block();
         }
 
-        async Task writeShellPrompt()
-            => safeWritePromptCore(await getShellPromptString(), true, false);
+        async Task writeShellPrompt() =>
+            safeWritePromptCore(await getShellPromptString(), true, false);
 
         async Task<string> getShellPromptString()
         {
@@ -324,8 +321,8 @@ namespace AvocadoShell.Terminal
             if (fromShell)
             {
                 // Update the window title to the shell prompt text.
-                Window.GetWindow(this).Title 
-                    = $"{Prompt.ElevatedPrefix}{prompt}";
+                Window.GetWindow(this).Title =
+                    $"{Prompt.ElevatedPrefix}{prompt}";
 
                 // Write elevated prefix at shell prompt.
                 if (!string.IsNullOrWhiteSpace(Prompt.ElevatedPrefix))
@@ -375,9 +372,7 @@ namespace AvocadoShell.Terminal
             // Run the data through the output buffer to determine if 
             // anything should be printed right now.
             if (!outputBuffer.ProcessNewOutput(ref data, ref foreground))
-            {
                 return;
-            }
 
             var action = newline ? (Action<string, Brush>)WriteLine : Write;
             action(data, foreground);

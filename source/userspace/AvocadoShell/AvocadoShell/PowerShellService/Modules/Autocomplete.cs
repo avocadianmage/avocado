@@ -68,11 +68,9 @@ namespace AvocadoShell.PowerShellService.Modules
                     .CompletionText.Length;
         }
 
-        bool completionListNeedsUpdate(string input, int index)
-        {
-            return completions == null
-                || expectedInput != input
+        bool completionListNeedsUpdate(string input, int index) =>
+            completions == null 
+                || expectedInput != input 
                 || expectedIndex != index;
-        }
     }
 }

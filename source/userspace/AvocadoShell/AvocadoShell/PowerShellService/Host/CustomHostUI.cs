@@ -230,15 +230,15 @@ namespace AvocadoShell.PowerShellService.Host
         /// NotImplementException exception.
         /// </summary>
         /// <returns>Throws a NotImplemented exception.</returns>
-        public override SecureString ReadLineAsSecureString()
-            => shellUI.WriteSecurePrompt("Secure prompt: ");
+        public override SecureString ReadLineAsSecureString() =>
+            shellUI.WriteSecurePrompt("Secure prompt: ");
 
         /// <summary>
         /// Writes characters to the output display of the host.
         /// </summary>
         /// <param name="value">The characters to be written.</param>
-        public override void Write(string value)
-            => shellUI.WriteCustom(value, Config.SystemFontBrush, false);
+        public override void Write(string value) =>
+            shellUI.WriteCustom(value, Config.SystemFontBrush, false);
 
         /// <summary>
         /// Writes characters to the output display of the host with possible 
@@ -275,16 +275,16 @@ namespace AvocadoShell.PowerShellService.Host
         /// Writes an error message to the output display of the host.
         /// </summary>
         /// <param name="value">The error message that is displayed.</param>
-        public override void WriteErrorLine(string value)
-            => shellUI.WriteErrorLine(value);
+        public override void WriteErrorLine(string value) => 
+            shellUI.WriteErrorLine(value);
 
         /// <summary>
         /// Writes a line of characters to the output display of the host 
         /// and appends a newline character(carriage return). 
         /// </summary>
         /// <param name="value">The line to be written.</param>
-        public override void WriteLine(string value)
-            => shellUI.WriteOutputLine(value);
+        public override void WriteLine(string value) =>
+            shellUI.WriteOutputLine(value);
 
         /// <summary>
         /// Writes a progress report to the output display of the host.
@@ -294,36 +294,32 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteProgress(long sourceId, ProgressRecord record)
         {
             if (record.RecordType == ProgressRecordType.Completed) return;
-            shellUI.WriteOutputLine(
-                $@"{record.Activity} {record.StatusDescription} ({
-                    record.PercentComplete}%)");
+
+            var line = $"{record.Activity} {record.StatusDescription}";
+            var percent = record.PercentComplete;
+            if (percent >= 0) line += $" {percent}";
+            shellUI.WriteOutputLine(line);
         }
 
         /// <summary>
         /// Writes a debug message to the output display of the host.
         /// </summary>
         /// <param name="message">The debug message that is displayed.</param>
-        public override void WriteDebugLine(string message)
-        {
+        public override void WriteDebugLine(string message) =>
             shellUI.WriteCustom($"[Debug] {message}", Brushes.Cyan, true);
-        }
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
         /// </summary>
         /// <param name="message">The verbose message that is displayed.</param>
-        public override void WriteVerboseLine(string message)
-        {
+        public override void WriteVerboseLine(string message) =>
             shellUI.WriteCustom($"[Verbose] {message}", Brushes.DimGray, true);
-        }
 
         /// <summary>
         /// Writes a warning message to the output display of the host.
         /// </summary>
         /// <param name="message">The warning message that is displayed.</param>
-        public override void WriteWarningLine(string message)
-        {
+        public override void WriteWarningLine(string message) => 
             shellUI.WriteCustom($"[Warning] {message}", Brushes.Orange, true);
-        }
     }
 }
