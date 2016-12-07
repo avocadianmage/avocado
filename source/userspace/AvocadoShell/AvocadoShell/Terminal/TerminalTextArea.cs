@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using static AvocadoShell.Config;
 using static StandardLibrary.Utilities.WPF;
+using System.Windows.Controls;
 
 namespace AvocadoShell.Terminal
 {
@@ -37,10 +38,15 @@ namespace AvocadoShell.Terminal
             Task.Run(startPowershell);
 
             Unloaded += async (s, e) => await terminateExec();
-            TextChanged += (s, e) => ScrollToEnd();
             SizeChanged += onSizeChanged;
 
             disableRichTextBoxKeys();
+        }
+
+        protected override void OnTextChanged(TextChangedEventArgs e)
+        {
+            base.OnTextChanged(e);
+            ScrollToEnd();
         }
 
         void disableRichTextBoxKeys() =>
