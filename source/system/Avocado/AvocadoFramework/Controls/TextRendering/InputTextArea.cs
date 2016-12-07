@@ -1,5 +1,6 @@
 ﻿using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,25 +69,30 @@ namespace AvocadoFramework.Controls.TextRendering
             base.OnPreviewKeyDown(e);
         }
 
-        protected virtual void HandleSpecialKeys(KeyEventArgs e)
+        protected virtual Task HandleSpecialKeys(KeyEventArgs e)
         {
-            if (e.Handled) return;
-
-            switch (e.Key)
+            if (!e.Handled)
             {
-                // Format linebreak.
-                case Key.Enter:
-                    WriteLine();
-                    e.Handled = true;
-                    break;
-                    
-                // Disallow other styling when pasting.
-                case Key.V:
-                    if (!WPF.IsControlKeyDown) break;
-                    Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
-                    e.Handled = true;
-                    break;
+                switch (e.Key)
+                {
+                    // Format linebreak.
+                    case Key.Enter:
+                        WriteLine();
+                        e.Handled = true;
+                        break;
+
+                    // Disallow other styling when pasting.
+                    case Key.V:
+                        if (!WPF.IsControlKeyDown) break;
+                        paste();
+                        e.Handled = true;
+                        break;
+                }
             }
+            return Task.CompletedTask;
         }
+
+        void paste() =>
+            Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
     }
 }

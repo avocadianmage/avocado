@@ -171,7 +171,7 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        protected override async void HandleSpecialKeys(KeyEventArgs e)
+        protected override async Task HandleSpecialKeys(KeyEventArgs e)
         {
             if (e.Handled) return;
 
@@ -215,7 +215,7 @@ namespace AvocadoShell.Terminal
                     break;
             }
             
-            base.HandleSpecialKeys(e);
+            await base.HandleSpecialKeys(e);
         }
 
         async Task execute()
