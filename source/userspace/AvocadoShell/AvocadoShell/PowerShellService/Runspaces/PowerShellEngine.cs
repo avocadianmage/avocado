@@ -1,6 +1,5 @@
 ﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.Terminal;
-using System;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 
@@ -8,8 +7,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 {
     sealed class PowerShellEngine
     {
-        public event EventHandler ExitRequested;
-        
+        public bool ShouldExit => host.ShouldExit;
+
         readonly CustomHost host;
 
         public PSHostRawUserInterface HostRawUI => host.UI.RawUI;
@@ -25,7 +24,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public PowerShellEngine(IShellUI ui)
         {
             host = new CustomHost(ui);
-            host.ExitRequested += onExitRequested;
             createRunspace(host);
         }
 
@@ -34,12 +32,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
             var runspace = RunspaceFactory.CreateRunspace(host);
             runspace.Open();
             host.PushRunspace(runspace);
-        }
-
-        void onExitRequested(object sender, EventArgs e)
-        {
-            if (host.IsRunspacePushed) host.PopRunspace();
-            else ExitRequested(this, EventArgs.Empty);
         }
 
         public string InitEnvironment() => host.Pipeline.InitEnvironment();

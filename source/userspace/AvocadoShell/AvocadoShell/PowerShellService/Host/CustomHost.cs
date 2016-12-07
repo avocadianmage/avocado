@@ -18,7 +18,7 @@ namespace AvocadoShell.PowerShellService.Host
     /// </summary>
     class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
-        public event EventHandler ExitRequested;
+        public bool ShouldExit { get; private set; }
 
         readonly IShellUI shellUI;
         readonly Stack<RunspacePipeline> pipelines
@@ -61,8 +61,8 @@ namespace AvocadoShell.PowerShellService.Host
 
         /// <summary>
         /// Gets an instance of the implementation of the PSHostUserInterface
-        /// class for this application. This instance is allocated once at startup time
-        /// and returned every time thereafter.
+        /// class for this application. This instance is allocated once at 
+        /// startup time and returned every time thereafter.
         /// </summary>
         public override PSHostUserInterface UI { get; }
 
@@ -85,8 +85,8 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API instructs the host to exit the currently running input loop. 
-        /// In this example this functionality is not needed so the method 
+        /// This API instructs the host to exit the currently running input 
+        /// loop. In this example this functionality is not needed so the method 
         /// throws a NotImplementedException exception.
         /// </summary>
         public override void ExitNestedPrompt()
@@ -125,7 +125,11 @@ namespace AvocadoShell.PowerShellService.Host
         /// <param name="exitCode">The exit code that the 
         /// host application should use.</param>
         public override void SetShouldExit(int exitCode)
-            => ExitRequested(this, new EventArgs());
+        {
+            if (IsRunspacePushed) PopRunspace();
+            else ShouldExit = true;
+        }
+
 
         #region IHostSupportsInteractiveSession implementation.
 

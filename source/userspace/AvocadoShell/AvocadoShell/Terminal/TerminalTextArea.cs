@@ -32,7 +32,7 @@ namespace AvocadoShell.Terminal
 
         public TerminalTextArea()
         {
-            psEngineAsync = Task.Run(() => createPowerShellEngine());
+            psEngineAsync = Task.Run(() => new PowerShellEngine(this));
             historyAsync = Task.Run(createHistory);
             Task.Run(startPowershell);
 
@@ -47,14 +47,6 @@ namespace AvocadoShell.Terminal
             new Key[] { Key.B, Key.E, Key.I, Key.J, Key.L, Key.R, Key.U }
                 .ForEach(k => InputBindings.Add(new KeyBinding(
                     ApplicationCommands.NotACommand, k, ModifierKeys.Control)));
-
-        PowerShellEngine createPowerShellEngine()
-        {
-            var psEngine = new PowerShellEngine(this);
-            psEngine.ExitRequested += (s, e) =>
-                Dispatcher.BeginInvoke((Action)exit);
-            return psEngine;
-        }
 
         async Task<History> createHistory() =>
             new History((await psEngineAsync).GetMaxHistoryCount());
@@ -249,12 +241,16 @@ namespace AvocadoShell.Terminal
             // Reset the buffer for command output.
             outputBuffer.Reset();
 
-            // Execute the command.
-            await Task.Run(async () => 
-                WriteErrorLine((await psEngineAsync).ExecuteCommand(input)));
+            var psEngine = await psEngineAsync;
 
-            // Show the next shell prompt.
-            await writeShellPrompt();
+            // Execute the command.
+            await Task.Run(
+                () => WriteErrorLine(psEngine.ExecuteCommand(input)));
+
+            // Check if exit was requested.
+            if (psEngine.ShouldExit) Window.GetWindow(this).Close();
+            // Otherwise, show the next shell prompt.
+            else await writeShellPrompt();
         }
 
         async Task performAutocomplete()
@@ -273,12 +269,6 @@ namespace AvocadoShell.Terminal
             // Update the input (UI) with the result of the completion.
             setInput(input);
             MoveCaret(getPromptPointer().GetPositionAtOffset(index), false);
-        }
-
-        void exit()
-        {
-            IsReadOnly = true;
-            Window.GetWindow(this).Close();
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
