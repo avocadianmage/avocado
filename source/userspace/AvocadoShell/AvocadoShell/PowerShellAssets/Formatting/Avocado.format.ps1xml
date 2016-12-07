@@ -1,9 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <Configuration>
-
     <ViewDefinitions>
-        
+
         <!-- Get-ChildItem (ls). -->
         <View>
             <Name>children</Name>
@@ -49,6 +47,27 @@
                 </CustomEntries>
             </CustomControl>
         </View>
+        
+        <!-- Invoke-WebRequest (wget). -->
+        <View>
+            <Name>Microsoft.PowerShell.Commands.WebResponseObject</Name>
+            <ViewSelectedBy>
+                <TypeName>Microsoft.PowerShell.Commands.WebResponseObject</TypeName>
+                <TypeName>Microsoft.PowerShell.Commands.HtmlWebResponseObject</TypeName>
+                <TypeName>Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject</TypeName>
+            </ViewSelectedBy>
+            <CustomControl>
+                <CustomEntries>
+                    <CustomEntry>
+                        <CustomItem>
+                            <ExpressionBinding>
+                                <PropertyName>Content</PropertyName>
+                            </ExpressionBinding>
+                        </CustomItem>
+                    </CustomEntry>
+                </CustomEntries>
+            </CustomControl>
+        </View>
 
         <!-- Errors. -->
         <View>
@@ -69,7 +88,6 @@
                 </CustomEntries>
             </CustomControl>
         </View>
-        
-    </ViewDefinitions>
 
+    </ViewDefinitions>
 </Configuration>
