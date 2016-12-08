@@ -45,8 +45,16 @@ namespace AvocadoShell.Terminal
 
         void addCommandBindings()
         {
-            // Ctrl+A - Select all.
+            // Ctrl+A - Select input.
             this.BindCommand(ApplicationCommands.SelectAll, selectInput);
+
+            // Disable PgUp/PgDn.
+            new ICommand[] {
+                EditingCommands.MoveDownByPage,
+                EditingCommands.MoveUpByPage,
+                EditingCommands.SelectDownByPage,
+                EditingCommands.SelectUpByPage
+            }.ForEach(c => this.BindCommand(c, () => { }));
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
@@ -133,12 +141,6 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        bool handlePageUpAndPageDownKeys()
-        {
-            // Currently no support for PageUp/PageDown.
-            return true;
-        }
-
         async Task<bool> handleUpAndDownKeys(Key key)
         {
             IsReadOnly = true;
@@ -182,10 +184,6 @@ namespace AvocadoShell.Terminal
                     break;
                 case Key.Home:
                     e.Handled = handleHomeKey();
-                    break;
-                case Key.PageUp:
-                case Key.PageDown:
-                    e.Handled = handlePageUpAndPageDownKeys();
                     break;
 
                 // Clear input or selection.
