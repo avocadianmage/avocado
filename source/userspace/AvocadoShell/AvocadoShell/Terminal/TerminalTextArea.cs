@@ -209,8 +209,6 @@ namespace AvocadoShell.Terminal
                     e.Handled = await handleEnterKey();
                     break;
             }
-            
-            await base.HandleSpecialKeys(e);
         }
 
         async Task execute()

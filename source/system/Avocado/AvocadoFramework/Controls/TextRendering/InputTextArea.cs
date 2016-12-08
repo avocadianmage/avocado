@@ -92,21 +92,7 @@ namespace AvocadoFramework.Controls.TextRendering
             base.OnPreviewKeyDown(e);
         }
 
-        protected virtual Task HandleSpecialKeys(KeyEventArgs e)
-        {
-            if (!e.Handled)
-            {
-                switch (e.Key)
-                {
-                    // Format linebreak.
-                    case Key.Enter:
-                        WriteLine();
-                        e.Handled = true;
-                        break;
-                }
-            }
-            return Task.CompletedTask;
-        }
+        protected abstract Task HandleSpecialKeys(KeyEventArgs e);
 
         // Disallow other styling when pasting.
         void paste() =>
