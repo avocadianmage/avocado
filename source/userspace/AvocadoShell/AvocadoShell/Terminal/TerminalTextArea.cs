@@ -39,8 +39,6 @@ namespace AvocadoShell.Terminal
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;
-
-            disableRichTextBoxKeys();
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
@@ -48,11 +46,6 @@ namespace AvocadoShell.Terminal
             base.OnTextChanged(e);
             ScrollToEnd();
         }
-
-        void disableRichTextBoxKeys() =>
-            new Key[] { Key.B, Key.E, Key.I, Key.J, Key.L, Key.R, Key.U }
-                .ForEach(k => InputBindings.Add(new KeyBinding(
-                    ApplicationCommands.NotACommand, k, ModifierKeys.Control)));
 
         async Task<History> createHistory() =>
             new History((await psEngineAsync).GetMaxHistoryCount());

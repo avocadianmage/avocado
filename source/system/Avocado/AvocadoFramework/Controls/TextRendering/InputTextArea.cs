@@ -9,6 +9,16 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
+        public InputTextArea() : base()
+        {
+            disableFormattingKeys();
+        }
+
+        void disableFormattingKeys() =>
+            new Key[] { Key.B, Key.E, Key.I, Key.J, Key.L, Key.R, Key.U }
+                .ForEach(k => InputBindings.Add(new KeyBinding(
+                    ApplicationCommands.NotACommand, k, ModifierKeys.Control)));
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
