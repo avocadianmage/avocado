@@ -39,6 +39,14 @@ namespace AvocadoShell.Terminal
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;
+
+            addCommandBindings();
+        }
+
+        void addCommandBindings()
+        {
+            // Ctrl+A - Select all.
+            this.BindCommand(ApplicationCommands.SelectAll, selectInput);
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
@@ -116,15 +124,6 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        bool handleCtrlAKey()
-        {
-            if (!IsControlKeyDown) return false;
-
-            // Ctrl+A will select all text after the prompt.
-            Selection.Select(getPromptPointer(), EndPointer);
-            return true;
-        }
-
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
@@ -183,9 +182,6 @@ namespace AvocadoShell.Terminal
                     break;
                 case Key.Home:
                     e.Handled = handleHomeKey();
-                    break;
-                case Key.A:
-                    e.Handled = handleCtrlAKey();
                     break;
                 case Key.PageUp:
                 case Key.PageDown:
@@ -422,5 +418,7 @@ namespace AvocadoShell.Terminal
         
         bool atOrBeforePrompt()
             => string.IsNullOrEmpty(getInputTextRange(CaretPosition).Text);
+
+        void selectInput() => Selection.Select(getPromptPointer(), EndPointer);
     }
 }

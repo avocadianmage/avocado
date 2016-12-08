@@ -22,6 +22,15 @@ namespace StandardLibrary.Utilities.Extensions
             return (T)element.FindResource(name);
         }
 
+        public static void BindCommand(
+            this UIElement element, 
+            ICommand command,
+            Action action)
+        {
+            element.CommandBindings.Add(
+                new CommandBinding(command, (s, e) => action()));
+        }
+
         public static void MoveNextFocus(this FrameworkElement element)
             => element.MoveFocus(new TraversalRequest(
                 FocusNavigationDirection.Next));
