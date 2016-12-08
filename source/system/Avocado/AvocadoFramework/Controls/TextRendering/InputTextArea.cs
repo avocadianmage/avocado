@@ -1,8 +1,8 @@
-﻿using StandardLibrary.Utilities;
-using StandardLibrary.Utilities.Extensions;
+﻿using StandardLibrary.Utilities.Extensions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace AvocadoFramework.Controls.TextRendering
@@ -11,13 +11,26 @@ namespace AvocadoFramework.Controls.TextRendering
     {
         public InputTextArea() : base()
         {
-            disableFormattingKeys();
+            addCommandBindings();
         }
 
-        void disableFormattingKeys() =>
-            new Key[] { Key.B, Key.E, Key.I, Key.J, Key.L, Key.R, Key.U }
-                .ForEach(k => InputBindings.Add(new KeyBinding(
-                    ApplicationCommands.NotACommand, k, ModifierKeys.Control)));
+        void addCommandBindings()
+        {
+            disableFormattingKeys();
+
+            // Ctrl+V, Shift+Ins - Paste.
+            this.BindCommand(ApplicationCommands.Paste, paste);
+        }
+
+        void disableFormattingKeys() => new ICommand[] {
+            EditingCommands.ToggleBold,
+            EditingCommands.ToggleItalic,
+            EditingCommands.ToggleUnderline,
+            EditingCommands.AlignCenter,
+            EditingCommands.AlignJustify,
+            EditingCommands.AlignLeft,
+            EditingCommands.AlignRight
+        }.ForEach(c => this.BindCommand(c, () => { }));
 
         public override void OnApplyTemplate()
         {
@@ -90,18 +103,12 @@ namespace AvocadoFramework.Controls.TextRendering
                         WriteLine();
                         e.Handled = true;
                         break;
-
-                    // Disallow other styling when pasting.
-                    case Key.V:
-                        if (!WPF.IsControlKeyDown) break;
-                        paste();
-                        e.Handled = true;
-                        break;
                 }
             }
             return Task.CompletedTask;
         }
 
+        // Disallow other styling when pasting.
         void paste() =>
             Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
     }
