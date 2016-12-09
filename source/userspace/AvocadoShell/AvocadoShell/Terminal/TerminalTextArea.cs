@@ -100,6 +100,14 @@ namespace AvocadoShell.Terminal
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
         }
 
+        void doInputManipulationWork(Func<Task> work)
+        {
+            IsReadOnly = true;
+            work().ContinueWith(
+                t => IsReadOnly = false,
+                TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
         void performHistoryLookup(bool forward) =>
             doInputManipulationWork(() => setInputFromHistory(forward));
 
@@ -158,14 +166,6 @@ namespace AvocadoShell.Terminal
             if (!currentPrompt.FromShell) return false;
             doInputManipulationWork(() => performAutocomplete(!IsShiftKeyDown));
             return true;
-        }
-
-        void doInputManipulationWork(Func<Task> work)
-        {
-            IsReadOnly = true;
-            work().ContinueWith(
-                t => IsReadOnly = false, 
-                TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         bool handleEnterKey()
