@@ -246,8 +246,8 @@ namespace AvocadoShell.Terminal
             else await writeShellPrompt();
         }
 
-        void exit() => Dispatcher.BeginInvoke((Action)(
-            () => Window.GetWindow(this).Close()));
+        void exit() => 
+            this.InvokeOnUIThread(() => Window.GetWindow(this).Close());
 
         async Task performAutocomplete()
         { 
@@ -295,12 +295,10 @@ namespace AvocadoShell.Terminal
                 psEngine.RemoteComputerName);
         }
 
-        void safeWritePromptCore(string prompt, bool fromShell, bool secure)
-        {
-            Dispatcher.BeginInvoke(
-                (Action)(() => writePromptCore(prompt, fromShell, secure)),
+        void safeWritePromptCore(string prompt, bool fromShell, bool secure) =>
+            this.InvokeOnUIThread(
+                () => writePromptCore(prompt, fromShell, secure),
                 OUTPUT_PRIORITY);
-        }
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
@@ -329,8 +327,8 @@ namespace AvocadoShell.Terminal
             IsReadOnly = false;
         }
 
-        public void WriteCustom(string data, Brush foreground, bool newline)
-            => safeWrite(data, foreground, newline);
+        public void WriteCustom(string data, Brush foreground, bool newline) =>
+            safeWrite(data, foreground, newline);
 
         public void WriteOutputLine(string data)
         {
@@ -342,16 +340,12 @@ namespace AvocadoShell.Terminal
             else safeWrite(data, SystemFontBrush, true);
         }
 
-        public void WriteErrorLine(string data)
-            => safeWrite(data, ErrorFontBrush, true);
+        public void WriteErrorLine(string data) =>
+            safeWrite(data, ErrorFontBrush, true);
 
-        void safeWrite(string data, Brush foreground, bool newline)
-        {
-            Dispatcher.BeginInvoke(
-                (Action<string, Brush, bool>)write,
-                OUTPUT_PRIORITY,
-                data, foreground, newline);
-        }
+        void safeWrite(string data, Brush foreground, bool newline) =>
+            this.InvokeOnUIThread(
+                () => write(data, foreground, newline), OUTPUT_PRIORITY);
         
         void write(string data, Brush foreground, bool newline)
         {
@@ -376,13 +370,13 @@ namespace AvocadoShell.Terminal
 
         void writeANSISegment(ANSISegment segment, bool newline)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
+            this.InvokeOnUIThread(() =>
             {
                 var brush = segment.Color.HasValue
                         ? new SolidColorBrush(segment.Color.Value)
                         : SystemFontBrush;
                 write(segment.Text, brush, newline);
-            }),
+            },
             OUTPUT_PRIORITY);
         }
 
