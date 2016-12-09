@@ -141,37 +141,40 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        async Task<bool> handleUpAndDownKeys(Key key)
+        bool handleUpAndDownKeys(Key key)
         {
-            IsReadOnly = true;
-            await historyLookup(key == Key.Down);
-            IsReadOnly = false;
+            doInputManipulationWork(() => historyLookup(key == Key.Down));
             return true;
         }
 
-        async Task<bool> handleTabKey()
+        bool handleTabKey()
         {
             // Handle normally if not at the shell prompt.
             if (!currentPrompt.FromShell) return false;
-
-            IsReadOnly = true;
-            await performAutocomplete();
-            IsReadOnly = false;
+            doInputManipulationWork(performAutocomplete);
             return true;
         }
 
-        async Task<bool> handleEnterKey()
+        void doInputManipulationWork(Func<Task> work)
+        {
+            IsReadOnly = true;
+            work().ContinueWith(
+                t => IsReadOnly = false, 
+                TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        bool handleEnterKey()
         {
             // Go to new line if shift is pressed at shell prompt.
             if (IsShiftKeyDown) return false;
 
             // Otherwise, execute the input.
             IsReadOnly = true;
-            await execute();
+            execute();
             return true;
         }
 
-        protected override async Task HandleSpecialKeys(KeyEventArgs e)
+        protected override void HandleSpecialKeys(KeyEventArgs e)
         {
             if (e.Handled) return;
 
@@ -194,22 +197,22 @@ namespace AvocadoShell.Terminal
                 // Input history.
                 case Key.Up:
                 case Key.Down:
-                    e.Handled = await handleUpAndDownKeys(e.Key);
+                    e.Handled = handleUpAndDownKeys(e.Key);
                     break;
 
                 // Autocompletion.
                 case Key.Tab:
-                    e.Handled = await handleTabKey();
+                    e.Handled = handleTabKey();
                     break;
 
                 // Handle command execution.
                 case Key.Enter:
-                    e.Handled = await handleEnterKey();
+                    e.Handled = handleEnterKey();
                     break;
             }
         }
 
-        async Task execute()
+        void execute()
         {
             // Get user input.
             var input = getInput();
@@ -219,7 +222,7 @@ namespace AvocadoShell.Terminal
             WriteLine();
 
             // If this is the shell prompt, execute the input.
-            if (currentPrompt.FromShell) await executeInput(input);
+            if (currentPrompt.FromShell) Task.Run(() => executeInput(input));
             // Otherwise, signal that the we are done entering input.
             else nonShellPromptDone.Signal(input);
         }
@@ -235,14 +238,16 @@ namespace AvocadoShell.Terminal
             var psEngine = await psEngineAsync;
 
             // Execute the command.
-            await Task.Run(
-                () => WriteErrorLine(psEngine.ExecuteCommand(input)));
+            WriteErrorLine(psEngine.ExecuteCommand(input));
 
             // Check if exit was requested.
-            if (psEngine.ShouldExit) Window.GetWindow(this).Close();
+            if (psEngine.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
             else await writeShellPrompt();
         }
+
+        void exit() => Dispatcher.BeginInvoke((Action)(
+            () => Window.GetWindow(this).Close()));
 
         async Task performAutocomplete()
         { 

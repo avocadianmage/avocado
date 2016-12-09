@@ -92,7 +92,7 @@ namespace AvocadoFramework.Controls.TextRendering
             base.OnPreviewKeyDown(e);
         }
 
-        protected abstract Task HandleSpecialKeys(KeyEventArgs e);
+        protected abstract void HandleSpecialKeys(KeyEventArgs e);
 
         // Disallow other styling when pasting.
         void paste() =>
