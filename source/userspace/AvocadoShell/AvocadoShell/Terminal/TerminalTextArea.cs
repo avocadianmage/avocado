@@ -48,6 +48,14 @@ namespace AvocadoShell.Terminal
             // Ctrl+A - Select input.
             this.BindCommand(ApplicationCommands.SelectAll, selectInput);
 
+            // Up/Down - Access command history.
+            this.BindCommand(
+                EditingCommands.MoveUpByLine, 
+                () => doInputManipulationWork(() => historyLookup(false)));
+            this.BindCommand(
+                EditingCommands.MoveDownByLine,
+                () => doInputManipulationWork(() => historyLookup(true)));
+
             // Disable PgUp/PgDn.
             new ICommand[] {
                 EditingCommands.MoveDownByPage,
@@ -141,12 +149,6 @@ namespace AvocadoShell.Terminal
             return true;
         }
 
-        bool handleUpAndDownKeys(Key key)
-        {
-            doInputManipulationWork(() => historyLookup(key == Key.Down));
-            return true;
-        }
-
         bool handleTabKey()
         {
             // Handle normally if not at the shell prompt.
@@ -192,12 +194,6 @@ namespace AvocadoShell.Terminal
                 // Clear input or selection.
                 case Key.Escape:
                     e.Handled = handleEscKey();
-                    break;
-
-                // Input history.
-                case Key.Up:
-                case Key.Down:
-                    e.Handled = handleUpAndDownKeys(e.Key);
                     break;
 
                 // Autocompletion.
