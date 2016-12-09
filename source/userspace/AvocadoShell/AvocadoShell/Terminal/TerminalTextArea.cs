@@ -51,10 +51,10 @@ namespace AvocadoShell.Terminal
             // Up/Down - Access command history.
             this.BindCommand(
                 EditingCommands.MoveUpByLine, 
-                () => doInputManipulationWork(() => historyLookup(false)));
+                () => performHistoryLookup(false));
             this.BindCommand(
                 EditingCommands.MoveDownByLine,
-                () => doInputManipulationWork(() => historyLookup(true)));
+                () => performHistoryLookup(true));
 
             // Disable PgUp/PgDn.
             new ICommand[] {
@@ -99,6 +99,9 @@ namespace AvocadoShell.Terminal
             // Ensure the powershell thread is unblocked.
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
         }
+
+        void performHistoryLookup(bool forward) =>
+            doInputManipulationWork(() => setInputFromHistory(forward));
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
@@ -153,7 +156,7 @@ namespace AvocadoShell.Terminal
         {
             // Handle normally if not at the shell prompt.
             if (!currentPrompt.FromShell) return false;
-            doInputManipulationWork(performAutocomplete);
+            doInputManipulationWork(() => performAutocomplete(!IsShiftKeyDown));
             return true;
         }
 
@@ -245,12 +248,11 @@ namespace AvocadoShell.Terminal
         void exit() => 
             this.InvokeOnUIThread(() => Window.GetWindow(this).Close());
 
-        async Task performAutocomplete()
+        async Task performAutocomplete(bool forward)
         { 
             // Get data needed for the completion.
             var input = getInput();
             var index = getInputTextRange(CaretPosition).Text.Length;
-            var forward = !IsShiftKeyDown;
 
             // Perform the completion.
             var psEngine = await psEngineAsync;
@@ -376,7 +378,7 @@ namespace AvocadoShell.Terminal
             OUTPUT_PRIORITY);
         }
 
-        async Task historyLookup(bool forward)
+        async Task setInputFromHistory(bool forward)
         {
             // Disallow lookup when not at the shell prompt.
             if (!currentPrompt.FromShell) return;
