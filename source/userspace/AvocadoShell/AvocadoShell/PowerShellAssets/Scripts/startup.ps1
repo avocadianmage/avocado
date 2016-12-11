@@ -1,8 +1,6 @@
 # Import formatting file.
-$exePath = Split-Path ([System.Diagnostics.Process]::GetCurrentProcess().Path)
 Update-FormatData -PrependPath `
-	$exePath/PowerShellAssets/Formatting/Avocado.format.ps1xml
-Remove-Variable exePath
+	$env:APPDATA/Avocado/PowerShellAssets/Formatting/Avocado.format.ps1xml
 
 # Import user profile.
 $PROFILE = Join-Path `
