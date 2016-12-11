@@ -298,7 +298,7 @@ namespace AvocadoShell.PowerShellService.Host
             var line = $"{record.Activity} {record.StatusDescription}";
             var percent = record.PercentComplete;
             if (percent >= 0) line += $" {percent}";
-            shellUI.WriteOutputLine(line);
+            shellUI.WriteCustom(line, Brushes.Cyan, true);
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message) =>
-            shellUI.WriteCustom($"[Debug] {message}", Brushes.Cyan, true);
+            shellUI.WriteCustom($"[Debug] {message}", Brushes.Yellow, true);
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
