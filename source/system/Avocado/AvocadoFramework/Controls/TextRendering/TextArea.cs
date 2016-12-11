@@ -53,7 +53,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void WriteLine(string text, Brush foreground)
         {
-            text = $"{text.TrimEnd()}{Environment.NewLine}";
+            text = $"{text.TrimEnd()}\r";
             Write(text, foreground);
         }
 
