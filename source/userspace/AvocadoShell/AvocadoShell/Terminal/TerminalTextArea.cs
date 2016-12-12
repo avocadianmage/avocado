@@ -56,13 +56,24 @@ namespace AvocadoShell.Terminal
                 EditingCommands.MoveDownByLine,
                 () => performHistoryLookup(true));
 
-            // Disable PgUp/PgDn.
+            // PgUp/PgDn - scroll a page at a time without moving the text 
+            // cursor.
+            this.BindCommand(
+                EditingCommands.MoveDownByPage, () => scrollPage(true));
+            this.BindCommand(
+                EditingCommands.MoveUpByPage, () => scrollPage(false));
+
+            // Disable Shift+PgUp/PgDn.
             new ICommand[] {
-                EditingCommands.MoveDownByPage,
-                EditingCommands.MoveUpByPage,
                 EditingCommands.SelectDownByPage,
                 EditingCommands.SelectUpByPage
             }.ForEach(c => this.BindCommand(c, () => { }));
+        }
+
+        void scrollPage(bool down)
+        {
+            var direction = down ? 1 : -1;
+            ScrollToVerticalOffset(VerticalOffset + ViewportHeight * direction);
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
