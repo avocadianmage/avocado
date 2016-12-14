@@ -3,17 +3,10 @@ using System.Management.Automation.Host;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    /// <summary>
-    /// A sample implementation of the PSHostRawUserInterface for console
-    /// applications. Members of this class that easily map to the .NET 
-    /// console class are implemented. More complex methods are not 
-    /// implemented and throw a NotImplementedException exception.
-    /// </summary>
     class CustomRawHostUI : PSHostRawUserInterface
     {
         /// <summary>
         /// Gets or sets the background color of text to be written.
-        /// This maps to the corresponding Console.Background property.
         /// </summary>
         public override ConsoleColor BackgroundColor
         {
@@ -22,15 +15,12 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets or sets the host buffer size adapted from the Console buffer 
-        /// size members.
+        /// Gets or sets the host buffer size.
         /// </summary>
         public override Size BufferSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the cursor position. In this example this 
-        /// functionality is not needed so the property throws a 
-        /// NotImplementException exception.
+        /// Gets or sets the cursor position.
         /// </summary>
         public override Coordinates CursorPosition
         {
@@ -39,8 +29,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets or sets the cursor size taken directly from the 
-        /// Console.CursorSize property.
+        /// Gets or sets the cursor size.
         /// </summary>
         public override int CursorSize
         {
@@ -50,7 +39,6 @@ namespace AvocadoShell.PowerShellService.Host
 
         /// <summary>
         /// Gets or sets the foreground color of the text to be written.
-        /// This maps to the corresponding Console.ForgroundColor property.
         /// </summary>
         public override ConsoleColor ForegroundColor
         {
@@ -59,8 +47,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets a value indicating whether a key is available. This maps to  
-        /// the corresponding Console.KeyAvailable property.
+        /// Gets a value indicating whether a key is available.
         /// </summary>
         public override bool KeyAvailable
         {
@@ -68,9 +55,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets the maximum physical size of the window adapted from the  
-        /// Console.LargestWindowWidth and Console.LargestWindowHeight 
-        /// properties.
+        /// Gets the maximum physical size of the window.
         /// </summary>
         public override Size MaxPhysicalWindowSize
         {
@@ -78,9 +63,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets the maximum window size adapted from the 
-        /// Console.LargestWindowWidth and console.LargestWindowHeight 
-        /// properties.
+        /// Gets the maximum window size.
         /// </summary>
         public override Size MaxWindowSize
         {
@@ -88,8 +71,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets or sets the window position adapted from the Console window 
-        /// position members.
+        /// Gets or sets the window position.
         /// </summary>
         public override Coordinates WindowPosition
         {
@@ -98,8 +80,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets or sets the window size adapted from the corresponding Console 
-        /// calls.
+        /// Gets or sets the window size.
         /// </summary>
         public override Size WindowSize
         {
@@ -108,8 +89,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets or sets the title of the window mapped to the Console.Title 
-        /// property.
+        /// Gets or sets the title of the window.
         /// </summary>
         public override string WindowTitle
         {
@@ -118,8 +98,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API resets the input buffer. In this example this 
-        /// functionality is not needed so the method returns nothing.
+        /// Resets the input buffer.
         /// </summary>
         public override void FlushInputBuffer()
         {
@@ -127,11 +106,9 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API returns a rectangular region of the screen buffer. In 
-        /// this example this functionality is not needed so the method throws 
-        /// a NotImplementException exception.
+        /// Returns a rectangular region of the screen buffer.
         /// </summary>
-        /// <param name="rectangle">Defines the size of the rectangle.</param>
+        /// <param name="rectangle">Defines the size of the region.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override BufferCell[,] GetBufferContents(Rectangle rectangle)
         {
@@ -139,13 +116,11 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API Reads a pressed, released, or pressed and released keystroke 
-        /// from the keyboard device, blocking processing until a keystroke is 
-        /// typed that matches the specified keystroke options. In this example 
-        /// this functionality is not needed so the method throws a
-        /// NotImplementException exception.
+        /// Reads a pressed, released, or pressed and released keystroke from
+        /// the keyboard device, blocking processing until a keystroke is typed
+        /// that matches the specified keystroke options.
         /// </summary>
-        /// <param name="options">Options, such as IncludeKeyDown,  used when 
+        /// <param name="options">Options, such as IncludeKeyDown, used when 
         /// reading the keyboard.</param>
         /// <returns>Throws a NotImplementedException exception.</returns>
         public override KeyInfo ReadKey(ReadKeyOptions options)
@@ -154,15 +129,16 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API crops a region of the screen buffer. In this example 
-        /// this functionality is not needed so the method throws a
-        /// NotImplementException exception.
+        /// Crops a region of the screen buffer.
         /// </summary>
-        /// <param name="source">The region of the screen to be scrolled.</param>
+        /// <param name="source">The region of the screen to be scrolled.
+        /// </param>
         /// <param name="destination">The region of the screen to receive the 
         /// source region contents.</param>
-        /// <param name="clip">The region of the screen to include in the operation.</param>
-        /// <param name="fill">The character and attributes to be used to fill all cell.</param>
+        /// <param name="clip">The region of the screen to include in the 
+        /// operation.</param>
+        /// <param name="fill">The character and attributes to be used to fill 
+        /// all cells.</param>
         public override void ScrollBufferContents(
             Rectangle source, 
             Coordinates destination, 
@@ -173,12 +149,11 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API copies an array of buffer cells into the screen buffer 
-        /// at a specified location. In this example this  functionality is 
-        /// not needed si the method  throws a NotImplementedException exception.
+        /// Copies an array of buffer cells into the screen buffer at a 
+        /// specified location.
         /// </summary>
-        /// <param name="origin">The parameter is not used.</param>
-        /// <param name="contents">The parameter is not used.</param>
+        /// <param name="origin">Not used.</param>
+        /// <param name="contents">Not used.</param>
         public override void SetBufferContents(
             Coordinates origin, BufferCell[,] contents)
         {
@@ -186,11 +161,9 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API Copies a given character, foreground color, and background 
-        /// color to a region of the screen buffer. In this example this 
-        /// functionality is not needed so the method throws a
-        /// NotImplementException exception./// </summary>
-        /// <param name="rectangle">Defines the area to be filled. </param>
+        /// Copies a given character, foreground color, and background color
+        /// to a region of the screen buffer.</summary>
+        /// <param name="rectangle">Defines the area to be filled.</param>
         /// <param name="fill">Defines the fill character.</param>
         public override void SetBufferContents(
             Rectangle rectangle, BufferCell fill)

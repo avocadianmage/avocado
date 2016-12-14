@@ -10,12 +10,6 @@ using System.Threading;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    /// <summary>
-    /// This is a sample implementation of the PSHost abstract class for 
-    /// console applications. Not all members are implemented. Those that 
-    /// are not implemented throw a NotImplementedException exception or 
-    /// return nothing.
-    /// </summary>
     class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public bool ShouldExit { get; private set; }
@@ -31,24 +25,24 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Gets the culture information to use. This implementation 
-        /// returns a snapshot of the culture information of the thread 
-        /// that created this object.
+        /// Gets the culture information to use. This implementation returns a
+        /// snapshot of the culture information of the thread that created this
+        /// object.
         /// </summary>
         public override CultureInfo CurrentCulture { get; }
             = Thread.CurrentThread.CurrentCulture;
 
         /// <summary>
-        /// Gets the UI culture information to use. This implementation 
-        /// returns a snapshot of the UI culture information of the thread 
-        /// that created this object.
+        /// Gets the UI culture information to use. This implementation returns
+        /// a snapshot of the UI culture information of the thread that created
+        /// this object.
         /// </summary>
         public override CultureInfo CurrentUICulture { get; }
             = Thread.CurrentThread.CurrentUICulture;
 
         /// <summary>
-        /// Gets an identifier for this host. This implementation always 
-        /// returns the GUID allocated at instantiation time.
+        /// Gets an identifier for this host. This implementation always returns
+        /// the GUID allocated at instantiation time.
         /// </summary>
         public override Guid InstanceId { get; } = Guid.NewGuid();
 
@@ -74,10 +68,8 @@ namespace AvocadoShell.PowerShellService.Host
             => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
-        /// This API Instructs the host to interrupt the currently running 
-        /// pipeline and start a new nested input loop. In this example this 
-        /// functionality is not needed so the method throws a 
-        /// NotImplementedException exception.
+        /// Instructs the host to interrupt the currently running pipeline and
+        /// start a new nested input loop.
         /// </summary>
         public override void EnterNestedPrompt()
         {
@@ -85,9 +77,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API instructs the host to exit the currently running input 
-        /// loop. In this example this functionality is not needed so the method 
-        /// throws a NotImplementedException exception.
+        /// Instructs the host to exit the currently running input loop.
         /// </summary>
         public override void ExitNestedPrompt()
         {
@@ -95,11 +85,10 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API is called before an external application process is 
-        /// started. Typically it is used to save state so that the parent  
-        /// can restore state that has been modified by a child process (after 
-        /// the child exits). In this example this functionality is not  
-        /// needed so the method returns nothing.
+        /// This is called before an external application process is started.
+        /// Typically it is used to save state so that the parent can restore
+        /// state that has been modified by a child process (after the child 
+        /// exits).
         /// </summary>
         public override void NotifyBeginApplication()
         {
@@ -107,10 +96,9 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// This API is called after an external application process finishes.
+        /// This is called after an external application process finishes.
         /// Typically it is used to restore state that a child process has
-        /// altered. In this example, this functionality is not needed so  
-        /// the method returns nothing.
+        /// altered.
         /// </summary>
         public override void NotifyEndApplication()
         {
@@ -118,26 +106,25 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Indicate to the host application that exit has
-        /// been requested. Pass the exit code that the host
-        /// application should use when exiting the process.
+        /// Indicate to the host application that exit has been requested. Pass
+        /// the exit code that the host application should use when exiting the 
+        /// process.
         /// </summary>
-        /// <param name="exitCode">The exit code that the 
-        /// host application should use.</param>
+        /// <param name="exitCode">The exit code that the host application
+        /// should use.</param>
         public override void SetShouldExit(int exitCode)
         {
             if (IsRunspacePushed) PopRunspace();
             else ShouldExit = true;
         }
 
-
         #region IHostSupportsInteractiveSession implementation.
 
         public RunspacePipeline Pipeline => pipelines.Peek();
 
         /// <summary>
-        /// Gets a value indicating whether a request 
-        /// to open a PSSession has been made.
+        /// Gets a value indicating whether a request to open a PSSession has
+        /// been made.
         /// </summary>
         public bool IsRunspacePushed => pipelines.Count > 1;
 
