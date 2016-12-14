@@ -294,7 +294,7 @@ namespace AvocadoShell.PowerShellService.Host
         {
             if (record.RecordType == ProgressRecordType.Completed) return;
 
-            var line = $"{record.Activity} {record.StatusDescription}";
+            var line = $"{record.Activity}: {record.StatusDescription}";
             var percent = record.PercentComplete;
             if (percent >= 0) line += $" ({percent}%)";
             shellUI.WriteCustom(line, Brushes.Cyan, true);
