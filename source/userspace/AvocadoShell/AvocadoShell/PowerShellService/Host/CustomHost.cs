@@ -147,14 +147,8 @@ namespace AvocadoShell.PowerShellService.Host
             var pipeline = new RunspacePipeline(runspace);
             pipelines.Push(pipeline);
 
-            // Only call InitEnviroment immediately if this is not the initial
-            // runspace. This is because the inital runspace will be created
-            // while the UI thread has not been fully loaded. Thus there is a 
-            // separate call to InitEnviroment from the UI thread after startup.
-            if (IsRunspacePushed)
-            {
-                shellUI.WriteErrorLine(pipeline.InitEnvironment());
-            }
+            // Initialize the PowerShell environment of the pipeline.
+            shellUI.WriteErrorLine(pipeline.InitEnvironment());
         }
 
         #endregion

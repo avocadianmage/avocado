@@ -35,7 +35,7 @@ namespace AvocadoShell.Terminal
         {
             psEngineAsync = Task.Run(() => new PowerShellEngine(this));
             historyAsync = Task.Run(createHistory);
-            Task.Run(startPowershell);
+            Task.Run(writeShellPrompt);
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;
@@ -84,12 +84,6 @@ namespace AvocadoShell.Terminal
 
         async Task<History> createHistory() =>
             new History((await psEngineAsync).GetMaxHistoryCount());
-
-        async Task startPowershell()
-        {
-            WriteErrorLine((await psEngineAsync).InitEnvironment());
-            await writeShellPrompt();
-        }
 
         async void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
