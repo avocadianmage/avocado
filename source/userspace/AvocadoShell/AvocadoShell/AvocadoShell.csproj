@@ -111,7 +111,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="PowerShellService\Host\UIHelpers\Choice.cs" />
-    <Compile Include="Terminal\Modules\OutputBuffer.cs" />
     <Compile Include="Terminal\Modules\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />

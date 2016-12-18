@@ -27,7 +27,6 @@ namespace AvocadoShell.Terminal
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
-        readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly Task<PowerShellEngine> psEngineAsync;
         readonly Task<History> historyAsync;
 
@@ -236,9 +235,6 @@ namespace AvocadoShell.Terminal
             // Add command to history.
             (await historyAsync).Add(input);
 
-            // Reset the buffer for command output.
-            outputBuffer.Reset();
-
             var psEngine = await psEngineAsync;
 
             // Execute the command.
@@ -353,10 +349,6 @@ namespace AvocadoShell.Terminal
         
         void write(string text, Brush foreground, bool newline)
         {
-            // Run the data through the output buffer to determine if 
-            // anything should be printed right now.
-            if (!outputBuffer.ProcessNewOutput(ref text)) return;
-
             if (newline) WriteLine(text, foreground);
             else Write(text, foreground);
         }
