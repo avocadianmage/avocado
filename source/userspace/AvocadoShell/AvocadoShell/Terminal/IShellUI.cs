@@ -5,9 +5,9 @@ namespace AvocadoShell.Terminal
 {
     interface IShellUI
     {
-        void WriteOutputLine(string data);
-        void WriteErrorLine(string data);
-        void WriteCustom(string data, Brush foreground, bool newline);
+        void WriteOutputLine(string text);
+        void WriteErrorLine(string text);
+        void WriteCustom(string text, Brush foreground, bool newline);
         string WritePrompt(string prompt);
         SecureString WriteSecurePrompt(string prompt);
     }

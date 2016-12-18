@@ -330,40 +330,40 @@ namespace AvocadoShell.Terminal
             IsReadOnly = false;
         }
 
-        public void WriteCustom(string data, Brush foreground, bool newline) =>
-            safeWrite(data, foreground, newline);
+        public void WriteCustom(string text, Brush foreground, bool newline) =>
+            safeWrite(text, foreground, newline);
 
-        public void WriteOutputLine(string data)
+        public void WriteOutputLine(string text)
         {
             // Check if the line contains any ANSI codes that we should process.
-            if (ANSICode.ContainsANSICodes(data))
+            if (ANSICode.ContainsANSICodes(text))
             {
-                writeOutputLineWithANSICodes(data);
+                writeOutputLineWithANSICodes(text);
             }
-            else safeWrite(data, SystemFontBrush, true);
+            else safeWrite(text, SystemFontBrush, true);
         }
 
-        public void WriteErrorLine(string data) =>
-            safeWrite(data, ErrorFontBrush, true);
+        public void WriteErrorLine(string text) =>
+            safeWrite(text, ErrorFontBrush, true);
 
-        void safeWrite(string data, Brush foreground, bool newline) =>
+        void safeWrite(string text, Brush foreground, bool newline) =>
             this.InvokeOnUIThread(
-                () => write(data, foreground, newline), OUTPUT_PRIORITY);
+                () => write(text, foreground, newline), OUTPUT_PRIORITY);
         
-        void write(string data, Brush foreground, bool newline)
+        void write(string text, Brush foreground, bool newline)
         {
             // Run the data through the output buffer to determine if 
             // anything should be printed right now.
-            if (!outputBuffer.ProcessNewOutput(ref data, ref foreground))
+            if (!outputBuffer.ProcessNewOutput(ref text, ref foreground))
                 return;
 
-            var action = newline ? (Action<string, Brush>)WriteLine : Write;
-            action(data, foreground);
+            if (newline) WriteLine(text, foreground);
+            else Write(text, foreground);
         }
 
-        void writeOutputLineWithANSICodes(string data)
+        void writeOutputLineWithANSICodes(string text)
         {
-            var segments = ANSICode.GetColorSegments(data);
+            var segments = ANSICode.GetColorSegments(text);
             if (!segments.Any()) return;
             segments
                 .Take(segments.Count() - 1)
