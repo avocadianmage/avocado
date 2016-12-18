@@ -50,7 +50,7 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void WriteLine() => WriteLine(string.Empty, Foreground);
 
         protected void WriteLine(string text, Brush foreground) =>
-            Write($"{text.TrimEnd()}\r", foreground);
+            Write($"{text}\r", foreground);
 
         protected TextPointer StartPointer => CaretPosition.DocumentStart;
         protected TextPointer EndPointer =>
