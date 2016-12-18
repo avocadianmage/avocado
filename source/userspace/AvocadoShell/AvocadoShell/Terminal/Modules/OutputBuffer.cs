@@ -1,30 +1,28 @@
-﻿using System.Windows.Media;
-
-namespace AvocadoShell.Terminal.Modules
+﻿namespace AvocadoShell.Terminal.Modules
 {
     sealed class OutputBuffer
     {
-        string newlineBuffer;
-        bool hitNonwhitespace;
+        string whitespaceBuffer;
+        bool hitNonWhitespace;
 
         public OutputBuffer()
         {
             Reset();
         }
 
-        public bool ProcessNewOutput(ref string text, ref Brush brush)
+        public bool ProcessNewOutput(ref string text)
         {
             lock (this)
             {
                 if (string.IsNullOrWhiteSpace(text))
                 {
-                    if (hitNonwhitespace) newlineBuffer += "\r";
+                    if (hitNonWhitespace) whitespaceBuffer += text;
                     return false;
                 }
 
-                hitNonwhitespace = true;
-                text = newlineBuffer + text;
-                newlineBuffer = string.Empty;
+                hitNonWhitespace = true;
+                text = whitespaceBuffer + text;
+                whitespaceBuffer = string.Empty;
 
                 return true;
             }
@@ -34,8 +32,8 @@ namespace AvocadoShell.Terminal.Modules
         {
             lock (this)
             {
-                newlineBuffer = string.Empty;
-                hitNonwhitespace = false;
+                whitespaceBuffer = string.Empty;
+                hitNonWhitespace = false;
             }
         }
     }

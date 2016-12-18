@@ -355,8 +355,7 @@ namespace AvocadoShell.Terminal
         {
             // Run the data through the output buffer to determine if 
             // anything should be printed right now.
-            if (!outputBuffer.ProcessNewOutput(ref text, ref foreground))
-                return;
+            if (!outputBuffer.ProcessNewOutput(ref text)) return;
 
             if (newline) WriteLine(text, foreground);
             else Write(text, foreground);
