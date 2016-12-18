@@ -42,7 +42,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         public override ConsoleColor ForegroundColor
         {
-            get { return Config.DefaultConsoleColor; }
+            get { return Config.SystemConsoleForeground; }
             set { throw new NotImplementedException(); }
         }
 

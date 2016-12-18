@@ -10,6 +10,7 @@ namespace AvocadoShell
         public static Brush ErrorFontBrush => Brushes.Salmon;
         public static Brush SystemFontBrush => Brushes.LightGray;
 
-        public static ConsoleColor DefaultConsoleColor => ConsoleColor.Gray;
+        public static ConsoleColor SystemConsoleForeground 
+            => ConsoleColor.Gray;
     }
 }

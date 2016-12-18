@@ -191,7 +191,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="value">The characters to be written.</param>
         public override void Write(string value) =>
-            shellUI.WriteCustom(value, Config.SystemFontBrush, false);
+            Write(Config.SystemConsoleForeground, default(ConsoleColor), value);
 
         /// <summary>
         /// Writes characters to the output display of the host with possible 
@@ -212,7 +212,7 @@ namespace AvocadoShell.PowerShellService.Host
         static Brush consoleColorToBrush(ConsoleColor consoleColor)
         {
             // Recognize default system color.
-            if (consoleColor == Config.DefaultConsoleColor)
+            if (consoleColor == Config.SystemConsoleForeground)
                 return Config.SystemFontBrush;
 
             // Handle 'DarkYellow' which does not have a brush with a matching
