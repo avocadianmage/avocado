@@ -1,5 +1,5 @@
-﻿using AvocadoShell.Terminal;
-using StandardLibrary.Utilities.Extensions;
+﻿using AvocadoShell.PowerShellService.Host.UIHelpers;
+using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +7,6 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
-using System.Text;
 using System.Windows.Media;
 
 namespace AvocadoShell.PowerShellService.Host
@@ -73,8 +72,6 @@ namespace AvocadoShell.PowerShellService.Host
             return results;
         }
 
-        #region Choice prompt
-
         /// <summary>
         /// Provides a set of choices that enable the user to choose a single
         /// option.
@@ -98,7 +95,7 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message);
             
             var choiceList = choices.Select(c => new Choice(c)).ToArray();
-            var choicePrompt = getChoicePromptText(
+            var choicePrompt = Choice.GetPromptText(
                 choiceList, choiceList[defaultChoice].Hotkey);
 
             // Read prompts until a match is made or the default is chosen.
@@ -114,7 +111,7 @@ namespace AvocadoShell.PowerShellService.Host
                 // Check for help selection.
                 if (input == "?")
                 {
-                    shellUI.WriteOutputLine(getChoiceHelpText(choiceList));
+                    shellUI.WriteOutputLine(Choice.GetHelpText(choiceList));
                     continue;
                 }
 
@@ -124,42 +121,6 @@ namespace AvocadoShell.PowerShellService.Host
                     if (choiceList[i].Hotkey == input) return i;
             }
         }
-
-        string getChoicePromptText(
-            IEnumerable<Choice> choiceList, string defaultHotkey)
-        {
-            var builder = new StringBuilder();
-            choiceList.ForEach(c => builder.Append(c));
-            builder.Append($"[?] Help  (default is \"{defaultHotkey}\"): ");
-            return builder.ToString();
-        }
-
-        string getChoiceHelpText(IEnumerable<Choice> choiceList)
-        {
-            var builder = new StringBuilder();
-            choiceList.ForEach(c => builder.AppendLine(c.HelpLine));
-            return builder.ToString();
-        }
-
-        sealed class Choice
-        {
-            public string HelpMessage { get; }
-            public string Text { get; }
-            public string Hotkey { get; }
-
-            public Choice(ChoiceDescription desc)
-            {
-                Text = desc.Label.Replace("&", string.Empty);
-                Hotkey = desc.Label.Split('&')[1].First().ToString().ToUpper();
-                HelpMessage = desc.HelpMessage;
-            }
-
-            public string HelpLine => $"{Hotkey} - {HelpMessage}";
-
-            public override string ToString() => $"[{Hotkey}] {Text}  ";
-        }
-
-        #endregion
 
         /// <summary>
         /// Prompts the user for credentials with a specified prompt caption, 

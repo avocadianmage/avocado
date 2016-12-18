@@ -1,5 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Modules;
-using StandardLibrary.Processes;
+﻿using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
