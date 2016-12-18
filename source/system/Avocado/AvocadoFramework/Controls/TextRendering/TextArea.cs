@@ -40,31 +40,26 @@ namespace AvocadoFramework.Controls.TextRendering
             return brush;
         }
 
-        protected void Write(string text, Brush foreground)
-        {
+        protected void Write(string text, Brush foreground) =>
             CaretPosition = new Run(text, CaretPosition)
             {
                 Foreground = createFadingBrush(foreground, TEXT_FADE_DURATION)
             }
             .ContentEnd;
-        }
 
         protected void WriteLine() => WriteLine(string.Empty, Foreground);
 
-        protected void WriteLine(string text, Brush foreground)
-        {
-            text = $"{text.TrimEnd()}\r";
-            Write(text, foreground);
-        }
+        protected void WriteLine(string text, Brush foreground) =>
+            Write($"{text.TrimEnd()}\r", foreground);
 
         protected TextPointer StartPointer => CaretPosition.DocumentStart;
-        protected TextPointer EndPointer
-            => CaretPosition.DocumentEnd
+        protected TextPointer EndPointer =>
+            CaretPosition.DocumentEnd
                 // Omit default newline that is at the end of the document.
                 .GetNextInsertionPosition(LogicalDirection.Backward);
 
-        protected TextPointer LineStartPointer 
-            => CaretPosition.GetLineStartPosition(0);
+        protected TextPointer LineStartPointer =>
+            CaretPosition.GetLineStartPosition(0);
 
         protected void MoveCaret(TextPointer pointer, bool select)
         {
@@ -72,8 +67,8 @@ namespace AvocadoFramework.Controls.TextRendering
             else CaretPosition = pointer;
         }
 
-        protected void ClearSelection()
-            => Selection.Select(CaretPosition, CaretPosition);
+        protected void ClearSelection() =>
+            Selection.Select(CaretPosition, CaretPosition);
         
         Size getCharDimensions()
         {
