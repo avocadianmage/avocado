@@ -242,7 +242,8 @@ namespace AvocadoShell.Terminal
             var psEngine = await psEngineAsync;
 
             // Execute the command.
-            WriteErrorLine(psEngine.ExecuteCommand(input));
+            var error = psEngine.ExecuteCommand(input);
+            if (error != null) WriteErrorLine(error);
 
             // Check if exit was requested.
             if (psEngine.ShouldExit) exit();

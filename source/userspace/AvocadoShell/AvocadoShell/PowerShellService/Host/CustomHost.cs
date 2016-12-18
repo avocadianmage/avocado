@@ -148,7 +148,8 @@ namespace AvocadoShell.PowerShellService.Host
             pipelines.Push(pipeline);
 
             // Initialize the PowerShell environment of the pipeline.
-            shellUI.WriteErrorLine(pipeline.InitEnvironment());
+            var error = pipeline.InitEnvironment();
+            if (error != null) shellUI.WriteErrorLine(error);
         }
 
         #endregion
