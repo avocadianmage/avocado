@@ -12,7 +12,7 @@
 
     <!-- Resources. -->
     <AvocadoEngine:GlassPane.Resources>
-        <Color x:Key="PrimaryColor">LightGreen</Color>
+        <Color x:Key="PrimaryColor">LightGray</Color>
         <SolidColorBrush x:Key="PrimaryBrush" 
                          Color="{StaticResource PrimaryColor}" />
         <Color x:Key="SelectedColor">Orange</Color>

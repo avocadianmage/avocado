@@ -55,7 +55,6 @@ namespace AvocadoDownloader.BusinessLayer
             webDownload.ProgressUpdated += onProgressUpdated;
 
             FilePath = filePath;
-            Status = Config.InitialDownloadStatus;
         }
 
         public async Task DownloadFromUrl(string url)
@@ -81,7 +80,7 @@ namespace AvocadoDownloader.BusinessLayer
 
         void notifyFinish()
         {
-            Status = Config.FinishDownloadStatus;
+            Status = string.Empty;
             ProgressValue = 100;
             FinishedDownloading = true;
             DownloadFinished?.Invoke(this, EventArgs.Empty);
