@@ -1,4 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Runspaces;
+﻿using AvocadoShell.PowerShellService.Execution;
 using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
@@ -10,9 +10,16 @@ using System.Threading;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    class CustomHost : PSHost, IHostSupportsInteractiveSession
+    sealed class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public bool ShouldExit { get; private set; }
+        public string RemoteComputerName
+            => Runspace.ConnectionInfo?.ComputerName;
+        public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
+        public int GetMaxHistoryCount()
+            => (int)getPSVariable("MaximumHistoryCount");
+
+        RunspacePipeline currentPipeline => pipelines.Peek();
 
         readonly IShellUI shellUI;
         readonly Stack<RunspacePipeline> pipelines
@@ -21,8 +28,32 @@ namespace AvocadoShell.PowerShellService.Host
         public CustomHost(IShellUI shellUI)
         {
             this.shellUI = shellUI;
+
+            // Initialize host UI.
             UI = new CustomHostUI(shellUI);
+
+            // Create initial runspace.
+            PushRunspace(createRunspace());
         }
+
+        Runspace createRunspace()
+        {
+            var runspace = RunspaceFactory.CreateRunspace(this);
+            runspace.Open();
+            return runspace;
+        }
+
+        object getPSVariable(string name)
+            => Runspace.SessionStateProxy.GetVariable(name);
+
+        public string ExecuteCommand(string command)
+            => currentPipeline.ExecuteCommand(command);
+
+        public bool Stop() => currentPipeline.Stop();
+
+        public bool GetCompletion(ref string input, ref int index, bool forward)
+            => currentPipeline.Autocomplete.GetCompletion(
+                ref input, ref index, forward);
 
         /// <summary>
         /// Gets the culture information to use. This implementation returns a
@@ -120,8 +151,6 @@ namespace AvocadoShell.PowerShellService.Host
 
         #region IHostSupportsInteractiveSession implementation.
 
-        public RunspacePipeline Pipeline => pipelines.Peek();
-
         /// <summary>
         /// Gets a value indicating whether a request to open a PSSession has
         /// been made.
@@ -131,7 +160,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <summary>
         /// Gets or sets the runspace used by the PSSession.
         /// </summary>
-        public Runspace Runspace => Pipeline.Runspace;
+        public Runspace Runspace => currentPipeline.Runspace;
 
         /// <summary>
         /// Requests to close a PSSession.

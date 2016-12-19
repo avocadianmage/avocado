@@ -3,7 +3,7 @@ using System.Management.Automation.Host;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    class CustomRawHostUI : PSHostRawUserInterface
+    sealed class CustomRawHostUI : PSHostRawUserInterface
     {
         /// <summary>
         /// Gets or sets the background color of text to be written.

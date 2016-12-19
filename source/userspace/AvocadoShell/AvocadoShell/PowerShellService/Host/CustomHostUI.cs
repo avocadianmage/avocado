@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    class CustomHostUI : PSHostUserInterface
+    sealed class CustomHostUI : PSHostUserInterface
     {
         readonly IShellUI shellUI;
         readonly List<ProgressRecord> actionsInProgress

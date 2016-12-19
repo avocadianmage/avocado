@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace AvocadoShell.PowerShellService.Runspaces
+namespace AvocadoShell.PowerShellService.Execution
 {
     sealed class Autocomplete
     {

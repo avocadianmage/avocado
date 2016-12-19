@@ -114,13 +114,12 @@
     <Compile Include="Terminal\Modules\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />
-    <Compile Include="PowerShellService\Runspaces\PowerShellEngine.cs" />
-    <Compile Include="PowerShellService\Runspaces\RunspacePipeline.cs" />
+    <Compile Include="PowerShellService\Execution\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
     <Compile Include="PowerShellService\Host\CustomRawHostUI.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="PowerShellService\Runspaces\Autocomplete.cs" />
+    <Compile Include="PowerShellService\Execution\Autocomplete.cs" />
     <Compile Include="Terminal\Modules\History.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

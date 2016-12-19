@@ -1,5 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
-using AvocadoShell.PowerShellService.Runspaces;
+using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
@@ -27,12 +27,12 @@ namespace AvocadoShell.Terminal
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
-        readonly Task<PowerShellEngine> psEngineAsync;
+        readonly Task<CustomHost> hostAsync;
         readonly Task<History> historyAsync;
 
         public TerminalTextArea()
         {
-            psEngineAsync = Task.Run(() => new PowerShellEngine(this));
+            hostAsync = Task.Run(() => new CustomHost(this));
             historyAsync = Task.Run(createHistory);
             Task.Run(writeShellPrompt);
 
@@ -82,7 +82,7 @@ namespace AvocadoShell.Terminal
         }
 
         async Task<History> createHistory() =>
-            new History((await psEngineAsync).GetMaxHistoryCount());
+            new History((await hostAsync).GetMaxHistoryCount());
 
         async void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -91,13 +91,14 @@ namespace AvocadoShell.Terminal
             // Set the character buffer width of the PowerShell host.
             var bufferWidth = (int)Math.Ceiling(
                 e.NewSize.Width / CharDimensions.Width);
-            (await psEngineAsync).SetHostBufferSize(bufferWidth, 1);
+            (await hostAsync).UI.RawUI.BufferSize 
+                = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
         async Task terminateExec()
         {
             // Terminate the powershell process.
-            if (!(await psEngineAsync).Stop()) return;
+            if (!(await hostAsync).Stop()) return;
 
             // Ensure the powershell thread is unblocked.
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
@@ -234,14 +235,14 @@ namespace AvocadoShell.Terminal
             // Add command to history.
             (await historyAsync).Add(input);
 
-            var psEngine = await psEngineAsync;
+            var host = await hostAsync;
 
             // Execute the command.
-            var error = psEngine.ExecuteCommand(input);
+            var error = host.ExecuteCommand(input);
             if (error != null) WriteErrorLine(error);
 
             // Check if exit was requested.
-            if (psEngine.ShouldExit) exit();
+            if (host.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
             else await writeShellPrompt();
         }
@@ -256,9 +257,9 @@ namespace AvocadoShell.Terminal
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
-            var psEngine = await psEngineAsync;
+            var host = await hostAsync;
             var hasCompletion = await Task.Run(
-                () => psEngine.GetCompletion(ref input, ref index, forward));
+                () => host.GetCompletion(ref input, ref index, forward));
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
@@ -288,10 +289,10 @@ namespace AvocadoShell.Terminal
 
         async Task<string> getShellPromptString()
         {
-            var psEngine = await psEngineAsync;
+            var host = await hostAsync;
             return Prompt.GetShellPromptString(
-                psEngine.GetWorkingDirectory(),
-                psEngine.RemoteComputerName);
+                host.GetWorkingDirectory(),
+                host.RemoteComputerName);
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure) =>
