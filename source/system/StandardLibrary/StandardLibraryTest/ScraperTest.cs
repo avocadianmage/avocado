@@ -1,5 +1,5 @@
-﻿using System;
-using StandardLibrary.Web.Scraping;
+﻿using StandardLibrary.Web.Scraping;
+using System;
 
 namespace StandardLibraryTest
 {

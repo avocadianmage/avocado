@@ -70,13 +70,13 @@
     <Compile Include="Utilities\Extensions\WPFExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WPF.cs" />
+    <Compile Include="Web\Browser\BrowserUtils.cs" />
     <Compile Include="Web\Scraping\Parsing\LinkParser.cs" />
     <Compile Include="Web\Scraping\DynamicScraper.cs" />
-    <Compile Include="Web\Scraping\IScraper.cs" />
     <Compile Include="Web\Scraping\ScrapeUtils.cs" />
-    <Compile Include="Web\Scraping\ScrapingEngine.cs" />
     <Compile Include="Web\Scraping\StaticScraper.cs" />
     <Compile Include="Web\Scraping\Parsing\TextParser.cs" />
+    <Compile Include="Web\WebConfig.cs" />
     <Compile Include="Web\WebDownloader.cs" />
   </ItemGroup>
   <ItemGroup>

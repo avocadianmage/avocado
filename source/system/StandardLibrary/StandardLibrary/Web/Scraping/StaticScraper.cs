@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StandardLibrary.Web.Scraping
 {
-    public sealed class StaticScraper : IScraper
+    public sealed class StaticScraper
     {
         readonly CookieContainer cookies = new CookieContainer();
 
@@ -45,7 +45,7 @@ namespace StandardLibrary.Web.Scraping
 
         IDictionary<string, string> headers => new Dictionary<string, string>
         {
-            { "User-Agent", ScrapeUtils.GetUserAgent(Browser.Chrome) }
+            { "User-Agent", ScrapeUtils.GetUserAgent(WebBrowserType.Chrome) }
         };
     }
 }

@@ -1,34 +1,39 @@
-﻿using System;
+﻿using StandardLibrary.Web.Browser;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace StandardLibrary.Web.Scraping
 {
-    public class DynamicScaper : IScraper
+    public class DynamicScaper
     {
+        public bool ShowBrowser { get; set; }
+
         static readonly int MsBeforeShowBrowser
             = (int)new TimeSpan(0, 0, 10).TotalMilliseconds;
         static readonly int MsBeforeTimeout
             = (int)new TimeSpan(0, 3, 0).TotalMilliseconds;
 
         public virtual Task<string> GetSource(string url) 
-            => GetSource(url, false);
-
-        public Task<string> GetSource(string url, bool showBrowser)
+            => GetSource(url, null);
+        
+        public virtual Task<string> GetSource(
+            string url, Dictionary<string, string> postData)
         {
             var tcs = new TaskCompletionSource<string>();
 
             // Start the browsing operation on a STA thread.
             var thread = new Thread(
-                () => tcs.SetResult(navigate(url, showBrowser)));
+                () => tcs.SetResult(navigate(url, postData)));
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
 
             return tcs.Task;
         }
 
-        string navigate(string url, bool showBrowser)
+        string navigate(string url, Dictionary<string, string> postData)
         {
             string source = null;
 
@@ -43,16 +48,16 @@ namespace StandardLibrary.Web.Scraping
                 Height = 600,
 
                 // Prevent background browser from stealing focus.
-                Enabled = showBrowser
+                Enabled = ShowBrowser
             };
             frm.Controls.Add(browser);
 
             // Retrieve source before application exit.
-            frm.FormClosing += (s, e) => source = getSourceFromBrowser(browser);
+            frm.FormClosing += (s, e) => source = browser.GetSource();
             frm.FormClosed += (s, e) => Application.Exit();
 
             // Handle showing the browser.
-            if (showBrowser)
+            if (ShowBrowser)
             {
                 frm.Show();
 
@@ -74,7 +79,7 @@ namespace StandardLibrary.Web.Scraping
                     if (browser.Url.BaseUrl() != e.Url.BaseUrl()) return;
 
                     // Grab the source and exit the application.
-                    source = getSourceFromBrowser(browser);
+                    source = browser.GetSource();
                     Application.Exit();
                 };
 
@@ -87,18 +92,13 @@ namespace StandardLibrary.Web.Scraping
                     },
                     TaskScheduler.FromCurrentSynchronizationContext());
             }
-            
+
             // Navigate to the URL and block until the application exits.
-            browser.Navigate(url);
+            if (postData == null) browser.Navigate(url);
+            else browser.Post(url, postData);
+
             Application.Run();
-
             return source;
-        }
-
-        string getSourceFromBrowser(WebBrowser browser)
-        {
-            dynamic dom = browser.Document?.DomDocument;
-            return dom?.documentElement?.innerHTML;
         }
     }
 }
