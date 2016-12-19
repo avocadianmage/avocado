@@ -11,7 +11,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         readonly CustomHost host;
 
-        public PSHostRawUserInterface HostRawUI => host.UI.RawUI;
         public string RemoteComputerName
             => host.Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
@@ -44,5 +43,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
         public bool GetCompletion(ref string input, ref int index, bool forward)
             => host.Pipeline.Autocomplete.GetCompletion(
                 ref input, ref index, forward);
+
+        public void SetHostBufferSize(int width, int height)
+            => host.UI.RawUI.BufferSize = new Size(width, height);
     }
 }

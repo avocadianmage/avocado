@@ -9,13 +9,13 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static AvocadoShell.Config;
 using static StandardLibrary.Utilities.WPF;
-using System.Windows.Controls;
 
 namespace AvocadoShell.Terminal
 {
@@ -89,10 +89,9 @@ namespace AvocadoShell.Terminal
             if (!e.WidthChanged) return;
             
             // Set the character buffer width of the PowerShell host.
-            var bufferWidth =
-                (int)Math.Ceiling(e.NewSize.Width / CharDimensions.Width);
-            (await psEngineAsync).HostRawUI.BufferSize
-                = new System.Management.Automation.Host.Size(bufferWidth, 1);
+            var bufferWidth = (int)Math.Ceiling(
+                e.NewSize.Width / CharDimensions.Width);
+            (await psEngineAsync).SetHostBufferSize(bufferWidth, 1);
         }
 
         async Task terminateExec()
