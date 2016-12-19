@@ -8,9 +8,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
     sealed class PowerShellEngine
     {
         public bool ShouldExit => host.ShouldExit;
-
-        readonly CustomHost host;
-
         public string RemoteComputerName
             => host.Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
@@ -19,6 +16,8 @@ namespace AvocadoShell.PowerShellService.Runspaces
 
         object getPSVariable(string name)
             => host.Runspace.SessionStateProxy.GetVariable(name);
+
+        readonly CustomHost host;
 
         public PowerShellEngine(IShellUI ui)
         {
@@ -32,8 +31,6 @@ namespace AvocadoShell.PowerShellService.Runspaces
             runspace.Open();
             host.PushRunspace(runspace);
         }
-
-        public string InitEnvironment() => host.Pipeline.InitEnvironment();
 
         public string ExecuteCommand(string cmd)
             => host.Pipeline.ExecuteCommand(cmd);
