@@ -13,8 +13,9 @@
             <Color x:Key="PrimaryColor">Green</Color>
             <SolidColorBrush x:Key="PrimaryBrush" 
                              Color="{StaticResource PrimaryColor}" />
-            <Color x:Key="SelectedColor">Orange</Color>
-            <SolidColorBrush x:Key="TextColor" Color="White" />
+            <Color x:Key="TextColor">White</Color>
+            <SolidColorBrush x:Key="TextBrush" 
+                             Color="{StaticResource TextColor}" />
             <Duration x:Key="SelectAnimationDuration">0:0:0.2</Duration>
         </Style.Resources>
         
@@ -25,8 +26,8 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <ColorAnimation 
-                                To="{StaticResource SelectedColor}" 
-                                Storyboard.TargetProperty="BorderBrush.Color"
+                                To="Orange" 
+                                Storyboard.TargetProperty="Foreground.Color"
                                 Duration="{StaticResource SelectAnimationDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
@@ -35,8 +36,8 @@
                     <BeginStoryboard>
                         <Storyboard>
                             <ColorAnimation 
-                                To="{StaticResource PrimaryColor}" 
-                                Storyboard.TargetProperty="BorderBrush.Color"
+                                To="{StaticResource TextColor}" 
+                                Storyboard.TargetProperty="Foreground.Color"
                                 Duration="{StaticResource SelectAnimationDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
@@ -46,10 +47,9 @@
 
         <!-- Properties. -->
         <Setter Property="Focusable" Value="True" />
-        <Setter Property="Height" Value="18" />
+        <Setter Property="Height" Value="16" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
 
         <!-- Template. -->
         <Setter Property="Template">
@@ -57,32 +57,29 @@
                 <ControlTemplate TargetType="{x:Type progress:Progressor}">
 
                     <!-- Layout. -->
-                    <Border BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}">
-                        <Grid>
+                    <Grid>
 
-                            <ProgressBar 
-                                Background="Transparent"
-                                Foreground="{StaticResource PrimaryBrush}"
-                                BorderThickness="0"
-                                Minimum="{TemplateBinding Minimum}" 
-                                Maximum="{TemplateBinding Maximum}" 
-                                Value="{TemplateBinding Value}" />
+                        <ProgressBar 
+                            Background="#333333"
+                            Foreground="{StaticResource PrimaryBrush}"
+                            BorderThickness="0"
+                            Minimum="{TemplateBinding Minimum}" 
+                            Maximum="{TemplateBinding Maximum}" 
+                            Value="{TemplateBinding Value}" />
 
-                            <text:TextLabel 
-                                Content="{TemplateBinding Title}"
-                                Foreground="{StaticResource TextColor}"
-                                VerticalAlignment="Center"
-                                Margin="4 0 0 1" />
-                            <text:TextLabel
-                                Content="{TemplateBinding Status}"
-                                Foreground="{StaticResource TextColor}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Right"
-                                Margin="0 0 4 1" />
+                        <text:TextLabel 
+                            Content="{TemplateBinding Title}"
+                            Foreground="{TemplateBinding Foreground}"
+                            VerticalAlignment="Center"
+                            Margin="4 0 0 1" />
+                        <text:TextLabel
+                            Content="{TemplateBinding Status}"
+                            Foreground="{TemplateBinding Foreground}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Margin="0 0 4 1" />
 
-                        </Grid>
-                    </Border>
+                    </Grid>
 
                 </ControlTemplate>
             </Setter.Value>
