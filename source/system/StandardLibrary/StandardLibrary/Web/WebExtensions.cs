@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace StandardLibrary.Web.Browser
+namespace StandardLibrary.Web
 {
-    static class BrowserUtils
+    static class WebExtensions
     {
         public static string GetSource(this WebBrowser browser)
         {
@@ -22,5 +23,8 @@ namespace StandardLibrary.Web.Browser
             var postData = Encoding.UTF8.GetBytes(string.Join("&", pairs));
             browser.Navigate(url, null, postData, WebConfig.PostHeader);
         }
+
+        public static string BaseUrl(this Uri url)
+            => url.GetLeftPart(UriPartial.Authority);
     }
 }

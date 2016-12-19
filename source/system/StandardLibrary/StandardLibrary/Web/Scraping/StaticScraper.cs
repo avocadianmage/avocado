@@ -45,7 +45,7 @@ namespace StandardLibrary.Web.Scraping
 
         IDictionary<string, string> headers => new Dictionary<string, string>
         {
-            { "User-Agent", ScrapeUtils.GetUserAgent(WebBrowserType.Chrome) }
+            { "User-Agent", WebConfig.UserAgentChrome }
         };
     }
 }
