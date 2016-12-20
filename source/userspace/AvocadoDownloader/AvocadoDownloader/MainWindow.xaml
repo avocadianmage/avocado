@@ -54,6 +54,7 @@
                                             SaveFilePath="{Binding FilePath}"
                                             Status="{Binding Status}"
                                             Value="{Binding ProgressValue}"
+                                            IsIndeterminate="{Binding IsIndeterminate}"
                                             Maximum="100"
                                             Margin="4 2 2 2" />
                                     </DataTemplate>

@@ -30,7 +30,8 @@ namespace AvocadoDownloader.BusinessLayer
                 if (status == value) return;
                 status = value;
                 PropertyChanged?.Invoke(
-                    this, new PropertyChangedEventArgs(nameof(Status)));
+                    this, 
+                    new PropertyChangedEventArgs(nameof(Status)));
             }
         }
 
@@ -43,7 +44,22 @@ namespace AvocadoDownloader.BusinessLayer
                 if (progressValue == value) return;
                 progressValue = value;
                 PropertyChanged?.Invoke(
-                    this, new PropertyChangedEventArgs(nameof(ProgressValue)));
+                    this, 
+                    new PropertyChangedEventArgs(nameof(ProgressValue)));
+            }
+        }
+
+        bool isIndeterminate;
+        public bool IsIndeterminate
+        {
+            get { return isIndeterminate; }
+            set
+            {
+                if (isIndeterminate == value) return;
+                isIndeterminate = value;
+                PropertyChanged?.Invoke(
+                    this, 
+                    new PropertyChangedEventArgs(nameof(IsIndeterminate)));
             }
         }
 
@@ -69,14 +85,11 @@ namespace AvocadoDownloader.BusinessLayer
             await webDownload.Cancel();
             Status = status;
             ProgressValue = 0;
+            FinishedDownloading = false;
+            IsIndeterminate = true;
         }
 
-        void notifyStart()
-        {
-            Status = Config.StartDownloadStatus;
-            ProgressValue = 0;
-            FinishedDownloading = false;
-        }
+        void notifyStart() => Status = Config.StartDownloadStatus;
 
         void notifyFinish()
         {
@@ -96,12 +109,10 @@ namespace AvocadoDownloader.BusinessLayer
         {
             var percent = 100D * bytes / totalBytes;
 
-            // Set progress bar value.
             ProgressValue = percent;
-
-            // Update status text.
             Status = $@"{percent.ToRoundedString(2)}% [{
                 getDownloadBytesStr(bytes, totalBytes)}]";
+            IsIndeterminate = false;
         }
 
         static string getDownloadBytesStr(long bytes, long totalBytes)
@@ -157,21 +168,23 @@ namespace AvocadoDownloader.BusinessLayer
         public void GetObjectData(
             SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("Removed", Removed);
-            info.AddValue("FilePath", FilePath);
-            info.AddValue("FinishedDownloading", FinishedDownloading);
-            info.AddValue("Status", Status);
-            info.AddValue("ProgressValue", ProgressValue);
+            info.AddValue(nameof(FilePath), FilePath);
+            info.AddValue(nameof(FinishedDownloading), FinishedDownloading);
+            info.AddValue(nameof(Status), Status);
+            info.AddValue(nameof(ProgressValue), ProgressValue);
+            info.AddValue(nameof(IsIndeterminate), IsIndeterminate);
+            info.AddValue(nameof(Removed), Removed);
         }
 
         FileItem(SerializationInfo info, StreamingContext context)
-            : this(info.GetString("FilePath"))
+            : this(info.GetString(nameof(FilePath)))
         {
+            FinishedDownloading = info.GetBoolean(nameof(FinishedDownloading));
+            Status = info.GetString(nameof(Status));
+            ProgressValue = info.GetDouble(nameof(ProgressValue));
+            IsIndeterminate = info.GetBoolean(nameof(IsIndeterminate));
             Removed += (EventHandler)info.GetValue(
-                "Removed", typeof(EventHandler));
-            FinishedDownloading = info.GetBoolean("FinishedDownloading");
-            Status = info.GetString("Status");
-            ProgressValue = info.GetDouble("ProgressValue");
+                nameof(Removed), typeof(EventHandler));
         }
     }
 }

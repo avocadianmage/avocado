@@ -53,7 +53,7 @@ namespace AvocadoDownloader
                     return (GrouperList)new BinaryFormatter()
                         .Deserialize(stream);
                 }
-                catch (SerializationException exc)
+                catch (Exception exc)
                 {
                     // Show error and discard the serialized file if it is 
                     // corrupt.

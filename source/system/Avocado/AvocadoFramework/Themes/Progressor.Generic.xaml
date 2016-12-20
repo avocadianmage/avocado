@@ -63,6 +63,7 @@
                             Background="#333333"
                             Foreground="{StaticResource PrimaryBrush}"
                             BorderThickness="0"
+                            IsIndeterminate="{TemplateBinding IsIndeterminate}"
                             Minimum="{TemplateBinding Minimum}" 
                             Maximum="{TemplateBinding Maximum}" 
                             Value="{TemplateBinding Value}" />
