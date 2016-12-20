@@ -47,7 +47,7 @@
 
         <!-- Properties. -->
         <Setter Property="Focusable" Value="True" />
-        <Setter Property="Height" Value="16" />
+        <Setter Property="Height" Value="18" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
 
@@ -71,13 +71,13 @@
                             Content="{TemplateBinding Title}"
                             Foreground="{TemplateBinding Foreground}"
                             VerticalAlignment="Center"
-                            Margin="4 0 0 1" />
+                            Margin="6 0 0 1" />
                         <text:TextLabel
                             Content="{TemplateBinding Status}"
                             Foreground="{TemplateBinding Foreground}"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Right"
-                            Margin="0 0 4 1" />
+                            Margin="0 0 6 1" />
 
                     </Grid>
 

@@ -22,6 +22,12 @@ namespace AvocadoShell.PowerShellService.Host
             this.shellUI = shellUI;
         }
 
+        void writeOutputUnlessWhitespace(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return;
+            shellUI.WriteOutputLine(text);
+        }
+
         /// <summary>
         /// Gets an instance of the PSRawUserInterface object for this host
         /// application.
@@ -42,8 +48,8 @@ namespace AvocadoShell.PowerShellService.Host
             string message,
             Collection<FieldDescription> descriptions)
         {
-            shellUI.WriteOutputLine(caption);
-            shellUI.WriteOutputLine(message);
+            writeOutputUnlessWhitespace(caption);
+            writeOutputUnlessWhitespace(message);
 
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
@@ -85,8 +91,8 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            shellUI.WriteOutputLine(caption);
-            shellUI.WriteOutputLine(message);
+            writeOutputUnlessWhitespace(caption);
+            writeOutputUnlessWhitespace(message);
 
             var choiceList = choices.Select(c => new Choice(c)).ToArray();
             var choicePrompt = Choice.GetPromptText(
