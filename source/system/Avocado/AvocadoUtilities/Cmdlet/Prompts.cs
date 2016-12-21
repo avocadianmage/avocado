@@ -19,14 +19,14 @@ namespace AvocadoUtilities.Cmdlet
             return result[msg].ToString();
         }
 
-        public static string OptionPrompt(
+        public static T OptionPrompt<T>(
             this PSCmdlet cmdlet, 
-            params string[] options)
+            params T[] options)
         {
             var input = cmdlet.TextPrompt("Input selection");
 
             // Return null if nothing was entered.
-            if (string.IsNullOrWhiteSpace(input)) return null;
+            if (string.IsNullOrWhiteSpace(input)) return default(T);
 
             int selection;
             if (!validateSingleSelection(
@@ -42,9 +42,9 @@ namespace AvocadoUtilities.Cmdlet
             return options[selection];
         }
 
-        public static IEnumerable<string> MultiOptionPrompt(
+        public static IEnumerable<T> MultiOptionPrompt<T>(
             this PSCmdlet cmdlet, 
-            params string[] options)
+            params T[] options)
         {
             var input = cmdlet.TextPrompt("Input selection(s)");
 
@@ -60,7 +60,7 @@ namespace AvocadoUtilities.Cmdlet
                 return MultiOptionPrompt(cmdlet, options);
             }
 
-            var selections = new List<string>();
+            var selections = new List<T>();
 
             foreach (var range in rangeList)
             {
