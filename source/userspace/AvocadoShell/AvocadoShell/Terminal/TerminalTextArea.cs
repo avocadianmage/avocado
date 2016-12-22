@@ -27,6 +27,7 @@ namespace AvocadoShell.Terminal
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
+        readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly Task<CustomHost> hostAsync;
         readonly Task<History> historyAsync;
 
@@ -235,9 +236,11 @@ namespace AvocadoShell.Terminal
             // Add command to history.
             (await historyAsync).Add(input);
 
-            var host = await hostAsync;
+            // Reset the buffer for command output.
+            outputBuffer.Reset();
 
             // Execute the command.
+            var host = await hostAsync;
             var error = host.ExecuteCommand(input);
             if (error != null) WriteErrorLine(error);
 
@@ -247,8 +250,8 @@ namespace AvocadoShell.Terminal
             else await writeShellPrompt();
         }
 
-        void exit() => 
-            this.InvokeOnUIThread(() => Window.GetWindow(this).Close());
+        void exit() 
+            => Dispatcher.InvokeAsync(() => Window.GetWindow(this).Close());
 
         async Task performAutocomplete(bool forward)
         { 
@@ -284,8 +287,8 @@ namespace AvocadoShell.Terminal
             return nonShellPromptDone.Block();
         }
 
-        async Task writeShellPrompt() =>
-            safeWritePromptCore(await getShellPromptString(), true, false);
+        async Task writeShellPrompt()
+            => safeWritePromptCore(await getShellPromptString(), true, false);
 
         async Task<string> getShellPromptString()
         {
@@ -295,8 +298,8 @@ namespace AvocadoShell.Terminal
                 host.RemoteComputerName);
         }
 
-        void safeWritePromptCore(string prompt, bool fromShell, bool secure) =>
-            this.InvokeOnUIThread(
+        void safeWritePromptCore(string prompt, bool fromShell, bool secure)
+            => Dispatcher.InvokeAsync(
                 () => writePromptCore(prompt, fromShell, secure),
                 OUTPUT_PRIORITY);
 
@@ -327,8 +330,8 @@ namespace AvocadoShell.Terminal
             IsReadOnly = false;
         }
 
-        public void WriteCustom(string text, Brush foreground, bool newline) =>
-            safeWrite(text, foreground, newline);
+        public void WriteCustom(string text, Brush foreground, bool newline)
+            => safeWrite(text, foreground, newline);
 
         public void WriteOutputLine(string text)
         {
@@ -340,15 +343,19 @@ namespace AvocadoShell.Terminal
             else safeWrite(text, SystemFontBrush, true);
         }
 
-        public void WriteErrorLine(string text) =>
-            safeWrite(text, ErrorFontBrush, true);
+        public void WriteErrorLine(string text)
+            => safeWrite(text, ErrorFontBrush, true);
 
-        void safeWrite(string text, Brush foreground, bool newline) =>
-            this.InvokeOnUIThread(
+        void safeWrite(string text, Brush foreground, bool newline)
+            => Dispatcher.InvokeAsync(
                 () => write(text, foreground, newline), OUTPUT_PRIORITY);
         
         void write(string text, Brush foreground, bool newline)
         {
+            // Run the data through the output buffer to determine if 
+            // anything should be printed right now.
+            if (!outputBuffer.ProcessNewOutput(ref text, newline)) return;
+
             if (newline) WriteLine(text, foreground);
             else Write(text, foreground);
         }
@@ -365,7 +372,7 @@ namespace AvocadoShell.Terminal
 
         void writeANSISegment(ANSISegment segment, bool newline)
         {
-            this.InvokeOnUIThread(() =>
+            Dispatcher.InvokeAsync(() =>
             {
                 var brush = segment.Color.HasValue
                         ? new SolidColorBrush(segment.Color.Value)

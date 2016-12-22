@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Threading;
 
 namespace StandardLibrary.Utilities.Extensions
 {
@@ -30,21 +29,6 @@ namespace StandardLibrary.Utilities.Extensions
         {
             element.CommandBindings.Add(
                 new CommandBinding(command, (s, e) => action()));
-        }
-
-        public static void InvokeOnUIThread(
-            this DispatcherObject dispatcherObject, Action action)
-        {
-            dispatcherObject.InvokeOnUIThread(
-                action, DispatcherPriority.Normal);
-        }
-
-        public static void InvokeOnUIThread(
-            this DispatcherObject dispatcherObject, 
-            Action action, 
-            DispatcherPriority priority)
-        {
-            dispatcherObject.Dispatcher.BeginInvoke(action, priority);
         }
 
         public static void MoveNextFocus(this FrameworkElement element)

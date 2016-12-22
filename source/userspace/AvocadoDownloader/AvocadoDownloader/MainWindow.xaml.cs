@@ -111,7 +111,7 @@ namespace AvocadoDownloader
         }
 
         void onFileItemDownloadFinished(object sender, EventArgs e) =>
-            this.InvokeOnUIThread(() =>
+            Dispatcher.InvokeAsync(() =>
                 TaskbarItemInfo.ProgressState = getUnfinishedFileItems().Any()
                     ? TaskbarItemProgressState.Indeterminate
                     : TaskbarItemProgressState.None);
@@ -124,7 +124,7 @@ namespace AvocadoDownloader
             // it as coming from the commandline.
             else
             {
-                this.InvokeOnUIThread(() => 
+                Dispatcher.InvokeAsync(() => 
                     processCommandlineArgs(EnvUtils.SplitArgStr(message)));
             }
         }
