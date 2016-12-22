@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Shell;
@@ -31,6 +30,9 @@ namespace AvocadoDownloader
             grouperList = createGrouperList();
             DataContext = grouperList;
 
+            // Clear any files that no longer exist.
+            clearNonexistentFileItems();
+
             // Start server and process command line.
             initServer().RunAsync();
             processCommandlineArgs(EnvUtils.GetArgs());
@@ -41,6 +43,9 @@ namespace AvocadoDownloader
 
         IEnumerable<FileItem> getUnfinishedFileItems()
             => getFileItems().Where(f => !f.FinishedDownloading);
+
+        IEnumerable<FileItem> getNonexistentFileItems()
+            => getFileItems().Where(f => !File.Exists(f.FilePath));
 
         GrouperList createGrouperList()
         {
@@ -147,6 +152,10 @@ namespace AvocadoDownloader
         // Delete file items that have not finished downloading.
         void deleteUnfinishedFileItems()
             => getUnfinishedFileItems().ToList().ForEach(f => f.Remove(true));
+
+        // Clear any files that no longer exist.
+        void clearNonexistentFileItems()
+            => getNonexistentFileItems().ToList().ForEach(f => f.Remove(false));
 
         void GlassPane_Closed(object sender, EventArgs e)
         {
