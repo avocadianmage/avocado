@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace StandardLibrary.Web
 {
-    static class WebExtensions
+    public static class WebExtensions
     {
         public static string GetSource(this WebBrowser browser)
         {

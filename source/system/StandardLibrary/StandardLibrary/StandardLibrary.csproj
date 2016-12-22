@@ -67,7 +67,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\WPF.cs" />
     <Compile Include="Web\WebExtensions.cs" />
-    <Compile Include="Web\Scraping\DynamicScraper.cs" />
     <Compile Include="Web\Scraping\StaticScraper.cs" />
     <Compile Include="Web\WebConfig.cs" />
     <Compile Include="Web\Downloading\WebDownloader.cs" />
