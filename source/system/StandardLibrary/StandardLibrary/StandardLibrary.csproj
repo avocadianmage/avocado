@@ -69,7 +69,6 @@
     <Compile Include="Web\WebExtensions.cs" />
     <Compile Include="Web\Scraping\DynamicScraper.cs" />
     <Compile Include="Web\Scraping\StaticScraper.cs" />
-    <Compile Include="Web\Scraping\Parsing\TextParser.cs" />
     <Compile Include="Web\WebConfig.cs" />
     <Compile Include="Web\Downloading\WebDownloader.cs" />
   </ItemGroup>
