@@ -69,7 +69,7 @@
     <Compile Include="Web\WebExtensions.cs" />
     <Compile Include="Web\Scraping\StaticScraper.cs" />
     <Compile Include="Web\WebConfig.cs" />
-    <Compile Include="Web\Downloading\WebDownloader.cs" />
+    <Compile Include="Web\Scraping\WebDownloader.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

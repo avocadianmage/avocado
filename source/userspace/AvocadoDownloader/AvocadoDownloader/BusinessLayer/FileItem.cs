@@ -1,5 +1,5 @@
 ﻿using StandardLibrary.Utilities.Extensions;
-using StandardLibrary.Web.Downloading;
+using StandardLibrary.Web.Scraping;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

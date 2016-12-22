@@ -2,7 +2,7 @@
 using System.Net;
 using System.Threading.Tasks;
 
-namespace StandardLibrary.Web.Downloading
+namespace StandardLibrary.Web.Scraping
 {
     public sealed class WebDownload
     {
