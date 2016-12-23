@@ -92,15 +92,21 @@ namespace AvocadoDownloader
 
             // Subsequent arguments are file paths grouped under the directory.
             // Quit if this set is empty.
-            var fileItems = args.Skip(1).Select(f => new FileItem(f)).ToList();
+            var fileItems = args
+                .Skip(1)
+                .Select(f => createFileItem(f))
+                .ToList();
             if (!fileItems.Any()) return;
-
-            // Subscribe to download finished event for each file item.
-            fileItems.ForEach(
-                f => f.DownloadFinished += onFileItemDownloadFinished);
 
             grouperList.AddGrouper(directoryPath, fileItems);
             notifyDownloadStarted();
+        }
+
+        FileItem createFileItem(string filePath)
+        {
+            var fileItem = new FileItem(filePath);
+            fileItem.DownloadFinished += onFileItemDownloadFinished;
+            return fileItem;
         }
 
         void notifyDownloadStarted()
