@@ -86,19 +86,13 @@ namespace AvocadoDownloader
 
         void processCommandlineArgs(IEnumerable<string> args)
         {
-            // Directory path is the first argument. Quit if it was not sent.
-            var directoryPath = args.FirstOrDefault();
-            if (directoryPath == null) return;
-
-            // Subsequent arguments are file paths grouped under the directory.
-            // Quit if this set is empty.
-            var fileItems = args
-                .Skip(1)
+            // Arguments are file paths of downloads.
+            if (!args.Any()) return;
+            var fileItemGroupings = args
                 .Select(f => createFileItem(f))
-                .ToList();
-            if (!fileItems.Any()) return;
+                .GroupBy(f => Path.GetDirectoryName(f.FilePath))
+                .ForEach(g => grouperList.AddGrouper(g.Key, g));
 
-            grouperList.AddGrouper(directoryPath, fileItems);
             notifyDownloadStarted();
         }
 
@@ -141,10 +135,10 @@ namespace AvocadoDownloader
                 ProtocolConfig.MessageDelimiter.Yield().ToArray(),
                 StringSplitOptions.RemoveEmptyEntries);
             var messageType = (MessageType)int.Parse(pieces[0]);
-            var directoryPath = pieces[1];
-            var filePath = pieces[2];
-            var data = pieces[3];
-            var fileItem = grouperList.GetGrouper(directoryPath)
+            var filePath = pieces[1];
+            var data = pieces[2];
+            var fileItem = grouperList
+                .GetGrouper(Path.GetDirectoryName(filePath))
                 .GetFileItem(filePath);
             switch (messageType)
             {

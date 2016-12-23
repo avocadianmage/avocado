@@ -9,12 +9,11 @@ namespace DownloaderProtocol
 
         public Task SendMessage(
             MessageType messageType, 
-            string directoryPath, 
             string filePath, 
             string data)
         {
             var type = ((int)messageType).ToString();
-            return sendMessage(type, directoryPath, filePath, data);
+            return sendMessage(type, filePath, data);
         }
 
         Task sendMessage(params string[] args)
