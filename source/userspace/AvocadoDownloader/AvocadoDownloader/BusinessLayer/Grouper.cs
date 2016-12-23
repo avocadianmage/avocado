@@ -1,4 +1,5 @@
-﻿using StandardLibrary.Utilities;
+﻿using StandardLibrary.Processes;
+using StandardLibrary.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,12 @@ namespace AvocadoDownloader.BusinessLayer
             Directory.CreateDirectory(directoryPath);
 
             AddFileItems(fileItems);
+        }
+
+        public void Open()
+        {
+            Directory.SetCurrentDirectory(DirectoryPath);
+            new ManagedProcess("Shell").RunForeground();
         }
 
         public FileItem GetFileItem(string fileName) => fileItemDict[fileName];

@@ -14,10 +14,16 @@ namespace AvocadoDownloader.UILayer
 
             if (!(e.OriginalSource is GrouperUI)) return;
 
+            var grouper = (Grouper)DataContext;
             switch (e.Key)
             {
+                case Key.Enter:
+                case Key.Space:
+                    grouper.Open();
+                    break;
+
                 case Key.Delete:
-                    remove((Grouper)DataContext, WPF.IsShiftKeyDown);
+                    remove(grouper, WPF.IsShiftKeyDown);
                     break;
             }
         }
