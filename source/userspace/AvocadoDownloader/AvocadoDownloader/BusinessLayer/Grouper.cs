@@ -1,6 +1,7 @@
 ﻿using StandardLibrary.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AvocadoDownloader.BusinessLayer
@@ -10,19 +11,21 @@ namespace AvocadoDownloader.BusinessLayer
     {
         public event EventHandler Removed;
 
-        public string Title { get; }
+        public string DirectoryPath { get; }
         public IEnumerable<FileItem> FileItems => fileItemDict.EnumerableData;
 
         readonly ObservableDictionary<string, FileItem> fileItemDict
             = new ObservableDictionary<string, FileItem>();
 
-        public Grouper(string title, IEnumerable<FileItem> fileItems)
+        public Grouper(string directoryPath, IEnumerable<FileItem> fileItems)
         {
-            Title = title;
+            DirectoryPath = directoryPath;
+            Directory.CreateDirectory(directoryPath);
+
             AddFileItems(fileItems);
         }
 
-        public FileItem GetFileItem(string filePath) => fileItemDict[filePath];
+        public FileItem GetFileItem(string fileName) => fileItemDict[fileName];
 
         public void AddFileItems(IEnumerable<FileItem> fileItems)
         {

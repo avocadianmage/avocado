@@ -8,10 +8,13 @@ namespace DownloaderProtocol
         public DownloaderClient() : base(ProtocolConfig.PipeName) { }
 
         public Task SendMessage(
-            MessageType messageType, string title, string filePath, string data)
+            MessageType messageType, 
+            string directoryPath, 
+            string filePath, 
+            string data)
         {
             var type = ((int)messageType).ToString();
-            return sendMessage(type, title, filePath, data);
+            return sendMessage(type, directoryPath, filePath, data);
         }
 
         Task sendMessage(params string[] args)

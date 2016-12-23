@@ -12,19 +12,22 @@ namespace AvocadoDownloader.BusinessLayer
         readonly ObservableDictionary<string, Grouper> grouperDict
             = new ObservableDictionary<string, Grouper>();
 
-        public Grouper GetGrouper(string title) => grouperDict[title];
+        public Grouper GetGrouper(string directoryPath) 
+            => grouperDict[directoryPath];
 
-        public void AddGrouper(string title, IEnumerable<FileItem> fileItems)
+        public void AddGrouper(
+            string directoryPath, IEnumerable<FileItem> fileItems)
         {
-            if (grouperDict.ContainsKey(title))
+            if (grouperDict.ContainsKey(directoryPath))
             {
-                grouperDict[title].AddFileItems(fileItems);
+                grouperDict[directoryPath].AddFileItems(fileItems);
                 return;
             }
 
-            var grouper = new Grouper(title, fileItems);
-            grouper.Removed += (s, e) => grouperDict.Remove(((Grouper)s).Title);
-            grouperDict.Add(title, grouper);
+            var grouper = new Grouper(directoryPath, fileItems);
+            grouper.Removed += (s, e) 
+                => grouperDict.Remove(((Grouper)s).DirectoryPath);
+            grouperDict.Add(directoryPath, grouper);
         }
     }
 }
