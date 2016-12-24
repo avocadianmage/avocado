@@ -1,5 +1,6 @@
 ﻿using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace AvocadoShell.PowerShellService.Execution
         public string InitEnvironment()
         {
             var startupScripts = getSystemStartupScripts()
-                .Concat(EnvUtils.GetArgs());
+                .Concat(getParameterScripts());
             return ExecuteScripts(startupScripts);
         }
 
@@ -39,6 +40,9 @@ namespace AvocadoShell.PowerShellService.Execution
                 .Where(r => r.EndsWith(".ps1"))
                 .Select(r => EnvUtils.GetEmbeddedText(asm, r));
         }
+
+        IEnumerable<string> getParameterScripts()
+            => string.Join(" ", EnvUtils.GetArgs()).Yield();
 
         /// <summary>
         /// Asynchronous request to stop the running pipeline.

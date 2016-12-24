@@ -34,8 +34,12 @@ namespace AvocadoShell.Terminal
         public TerminalTextArea()
         {
             hostAsync = Task.Run(() => new CustomHost(this));
-            historyAsync = Task.Run(createHistory);
-            Task.Run(writeShellPrompt);
+            historyAsync = Task.Run(async () =>
+            {
+                (await hostAsync).InitializeRunspace();
+                await writeShellPrompt();
+                return await createHistory();
+            });
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;

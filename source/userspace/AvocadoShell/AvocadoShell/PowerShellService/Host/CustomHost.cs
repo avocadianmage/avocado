@@ -28,19 +28,14 @@ namespace AvocadoShell.PowerShellService.Host
         public CustomHost(IShellUI shellUI)
         {
             this.shellUI = shellUI;
-
-            // Initialize host UI.
             UI = new CustomHostUI(shellUI);
-
-            // Create initial runspace.
-            PushRunspace(createRunspace());
         }
 
-        Runspace createRunspace()
+        public void InitializeRunspace()
         {
             var runspace = RunspaceFactory.CreateRunspace(this);
             runspace.Open();
-            return runspace;
+            PushRunspace(runspace);
         }
 
         object getPSVariable(string name)
