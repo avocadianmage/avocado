@@ -110,18 +110,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="PowerShellService\Host\UIHelpers\Choice.cs" />
-    <Compile Include="Terminal\Modules\OutputBuffer.cs" />
-    <Compile Include="Terminal\Modules\Prompt.cs" />
+    <Compile Include="PowerShellService\Host\UI\Choice.cs" />
+    <Compile Include="Terminal\OutputBuffer.cs" />
+    <Compile Include="Terminal\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\Execution\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
-    <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
-    <Compile Include="PowerShellService\Host\CustomRawHostUI.cs" />
+    <Compile Include="PowerShellService\Host\UI\CustomHostUI.cs" />
+    <Compile Include="PowerShellService\Host\UI\CustomRawHostUI.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="PowerShellService\Execution\Autocomplete.cs" />
-    <Compile Include="Terminal\Modules\History.cs" />
+    <Compile Include="PowerShellService\Host\History.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

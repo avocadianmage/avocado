@@ -1,4 +1,5 @@
 ﻿using AvocadoShell.PowerShellService.Execution;
+using AvocadoShell.PowerShellService.Host.UI;
 using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,11 @@ namespace AvocadoShell.PowerShellService.Host
     sealed class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public bool ShouldExit { get; private set; }
+        public History HistoryBuffer { get; private set; }
+
         public string RemoteComputerName
             => Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
-        public int GetMaxHistoryCount()
-            => (int)getPSVariable("MaximumHistoryCount");
 
         RunspacePipeline currentPipeline => pipelines.Peek();
 
@@ -31,11 +32,21 @@ namespace AvocadoShell.PowerShellService.Host
             UI = new CustomHostUI(shellUI);
         }
 
-        public void InitializeRunspace()
+        public void InitializeEnvironment()
         {
+            // Initialize runspace.
             var runspace = RunspaceFactory.CreateRunspace(this);
             runspace.Open();
             PushRunspace(runspace);
+
+            // Initialize history.
+            HistoryBuffer = createHistory();
+        }
+
+        History createHistory()
+        {
+            var maxHistoryCount = (int)getPSVariable("MaximumHistoryCount");
+            return new History(maxHistoryCount);
         }
 
         object getPSVariable(string name)

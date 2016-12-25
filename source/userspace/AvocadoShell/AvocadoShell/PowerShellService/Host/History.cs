@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AvocadoShell.Terminal.Modules
+namespace AvocadoShell.PowerShellService.Host
 {
     sealed class History
     {

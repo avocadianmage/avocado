@@ -1,5 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Host.UIHelpers;
-using AvocadoShell.Terminal;
+﻿using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +8,7 @@ using System.Management.Automation.Host;
 using System.Security;
 using System.Windows.Media;
 
-namespace AvocadoShell.PowerShellService.Host
+namespace AvocadoShell.PowerShellService.Host.UI
 {
     sealed class CustomHostUI : PSHostUserInterface
     {

@@ -1,6 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoShell.PowerShellService.Host;
-using AvocadoShell.Terminal.Modules;
 using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
@@ -29,22 +28,22 @@ namespace AvocadoShell.Terminal
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly Task<CustomHost> hostAsync;
-        readonly Task<History> historyAsync;
 
         public TerminalTextArea()
         {
             hostAsync = Task.Run(() => new CustomHost(this));
-            historyAsync = Task.Run(async () =>
-            {
-                (await hostAsync).InitializeRunspace();
-                await writeShellPrompt();
-                return await createHistory();
-            });
+            Task.Run(prepareHost);
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;
 
             addCommandBindings();
+        }
+
+        async Task prepareHost()
+        {
+            (await hostAsync).InitializeEnvironment();
+            await writeShellPrompt();
         }
 
         void addCommandBindings()
@@ -85,9 +84,6 @@ namespace AvocadoShell.Terminal
             base.OnTextChanged(e);
             ScrollToEnd();
         }
-
-        async Task<History> createHistory() =>
-            new History((await hostAsync).GetMaxHistoryCount());
 
         async void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -238,7 +234,7 @@ namespace AvocadoShell.Terminal
         async Task executeInput(string input)
         {
             // Add command to history.
-            (await historyAsync).Add(input);
+            (await hostAsync).HistoryBuffer.Add(input);
 
             // Reset the buffer for command output.
             outputBuffer.Reset();
@@ -393,7 +389,8 @@ namespace AvocadoShell.Terminal
 
             // Cache the current user input to the buffer and look up the stored 
             // input to display from the buffer.
-            var storedInput = (await historyAsync).Cycle(getInput(), forward);
+            var storedInput = (await hostAsync).HistoryBuffer
+                .Cycle(getInput(), forward);
 
             // Return if no command was found.
             if (storedInput == null) return;

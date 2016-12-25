@@ -1,4 +1,4 @@
-﻿namespace AvocadoShell.Terminal.Modules
+﻿namespace AvocadoShell.Terminal
 {
     sealed class OutputBuffer
     {

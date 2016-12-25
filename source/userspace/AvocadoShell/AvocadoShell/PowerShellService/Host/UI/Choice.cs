@@ -4,7 +4,7 @@ using System.Linq;
 using System.Management.Automation.Host;
 using System.Text;
 
-namespace AvocadoShell.PowerShellService.Host.UIHelpers
+namespace AvocadoShell.PowerShellService.Host.UI
 {
     sealed class Choice
     {
