@@ -8,7 +8,7 @@ using System.Management.Automation.Host;
 using System.Security;
 using System.Windows.Media;
 
-namespace AvocadoShell.PowerShellService.Host.UI
+namespace AvocadoShell.PowerShellService.Host
 {
     sealed class CustomHostUI : PSHostUserInterface
     {

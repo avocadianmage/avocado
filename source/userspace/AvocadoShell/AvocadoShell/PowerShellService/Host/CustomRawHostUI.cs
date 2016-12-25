@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management.Automation.Host;
 
-namespace AvocadoShell.PowerShellService.Host.UI
+namespace AvocadoShell.PowerShellService.Host
 {
     sealed class CustomRawHostUI : PSHostRawUserInterface
     {

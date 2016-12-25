@@ -1,5 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Execution;
-using AvocadoShell.PowerShellService.Host.UI;
+﻿using AvocadoShell.PowerShellService.Modules;
 using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
@@ -14,58 +13,18 @@ namespace AvocadoShell.PowerShellService.Host
     sealed class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public bool ShouldExit { get; private set; }
-        public string RemoteComputerName
-            => Runspace.ConnectionInfo?.ComputerName;
-        public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
-
-        RunspacePipeline currentPipeline => pipelines.Peek();
+        public RunspacePipeline CurrentPipeline => pipelines.Peek();
 
         readonly IShellUI shellUI;
         readonly Stack<RunspacePipeline> pipelines
             = new Stack<RunspacePipeline>();
-        History history;
 
         public CustomHost(IShellUI shellUI)
         {
             this.shellUI = shellUI;
             UI = new CustomHostUI(shellUI);
         }
-
-        public void InitializeEnvironment()
-        {
-            // Initialize runspace.
-            var runspace = RunspaceFactory.CreateRunspace(this);
-            runspace.Open();
-            PushRunspace(runspace);
-
-            // Initialize history.
-            history = createHistory();
-        }
-
-        History createHistory()
-        {
-            var maxHistoryCount = (int)getPSVariable("MaximumHistoryCount");
-            return new History(maxHistoryCount);
-        }
-
-        object getPSVariable(string name)
-            => Runspace.SessionStateProxy.GetVariable(name);
-
-        public string ExecuteCommand(string command)
-        {
-            history.Add(command);
-            return currentPipeline.ExecuteCommand(command);
-        }
-
-        public bool Stop() => currentPipeline.Stop();
-
-        public bool GetCompletion(ref string input, ref int index, bool forward)
-            => currentPipeline.Autocomplete.GetCompletion(
-                ref input, ref index, forward);
-
-        public string CycleHistory(string currentInput, bool forward)
-            => history.Cycle(currentInput, forward);
-
+        
         /// <summary>
         /// Gets the culture information to use. This implementation returns a
         /// snapshot of the culture information of the thread that created this
@@ -171,7 +130,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// <summary>
         /// Gets or sets the runspace used by the PSSession.
         /// </summary>
-        public Runspace Runspace => currentPipeline.Runspace;
+        public Runspace Runspace => CurrentPipeline.Runspace;
 
         /// <summary>
         /// Requests to close a PSSession.

@@ -1,5 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
-using AvocadoShell.PowerShellService.Host;
+using AvocadoShell.PowerShellService;
 using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
@@ -27,12 +27,12 @@ namespace AvocadoShell.Terminal
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
-        readonly Task<CustomHost> hostAsync;
+        readonly Task<PowerShellEngine> engineAsync;
 
         public TerminalTextArea()
         {
-            hostAsync = Task.Run(() => new CustomHost(this));
-            Task.Run(prepareHost);
+            engineAsync = Task.Run(() => new PowerShellEngine(this));
+            Task.Run(startCommandline);
 
             Unloaded += async (s, e) => await terminateExec();
             SizeChanged += onSizeChanged;
@@ -40,9 +40,9 @@ namespace AvocadoShell.Terminal
             addCommandBindings();
         }
 
-        async Task prepareHost()
+        async Task startCommandline()
         {
-            (await hostAsync).InitializeEnvironment();
+            (await engineAsync).Initialize();
             await writeShellPrompt();
         }
 
@@ -92,14 +92,14 @@ namespace AvocadoShell.Terminal
             // Set the character buffer width of the PowerShell host.
             var bufferWidth = (int)Math.Ceiling(
                 e.NewSize.Width / CharDimensions.Width);
-            (await hostAsync).UI.RawUI.BufferSize 
+            (await engineAsync).MyHost.UI.RawUI.BufferSize 
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
         async Task terminateExec()
         {
             // Terminate the powershell process.
-            if (!(await hostAsync).Stop()) return;
+            if (!(await engineAsync).Stop()) return;
 
             // Ensure the powershell thread is unblocked.
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
@@ -237,12 +237,12 @@ namespace AvocadoShell.Terminal
             outputBuffer.Reset();
 
             // Execute the command.
-            var host = await hostAsync;
-            var error = host.ExecuteCommand(input);
+            var engine = await engineAsync;
+            var error = engine.ExecuteCommand(input);
             if (error != null) WriteErrorLine(error);
 
             // Check if exit was requested.
-            if (host.ShouldExit) exit();
+            if (engine.MyHost.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
             else await writeShellPrompt();
         }
@@ -257,9 +257,9 @@ namespace AvocadoShell.Terminal
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
-            var host = await hostAsync;
+            var engine = await engineAsync;
             var hasCompletion = await Task.Run(
-                () => host.GetCompletion(ref input, ref index, forward));
+                () => engine.GetCompletion(ref input, ref index, forward));
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
@@ -289,10 +289,10 @@ namespace AvocadoShell.Terminal
 
         async Task<string> getShellPromptString()
         {
-            var host = await hostAsync;
+            var engine = await engineAsync;
             return Prompt.GetShellPromptString(
-                host.GetWorkingDirectory(),
-                host.RemoteComputerName);
+                engine.GetWorkingDirectory(),
+                engine.RemoteComputerName);
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
@@ -386,8 +386,8 @@ namespace AvocadoShell.Terminal
 
             // Cache the current user input to the buffer and look up the stored 
             // input to display from the buffer.
-            var storedInput = (await hostAsync)
-                .CycleHistory(getInput(), forward);
+            var storedInput = (await engineAsync).MyHistory
+                .Cycle(getInput(), forward);
 
             // Return if no command was found.
             if (storedInput == null) return;
