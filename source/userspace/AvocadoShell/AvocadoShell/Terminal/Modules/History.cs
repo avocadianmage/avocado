@@ -110,8 +110,11 @@ namespace AvocadoShell.Terminal.Modules
             return true;
         }
 
-        public string Cycle(bool forward)
+        public string Cycle(string currentInput, bool forward)
         {
+            // Cache the current input to the buffer.
+            currentNode.Value = currentInput;
+
             // Get the node to move to.
             var destinationNode = forward
                 ? currentNode.Next
@@ -125,8 +128,6 @@ namespace AvocadoShell.Terminal.Modules
             currentNode = destinationNode;
             return currentNode.Value;
         }
-
-        public void CacheInput(string input) => currentNode.Value = input;
 
         void reset()
         {

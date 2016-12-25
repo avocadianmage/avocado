@@ -391,13 +391,9 @@ namespace AvocadoShell.Terminal
             // Disallow lookup when not at the shell prompt.
             if (!currentPrompt.FromShell) return;
 
-            var history = await historyAsync;
-
-            // Cache the current user input to the buffer.
-            history.CacheInput(getInput());
-
-            // Look up the stored input to display from the buffer.
-            var storedInput = history.Cycle(forward);
+            // Cache the current user input to the buffer and look up the stored 
+            // input to display from the buffer.
+            var storedInput = (await historyAsync).Cycle(getInput(), forward);
 
             // Return if no command was found.
             if (storedInput == null) return;
