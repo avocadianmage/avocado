@@ -7,7 +7,7 @@ namespace AvocadoShell.PowerShellService
 {
     sealed class PowerShellEngine
     {
-        public CustomHost MyHost { get; }
+        public CustomHost MyHost { get; private set;  }
         public History MyHistory { get; private set; }
 
         public string RemoteComputerName
@@ -26,14 +26,11 @@ namespace AvocadoShell.PowerShellService
             => MyHost.CurrentPipeline.Autocomplete.GetCompletion(
                 ref input, ref index, forward);
 
-        public PowerShellEngine(IShellUI shellUI)
+        public void Initialize(IShellUI shellUI)
         {
             MyHost = new CustomHost(shellUI);
-        }
-
-        public void Initialize()
-        {
             createInitialHostRunspace();
+
             MyHistory = createHistory();
         }
 

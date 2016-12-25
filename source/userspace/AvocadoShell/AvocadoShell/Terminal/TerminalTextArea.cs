@@ -27,23 +27,22 @@ namespace AvocadoShell.Terminal
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
-        readonly Task<PowerShellEngine> engineAsync;
+        readonly PowerShellEngine engine = new PowerShellEngine();
 
         public TerminalTextArea()
         {
-            engineAsync = Task.Run(() => new PowerShellEngine(this));
-            Task.Run(startCommandline);
+            Task.Run(() => startCommandline());
 
-            Unloaded += async (s, e) => await terminateExec();
+            Unloaded += (s, e) => terminateExec();
             SizeChanged += onSizeChanged;
 
             addCommandBindings();
         }
 
-        async Task startCommandline()
+        void startCommandline()
         {
-            (await engineAsync).Initialize();
-            await writeShellPrompt();
+            engine.Initialize(this);
+            writeShellPrompt();
         }
 
         void addCommandBindings()
@@ -54,10 +53,10 @@ namespace AvocadoShell.Terminal
             // Up/Down - Access command history.
             this.BindCommand(
                 EditingCommands.MoveUpByLine, 
-                () => performHistoryLookup(false));
+                () => setInputFromHistory(false));
             this.BindCommand(
                 EditingCommands.MoveDownByLine,
-                () => performHistoryLookup(true));
+                () => setInputFromHistory(true));
 
             // PgUp/PgDn - scroll a page at a time without moving the text 
             // cursor.
@@ -85,21 +84,21 @@ namespace AvocadoShell.Terminal
             ScrollToEnd();
         }
 
-        async void onSizeChanged(object sender, SizeChangedEventArgs e)
+        void onSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!e.WidthChanged) return;
             
             // Set the character buffer width of the PowerShell host.
             var bufferWidth = (int)Math.Ceiling(
                 e.NewSize.Width / CharDimensions.Width);
-            (await engineAsync).MyHost.UI.RawUI.BufferSize 
+            engine.MyHost.UI.RawUI.BufferSize 
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
-        async Task terminateExec()
+        void terminateExec()
         {
             // Terminate the powershell process.
-            if (!(await engineAsync).Stop()) return;
+            if (!engine.Stop()) return;
 
             // Ensure the powershell thread is unblocked.
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
@@ -113,15 +112,12 @@ namespace AvocadoShell.Terminal
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        void performHistoryLookup(bool forward) =>
-            doInputManipulationWork(() => setInputFromHistory(forward));
-
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             // Always detect Ctrl+B break.
             if (IsControlKeyDown && e.Key == Key.B)
             {
-                Task.Run(terminateExec);
+                terminateExec();
                 return;
             }
 
@@ -231,20 +227,19 @@ namespace AvocadoShell.Terminal
             else nonShellPromptDone.Signal(input);
         }
 
-        async Task executeInput(string input)
+        void executeInput(string input)
         {
             // Reset the buffer for command output.
             outputBuffer.Reset();
 
             // Execute the command.
-            var engine = await engineAsync;
             var error = engine.ExecuteCommand(input);
             if (error != null) WriteErrorLine(error);
 
             // Check if exit was requested.
             if (engine.MyHost.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
-            else await writeShellPrompt();
+            else writeShellPrompt();
         }
 
         void exit() 
@@ -257,7 +252,6 @@ namespace AvocadoShell.Terminal
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
-            var engine = await engineAsync;
             var hasCompletion = await Task.Run(
                 () => engine.GetCompletion(ref input, ref index, forward));
             if (!hasCompletion) return;
@@ -284,12 +278,11 @@ namespace AvocadoShell.Terminal
             return nonShellPromptDone.Block();
         }
 
-        async Task writeShellPrompt()
-            => safeWritePromptCore(await getShellPromptString(), true, false);
+        void writeShellPrompt()
+            => safeWritePromptCore(getShellPromptString(), true, false);
 
-        async Task<string> getShellPromptString()
+        string getShellPromptString()
         {
-            var engine = await engineAsync;
             return Prompt.GetShellPromptString(
                 engine.GetWorkingDirectory(),
                 engine.RemoteComputerName);
@@ -379,15 +372,14 @@ namespace AvocadoShell.Terminal
             OUTPUT_PRIORITY);
         }
 
-        async Task setInputFromHistory(bool forward)
+        void setInputFromHistory(bool forward)
         {
             // Disallow lookup when not at the shell prompt.
             if (!currentPrompt.FromShell) return;
 
             // Cache the current user input to the buffer and look up the stored 
             // input to display from the buffer.
-            var storedInput = (await engineAsync).MyHistory
-                .Cycle(getInput(), forward);
+            var storedInput = engine.MyHistory.Cycle(getInput(), forward);
 
             // Return if no command was found.
             if (storedInput == null) return;
