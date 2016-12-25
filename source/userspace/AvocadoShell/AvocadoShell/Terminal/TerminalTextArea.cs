@@ -98,7 +98,7 @@ namespace AvocadoShell.Terminal
         void terminateExec()
         {
             // Terminate the powershell process.
-            if (!engine.Stop()) return;
+            if (!engine.MyHost.CurrentPipeline.Stop()) return;
 
             // Ensure the powershell thread is unblocked.
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
@@ -253,7 +253,8 @@ namespace AvocadoShell.Terminal
 
             // Perform the completion.
             var hasCompletion = await Task.Run(
-                () => engine.GetCompletion(ref input, ref index, forward));
+                () => engine.MyAutocomplete.GetCompletion(
+                    ref input, ref index, forward));
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.

@@ -9,6 +9,8 @@ namespace AvocadoShell.PowerShellService
     {
         public CustomHost MyHost { get; private set;  }
         public History MyHistory { get; private set; }
+        public Autocomplete MyAutocomplete 
+            => MyHost.CurrentPipeline.Autocomplete;
 
         public string RemoteComputerName
             => MyHost.Runspace.ConnectionInfo?.ComputerName;
@@ -19,12 +21,6 @@ namespace AvocadoShell.PowerShellService
             MyHistory.Add(command);
             return MyHost.CurrentPipeline.ExecuteCommand(command);
         }
-
-        public bool Stop() => MyHost.CurrentPipeline.Stop();
-
-        public bool GetCompletion(ref string input, ref int index, bool forward)
-            => MyHost.CurrentPipeline.Autocomplete.GetCompletion(
-                ref input, ref index, forward);
 
         public void Initialize(IShellUI shellUI)
         {
