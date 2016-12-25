@@ -233,9 +233,6 @@ namespace AvocadoShell.Terminal
 
         async Task executeInput(string input)
         {
-            // Add command to history.
-            (await hostAsync).HistoryBuffer.Add(input);
-
             // Reset the buffer for command output.
             outputBuffer.Reset();
 
@@ -389,8 +386,8 @@ namespace AvocadoShell.Terminal
 
             // Cache the current user input to the buffer and look up the stored 
             // input to display from the buffer.
-            var storedInput = (await hostAsync).HistoryBuffer
-                .Cycle(getInput(), forward);
+            var storedInput = (await hostAsync)
+                .CycleHistory(getInput(), forward);
 
             // Return if no command was found.
             if (storedInput == null) return;

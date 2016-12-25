@@ -14,8 +14,6 @@ namespace AvocadoShell.PowerShellService.Host
     sealed class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
         public bool ShouldExit { get; private set; }
-        public History HistoryBuffer { get; private set; }
-
         public string RemoteComputerName
             => Runspace.ConnectionInfo?.ComputerName;
         public string GetWorkingDirectory() => getPSVariable("PWD").ToString();
@@ -25,6 +23,7 @@ namespace AvocadoShell.PowerShellService.Host
         readonly IShellUI shellUI;
         readonly Stack<RunspacePipeline> pipelines
             = new Stack<RunspacePipeline>();
+        History history;
 
         public CustomHost(IShellUI shellUI)
         {
@@ -40,7 +39,7 @@ namespace AvocadoShell.PowerShellService.Host
             PushRunspace(runspace);
 
             // Initialize history.
-            HistoryBuffer = createHistory();
+            history = createHistory();
         }
 
         History createHistory()
@@ -53,13 +52,19 @@ namespace AvocadoShell.PowerShellService.Host
             => Runspace.SessionStateProxy.GetVariable(name);
 
         public string ExecuteCommand(string command)
-            => currentPipeline.ExecuteCommand(command);
+        {
+            history.Add(command);
+            return currentPipeline.ExecuteCommand(command);
+        }
 
         public bool Stop() => currentPipeline.Stop();
 
         public bool GetCompletion(ref string input, ref int index, bool forward)
             => currentPipeline.Autocomplete.GetCompletion(
                 ref input, ref index, forward);
+
+        public string CycleHistory(string currentInput, bool forward)
+            => history.Cycle(currentInput, forward);
 
         /// <summary>
         /// Gets the culture information to use. This implementation returns a
