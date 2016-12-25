@@ -9,8 +9,6 @@ namespace AvocadoShell.PowerShellService
     {
         public CustomHost MyHost { get; private set;  }
         public History MyHistory { get; private set; }
-        public Autocomplete MyAutocomplete 
-            => MyHost.CurrentPipeline.Autocomplete;
 
         public string RemoteComputerName
             => MyHost.Runspace.ConnectionInfo?.ComputerName;

@@ -253,7 +253,7 @@ namespace AvocadoShell.Terminal
 
             // Perform the completion.
             var hasCompletion = await Task.Run(
-                () => engine.MyAutocomplete.GetCompletion(
+                () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
                     ref input, ref index, forward));
             if (!hasCompletion) return;
 
