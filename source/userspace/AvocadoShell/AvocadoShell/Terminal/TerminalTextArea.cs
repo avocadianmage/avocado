@@ -5,6 +5,7 @@ using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Linq;
+using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -95,24 +96,26 @@ namespace AvocadoShell.Terminal
             tokenization.ForEach(p =>
             {
                 Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(
-                        promptStart, p.Key.Start, p.Key.Length, p.Value),
+                    () => applyTokenColoring(promptStart, p.Key, p.Value),
                     TEXT_PRIORITY);
             });
         }
 
         void applyTokenColoring(
-            TextPointer promptStart, int startIndex, int length, Color? color)
+            TextPointer promptStart, PSToken token, Color? color)
         {
-            var start = GetPointerFromCharOffset(promptStart, startIndex);
+            var start = GetPointerFromCharOffset(promptStart, token.Start);
             if (start == null) return;
-            var end = GetPointerFromCharOffset(start, length);
+            var end = GetPointerFromCharOffset(start, token.Length);
             if (end == null) return;
+
+            var range = new TextRange(start, end);
+            if (!PSSyntaxHighlighter.CompareTokenToContent(token, range.Text))
+                return;
 
             var foreground = color.HasValue
                 ? new SolidColorBrush(color.Value) : Foreground;
-
-            new TextRange(start, end).ApplyPropertyValue(
+            range.ApplyPropertyValue(
                 TextElement.ForegroundProperty, foreground);
         }
 

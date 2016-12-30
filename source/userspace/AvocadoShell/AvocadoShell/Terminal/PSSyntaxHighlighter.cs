@@ -9,6 +9,20 @@ namespace AvocadoShell.Terminal
 {
     sealed class PSSyntaxHighlighter
     {
+
+        public static bool CompareTokenToContent(PSToken token, string content)
+        {
+            switch (token.Type)
+            {
+                case PSTokenType.Variable:
+                    return $"${token.Content}" == content;
+                case PSTokenType.String:
+                    return token.Content.Trim('"') == content.Trim('"');
+                default:
+                    return token.Content == content;
+            }
+        }
+
         static Dictionary<PSTokenType, Color?> ColorLookup
             = new Dictionary<PSTokenType, Color?>
             {
