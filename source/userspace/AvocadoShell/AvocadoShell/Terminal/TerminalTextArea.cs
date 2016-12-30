@@ -139,14 +139,6 @@ namespace AvocadoShell.Terminal
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
         }
 
-        void doInputManipulationWork(Func<Task> work)
-        {
-            IsReadOnly = true;
-            work().ContinueWith(
-                t => IsReadOnly = false,
-                TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             // Always detect Ctrl+B break.
@@ -200,7 +192,7 @@ namespace AvocadoShell.Terminal
         {
             // Handle normally if not at the shell prompt.
             if (!currentPrompt.FromShell) return false;
-            doInputManipulationWork(() => performAutocomplete(!IsShiftKeyDown));
+            performAutocomplete(!IsShiftKeyDown).RunAsync();
             return true;
         }
 
