@@ -260,7 +260,8 @@ namespace AvocadoShell.Terminal
 
             // Position caret for writing command output.
             MoveCaret(EndPointer, false);
-            WriteLine(" ", Foreground).Background = InputBackgroundBrush;
+            CaretPosition.InsertTextInRun(" ");
+            WriteLine();
 
             // If this is the shell prompt, execute the input.
             if (currentPrompt.FromShell) Task.Run(() => executeInput(input));
@@ -350,8 +351,8 @@ namespace AvocadoShell.Terminal
             
             // Write prompt text.
             Write(prompt.TrimEnd(), PromptBrush);
-            var foreground = secure ? Brushes.Transparent : Foreground;
-            Write(" ", foreground).Background = InputBackgroundBrush;
+            var run = Write(" ", secure ? Brushes.Transparent : Foreground);
+            if (!secure) run.Background = InputBackgroundBrush;
             
             // Update the current prompt object.
             currentPrompt.Update(
