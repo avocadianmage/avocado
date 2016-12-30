@@ -40,16 +40,19 @@ namespace AvocadoFramework.Controls.TextRendering
             return brush;
         }
 
-        protected void Write(string text, Brush foreground) =>
-            CaretPosition = new Run(text, CaretPosition)
+        protected Run Write(string text, Brush foreground)
+        {
+            var run = new Run(text, CaretPosition)
             {
                 Foreground = createFadingBrush(foreground, TEXT_FADE_DURATION)
-            }
-            .ContentEnd;
+            };
+            CaretPosition = run.ContentEnd;
+            return run;
+        }
 
-        protected void WriteLine() => WriteLine(string.Empty, Foreground);
+        protected Run WriteLine() => WriteLine(string.Empty, Foreground);
 
-        protected void WriteLine(string text, Brush foreground) =>
+        protected Run WriteLine(string text, Brush foreground) =>
             Write($"{text}\r", foreground);
 
         protected TextPointer StartPointer => CaretPosition.DocumentStart;
@@ -80,6 +83,43 @@ namespace AvocadoFramework.Controls.TextRendering
                 FontSize,
                 Foreground);
             return new Size(formattedText.Width, formattedText.Height);
+        }
+
+        protected TextPointer GetPointerFromCharOffset(
+            TextPointer start, int offset)
+        {
+            var count = 0;
+            while (start != null)
+            {
+                var nextPointerContext = start.GetPointerContext(
+                    LogicalDirection.Forward);
+                if (nextPointerContext == TextPointerContext.Text)
+                {
+                    var runLength = start.GetTextRunLength(
+                        LogicalDirection.Forward);
+                    if (runLength > 0 && runLength + count < offset)
+                    {
+                        count += runLength;
+                        start = start.GetPositionAtOffset(runLength);
+
+                        if (count <= offset) continue;
+                    }
+                    else count++;
+                }
+                else if (nextPointerContext == TextPointerContext.ElementEnd)
+                {
+                    var element = start.GetAdjacentElement(
+                        LogicalDirection.Forward);
+                    if (element is LineBreak || element is Paragraph)
+                        count += Environment.NewLine.Length;
+                }
+
+                if (count > offset) break;
+
+                start = start.GetPositionAtOffset(
+                    1, LogicalDirection.Forward);
+            }
+            return start;
         }
     }
 }

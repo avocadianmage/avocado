@@ -115,6 +115,7 @@
     <Compile Include="Terminal\OutputBuffer.cs" />
     <Compile Include="Terminal\Prompt.cs" />
     <Compile Include="Terminal\IShellUI.cs" />
+    <Compile Include="Terminal\PSSyntaxHighlighter.cs" />
     <Compile Include="Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\Modules\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />

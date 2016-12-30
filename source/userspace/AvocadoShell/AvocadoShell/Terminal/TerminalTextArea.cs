@@ -20,14 +20,15 @@ namespace AvocadoShell.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        const DispatcherPriority OUTPUT_PRIORITY 
-            = DispatcherPriority.Background;
+        const DispatcherPriority TEXT_PRIORITY 
+            = DispatcherPriority.ContextIdle;
 
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly PowerShellEngine engine = new PowerShellEngine();
+        readonly PSSyntaxHighlighter highlighter = new PSSyntaxHighlighter();
 
         public TerminalTextArea()
         {
@@ -35,6 +36,7 @@ namespace AvocadoShell.Terminal
 
             Unloaded += (s, e) => terminateExec();
             SizeChanged += onSizeChanged;
+            TextChanged += onTextChanged;
 
             addCommandBindings();
         }
@@ -78,10 +80,40 @@ namespace AvocadoShell.Terminal
             ScrollToVerticalOffset(VerticalOffset + ViewportHeight * direction);
         }
 
-        protected override void OnTextChanged(TextChangedEventArgs e)
+        async void onTextChanged(object sender, TextChangedEventArgs e)
         {
-            base.OnTextChanged(e);
-            ScrollToEnd();
+            if (IsReadOnly || !currentPrompt.FromShell) return;
+            await performSyntaxHighlighting();
+        }
+
+        async Task performSyntaxHighlighting()
+        {
+            var input = getInput();
+            var tokenization = await Task.Run(
+                () => highlighter.GetChangedTokens(input));
+            var promptStart = getPromptPointer();
+            tokenization.ForEach(p =>
+            {
+                Dispatcher.InvokeAsync(
+                    () => applyTokenColoring(
+                        promptStart, p.Key.Start, p.Key.Length, p.Value),
+                    TEXT_PRIORITY);
+            });
+        }
+
+        void applyTokenColoring(
+            TextPointer promptStart, int startIndex, int length, Color? color)
+        {
+            var start = GetPointerFromCharOffset(promptStart, startIndex);
+            if (start == null) return;
+            var end = GetPointerFromCharOffset(start, length);
+            if (end == null) return;
+
+            var foreground = color.HasValue
+                ? new SolidColorBrush(color.Value) : Foreground;
+
+            new TextRange(start, end).ApplyPropertyValue(
+                TextElement.ForegroundProperty, foreground);
         }
 
         void onSizeChanged(object sender, SizeChangedEventArgs e)
@@ -212,6 +244,12 @@ namespace AvocadoShell.Terminal
             }
         }
 
+        protected override void OnPaste()
+        {
+            highlighter.Reset();
+            base.OnPaste();
+        }
+
         void execute()
         {
             // Get user input.
@@ -219,7 +257,7 @@ namespace AvocadoShell.Terminal
 
             // Position caret for writing command output.
             MoveCaret(EndPointer, false);
-            WriteLine();
+            WriteLine(" ", Foreground).Background = InputBackgroundBrush;
 
             // If this is the shell prompt, execute the input.
             if (currentPrompt.FromShell) Task.Run(() => executeInput(input));
@@ -229,8 +267,8 @@ namespace AvocadoShell.Terminal
 
         void executeInput(string input)
         {
-            // Reset the buffer for command output.
             outputBuffer.Reset();
+            highlighter.Reset();
 
             // Execute the command.
             var error = engine.ExecuteCommand(input);
@@ -292,7 +330,7 @@ namespace AvocadoShell.Terminal
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
             => Dispatcher.InvokeAsync(
                 () => writePromptCore(prompt, fromShell, secure),
-                OUTPUT_PRIORITY);
+                TEXT_PRIORITY);
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
@@ -309,10 +347,9 @@ namespace AvocadoShell.Terminal
             
             // Write prompt text.
             Write(prompt.TrimEnd(), PromptBrush);
-            Write(" ", secure ? Brushes.Transparent : Foreground);
+            var foreground = secure ? Brushes.Transparent : Foreground;
+            Write(" ", foreground).Background = InputBackgroundBrush;
             
-            ClearUndoBuffer();
-
             // Update the current prompt object.
             currentPrompt.Update(
                 fromShell, StartPointer.GetOffsetToPosition(CaretPosition));
@@ -339,7 +376,7 @@ namespace AvocadoShell.Terminal
 
         void safeWrite(string text, Brush foreground, bool newline)
             => Dispatcher.InvokeAsync(
-                () => write(text, foreground, newline), OUTPUT_PRIORITY);
+                () => write(text, foreground, newline), TEXT_PRIORITY);
         
         void write(string text, Brush foreground, bool newline)
         {
@@ -370,7 +407,7 @@ namespace AvocadoShell.Terminal
                         : SystemFontBrush;
                 write(segment.Text, brush, newline);
             },
-            OUTPUT_PRIORITY);
+            TEXT_PRIORITY);
         }
 
         void setInputFromHistory(bool forward)
@@ -392,7 +429,11 @@ namespace AvocadoShell.Terminal
 
         string getInput() => getInputTextRange(EndPointer).Text;
 
-        void setInput(string text) => getInputTextRange(EndPointer).Text = text;
+        void setInput(string text)
+        {
+            highlighter.Reset();
+            getInputTextRange(EndPointer).Text = text;
+        }
 
         TextPointer getPromptPointer() 
             => StartPointer.GetPositionAtOffset(currentPrompt.LengthInSymbols);

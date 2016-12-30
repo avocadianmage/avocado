@@ -18,7 +18,7 @@ namespace AvocadoFramework.Controls.TextRendering
             disableFormattingKeys();
 
             // Ctrl+V, Shift+Ins - Paste.
-            this.BindCommand(ApplicationCommands.Paste, paste);
+            this.BindCommand(ApplicationCommands.Paste, OnPaste);
         }
 
         void disableFormattingKeys() => new ICommand[] {
@@ -68,12 +68,6 @@ namespace AvocadoFramework.Controls.TextRendering
             Canvas.SetTop(caret, caretRect.Y);
         }
 
-        protected void ClearUndoBuffer()
-        {
-            IsUndoEnabled = false;
-            IsUndoEnabled = true;
-        }
-
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
             // Ignore input if the InputEnabled flag is false.
@@ -93,8 +87,11 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected abstract void HandleSpecialKeys(KeyEventArgs e);
 
-        // Disallow other styling when pasting.
-        void paste() =>
-            Write(Clipboard.GetText(TextDataFormat.Text), Foreground);
+        protected virtual void OnPaste()
+        {
+            // Disallow other styling when pasting.
+            Selection.Text = Clipboard.GetText(TextDataFormat.Text);
+            ClearSelection();
+        }
     }
 }
