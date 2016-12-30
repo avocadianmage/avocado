@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Management.Automation;
 using System.Windows.Media;
 
 namespace AvocadoShell
@@ -15,5 +17,28 @@ namespace AvocadoShell
 
         public static ConsoleColor SystemConsoleForeground 
             => ConsoleColor.Gray;
+
+        public static Dictionary<PSTokenType, Color?> PSSyntaxColorLookup
+            = new Dictionary<PSTokenType, Color?>
+            {
+                { PSTokenType.Attribute, Color.FromRgb(230, 168, 255) },
+                { PSTokenType.Command, Color.FromRgb(78, 201, 176) },
+                { PSTokenType.CommandArgument, null },
+                { PSTokenType.CommandParameter, Colors.SkyBlue },
+                { PSTokenType.Comment, Colors.DimGray },
+                { PSTokenType.GroupStart, null },
+                { PSTokenType.GroupEnd, null },
+                { PSTokenType.Keyword, Color.FromRgb(86, 156, 214) },
+                { PSTokenType.LineContinuation, Colors.Orange },
+                { PSTokenType.Member, null },
+                { PSTokenType.NewLine, null },
+                { PSTokenType.Number, Color.FromRgb(184, 215, 163) },
+                { PSTokenType.Operator, null },
+                { PSTokenType.StatementSeparator, Colors.Orange },
+                { PSTokenType.String, Colors.Yellow },
+                { PSTokenType.Type, Color.FromRgb(230, 168, 255) },
+                { PSTokenType.Variable, Color.FromRgb(184, 215, 163) },
+                { PSTokenType.Unknown, null }
+            };
     }
 }
