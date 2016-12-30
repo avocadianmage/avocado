@@ -122,7 +122,7 @@ namespace AvocadoShell.Terminal
             // Set the character buffer width of the PowerShell host.
             var bufferWidth = (int)Math.Ceiling(
                 e.NewSize.Width / CharDimensions.Width);
-            engine.MyHost.UI.RawUI.BufferSize 
+            engine.MyHost.UI.RawUI.BufferSize
                 = new System.Management.Automation.Host.Size(bufferWidth, 1);
         }
 
