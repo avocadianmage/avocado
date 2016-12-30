@@ -148,7 +148,40 @@ namespace AvocadoShell.Terminal
                 return;
             }
 
+            // Handle other special keys if input is allowed.
+            if (!IsReadOnly) handleSpecialKeys(e);
+
             base.OnPreviewKeyDown(e);
+        }
+
+        void handleSpecialKeys(KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                // Prevent overwriting the prompt.
+                case Key.Back:
+                case Key.Left:
+                    e.Handled = handleBackAndLeftKeys(e.Key);
+                    break;
+                case Key.Home:
+                    e.Handled = handleHomeKey();
+                    break;
+
+                // Clear input or selection.
+                case Key.Escape:
+                    e.Handled = handleEscKey();
+                    break;
+
+                // Autocompletion.
+                case Key.Tab:
+                    e.Handled = handleTabKey();
+                    break;
+
+                // Handle command execution.
+                case Key.Enter:
+                    e.Handled = handleEnterKey();
+                    break;
+            }
         }
 
         bool handleBackAndLeftKeys(Key key)
@@ -205,38 +238,6 @@ namespace AvocadoShell.Terminal
             IsReadOnly = true;
             execute();
             return true;
-        }
-
-        protected override void HandleSpecialKeys(KeyEventArgs e)
-        {
-            if (e.Handled) return;
-
-            switch (e.Key)
-            {
-                // Prevent overwriting the prompt.
-                case Key.Back:
-                case Key.Left:
-                    e.Handled = handleBackAndLeftKeys(e.Key);
-                    break;
-                case Key.Home:
-                    e.Handled = handleHomeKey();
-                    break;
-
-                // Clear input or selection.
-                case Key.Escape:
-                    e.Handled = handleEscKey();
-                    break;
-
-                // Autocompletion.
-                case Key.Tab:
-                    e.Handled = handleTabKey();
-                    break;
-
-                // Handle command execution.
-                case Key.Enter:
-                    e.Handled = handleEnterKey();
-                    break;
-            }
         }
 
         protected override void OnPaste()

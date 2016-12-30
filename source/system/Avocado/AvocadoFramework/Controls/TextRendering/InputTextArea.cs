@@ -68,25 +68,6 @@ namespace AvocadoFramework.Controls.TextRendering
             Canvas.SetTop(caret, caretRect.Y);
         }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            // Ignore input if the InputEnabled flag is false.
-            // The exception to this is system key handling (ex: Alt+F4).
-            if (IsReadOnly && e.Key != Key.System)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            // Handle any special key actions.
-            HandleSpecialKeys(e);
-
-            // Handle all other keys.
-            base.OnPreviewKeyDown(e);
-        }
-
-        protected abstract void HandleSpecialKeys(KeyEventArgs e);
-
         protected virtual void OnPaste()
         {
             // Disallow other styling when pasting.
