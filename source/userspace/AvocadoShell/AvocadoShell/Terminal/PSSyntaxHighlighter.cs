@@ -16,7 +16,8 @@ namespace AvocadoShell.Terminal
                 case PSTokenType.Variable:
                     return $"${token.Content}" == content;
                 case PSTokenType.String:
-                    return token.Content.Trim('"') == content.Trim('"');
+                    return token.Content.Trim('"', '\'') 
+                        == content.Trim('"', '\'');
                 default:
                     return token.Content == content;
             }
