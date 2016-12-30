@@ -21,10 +21,10 @@ namespace AvocadoShell
         public static Dictionary<PSTokenType, Color?> PSSyntaxColorLookup
             = new Dictionary<PSTokenType, Color?>
             {
-                { PSTokenType.Attribute, Color.FromRgb(230, 168, 255) },
-                { PSTokenType.Command, Color.FromRgb(78, 201, 176) },
+                { PSTokenType.Attribute, Color.FromRgb(78, 201, 176) },
+                { PSTokenType.Command, Colors.SkyBlue },
                 { PSTokenType.CommandArgument, null },
-                { PSTokenType.CommandParameter, Colors.SkyBlue },
+                { PSTokenType.CommandParameter, Color.FromRgb(180, 155, 230) },
                 { PSTokenType.Comment, Colors.DimGray },
                 { PSTokenType.GroupStart, null },
                 { PSTokenType.GroupEnd, null },
@@ -36,7 +36,7 @@ namespace AvocadoShell
                 { PSTokenType.Operator, null },
                 { PSTokenType.StatementSeparator, Colors.Orange },
                 { PSTokenType.String, Colors.Yellow },
-                { PSTokenType.Type, Color.FromRgb(230, 168, 255) },
+                { PSTokenType.Type, Color.FromRgb(78, 201, 176) },
                 { PSTokenType.Variable, Color.FromRgb(184, 215, 163) },
                 { PSTokenType.Unknown, null }
             };

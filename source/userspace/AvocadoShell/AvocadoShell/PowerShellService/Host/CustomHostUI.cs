@@ -265,7 +265,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message) =>
-            shellUI.WriteCustom($"[Debug] {message}", Brushes.Cyan, true);
+            shellUI.WriteCustom($"[Debug] {message}", Brushes.SkyBlue, true);
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
