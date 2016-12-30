@@ -21,8 +21,7 @@ namespace AvocadoShell.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        const DispatcherPriority TEXT_PRIORITY 
-            = DispatcherPriority.ContextIdle;
+        const DispatcherPriority TEXT_PRIORITY = DispatcherPriority.ContextIdle;
 
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
