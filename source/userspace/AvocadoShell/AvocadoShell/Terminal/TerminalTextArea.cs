@@ -109,13 +109,9 @@ namespace AvocadoShell.Terminal
             var end = GetPointerFromCharOffset(start, token.Length);
             if (end == null) return;
 
-            var range = new TextRange(start, end);
-            if (!PSSyntaxHighlighter.CompareTokenToContent(token, range.Text))
-                return;
-
             var foreground = color.HasValue
                 ? new SolidColorBrush(color.Value) : Foreground;
-            range.ApplyPropertyValue(
+            new TextRange(start, end).ApplyPropertyValue(
                 TextElement.ForegroundProperty, foreground);
         }
 
