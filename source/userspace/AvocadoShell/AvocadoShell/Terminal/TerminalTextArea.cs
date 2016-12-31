@@ -101,7 +101,7 @@ namespace AvocadoShell.Terminal
         }
 
         void applyTokenColoring(
-            TextPointer promptStart, PSToken token, Color? color)
+            TextPointer promptStart, PSToken token, Brush foreground)
         {
             var start = GetPointerFromCharOffset(promptStart, token.Start);
             if (start == null) return;
@@ -112,10 +112,8 @@ namespace AvocadoShell.Terminal
             if (!PSSyntaxHighlighter.CompareTokenToContent(token, range.Text))
                 return;
 
-            var foreground = color.HasValue
-                ? new SolidColorBrush(color.Value) : Foreground;
             range.ApplyPropertyValue(
-                TextElement.ForegroundProperty, foreground);
+                TextElement.ForegroundProperty, foreground ?? Foreground);
         }
 
         void onSizeChanged(object sender, SizeChangedEventArgs e)

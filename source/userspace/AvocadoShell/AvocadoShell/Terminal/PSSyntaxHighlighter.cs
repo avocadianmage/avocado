@@ -30,7 +30,7 @@ namespace AvocadoShell.Terminal
             lock (padlock) cachedTokens = new Collection<PSToken>();
         }
 
-        public IDictionary<PSToken, Color?> GetChangedTokens(string text)
+        public IDictionary<PSToken, Brush> GetChangedTokens(string text)
         {
             Collection<PSParseError> errors;
             var newTokens = PSParser.Tokenize(text, out errors);

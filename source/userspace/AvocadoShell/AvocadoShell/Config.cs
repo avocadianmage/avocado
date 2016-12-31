@@ -13,37 +13,42 @@ namespace AvocadoShell
         public static Brush SystemFontBrush => Brushes.LightGray;
 
         public static Brush InputBackgroundBrush { get; } 
-            = new SolidColorBrush(Colors.Gray) { Opacity = 0.25, };
+            = createBrush(Colors.Gray, 0.25);
 
         public static ConsoleColor SystemConsoleForeground 
             => ConsoleColor.Gray;
 
-        public static Dictionary<PSTokenType, Color?> PSSyntaxColorLookup
-            = new Dictionary<PSTokenType, Color?>
+        public static Dictionary<PSTokenType, Brush> PSSyntaxColorLookup
+            = new Dictionary<PSTokenType, Brush>
             {
-                { PSTokenType.Attribute, Color.FromRgb(78, 201, 176) },
-                { PSTokenType.Command, Colors.SkyBlue },
+                { PSTokenType.Attribute, createBrush(78, 201, 176) },
+                { PSTokenType.Command, Brushes.SkyBlue },
                 { PSTokenType.CommandArgument, null },
-                { PSTokenType.CommandParameter, Color.FromRgb(180, 155, 230) },
-                { PSTokenType.Comment, Colors.DimGray },
+                { PSTokenType.CommandParameter, createBrush(180, 155, 230) },
+                { PSTokenType.Comment, Brushes.DimGray },
                 { PSTokenType.GroupStart, null },
                 { PSTokenType.GroupEnd, null },
-                { PSTokenType.Keyword, Color.FromRgb(86, 156, 214) },
-                { PSTokenType.LineContinuation, Colors.Orange },
+                { PSTokenType.Keyword, createBrush(86, 156, 214) },
+                { PSTokenType.LineContinuation, Brushes.Orange },
                 { PSTokenType.Member, null },
                 { PSTokenType.NewLine, null },
-                { PSTokenType.Number, Color.FromRgb(184, 215, 163) },
+                { PSTokenType.Number, createBrush(184, 215, 163) },
                 { PSTokenType.Operator, null },
-                { PSTokenType.StatementSeparator, Colors.Orange },
-                { PSTokenType.String, Colors.Yellow },
-                { PSTokenType.Type, Color.FromRgb(78, 201, 176) },
-                { PSTokenType.Variable, Color.FromRgb(184, 215, 163) },
+                { PSTokenType.StatementSeparator, Brushes.Orange },
+                { PSTokenType.String, Brushes.Yellow },
+                { PSTokenType.Type, createBrush(78, 201, 176) },
+                { PSTokenType.Variable, createBrush(184, 215, 163) },
                 { PSTokenType.Unknown, null }
             };
 
-        static Config()
+        static Brush createBrush(byte r, byte g, byte b, double opacity = 1)
+            => createBrush(Color.FromRgb(r, g, b), opacity);
+
+        static Brush createBrush(Color color, double opacity = 1)
         {
-            InputBackgroundBrush.Freeze();
+            var brush = new SolidColorBrush(color) { Opacity = opacity };
+            brush.Freeze();
+            return brush;
         }
     }
 }
