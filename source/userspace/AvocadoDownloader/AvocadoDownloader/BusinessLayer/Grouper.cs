@@ -28,8 +28,11 @@ namespace AvocadoDownloader.BusinessLayer
 
         public void Open()
         {
-            Directory.SetCurrentDirectory(DirectoryPath);
-            new ManagedProcess("Shell", "Get-ChildItem").RunForeground();
+            new ManagedProcess("Shell", "Get-ChildItem")
+            {
+                WorkingDirectory = DirectoryPath
+            }
+            .RunForeground();
         }
 
         public FileItem GetFileItem(string fileName) => fileItemDict[fileName];
