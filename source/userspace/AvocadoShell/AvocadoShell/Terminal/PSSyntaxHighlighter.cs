@@ -9,6 +9,14 @@ namespace AvocadoShell.Terminal
 {
     sealed class PSSyntaxHighlighter
     {
+        public static bool CompareTokenToContent(PSToken token, string content)
+        {
+            var tokenContent = token.Content;
+            if (token.Type == PSTokenType.Variable)
+                tokenContent = $"${tokenContent}";
+            return tokenContent.Trim('"', '\'') == content.Trim('"', '\'');
+        }
+
         readonly object padlock = new object();
         Collection<PSToken> cachedTokens;
 
