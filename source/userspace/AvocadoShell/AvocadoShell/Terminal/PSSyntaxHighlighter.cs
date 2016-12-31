@@ -45,8 +45,8 @@ namespace AvocadoShell.Terminal
                     {
                         var newToken = newTokens[newTokenIterator(i)];
                         var cachedToken = cachedTokens[cachedTokenIterator(i)];
-                        if (compareTokens(newToken, cachedToken))
-                            deltaTokens.Remove(newToken);
+                        if (!compareTokens(newToken, cachedToken)) break;
+                        deltaTokens.Remove(newToken);
                     }
                 };
 
@@ -64,6 +64,8 @@ namespace AvocadoShell.Terminal
         }
 
         bool compareTokens(PSToken token1, PSToken token2)
-            => token1.Type == token2.Type && token1.Content == token2.Content;
+            => token1.Type == token2.Type
+            && token1.Content == token2.Content
+            && token1.Length == token2.Length;
     }
 }
