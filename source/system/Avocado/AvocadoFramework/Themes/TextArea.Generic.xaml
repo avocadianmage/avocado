@@ -48,22 +48,45 @@
                         <Canvas>
                             <Border x:Name="Caret" 
                                     BorderThickness="0 0 0 1"
+                                    BorderBrush="Transparent"
                                     SnapsToDevicePixels="True">
-                                
-                                <!-- Change color based on if the control is readonly. -->
+
                                 <Border.Style>
                                     <Style TargetType="Border">
-                                        <Setter Property="BorderBrush" 
-                                                Value="Orange" />
+
+                                        <Style.Resources>
+                                            <Duration x:Key="CaretReadonlyFadeDuration">0</Duration>
+                                        </Style.Resources>
+
+                                        <!-- Change color based on if the control is readonly. -->
                                         <Style.Triggers>
                                             <DataTrigger 
                                                 Binding="{Binding Path=IsReadOnly, 
                                                     RelativeSource={RelativeSource TemplatedParent}}"
                                                 Value="True">
-                                                <Setter Property="BorderBrush" 
-                                                        Value="Gray" />
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation
+                                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                                To="Gray"
+                                                                Duration="{StaticResource CaretReadonlyFadeDuration}" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation
+                                                                Storyboard.TargetProperty="BorderBrush.Color"
+                                                                To="Orange"
+                                                                Duration="{StaticResource CaretReadonlyFadeDuration}" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.ExitActions>
                                             </DataTrigger>
                                         </Style.Triggers>
+                                        
                                     </Style>
                                 </Border.Style>
                                 
