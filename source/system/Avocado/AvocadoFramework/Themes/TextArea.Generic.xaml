@@ -50,6 +50,10 @@
                                     BorderThickness="0 0 0 1"
                                     BorderBrush="Transparent"
                                     SnapsToDevicePixels="True">
+                                <Border.Background>
+                                    <SolidColorBrush Color="Gray" 
+                                                     Opacity="0.25" />
+                                </Border.Background>
 
                                 <Border.Style>
                                     <Style TargetType="Border">
@@ -58,8 +62,9 @@
                                             <Duration x:Key="CaretReadonlyFadeDuration">0</Duration>
                                         </Style.Resources>
 
-                                        <!-- Change color based on if the control is readonly. -->
                                         <Style.Triggers>
+
+                                            <!-- Change color based on if the control is readonly. -->
                                             <DataTrigger 
                                                 Binding="{Binding Path=IsReadOnly, 
                                                     RelativeSource={RelativeSource TemplatedParent}}"
@@ -85,28 +90,26 @@
                                                     </BeginStoryboard>
                                                 </DataTrigger.ExitActions>
                                             </DataTrigger>
+
+                                            <!-- Fade animation. -->
+                                            <EventTrigger RoutedEvent="Border.Loaded">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <DoubleAnimation
+                                                            Storyboard.TargetProperty="BorderBrush.Opacity"
+                                                            From="0" To="1"
+                                                            Duration="0:0:0.75"
+                                                            AutoReverse="True"
+                                                            RepeatBehavior="Forever" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+
                                         </Style.Triggers>
-                                        
+
                                     </Style>
                                 </Border.Style>
-                                
-                                <!-- Fade animation. -->
-                                <Border.Triggers>
-                                    <EventTrigger RoutedEvent="Border.Loaded">
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Storyboard.TargetName="Caret"
-                                                    Storyboard.TargetProperty="Opacity"
-                                                    From="0" To="1"
-                                                    Duration="0:0:0.75"
-                                                    AutoReverse="True"
-                                                    RepeatBehavior="Forever" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger>
-                                </Border.Triggers>
-                                
+
                             </Border>
                         </Canvas>
 
