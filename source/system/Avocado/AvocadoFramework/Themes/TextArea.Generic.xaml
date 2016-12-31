@@ -48,8 +48,7 @@
                         <Canvas>
                             <Border x:Name="Caret" 
                                     BorderThickness="0 0 0 1"
-                                    BorderBrush="Transparent"
-                                    SnapsToDevicePixels="True">
+                                    BorderBrush="Transparent">
                                 <Border.Background>
                                     <SolidColorBrush Color="Gray" 
                                                      Opacity="0.25" />
