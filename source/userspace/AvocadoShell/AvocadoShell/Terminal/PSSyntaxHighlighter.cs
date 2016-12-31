@@ -17,7 +17,6 @@ namespace AvocadoShell.Terminal
             return tokenContent.Trim('"', '\'') == content.Trim('"', '\'');
         }
 
-        readonly object padlock = new object();
         Collection<PSToken> cachedTokens;
 
         public PSSyntaxHighlighter()
@@ -27,7 +26,7 @@ namespace AvocadoShell.Terminal
 
         public void Reset()
         {
-            lock (padlock) cachedTokens = new Collection<PSToken>();
+            lock (this) cachedTokens = new Collection<PSToken>();
         }
 
         public IDictionary<PSToken, Brush> GetChangedTokens(string text)
@@ -50,7 +49,7 @@ namespace AvocadoShell.Terminal
                     }
                 };
 
-            lock (padlock)
+            lock (this)
             {
                 loopTokens(i => i, i => i);
                 loopTokens(
