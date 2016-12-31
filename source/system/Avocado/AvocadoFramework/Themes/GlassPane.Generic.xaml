@@ -128,11 +128,10 @@
 
                     <!-- Layout. -->
                     <Border x:Name="Pane" 
-                            BorderBrush="Transparent" 
+                            BorderBrush="{x:Static local:GlassPane.InactiveOutlineBrush}" 
                             BorderThickness="1" 
                             Background="Black">
                         <Border.Resources>
-                            <Color x:Key="InactiveOutlineColor">Gray</Color>
                             <Duration x:Key="WindowFadeDuration">
                                 0:0:0.2
                             </Duration>
@@ -150,15 +149,14 @@
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                    From="{StaticResource InactiveOutlineColor}" 
-                                    To="{x:Static local:GlassPane.ActiveOutlineColor}"
+                                    To="{Binding Source={x:Static local:GlassPane.ActiveOutlineBrush}, Path=Color}"
                                     Duration="{StaticResource OutlineFadeDuration}" />
                             </Storyboard>
                             <Storyboard x:Key="OutlineFadeOut">
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                    To="{StaticResource InactiveOutlineColor}"
+                                    To="{Binding Source={x:Static local:GlassPane.InactiveOutlineBrush}, Path=Color}"
                                     Duration="{StaticResource OutlineFadeDuration}" />
                             </Storyboard>
                         </Border.Resources>

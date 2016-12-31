@@ -12,8 +12,10 @@ namespace AvocadoFramework.Engine
 {
     public abstract class GlassPane : Window
     {
-        public static Color ActiveOutlineColor { get; }
-            = EnvUtils.IsAdmin ? Colors.Salmon : Colors.CornflowerBlue;
+        public static SolidColorBrush ActiveOutlineBrush { get; } 
+            = EnvUtils.IsAdmin ? ColorPalette.LightRed : ColorPalette.Blue;
+        public static SolidColorBrush InactiveOutlineBrush 
+            => ColorPalette.DarkGray;
 
         Border paneUI => this.GetTemplateElement<Border>("Pane");
         
