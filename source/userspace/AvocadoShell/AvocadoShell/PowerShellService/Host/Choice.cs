@@ -1,4 +1,5 @@
 ﻿using StandardLibrary.Utilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation.Host;
@@ -19,9 +20,8 @@ namespace AvocadoShell.PowerShellService.Host
 
         public static string GetHelpText(IEnumerable<Choice> choiceList)
         {
-            var builder = new StringBuilder();
-            choiceList.ForEach(c => builder.AppendLine(c.HelpLine));
-            return builder.ToString();
+            return string.Join(
+                Environment.NewLine, choiceList.Select(c => c.HelpLine));
         }
 
         public string HelpMessage { get; }
