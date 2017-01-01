@@ -22,8 +22,17 @@
                 <ControlTemplate TargetType="{x:Type text:TextLabel}">
 
                     <!-- Layout. -->
-                    <TextBlock Text="{TemplateBinding Content}"
-                               TextWrapping="Wrap" />
+                    <Grid>
+                        <TextBlock Text="{TemplateBinding Content}"
+                                   Foreground="Black"
+                                   TextWrapping="Wrap">
+                            <TextBlock.Effect>
+                                <BlurEffect Radius="2" KernelType="Box" />
+                            </TextBlock.Effect>
+                        </TextBlock>
+                        <TextBlock Text="{TemplateBinding Content}"
+                                   TextWrapping="Wrap" />
+                    </Grid>
 
                 </ControlTemplate>
             </Setter.Value>
