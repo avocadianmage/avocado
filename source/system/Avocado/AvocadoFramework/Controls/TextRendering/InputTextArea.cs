@@ -8,6 +8,8 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
+        protected Border StylizedCaret { get; private set; }
+
         public InputTextArea() : base()
         {
             addCommandBindings();
@@ -39,33 +41,33 @@ namespace AvocadoFramework.Controls.TextRendering
 
         void initCaret()
         {
-            var caret = this.GetTemplateElement<Border>("Caret");
+            StylizedCaret = this.GetTemplateElement<Border>("Caret");
 
             // Set size.
-            caret.Width = CharDimensions.Width + 1;
-            caret.Height = CharDimensions.Height + 1;
+            StylizedCaret.Width = CharDimensions.Width + 1;
+            StylizedCaret.Height = CharDimensions.Height + 1;
 
             // RichTextBox events.
-            SelectionChanged += (s, e) => updateCaretLocation(caret);
-            TextChanged += (s, e) => updateCaretLocation(caret);
-            var handler = new ScrollChangedEventHandler(
-                (s, e) => updateCaretLocation(caret));
-            AddHandler(ScrollViewer.ScrollChangedEvent, handler);
+            SelectionChanged += (s, e) => updateCaretLocation();
+            TextChanged += (s, e) => updateCaretLocation();
+            AddHandler(
+                ScrollViewer.ScrollChangedEvent, 
+                new ScrollChangedEventHandler((s, e) => updateCaretLocation()));
 
             // Window events.
             var window = Window.GetWindow(this);
             window.Activated += 
-                (s, e) => caret.Visibility = Visibility.Visible;
+                (s, e) => StylizedCaret.Visibility = Visibility.Visible;
             window.Deactivated += 
-                (s, e) => caret.Visibility = Visibility.Collapsed;
+                (s, e) => StylizedCaret.Visibility = Visibility.Collapsed;
         }
 
-        void updateCaretLocation(UIElement caret)
+        void updateCaretLocation()
         {
             var caretRect = CaretPosition.GetCharacterRect(
                 CaretPosition.LogicalDirection);
-            Canvas.SetLeft(caret, caretRect.X);
-            Canvas.SetTop(caret, caretRect.Y);
+            Canvas.SetLeft(StylizedCaret, caretRect.X);
+            Canvas.SetTop(StylizedCaret, caretRect.Y);
         }
 
         protected virtual void OnPaste()

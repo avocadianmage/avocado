@@ -80,6 +80,12 @@ namespace AvocadoShell.Terminal
             ScrollToVerticalOffset(VerticalOffset + ViewportHeight * direction);
         }
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            StylizedCaret.Background = InputBackgroundBrush;
+        }
+
         async void onTextChanged(object sender, TextChangedEventArgs e)
         {
             if (IsReadOnly || !currentPrompt.FromShell) return;

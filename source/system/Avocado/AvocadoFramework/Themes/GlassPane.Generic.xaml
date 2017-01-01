@@ -128,7 +128,7 @@
 
                     <!-- Layout. -->
                     <Border x:Name="Pane" 
-                            BorderBrush="{x:Static local:GlassPane.InactiveOutlineBrush}" 
+                            BorderBrush="Transparent" 
                             BorderThickness="1" 
                             Background="Black">
                         <Border.Resources>
