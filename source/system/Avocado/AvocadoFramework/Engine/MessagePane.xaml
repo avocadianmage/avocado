@@ -23,7 +23,7 @@
         <text:TextLabel Grid.Row="0" Grid.Column="1"
                         Margin="8 0 0 0"
                         x:Name="Message"
-                        Foreground="Salmon"
+                        Foreground="{x:Static engine:ColorPalette.LightRed}"
                         VerticalAlignment="Center" />
     </Grid>
 

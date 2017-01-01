@@ -5,7 +5,10 @@ namespace AvocadoFramework.Engine
 {
     public static class ColorPalette
     {
-        public static SolidColorBrush LightGray => Brushes.LightGray;
+        public static SolidColorBrush Black => Brushes.Black;
+
+        public static SolidColorBrush LightGray { get; }
+            = CreateBrush(220, 220, 220);
         public static SolidColorBrush DarkGray => Brushes.DimGray;
 
         public static SolidColorBrush LightRed => Brushes.Salmon;
