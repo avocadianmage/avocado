@@ -5,6 +5,7 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public static class TextPalette
     {
+        public static SolidColorBrush White => Brushes.White;
         public static SolidColorBrush LightGray { get; }
             = CreateBrush(220, 220, 220);
         public static SolidColorBrush DarkGray => Brushes.DimGray;

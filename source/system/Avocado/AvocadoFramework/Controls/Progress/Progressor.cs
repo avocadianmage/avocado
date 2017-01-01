@@ -1,10 +1,15 @@
-﻿using System.Windows;
+﻿using AvocadoFramework.Controls.TextRendering;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace AvocadoFramework.Controls.Progress
 {
     public class Progressor : ProgressBar
     {
+        public static Color ForegroundColor => TextPalette.White.Color;
+        public static Color SelectedForegroundColor => TextPalette.Orange.Color;
+
         static Progressor()
         {
             // Associate this control with the default theme.
