@@ -284,15 +284,17 @@ namespace AvocadoShell.Terminal
             => Dispatcher.InvokeAsync(() => Window.GetWindow(this).Close());
 
         async Task performAutocomplete(bool forward)
-        { 
+        {
             // Get data needed for the completion.
             var input = getInput();
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
+            IsReadOnly = true;
             var hasCompletion = await Task.Run(
                 () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
                     ref input, ref index, forward));
+            IsReadOnly = false;
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.

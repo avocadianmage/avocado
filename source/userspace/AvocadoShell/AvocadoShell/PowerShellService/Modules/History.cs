@@ -123,8 +123,7 @@ namespace AvocadoShell.PowerShellService.Modules
             // Return null if the destination node does not exist.
             if (destinationNode == null) return null;
 
-            // Update the pointer to the current node and return its new 
-            // value.
+            // Update the pointer to the current node and return its new value.
             currentNode = destinationNode;
             return currentNode.Value;
         }
