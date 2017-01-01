@@ -1,7 +1,7 @@
-﻿<local:GlassPane x:Class="AvocadoFramework.Engine.MessagePane"
+﻿<engine:GlassPane x:Class="AvocadoFramework.Engine.MessagePane"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:AvocadoFramework.Engine"
+        xmlns:engine="clr-namespace:AvocadoFramework.Engine"
         xmlns:text="clr-namespace:AvocadoFramework.Controls.TextRendering"
         ResizeMode="NoResize"
         Width="420" SizeToContent="Height"
@@ -27,4 +27,4 @@
                         VerticalAlignment="Center" />
     </Grid>
 
-</local:GlassPane>
+</engine:GlassPane>
