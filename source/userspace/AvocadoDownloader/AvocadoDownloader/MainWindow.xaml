@@ -1,9 +1,10 @@
-﻿<AvocadoEngine:GlassPane x:Class="AvocadoDownloader.MainWindow"
+﻿<engine:GlassPane x:Class="AvocadoDownloader.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AvocadoDownloader"
         xmlns:uiLayer="clr-namespace:AvocadoDownloader.UILayer"
-        xmlns:AvocadoEngine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
-        xmlns:AvocadoControls="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
+        xmlns:engine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
+        xmlns:text="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
         ResizeMode="NoResize"
         Width="420" SizeToContent="Height"
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
@@ -11,13 +12,9 @@
         Closed="GlassPane_Closed">
 
     <!-- Resources. -->
-    <AvocadoEngine:GlassPane.Resources>
-        <Color x:Key="PrimaryColor">LightGray</Color>
-        <SolidColorBrush x:Key="PrimaryBrush" 
-                         Color="{StaticResource PrimaryColor}" />
-        <Color x:Key="SelectedColor">Orange</Color>
+    <engine:GlassPane.Resources>
         <Duration x:Key="SelectAnimationDuration">0:0:0.2</Duration>
-    </AvocadoEngine:GlassPane.Resources>
+    </engine:GlassPane.Resources>
 
     <!-- Show progress from taskbar item. -->
     <Window.TaskbarItemInfo>
@@ -36,7 +33,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="4">
-                            <AvocadoControls:TextLabel 
+                            <text:TextLabel 
                                 Foreground="{Binding BorderBrush, ElementName=GrouperItem}" 
                                 Content="{Binding DirectoryPath}"
                                 Margin="0 0 0 2"/>
@@ -63,16 +60,20 @@
                                 <!-- Grouper selection animation. -->
                                 <ItemsControl.Style>
                                     <Style TargetType="ItemsControl">
-                                        <Setter Property="BorderBrush" 
-                                                Value="{StaticResource PrimaryBrush}" />
+                                        <Setter Property="BorderBrush">
+                                            <Setter.Value>
+                                                <SolidColorBrush
+                                                    Color="{x:Static local:Config.InactiveGrouperColor}" />
+                                            </Setter.Value>
+                                        </Setter>
                                         <Style.Triggers>
                                             <Trigger Property="IsFocused" Value="True">
                                                 <Trigger.EnterActions>
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <ColorAnimation 
-                                                                To="{StaticResource SelectedColor}" 
                                                                 Storyboard.TargetProperty="BorderBrush.Color"
+                                                                To="{x:Static local:Config.ActiveGrouperColor}"
                                                                 Duration="{StaticResource SelectAnimationDuration}" />
                                                         </Storyboard>
                                                     </BeginStoryboard>
@@ -81,8 +82,8 @@
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <ColorAnimation 
-                                                                To="{StaticResource PrimaryColor}" 
                                                                 Storyboard.TargetProperty="BorderBrush.Color"
+                                                                To="{x:Static local:Config.InactiveGrouperColor}"
                                                                 Duration="{StaticResource SelectAnimationDuration}" />
                                                         </Storyboard>
                                                     </BeginStoryboard>
@@ -100,12 +101,12 @@
         </ScrollViewer>
         
         <!-- Text that displays when the downloader is empty. -->
-        <AvocadoControls:TextLabel Foreground="White" 
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="The downloader is empty.">
-            <AvocadoControls:TextLabel.Style>
-                <Style TargetType="{x:Type AvocadoControls:TextLabel}">
+        <text:TextLabel Foreground="{x:Static text:TextPalette.White}" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Content="The downloader is empty.">
+            <text:TextLabel.Style>
+                <Style TargetType="{x:Type text:TextLabel}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ElementName=GrouperList, Path=Items.Count}" 
@@ -114,9 +115,9 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </AvocadoControls:TextLabel.Style>
-        </AvocadoControls:TextLabel>
+            </text:TextLabel.Style>
+        </text:TextLabel>
         
     </Grid>
 
-</AvocadoEngine:GlassPane>
+</engine:GlassPane>
