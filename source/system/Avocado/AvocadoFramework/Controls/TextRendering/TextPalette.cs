@@ -1,12 +1,10 @@
 ﻿using System.Windows.Media;
 using static StandardLibrary.Utilities.WPF;
 
-namespace AvocadoFramework.Engine
+namespace AvocadoFramework.Controls.TextRendering
 {
-    public static class ColorPalette
+    public static class TextPalette
     {
-        public static SolidColorBrush Black => Brushes.Black;
-
         public static SolidColorBrush LightGray { get; }
             = CreateBrush(220, 220, 220);
         public static SolidColorBrush DarkGray => Brushes.DimGray;

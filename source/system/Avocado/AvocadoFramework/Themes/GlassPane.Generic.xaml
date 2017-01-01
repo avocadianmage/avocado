@@ -65,7 +65,7 @@
                         <!-- Scrollbars. -->
                         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
                             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-                            <Setter Property="Foreground" Value="{x:Static engine:ColorPalette.DarkGray}" />
+                            <Setter Property="Foreground" Value="DimGray" />
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="Width" Value="2" />
                             <Setter Property="MinWidth" Value="4" />
@@ -130,7 +130,7 @@
                     <Border x:Name="Pane" 
                             BorderBrush="Transparent" 
                             BorderThickness="1" 
-                            Background="{x:Static engine:ColorPalette.Black}">
+                            Background="Black">
                         <Border.Resources>
                             <Duration x:Key="WindowFadeDuration">
                                 0:0:0.2
@@ -149,14 +149,14 @@
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                    To="{Binding Source={x:Static engine:GlassPane.ActiveOutlineBrush}, Path=Color}"
+                                    To="{x:Static engine:GlassPane.ActiveOutlineColor}"
                                     Duration="{StaticResource OutlineFadeDuration}" />
                             </Storyboard>
                             <Storyboard x:Key="OutlineFadeOut">
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
-                                    To="{Binding Source={x:Static engine:GlassPane.InactiveOutlineBrush}, Path=Color}"
+                                    To="DimGray"
                                     Duration="{StaticResource OutlineFadeDuration}" />
                             </Storyboard>
                         </Border.Resources>

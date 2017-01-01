@@ -82,7 +82,7 @@
     <Compile Include="Controls\TextRendering\TextConfig.cs" />
     <Compile Include="Controls\TextRendering\TextLabel.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
-    <Compile Include="Engine\ColorPalette.cs" />
+    <Compile Include="Controls\TextRendering\TextPalette.cs" />
     <Compile Include="Engine\GlassPane.cs">
       <SubType>Code</SubType>
     </Compile>

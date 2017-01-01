@@ -17,8 +17,7 @@
         <!-- Properties. -->
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="CaretBrush" Value="Transparent" />
-        <Setter Property="SelectionBrush" 
-                Value="{x:Static engine:ColorPalette.Orange}" />
+        <Setter Property="SelectionBrush" Value="Orange" />
         <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
         <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="IsTabStop" Value="False" />
