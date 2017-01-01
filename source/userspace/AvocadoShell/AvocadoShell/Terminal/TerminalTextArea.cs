@@ -368,11 +368,11 @@ namespace AvocadoShell.Terminal
             {
                 writeOutputLineWithANSICodes(text);
             }
-            else safeWrite(text, SystemFontBrush, true);
+            else safeWrite(text, OutputBrush, true);
         }
 
         public void WriteErrorLine(string text)
-            => safeWrite(text, ErrorFontBrush, true);
+            => safeWrite(text, ErrorBrush, true);
 
         void safeWrite(string text, Brush foreground, bool newline)
             => Dispatcher.InvokeAsync(
@@ -404,7 +404,7 @@ namespace AvocadoShell.Terminal
             {
                 var brush = segment.Color.HasValue
                         ? new SolidColorBrush(segment.Color.Value)
-                        : SystemFontBrush;
+                        : OutputBrush;
                 write(segment.Text, brush, newline);
             },
             TEXT_PRIORITY);

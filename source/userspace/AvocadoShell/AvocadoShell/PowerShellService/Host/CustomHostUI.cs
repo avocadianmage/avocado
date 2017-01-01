@@ -218,7 +218,7 @@ namespace AvocadoShell.PowerShellService.Host
         {
             // Recognize default system color.
             if (consoleColor == Config.SystemConsoleForeground)
-                return Config.SystemFontBrush;
+                return Config.OutputBrush;
 
             // Handle 'DarkYellow' which does not have a brush with a matching
             // name.
@@ -257,7 +257,7 @@ namespace AvocadoShell.PowerShellService.Host
             var line = $"{record.Activity}: {record.StatusDescription}";
             var percent = record.PercentComplete;
             if (percent >= 0) line += $" ({percent}%)";
-            shellUI.WriteCustom(line, Brushes.Cyan, true);
+            shellUI.WriteCustom(line, Config.ProgressBrush, true);
         }
 
         /// <summary>
@@ -265,20 +265,22 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <param name="message">The debug message that is displayed.</param>
         public override void WriteDebugLine(string message) =>
-            shellUI.WriteCustom($"[Debug] {message}", Brushes.SkyBlue, true);
+            shellUI.WriteCustom($"[Debug] {message}", Config.DebugBrush, true);
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
         /// </summary>
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message) =>
-            shellUI.WriteCustom($"[Verbose] {message}", Brushes.DimGray, true);
+            shellUI.WriteCustom(
+                $"[Verbose] {message}", Config.VerboseBrush, true);
 
         /// <summary>
         /// Writes a warning message to the output display of the host.
         /// </summary>
         /// <param name="message">The warning message that is displayed.</param>
         public override void WriteWarningLine(string message) => 
-            shellUI.WriteCustom($"[Warning] {message}", Brushes.Orange, true);
+            shellUI.WriteCustom(
+                $"[Warning] {message}", Config.WarningBrush, true);
     }
 }

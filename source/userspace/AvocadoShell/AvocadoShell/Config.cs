@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvocadoFramework.Controls.TextRendering;
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Windows.Media;
@@ -8,10 +9,14 @@ namespace AvocadoShell
 {
     sealed class Config
     {
-        public static Brush PromptBrush => Brushes.LightGreen;
-        public static Brush ElevatedBrush => Brushes.Yellow;
-        public static Brush ErrorFontBrush => Brushes.Salmon;
-        public static Brush SystemFontBrush => Brushes.LightGray;
+        public static Brush PromptBrush => TextPalette.LightGreen;
+        public static Brush ElevatedBrush => TextPalette.Yellow;
+        public static Brush ErrorBrush => TextPalette.LightRed;
+        public static Brush OutputBrush => TextPalette.LightGray;
+        public static Brush ProgressBrush => TextPalette.LightBlue;
+        public static Brush DebugBrush => TextPalette.LightBlue;
+        public static Brush VerboseBrush => TextPalette.DarkGray;
+        public static Brush WarningBrush => TextPalette.Orange;
 
         public static Brush InputBackgroundBrush { get; } 
             = CreateBrush(Colors.Gray, 0.25);
@@ -22,23 +27,23 @@ namespace AvocadoShell
         public static Dictionary<PSTokenType, Brush> PSSyntaxColorLookup
             = new Dictionary<PSTokenType, Brush>
             {
-                { PSTokenType.Attribute, CreateBrush(78, 201, 176) },
-                { PSTokenType.Command, Brushes.SkyBlue },
+                { PSTokenType.Attribute, TextPalette.Teal },
+                { PSTokenType.Command, TextPalette.LightBlue },
                 { PSTokenType.CommandArgument, null },
-                { PSTokenType.CommandParameter, CreateBrush(180, 155, 230) },
-                { PSTokenType.Comment, Brushes.DimGray },
+                { PSTokenType.CommandParameter, TextPalette.Purple },
+                { PSTokenType.Comment, TextPalette.DarkGray},
                 { PSTokenType.GroupStart, null },
                 { PSTokenType.GroupEnd, null },
-                { PSTokenType.Keyword, CreateBrush(86, 156, 214) },
-                { PSTokenType.LineContinuation, Brushes.Orange },
+                { PSTokenType.Keyword, TextPalette.Blue },
+                { PSTokenType.LineContinuation, TextPalette.Orange },
                 { PSTokenType.Member, null },
                 { PSTokenType.NewLine, null },
-                { PSTokenType.Number, CreateBrush(184, 215, 163) },
+                { PSTokenType.Number, TextPalette.OliveGreen },
                 { PSTokenType.Operator, null },
-                { PSTokenType.StatementSeparator, Brushes.Orange },
-                { PSTokenType.String, Brushes.Yellow },
-                { PSTokenType.Type, CreateBrush(78, 201, 176) },
-                { PSTokenType.Variable, CreateBrush(184, 215, 163) },
+                { PSTokenType.StatementSeparator, TextPalette.Orange },
+                { PSTokenType.String, TextPalette.Yellow },
+                { PSTokenType.Type, TextPalette.Teal },
+                { PSTokenType.Variable, TextPalette.OliveGreen },
                 { PSTokenType.Unknown, null }
             };
     }
