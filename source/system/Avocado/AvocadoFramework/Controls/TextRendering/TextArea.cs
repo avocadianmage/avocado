@@ -64,12 +64,6 @@ namespace AvocadoFramework.Controls.TextRendering
         protected TextPointer LineStartPointer =>
             CaretPosition.GetLineStartPosition(0);
 
-        protected void MoveCaret(TextPointer pointer, bool select)
-        {
-            if (select) Selection.Select(CaretPosition, pointer);
-            else CaretPosition = pointer;
-        }
-
         protected void ClearSelection() =>
             Selection.Select(CaretPosition, CaretPosition);
         

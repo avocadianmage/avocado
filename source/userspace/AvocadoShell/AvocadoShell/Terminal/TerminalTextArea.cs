@@ -198,9 +198,13 @@ namespace AvocadoShell.Terminal
             }
 
             // If we are on the same line as the prompt (or Ctrl is pressed), 
-            // move the cursor to the end of the prompt instead of the beginning 
-            // of the line.
-            MoveCaret(getPromptPointer(), IsShiftKeyDown);
+            // move the cursor to the end of the prompt.
+            if (IsShiftKeyDown)
+            {
+                EditingCommands.SelectToDocumentStart.Execute(null, this);
+                Selection.Select(Selection.End, getPromptPointer());
+            }
+            else CaretPosition = getPromptPointer();
             return true;
         }
 
@@ -256,7 +260,7 @@ namespace AvocadoShell.Terminal
             var input = getInput();
 
             // Position caret for writing command output.
-            MoveCaret(EndPointer, false);
+            CaretPosition = EndPointer;
             CaretPosition.InsertTextInRun(" ");
             WriteLine();
 
@@ -300,7 +304,7 @@ namespace AvocadoShell.Terminal
 
             // Update the input (UI) with the result of the completion.
             setInput(input);
-            MoveCaret(getPromptPointer().GetPositionAtOffset(index), false);
+            CaretPosition = getPromptPointer().GetPositionAtOffset(index);
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
@@ -427,7 +431,7 @@ namespace AvocadoShell.Terminal
 
             // Update the display to show the new input.
             setInput(storedInput);
-            MoveCaret(EndPointer, false);
+            CaretPosition = EndPointer;
         }
 
         string getInput() => getInputTextRange(EndPointer).Text;
