@@ -51,27 +51,6 @@ namespace AvocadoShell.Terminal
         {
             // Ctrl+A - Select input.
             this.BindCommand(ApplicationCommands.SelectAll, selectInput);
-
-            // Up/Down - Access command history.
-            this.BindCommand(
-                EditingCommands.MoveUpByLine, 
-                () => setInputFromHistory(false));
-            this.BindCommand(
-                EditingCommands.MoveDownByLine,
-                () => setInputFromHistory(true));
-
-            // PgUp/PgDn - scroll a page at a time without moving the text 
-            // cursor.
-            this.BindCommand(
-                EditingCommands.MoveDownByPage, () => scrollPage(true));
-            this.BindCommand(
-                EditingCommands.MoveUpByPage, () => scrollPage(false));
-
-            // Disable Shift+PgUp/PgDn.
-            new ICommand[] {
-                EditingCommands.SelectDownByPage,
-                EditingCommands.SelectUpByPage
-            }.ForEach(c => this.BindCommand(c, () => { }));
         }
 
         void scrollPage(bool down)
@@ -150,10 +129,8 @@ namespace AvocadoShell.Terminal
                 terminateExec();
                 return;
             }
-
-            // Handle other special keys if input is allowed.
-            if (!IsReadOnly) handleSpecialKeys(e);
-
+            
+            handleSpecialKeys(e);
             base.OnPreviewKeyDown(e);
         }
 
@@ -164,25 +141,37 @@ namespace AvocadoShell.Terminal
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:
-                    e.Handled = handleBackAndLeftKeys(e.Key);
+                    e.Handled = IsReadOnly || handleBackAndLeftKeys(e.Key);
                     break;
                 case Key.Home:
-                    e.Handled = handleHomeKey();
+                    e.Handled = IsReadOnly || handleHomeKey();
                     break;
 
                 // Clear input or selection.
                 case Key.Escape:
-                    e.Handled = handleEscKey();
+                    e.Handled = IsReadOnly || handleEscKey();
                     break;
 
                 // Autocompletion.
                 case Key.Tab:
-                    e.Handled = handleTabKey();
+                    e.Handled = IsReadOnly || handleTabKey();
                     break;
 
-                // Handle command execution.
+                // Command execution.
                 case Key.Enter:
-                    e.Handled = handleEnterKey();
+                    e.Handled = IsReadOnly || handleEnterKey();
+                    break;
+
+                // History.
+                case Key.Up:
+                case Key.Down:
+                    e.Handled = IsReadOnly || handleUpDown(e.Key);
+                    break;
+
+                // Scroll page up/down (can be used while readonly).
+                case Key.PageUp:
+                case Key.PageDown:
+                    e.Handled = handlePageUpDown(e.Key);
                     break;
             }
         }
@@ -240,6 +229,18 @@ namespace AvocadoShell.Terminal
             // Otherwise, execute the input.
             IsReadOnly = true;
             execute();
+            return true;
+        }
+
+        bool handleUpDown(Key key)
+        {
+            setInputFromHistory(key == Key.Down);
+            return true;
+        }
+
+        bool handlePageUpDown(Key key)
+        {
+            scrollPage(key == Key.PageDown);
             return true;
         }
 
@@ -446,6 +447,10 @@ namespace AvocadoShell.Terminal
         bool atOrBeforePrompt()
             => string.IsNullOrEmpty(getInputTextRange(CaretPosition).Text);
 
-        void selectInput() => Selection.Select(getPromptPointer(), EndPointer);
+        void selectInput()
+        {
+            if (IsReadOnly) return;
+            Selection.Select(getPromptPointer(), EndPointer);
+        }
     }
 }
