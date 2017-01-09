@@ -4,7 +4,6 @@ using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Security;
@@ -49,9 +48,8 @@ namespace AvocadoShell.Terminal
             Unloaded += (s, e) => terminateExec();
             SizeChanged += onSizeChanged;
             TextChanged += onTextChanged;
-            DependencyPropertyDescriptor
-                .FromProperty(IsReadOnlyProperty, typeof(TerminalTextArea))
-                .AddValueChanged(this, onIsReadOnlyChanged);
+            this.SubscribeToPropertyChange(
+                IsReadOnlyProperty, onIsReadOnlyChanged);
         }
 
         void onIsReadOnlyChanged(object sender, EventArgs e)
@@ -69,8 +67,8 @@ namespace AvocadoShell.Terminal
 
         void scrollPage(bool down)
         {
-            var direction = down ? 1 : -1;
-            ScrollToVerticalOffset(VerticalOffset + ViewportHeight * direction);
+            ScrollToVerticalOffset(
+                VerticalOffset + ViewportHeight * (down ? 1 : -1));
         }
 
         async void onTextChanged(object sender, TextChangedEventArgs e)

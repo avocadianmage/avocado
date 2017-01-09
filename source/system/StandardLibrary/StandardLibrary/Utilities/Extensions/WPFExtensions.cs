@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -35,8 +36,14 @@ namespace StandardLibrary.Utilities.Extensions
             => element.MoveFocus(new TraversalRequest(
                 FocusNavigationDirection.Next));
 
-        // Get the window handle.
-        public static IntPtr GetHandle(this Window window)
-            => new WindowInteropHelper(window).Handle;
+        public static void SubscribeToPropertyChange(
+            this DependencyObject target, 
+            DependencyProperty property, 
+            EventHandler handler)
+        {
+            DependencyPropertyDescriptor
+                .FromProperty(property, target.GetType())
+                .AddValueChanged(target, handler);
+        }
     }
 }
