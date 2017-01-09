@@ -4,6 +4,7 @@ using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Management.Automation;
 using System.Security;
@@ -33,11 +34,7 @@ namespace AvocadoShell.Terminal
         public TerminalTextArea()
         {
             Task.Run(() => startCommandline());
-
-            Unloaded += (s, e) => terminateExec();
-            SizeChanged += onSizeChanged;
-            TextChanged += onTextChanged;
-
+            subscribeToEvents();
             addCommandBindings();
         }
 
@@ -45,6 +42,23 @@ namespace AvocadoShell.Terminal
         {
             engine.Initialize(this);
             writeShellPrompt();
+        }
+
+        void subscribeToEvents()
+        {
+            Unloaded += (s, e) => terminateExec();
+            SizeChanged += onSizeChanged;
+            TextChanged += onTextChanged;
+            DependencyPropertyDescriptor
+                .FromProperty(IsReadOnlyProperty, typeof(TerminalTextArea))
+                .AddValueChanged(this, onIsReadOnlyChanged);
+        }
+
+        void onIsReadOnlyChanged(object sender, EventArgs e)
+        {
+            if (StylizedCaret == null) return;
+            StylizedCaret.Background = IsReadOnly
+                ? Brushes.Transparent : InputBackgroundBrush;
         }
 
         void addCommandBindings()
@@ -57,12 +71,6 @@ namespace AvocadoShell.Terminal
         {
             var direction = down ? 1 : -1;
             ScrollToVerticalOffset(VerticalOffset + ViewportHeight * direction);
-        }
-
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            StylizedCaret.Background = InputBackgroundBrush;
         }
 
         async void onTextChanged(object sender, TextChangedEventArgs e)
