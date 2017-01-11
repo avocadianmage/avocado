@@ -48,15 +48,6 @@ namespace AvocadoShell.Terminal
             Unloaded += (s, e) => terminateExec();
             SizeChanged += onSizeChanged;
             TextChanged += onTextChanged;
-            this.SubscribeToPropertyChange(
-                IsReadOnlyProperty, onIsReadOnlyChanged);
-        }
-
-        void onIsReadOnlyChanged(object sender, EventArgs e)
-        {
-            if (StylizedCaret == null) return;
-            StylizedCaret.Background = IsReadOnly
-                ? Brushes.Transparent : InputBackgroundBrush;
         }
 
         void addCommandBindings()
@@ -360,8 +351,7 @@ namespace AvocadoShell.Terminal
             
             // Write prompt text.
             Write(prompt.TrimEnd(), PromptBrush);
-            var run = Write(" ", secure ? Brushes.Transparent : Foreground);
-            if (!secure) run.Background = InputBackgroundBrush;
+            Write(" ", secure ? Brushes.Transparent : Foreground);
             
             // Update the current prompt object.
             currentPrompt.Update(

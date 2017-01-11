@@ -52,7 +52,7 @@ function rsh
 # Download files across a remote session.
 function rdl
 {
-    Param([Parameter(Mandatory = $true)][string[]]$Path)
+    Param([Parameter(Mandatory=$true)][string[]]$Path)
     
     # Establish session back to the remote computer.
     $sess = newRemoteSession($env:RootComputerName)

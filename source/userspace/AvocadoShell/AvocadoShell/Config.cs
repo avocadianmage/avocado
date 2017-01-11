@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Windows.Media;
-using static StandardLibrary.Utilities.WPF;
 
 namespace AvocadoShell
 {
@@ -18,14 +17,10 @@ namespace AvocadoShell
         public static Brush VerboseBrush => TextPalette.DarkGray;
         public static Brush WarningBrush => TextPalette.Orange;
 
-        public static Brush InputBackgroundBrush { get; } 
-            = CreateBrush(Colors.Gray, 0.25);
-
-        public static ConsoleColor SystemConsoleForeground 
-            => ConsoleColor.Gray;
+        public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
 
         public static Dictionary<PSTokenType, Brush> PSSyntaxColorLookup
-            = new Dictionary<PSTokenType, Brush>
+            { get; } = new Dictionary<PSTokenType, Brush>
             {
                 { PSTokenType.Attribute, TextPalette.Teal },
                 { PSTokenType.Command, TextPalette.LightBlue },
