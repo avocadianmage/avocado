@@ -29,32 +29,31 @@ namespace AvocadoShell.Terminal
             lock (this) cachedTokens = new Collection<PSToken>();
         }
 
+        delegate T GetIndex<T>(Collection<T> array, int seed);
+
         public IDictionary<PSToken, Brush> GetChangedTokens(string text)
         {
             Collection<PSParseError> errors;
             var newTokens = PSParser.Tokenize(text, out errors);
 
             var deltaTokens = new LinkedList<PSToken>(newTokens);
-            Action<Func<int, int>, Func<int, int>> loopTokens = 
-                (newTokenIterator, cachedTokenIterator) =>
+            Action<GetIndex<PSToken>> loopTokens = (iterator) =>
+            {
+                var loopCount = Math.Min(
+                    cachedTokens.Count, deltaTokens.Count);
+                for (var i = 0; i < loopCount; i++)
                 {
-                    var loopCount = Math.Min(
-                        cachedTokens.Count, deltaTokens.Count);
-                    for (var i = 0; i < loopCount; i++)
-                    {
-                        var newToken = newTokens[newTokenIterator(i)];
-                        var cachedToken = cachedTokens[cachedTokenIterator(i)];
-                        if (!compareTokens(newToken, cachedToken)) break;
-                        deltaTokens.Remove(newToken);
-                    }
-                };
+                    var newToken = iterator(newTokens, i);
+                    var cachedToken = iterator(cachedTokens, i);
+                    if (!compareTokens(newToken, cachedToken)) break;
+                    deltaTokens.Remove(newToken);
+                }
+            };
 
             lock (this)
             {
-                loopTokens(i => i, i => i);
-                loopTokens(
-                    i => newTokens.Count - i - 1, 
-                    i => cachedTokens.Count - i - 1);
+                loopTokens((array, seed) => array[seed]);
+                loopTokens((array, seed) => array[array.Count - seed - 1]);
                 cachedTokens = newTokens;
             }
 
