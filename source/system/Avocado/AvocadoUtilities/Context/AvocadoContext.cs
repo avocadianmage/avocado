@@ -1,4 +1,4 @@
-﻿using System;
+﻿using StandardLibrary.Processes;
 using System.IO;
 using System.Reflection;
 
@@ -6,15 +6,7 @@ namespace AvocadoUtilities.Context
 {
     public sealed class AvocadoContext
     {
-        public static string AppDataPath
-        {
-            get
-            {
-                var appDataPath = Environment.GetFolderPath(
-                    Environment.SpecialFolder.ApplicationData);
-                return Path.Combine(appDataPath, "Avocado");
-            }
-        }
+        public static string AppDataPath => EnvUtils.GetAppDataPath("Avocado");
 
         public ConfigData Config { get; }
 

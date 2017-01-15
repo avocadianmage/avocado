@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 namespace StandardLibrary.Utilities.Extensions
 {
@@ -24,9 +23,7 @@ namespace StandardLibrary.Utilities.Extensions
         }
 
         public static void BindCommand(
-            this UIElement element, 
-            ICommand command,
-            Action action)
+            this UIElement element, ICommand command, Action action)
         {
             element.CommandBindings.Add(
                 new CommandBinding(command, (s, e) => action()));

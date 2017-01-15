@@ -53,5 +53,16 @@ namespace StandardLibrary.Processes
                 return reader.ReadToEnd();
             }
         }
+
+        public static string GetAppDataPath()
+            => GetAppDataPath(Assembly.GetEntryAssembly().GetName().Name);
+
+        public static string GetAppDataPath(string appName)
+        {
+            var appDataPath = Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData);
+            var path = Path.Combine(appDataPath, appName);
+            return Directory.CreateDirectory(path).FullName;
+        }
     }
 }
