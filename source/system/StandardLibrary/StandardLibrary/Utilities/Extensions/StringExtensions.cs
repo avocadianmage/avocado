@@ -37,8 +37,8 @@ namespace StandardLibrary.Utilities.Extensions
             // Eliminate any duplicate, adjacent separators.
             for (var i = 0; i < str.Length - 1; i++)
             {
-                if (str[i] == SEPARATOR && str[i] != str[i + 1]) continue;
-                str = str.Remove(i--, 1);
+                if (str[i] == SEPARATOR && str[i] == str[i + 1])
+                    str = str.Remove(i--, 1);
             }
 
             // Remove separators at the ends and return.
