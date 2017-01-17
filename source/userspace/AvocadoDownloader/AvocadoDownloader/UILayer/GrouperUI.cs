@@ -1,6 +1,5 @@
 ﻿using AvocadoDownloader.BusinessLayer;
-using StandardLibrary.Utilities;
-using StandardLibrary.Utilities.Extensions;
+using StandardLibrary.WPF;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -23,7 +22,7 @@ namespace AvocadoDownloader.UILayer
                     break;
 
                 case Key.Delete:
-                    remove(grouper, WPF.IsShiftKeyDown);
+                    remove(grouper, WPFUtils.IsShiftKeyDown);
                     break;
             }
         }

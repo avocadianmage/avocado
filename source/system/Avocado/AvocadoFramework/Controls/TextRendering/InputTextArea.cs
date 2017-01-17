@@ -1,4 +1,5 @@
 ﻿using StandardLibrary.Utilities.Extensions;
+using StandardLibrary.WPF;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;

@@ -1,7 +1,6 @@
 ﻿using AvocadoDownloader.BusinessLayer;
 using AvocadoFramework.Controls.Progress;
-using StandardLibrary.Utilities;
-using StandardLibrary.Utilities.Extensions;
+using StandardLibrary.WPF;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
@@ -42,7 +41,7 @@ namespace AvocadoDownloader.UILayer
                     break;
 
                 case Key.Delete:
-                    remove(fileItem, WPF.IsShiftKeyDown);
+                    remove(fileItem, WPFUtils.IsShiftKeyDown);
                     break;
             }
         }

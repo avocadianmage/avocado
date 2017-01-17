@@ -1,9 +1,9 @@
 ﻿using System.Windows.Input;
 using System.Windows.Media;
 
-namespace StandardLibrary.Utilities
+namespace StandardLibrary.WPF
 {
-    public static class WPF
+    public static class WPFUtils
     {
         public static bool IsAltKeyDown
             => isModifierKeyDown(ModifierKeys.Alt);

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace StandardLibrary.Utilities.Extensions
+namespace StandardLibrary.WPF
 {
     public static class WPFExtensions
     {

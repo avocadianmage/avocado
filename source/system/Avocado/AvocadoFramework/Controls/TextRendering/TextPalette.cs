@@ -1,5 +1,5 @@
 ﻿using System.Windows.Media;
-using static StandardLibrary.Utilities.WPF;
+using static StandardLibrary.WPF.WPFUtils;
 
 namespace AvocadoFramework.Controls.TextRendering
 {

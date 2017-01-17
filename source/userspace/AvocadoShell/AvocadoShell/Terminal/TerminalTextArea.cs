@@ -3,6 +3,7 @@ using AvocadoShell.PowerShellService;
 using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
+using StandardLibrary.WPF;
 using System;
 using System.Linq;
 using System.Management.Automation;
@@ -15,7 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using static AvocadoShell.Config;
-using static StandardLibrary.Utilities.WPF;
+using static StandardLibrary.WPF.WPFUtils;
 
 namespace AvocadoShell.Terminal
 {
