@@ -5,7 +5,7 @@
         xmlns:uiLayer="clr-namespace:AvocadoDownloader.UILayer"
         xmlns:engine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
         xmlns:text="clr-namespace:AvocadoFramework.Controls.TextRendering;assembly=AvocadoFramework"
-        ResizeMode="NoResize"
+        ResizeMode="CanMinimize"
         Width="420" SizeToContent="Height"
         MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
         Title="Avocado Downloader"

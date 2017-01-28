@@ -46,17 +46,8 @@ namespace AvocadoFramework.Engine
             e.Handled = true;
             base.OnPreviewMouseDown(e);
 
-            if (e.LeftButton != MouseButtonState.Pressed) return;
-
-            // Double-click to toggle maximize.
-            if (e.ClickCount == 2 && ResizeMode != ResizeMode.NoResize)
-            {
-                WindowState = WindowState == WindowState.Maximized
-                    ? WindowState.Normal : WindowState.Maximized;
-            }
-
-            // Otherwise, drag the window around.
-            else DragMove();
+            // Drag the window around.
+            DragMove();
         }
 
         protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
