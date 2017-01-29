@@ -47,16 +47,13 @@
 
                         <!-- Caret. -->
                         <Canvas>
-                            <Border x:Name="Caret" 
-                                    BorderBrush="Transparent"
-                                    BorderThickness="0 0 0 1">
+                            <Border x:Name="Caret" BorderThickness="0 0 0 1">
 
                                 <Border.Style>
                                     <Style TargetType="Border">
 
-                                        <Style.Resources>
-                                            <Duration x:Key="CaretReadonlyFadeDuration">0</Duration>
-                                        </Style.Resources>
+                                        <Setter Property="BorderBrush" 
+                                                Value="Orange" />
 
                                         <Style.Triggers>
 
@@ -65,34 +62,17 @@
                                                 Binding="{Binding Path=IsReadOnly, 
                                                     RelativeSource={RelativeSource TemplatedParent}}"
                                                 Value="True">
-                                                <DataTrigger.EnterActions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation
-                                                                Storyboard.TargetProperty="BorderBrush.Color"
-                                                                To="Gray"
-                                                                Duration="{StaticResource CaretReadonlyFadeDuration}" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.EnterActions>
-                                                <DataTrigger.ExitActions>
-                                                    <BeginStoryboard>
-                                                        <Storyboard>
-                                                            <ColorAnimation
-                                                                Storyboard.TargetProperty="BorderBrush.Color"
-                                                                To="Orange"
-                                                                Duration="{StaticResource CaretReadonlyFadeDuration}" />
-                                                        </Storyboard>
-                                                    </BeginStoryboard>
-                                                </DataTrigger.ExitActions>
+                                                <Setter Property="BorderBrush" 
+                                                        Value="Gray" />
                                             </DataTrigger>
 
                                             <!-- Fade animation. -->
-                                            <EventTrigger RoutedEvent="Border.Loaded">
+                                            <EventTrigger 
+                                                RoutedEvent="Border.Loaded">
                                                 <BeginStoryboard>
                                                     <Storyboard>
                                                         <DoubleAnimation
-                                                            Storyboard.TargetProperty="BorderBrush.Opacity"
+                                                            Storyboard.TargetProperty="Opacity"
                                                             From="0" To="1"
                                                             Duration="0:0:0.75"
                                                             AutoReverse="True"

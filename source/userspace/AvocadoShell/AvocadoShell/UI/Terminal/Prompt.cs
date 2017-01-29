@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace AvocadoShell.Terminal
+namespace AvocadoShell.UI.Terminal
 {
     sealed class Prompt
     {

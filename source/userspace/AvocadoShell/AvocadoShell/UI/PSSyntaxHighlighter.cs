@@ -5,7 +5,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Windows.Media;
 
-namespace AvocadoShell.Terminal
+namespace AvocadoShell.UI
 {
     sealed class PSSyntaxHighlighter
     {

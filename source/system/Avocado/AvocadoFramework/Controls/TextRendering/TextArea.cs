@@ -55,6 +55,8 @@ namespace AvocadoFramework.Controls.TextRendering
         protected Run WriteLine(string text, Brush foreground) =>
             Write($"{text}\r", foreground);
 
+        protected void ClearAllText() => Document.Blocks.Clear();
+
         protected TextPointer StartPointer => CaretPosition.DocumentStart;
         protected TextPointer EndPointer =>
             CaretPosition.DocumentEnd

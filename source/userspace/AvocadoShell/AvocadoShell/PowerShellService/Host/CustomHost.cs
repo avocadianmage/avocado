@@ -1,5 +1,4 @@
 ﻿using AvocadoShell.PowerShellService.Modules;
-using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,24 +6,30 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
+using System.Management.Automation;
 
 namespace AvocadoShell.PowerShellService.Host
 {
     sealed class CustomHost : PSHost, IHostSupportsInteractiveSession
     {
+        public IShellUI ShellUI { get; }
         public bool ShouldExit { get; private set; }
         public RunspacePipeline CurrentPipeline => pipelines.Peek();
-
-        readonly IShellUI shellUI;
+        
         readonly Stack<RunspacePipeline> pipelines
             = new Stack<RunspacePipeline>();
 
         public CustomHost(IShellUI shellUI)
         {
-            this.shellUI = shellUI;
+            ShellUI = shellUI;
             UI = new CustomHostUI(shellUI);
         }
-        
+
+        /// <summary>
+        /// Allow scripts to access the custom host.
+        /// </summary>
+        public override PSObject PrivateData => new PSObject(this);
+
         /// <summary>
         /// Gets the culture information to use. This implementation returns a
         /// snapshot of the culture information of the thread that created this
@@ -148,7 +153,7 @@ namespace AvocadoShell.PowerShellService.Host
 
             // Initialize the PowerShell environment of the pipeline.
             var error = pipeline.InitEnvironment();
-            if (error != null) shellUI.WriteErrorLine(error);
+            if (error != null) ShellUI.WriteErrorLine(error);
         }
 
         #endregion

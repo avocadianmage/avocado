@@ -1,13 +1,12 @@
 ﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Modules;
-using AvocadoShell.Terminal;
 using System.Management.Automation.Runspaces;
 
 namespace AvocadoShell.PowerShellService
 {
     sealed class PowerShellEngine
     {
-        public CustomHost MyHost { get; private set;  }
+        public CustomHost MyHost { get; private set; }
         public History MyHistory { get; private set; }
 
         public string RemoteComputerName

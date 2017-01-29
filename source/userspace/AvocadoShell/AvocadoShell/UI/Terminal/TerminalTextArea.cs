@@ -5,6 +5,7 @@ using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Security;
@@ -18,7 +19,7 @@ using System.Windows.Threading;
 using static AvocadoShell.Config;
 using static StandardLibrary.WPF.WPFUtils;
 
-namespace AvocadoShell.Terminal
+namespace AvocadoShell.UI.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
@@ -41,7 +42,7 @@ namespace AvocadoShell.Terminal
         void startCommandline()
         {
             engine.Initialize(this);
-            writeShellPrompt();
+            setNewShellPrompt();
         }
 
         void subscribeToEvents()
@@ -280,7 +281,7 @@ namespace AvocadoShell.Terminal
             // Check if exit was requested.
             if (engine.MyHost.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
-            else writeShellPrompt();
+            else setNewShellPrompt();
         }
 
         void exit() 
@@ -322,14 +323,13 @@ namespace AvocadoShell.Terminal
             return nonShellPromptDone.Block();
         }
 
-        void writeShellPrompt()
-            => safeWritePromptCore(getShellPromptString(), true, false);
-
-        string getShellPromptString()
+        void setNewShellPrompt()
         {
-            return Prompt.GetShellPromptString(
-                engine.GetWorkingDirectory(),
-                engine.RemoteComputerName);
+            var workingDirectory = engine.GetWorkingDirectory();
+            var promptStr = Prompt.GetShellPromptString(
+                workingDirectory, engine.RemoteComputerName);
+            safeWritePromptCore(promptStr, true, false);
+            Directory.SetCurrentDirectory(workingDirectory);
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
@@ -452,6 +452,14 @@ namespace AvocadoShell.Terminal
         {
             if (IsReadOnly) return;
             Selection.Select(getPromptPointer(), EndPointer);
+        }
+
+        public void EditFile(string path)
+        {
+            Dispatcher.InvokeAsync(() =>
+            {
+                ((MainWindow)Window.GetWindow(this)).OpenEditor(path);
+            });
         }
     }
 }

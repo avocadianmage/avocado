@@ -108,11 +108,12 @@
     </ApplicationDefinition>
     <Compile Include="PowerShellService\Host\Choice.cs" />
     <Compile Include="PowerShellService\PowerShellEngine.cs" />
-    <Compile Include="Terminal\OutputBuffer.cs" />
-    <Compile Include="Terminal\Prompt.cs" />
-    <Compile Include="Terminal\IShellUI.cs" />
-    <Compile Include="Terminal\PSSyntaxHighlighter.cs" />
-    <Compile Include="Terminal\TerminalTextArea.cs" />
+    <Compile Include="UI\Editor\EditorTextArea.cs" />
+    <Compile Include="UI\Terminal\OutputBuffer.cs" />
+    <Compile Include="UI\Terminal\Prompt.cs" />
+    <Compile Include="PowerShellService\IShellUI.cs" />
+    <Compile Include="UI\PSSyntaxHighlighter.cs" />
+    <Compile Include="UI\Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\Modules\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
@@ -152,6 +153,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="PowerShellAssets\Scripts\startup.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rsh.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rdl.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\edit.ps1" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
