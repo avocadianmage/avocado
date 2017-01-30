@@ -67,37 +67,7 @@ namespace AvocadoShell.UI.Terminal
         async void onTextChanged(object sender, TextChangedEventArgs e)
         {
             if (IsReadOnly || !currentPrompt.FromShell) return;
-            await performSyntaxHighlighting();
-        }
-
-        async Task performSyntaxHighlighting()
-        {
-            var input = getInput();
-            var tokenization = await Task.Run(
-                () => highlighter.GetChangedTokens(input));
-            var promptStart = getPromptPointer();
-            tokenization.ForEach(p =>
-            {
-                Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(promptStart, p.Key, p.Value),
-                    TEXT_PRIORITY);
-            });
-        }
-
-        void applyTokenColoring(
-            TextPointer promptStart, PSToken token, Brush foreground)
-        {
-            var start = GetPointerFromCharOffset(promptStart, token.Start);
-            if (start == null) return;
-            var end = GetPointerFromCharOffset(start, token.Length);
-            if (end == null) return;
-
-            var range = new TextRange(start, end);
-            if (!PSSyntaxHighlighter.CompareTokenToContent(token, range.Text))
-                return;
-
-            range.ApplyPropertyValue(
-                TextElement.ForegroundProperty, foreground ?? Foreground);
+            await highlighter.Highlight(this, getInputTextRange(EndPointer));
         }
 
         void onSizeChanged(object sender, SizeChangedEventArgs e)

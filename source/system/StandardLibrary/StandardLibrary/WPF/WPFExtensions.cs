@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace StandardLibrary.WPF
@@ -41,6 +42,43 @@ namespace StandardLibrary.WPF
             DependencyPropertyDescriptor
                 .FromProperty(property, target.GetType())
                 .AddValueChanged(target, handler);
+        }
+
+        public static TextPointer GetPointerFromCharOffset(
+            this TextPointer pointer, int offset)
+        {
+            var count = 0;
+            while (pointer != null)
+            {
+                var nextPointerContext = pointer.GetPointerContext(
+                    LogicalDirection.Forward);
+                if (nextPointerContext == TextPointerContext.Text)
+                {
+                    var runLength = pointer.GetTextRunLength(
+                        LogicalDirection.Forward);
+                    if (runLength > 0 && runLength + count < offset)
+                    {
+                        count += runLength;
+                        pointer = pointer.GetPositionAtOffset(runLength);
+
+                        if (count <= offset) continue;
+                    }
+                    else count++;
+                }
+                else if (nextPointerContext == TextPointerContext.ElementEnd)
+                {
+                    var element = pointer.GetAdjacentElement(
+                        LogicalDirection.Forward);
+                    if (element is LineBreak || element is Paragraph)
+                        count += Environment.NewLine.Length;
+                }
+
+                if (count > offset) break;
+
+                pointer = pointer.GetPositionAtOffset(
+                    1, LogicalDirection.Forward);
+            }
+            return pointer;
         }
     }
 }
