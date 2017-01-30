@@ -12,17 +12,17 @@ namespace AvocadoShell
 
         public void OpenEditor(string path)
         {
-            Terminal.Visibility = Visibility.Collapsed;
-            Editor.Visibility = Visibility.Visible;
-            Editor.Focus();
+            toggleMode(Editor, Terminal);
             Editor.OpenFile(path);
         }
 
-        public void CloseEditor()
+        public void CloseEditor() => toggleMode(Terminal, Editor);
+
+        void toggleMode(FrameworkElement active, FrameworkElement inactive)
         {
-            Editor.Visibility = Visibility.Collapsed;
-            Terminal.Visibility = Visibility.Visible;
-            Terminal.Focus();
+            inactive.Visibility = Visibility.Collapsed;
+            active.Visibility = Visibility.Visible;
+            active.Focus();
         }
     }
 }
