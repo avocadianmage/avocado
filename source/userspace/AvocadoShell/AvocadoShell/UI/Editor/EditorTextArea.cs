@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System.IO;
 using System.Windows;
@@ -20,7 +21,7 @@ namespace AvocadoShell.UI.Editor
 
         async void onTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (Path.GetExtension(path).ToLower() != ".ps1") return;
+            if (!path.HasFileExtension(".ps1")) return;
             await highlighter.Highlight(this, GetFullTextRange());
         }
 

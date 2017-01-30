@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 namespace StandardLibrary.Utilities.Extensions
@@ -51,6 +52,9 @@ namespace StandardLibrary.Utilities.Extensions
             var formatter = $"0.{ new string('0', decimals) }";
             return Math.Round(num, decimals).ToString(formatter);
         }
+
+        public static bool HasFileExtension(this string path, string extension)
+            => Path.GetExtension(path).ToLower() == extension.ToLower();
 
         public static string Base64Encode(this string str)
             => Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
