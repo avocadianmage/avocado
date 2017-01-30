@@ -55,13 +55,10 @@ namespace AvocadoFramework.Controls.TextRendering
         protected Run WriteLine(string text, Brush foreground) =>
             Write($"{text}\r", foreground);
 
-        protected void ClearAllText() => Document.Blocks.Clear();
+        protected TextRange GetFullTextRange() 
+            => new TextRange(Document.ContentStart, Document.ContentEnd);
 
-        protected TextPointer StartPointer => CaretPosition.DocumentStart;
-        protected TextPointer EndPointer =>
-            CaretPosition.DocumentEnd
-                // Omit default newline that is at the end of the document.
-                .GetNextInsertionPosition(LogicalDirection.Backward);
+        protected void ClearAllText() => Document.Blocks.Clear();
 
         protected TextPointer LineStartPointer =>
             CaretPosition.GetLineStartPosition(0);

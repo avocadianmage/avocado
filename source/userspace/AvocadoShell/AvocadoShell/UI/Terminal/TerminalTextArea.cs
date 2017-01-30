@@ -7,7 +7,6 @@ using StandardLibrary.WPF;
 using System;
 using System.IO;
 using System.Linq;
-using System.Management.Automation;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -400,6 +399,13 @@ namespace AvocadoShell.UI.Terminal
             setInput(storedInput);
             CaretPosition = EndPointer;
         }
+
+        TextPointer StartPointer => Document.ContentStart;
+
+        TextPointer EndPointer =>
+           Document.ContentEnd
+               // Omit default newline that is at the end of the document.
+               .GetNextInsertionPosition(LogicalDirection.Backward);
 
         string getInput() => getInputTextRange(EndPointer).Text;
 
