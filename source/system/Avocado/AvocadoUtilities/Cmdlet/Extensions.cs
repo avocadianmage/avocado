@@ -19,6 +19,12 @@ namespace AvocadoUtilities.Cmdlet
         public static void Terminate(this PSCmdlet cmdlet)
             => cmdlet.Terminate(string.Empty);
 
+        public static void DoOperation(
+            this PSCmdlet cmdlet, string msg, Action work)
+        {
+            cmdlet.DoOperation(msg, () => { work(); return 0; });
+        }
+
         public static T DoOperation<T>(
             this PSCmdlet cmdlet, string msg, Func<T> work)
         {
