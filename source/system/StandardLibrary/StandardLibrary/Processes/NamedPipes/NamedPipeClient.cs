@@ -21,8 +21,8 @@ namespace StandardLibrary.Processes.NamedPipes
         public async Task Send(string message)
         {
             var writer = new StreamWriter(client);
-            await writer.WriteLineAsync(message).ConfigureAwait(false);
-            await writer.FlushAsync().ConfigureAwait(false);
+            await writer.WriteLineAsync(message);
+            await writer.FlushAsync();
         }
     }
 }

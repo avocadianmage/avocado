@@ -376,8 +376,7 @@ namespace AvocadoShell.UI.Terminal
             Dispatcher.InvokeAsync(() =>
             {
                 var brush = segment.Color.HasValue
-                        ? new SolidColorBrush(segment.Color.Value)
-                        : OutputBrush;
+                    ? new SolidColorBrush(segment.Color.Value) : OutputBrush;
                 write(segment.Text, brush, newline);
             },
             TEXT_PRIORITY);
