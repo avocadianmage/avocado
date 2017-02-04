@@ -272,7 +272,7 @@ namespace AvocadoShell.UI.Terminal
 
             // Update the input (UI) with the result of the completion.
             setInput(input);
-            CaretPosition = getPromptPointer().GetPositionAtOffset(index);
+            CaretPosition = getPromptPointer().GetPointerFromCharOffset(index);
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
@@ -431,10 +431,8 @@ namespace AvocadoShell.UI.Terminal
 
         public void EditFile(string path)
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-                ((MainWindow)Window.GetWindow(this)).OpenEditor(path);
-            });
+            Dispatcher.InvokeAsync(
+                () => ((MainWindow)Window.GetWindow(this)).OpenEditor(path));
         }
     }
 }
