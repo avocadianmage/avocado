@@ -277,13 +277,13 @@ namespace AvocadoShell.UI.Terminal
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
-            var promptPointer = getPromptPointer();
-            var insertionPointer = promptPointer.GetPointerFromCharOffset(
+            var replacementStart = getPromptPointer().GetPointerFromCharOffset(
                 replacementIndex);
-            insertionPointer.DeleteTextInRun(replacementLength);
-            insertionPointer.InsertTextInRun(completionText);
-            CaretPosition = promptPointer.GetPointerFromCharOffset(
-                replacementIndex + completionText.Length);
+            var replacementEnd = replacementStart.GetPointerFromCharOffset(
+                replacementLength);
+            var range = new TextRange(replacementStart, replacementEnd);
+            range.Text = completionText;
+            CaretPosition = range.End;
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);

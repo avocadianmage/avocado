@@ -5,8 +5,6 @@ namespace AvocadoShell.PowerShellService.Modules
 {
     sealed class Autocomplete
     {
-        const string PATH_BEGIN = ".\\";
-
         readonly PowerShell powerShell;
 
         CommandCompletion completions;
@@ -29,14 +27,7 @@ namespace AvocadoShell.PowerShellService.Modules
             replacementLength = default(int);
             completionText = default(string);
 
-            // Suggest a file if the input is blank.
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                input = PATH_BEGIN;
-                index = PATH_BEGIN.Length;
-            }
-
-            if (index == 0) return false;
+            if (string.IsNullOrWhiteSpace(input)) return false;
 
             // Check the user has altered the input and we need to update our
             // completion list.
