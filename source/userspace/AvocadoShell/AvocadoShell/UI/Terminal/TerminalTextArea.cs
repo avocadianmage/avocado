@@ -263,16 +263,27 @@ namespace AvocadoShell.UI.Terminal
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
+            int replacementIndex = default(int);
+            int replacementLength = default(int);
+            string completionText = default(string);
             IsReadOnly = true;
             var hasCompletion = await Task.Run(
                 () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
-                    ref input, ref index, forward));
+                    input, index, forward, 
+                    out replacementIndex, 
+                    out replacementLength,
+                    out completionText));
             IsReadOnly = false;
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
-            setInput(input);
-            CaretPosition = getPromptPointer().GetPointerFromCharOffset(index);
+            var promptPointer = getPromptPointer();
+            var insertionPointer = promptPointer.GetPointerFromCharOffset(
+                replacementIndex);
+            insertionPointer.DeleteTextInRun(replacementLength);
+            insertionPointer.InsertTextInRun(completionText);
+            CaretPosition = promptPointer.GetPointerFromCharOffset(
+                replacementIndex + completionText.Length);
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);

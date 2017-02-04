@@ -19,8 +19,16 @@ namespace AvocadoShell.PowerShellService.Modules
             powerShell.Runspace = runspace;
         }
 
-        public bool GetCompletion(ref string input, ref int index, bool forward)
+        public bool GetCompletion(
+            string input, int index, bool forward, 
+            out int replacementIndex, 
+            out int replacementLength, 
+            out string completionText)
         {
+            replacementIndex = default(int);
+            replacementLength = default(int);
+            completionText = default(string);
+
             // Suggest a file if the input is blank.
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -40,22 +48,19 @@ namespace AvocadoShell.PowerShellService.Modules
 
             // Determine the length of the text to replace with the new
             // completion.
-            var replacementLength = getCurrentReplacementLength(completions);
+            replacementLength = getCurrentReplacementLength(completions);
 
             // Get the completion data.
             var result = completions.GetNextResult(forward);
             if (result == null) return false;
             
             // Set input and index of the new completion.
-            var replacementIndex = completions.ReplacementIndex;
-            var completionText = result.CompletionText;
+            replacementIndex = completions.ReplacementIndex;
+            completionText = result.CompletionText;
             expectedInput = input
                 .Remove(replacementIndex, replacementLength)
                 .Insert(replacementIndex, completionText);
             expectedIndex = replacementIndex + completionText.Length;
-
-            input = expectedInput;
-            index = expectedIndex;
             return true;
         }
 
