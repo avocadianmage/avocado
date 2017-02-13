@@ -85,10 +85,7 @@ namespace AvocadoShell.UI
         }
 
         void applyTokenColoring(
-            TextArea textArea, 
-            TextRange range, 
-            PSToken token, 
-            Brush foreground)
+            TextArea textArea, TextRange range, PSToken token, Brush foreground)
         {
             var start = range.Start.GetPointerFromCharOffset(token.Start);
             if (start == null) return;

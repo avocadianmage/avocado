@@ -263,9 +263,9 @@ namespace AvocadoShell.UI.Terminal
             var index = getInputTextRange(CaretPosition).Text.Length;
 
             // Perform the completion.
-            int replacementIndex = default(int);
-            int replacementLength = default(int);
-            string completionText = default(string);
+            var replacementIndex = default(int);
+            var replacementLength = default(int);
+            var completionText = default(string);
             IsReadOnly = true;
             var hasCompletion = await Task.Run(
                 () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
@@ -290,9 +290,8 @@ namespace AvocadoShell.UI.Terminal
 
         public SecureString WriteSecurePrompt(string prompt)
         {
-            var input = writePrompt(prompt, true);
             var secureStr = new SecureString();
-            input.ForEach(secureStr.AppendChar);
+            writePrompt(prompt, true).ForEach(secureStr.AppendChar);
             secureStr.MakeReadOnly();
             return secureStr;
         }
