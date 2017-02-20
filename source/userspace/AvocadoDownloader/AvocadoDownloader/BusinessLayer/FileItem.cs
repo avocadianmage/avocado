@@ -142,6 +142,9 @@ namespace AvocadoDownloader.BusinessLayer
 
         public void Remove(bool deleteFromDisk)
         {
+            // Also delete from disk if the file has not finished downloading.
+            deleteFromDisk = deleteFromDisk || !FinishedDownloading;
+
             Task.Run(async () =>
             {
                 // Ensure the download is stopped.

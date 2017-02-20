@@ -17,7 +17,7 @@ namespace AvocadoDownloader
 {
     public partial class MainWindow : GlassPane
     {
-        string serializationPath 
+        string serializationPath
             => Path.Combine(AvocadoContext.AppDataPath, "downloads.bin");
 
         readonly GrouperList grouperList;
@@ -99,22 +99,24 @@ namespace AvocadoDownloader
         FileItem createFileItem(string filePath)
         {
             var fileItem = new FileItem(filePath);
-            fileItem.DownloadFinished += onFileItemDownloadFinished;
+            fileItem.DownloadFinished += (s, e) => updateTaskbarProgressState();
+            fileItem.Removed += (s, e) => updateTaskbarProgressState();
             return fileItem;
         }
 
         void notifyDownloadStarted()
         {
-            TaskbarItemInfo.ProgressState 
+            TaskbarItemInfo.ProgressState
                 = TaskbarItemProgressState.Indeterminate;
             Activate();
         }
 
-        void onFileItemDownloadFinished(object sender, EventArgs e) =>
-            Dispatcher.InvokeAsync(() =>
-                TaskbarItemInfo.ProgressState = getUnfinishedFileItems().Any()
-                    ? TaskbarItemProgressState.Indeterminate
-                    : TaskbarItemProgressState.None);
+        void updateTaskbarProgressState() => Dispatcher.InvokeAsync(() =>
+        {
+            TaskbarItemInfo.ProgressState = getUnfinishedFileItems().Any()
+                ? TaskbarItemProgressState.Indeterminate
+                : TaskbarItemProgressState.None;
+        });
 
         void processMessage(string message)
         {
