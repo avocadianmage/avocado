@@ -88,8 +88,7 @@ namespace AvocadoDownloader
         {
             // Arguments are file paths of downloads.
             if (!args.Any()) return;
-            var fileItemGroupings = args
-                .Select(f => createFileItem(f))
+            args.Select(f => createFileItem(f))
                 .GroupBy(f => Path.GetDirectoryName(f.FilePath))
                 .ForEach(g => grouperList.AddGrouper(g.Key, g));
 
