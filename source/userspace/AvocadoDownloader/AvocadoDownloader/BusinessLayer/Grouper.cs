@@ -59,9 +59,6 @@ namespace AvocadoDownloader.BusinessLayer
         }
 
         public void Remove(bool deleteFromDisk)
-        {
-            FileItems.ToList().ForEach(f => f.Remove(deleteFromDisk));
-            Removed(this, EventArgs.Empty);
-        }
+            => FileItems.ToList().ForEach(f => f.Remove(deleteFromDisk));
     }
 }
