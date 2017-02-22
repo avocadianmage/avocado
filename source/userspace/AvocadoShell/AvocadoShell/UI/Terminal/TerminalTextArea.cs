@@ -258,11 +258,11 @@ namespace AvocadoShell.UI.Terminal
 
         async Task performAutocomplete(bool forward)
         {
-            // Get data needed for the completion.
+            // Get data needed for the completion lookup.
             var input = getInput();
             var index = getInputTextRange(CaretPosition).Text.Length;
 
-            // Perform the completion.
+            // Retrieve the completion text.
             var replacementIndex = default(int);
             var replacementLength = default(int);
             var completionText = default(string);
@@ -276,14 +276,25 @@ namespace AvocadoShell.UI.Terminal
             IsReadOnly = false;
             if (!hasCompletion) return;
 
+            // Quit if the completion matches the text that is already 
+            // displayed.
+            var range = getCompletionReplacementRange(
+                replacementIndex, replacementLength);
+            if (range.Text == completionText) return;
+
             // Update the input (UI) with the result of the completion.
+            range.Text = completionText;
+            CaretPosition = range.End;
+        }
+
+        TextRange getCompletionReplacementRange(
+            int replacementIndex, int replacementLength)
+        {
             var replacementStart = getPromptPointer().GetPointerFromCharOffset(
                 replacementIndex);
             var replacementEnd = replacementStart.GetPointerFromCharOffset(
                 replacementLength);
-            var range = new TextRange(replacementStart, replacementEnd);
-            range.Text = completionText;
-            CaretPosition = range.End;
+            return new TextRange(replacementStart, replacementEnd);
         }
 
         public string WritePrompt(string prompt) => writePrompt(prompt, false);
