@@ -1,9 +1,11 @@
 ﻿using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace AvocadoDownloader.BusinessLayer
 {
@@ -60,5 +62,9 @@ namespace AvocadoDownloader.BusinessLayer
 
         public void Remove(bool deleteFromDisk)
             => FileItems.ToList().ForEach(f => f.Remove(deleteFromDisk));
+
+        [OnDeserialized]
+        void onDeserialized(StreamingContext streamingContext)
+            => FileItems.ForEach(f => f.Removed += onFileItemRemoved);
     }
 }

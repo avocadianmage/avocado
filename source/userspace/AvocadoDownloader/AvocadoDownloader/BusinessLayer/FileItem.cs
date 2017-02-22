@@ -175,7 +175,6 @@ namespace AvocadoDownloader.BusinessLayer
             info.AddValue(nameof(Status), Status);
             info.AddValue(nameof(ProgressValue), ProgressValue);
             info.AddValue(nameof(IsIndeterminate), IsIndeterminate);
-            info.AddValue(nameof(Removed), Removed);
         }
 
         FileItem(SerializationInfo info, StreamingContext context)
@@ -185,8 +184,6 @@ namespace AvocadoDownloader.BusinessLayer
             Status = info.GetString(nameof(Status));
             ProgressValue = info.GetDouble(nameof(ProgressValue));
             IsIndeterminate = info.GetBoolean(nameof(IsIndeterminate));
-            Removed += (EventHandler)info.GetValue(
-                nameof(Removed), typeof(EventHandler));
         }
     }
 }
