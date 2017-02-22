@@ -20,12 +20,12 @@ namespace AvocadoDownloader.BusinessLayer
         readonly ObservableDictionary<string, FileItem> fileItemDict
             = new ObservableDictionary<string, FileItem>();
 
-        public Grouper(string directoryPath, IEnumerable<FileItem> fileItems)
+        public Grouper(string directoryPath, IEnumerable<string> filePaths)
         {
             DirectoryPath = directoryPath;
             Directory.CreateDirectory(directoryPath);
 
-            AddFileItems(fileItems);
+            AddFileItems(filePaths);
         }
 
         public void Open()
@@ -39,15 +39,16 @@ namespace AvocadoDownloader.BusinessLayer
 
         public FileItem GetFileItem(string fileName) => fileItemDict[fileName];
 
-        public void AddFileItems(IEnumerable<FileItem> fileItems)
+        public IEnumerable<FileItem> AddFileItems(IEnumerable<string> filePaths)
         {
-            foreach (var fileItem in fileItems)
+            foreach (var filePath in filePaths)
             {
-                var filePath = fileItem.FilePath;
                 if (fileItemDict.ContainsKey(filePath)) continue;
 
+                var fileItem = new FileItem(filePath);
                 fileItem.Removed += onFileItemRemoved;
                 fileItemDict.Add(filePath, fileItem);
+                yield return fileItem;
             }
         }
 

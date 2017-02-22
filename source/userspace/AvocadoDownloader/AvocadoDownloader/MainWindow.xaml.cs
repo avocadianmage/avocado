@@ -33,6 +33,8 @@ namespace AvocadoDownloader
             // Clear any files that no longer exist.
             clearNonexistentFileItems();
 
+            getFileItems().ForEach(hookFileItemEvents);
+
             // Start server and process command line.
             initServer().RunAsync();
             processCommandlineArgs(EnvUtils.GetArgs());
@@ -88,19 +90,20 @@ namespace AvocadoDownloader
         {
             // Arguments are file paths of downloads.
             if (!args.Any()) return;
-            args.Select(f => createFileItem(f))
-                .GroupBy(f => Path.GetDirectoryName(f.FilePath))
-                .ForEach(g => grouperList.AddGrouper(g.Key, g));
+            args.GroupBy(p => Path.GetDirectoryName(p))
+                .ForEach(g => 
+                {
+                    grouperList.AddGrouper(g.Key, g).FileItems
+                        .ForEach(hookFileItemEvents);
+                });
 
             notifyDownloadStarted();
         }
 
-        FileItem createFileItem(string filePath)
+        void hookFileItemEvents(FileItem fileItem)
         {
-            var fileItem = new FileItem(filePath);
             fileItem.DownloadFinished += (s, e) => updateTaskbarProgressState();
             fileItem.Removed += (s, e) => updateTaskbarProgressState();
-            return fileItem;
         }
 
         void notifyDownloadStarted()

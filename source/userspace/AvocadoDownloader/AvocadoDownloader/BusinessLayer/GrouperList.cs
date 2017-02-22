@@ -15,19 +15,20 @@ namespace AvocadoDownloader.BusinessLayer
         public Grouper GetGrouper(string directoryPath) 
             => grouperDict[directoryPath];
 
-        public void AddGrouper(
-            string directoryPath, IEnumerable<FileItem> fileItems)
+        public Grouper AddGrouper(
+            string directoryPath, IEnumerable<string> filePaths)
         {
             if (grouperDict.ContainsKey(directoryPath))
             {
-                grouperDict[directoryPath].AddFileItems(fileItems);
-                return;
+                grouperDict[directoryPath].AddFileItems(filePaths);
+                return grouperDict[directoryPath];
             }
 
-            var grouper = new Grouper(directoryPath, fileItems);
+            var grouper = new Grouper(directoryPath, filePaths);
             grouper.Removed += (s, e) 
                 => grouperDict.Remove(((Grouper)s).DirectoryPath);
             grouperDict.Add(directoryPath, grouper);
+            return grouper;
         }
     }
 }
