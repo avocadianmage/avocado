@@ -39,7 +39,7 @@ namespace AvocadoDownloader.BusinessLayer
 
         public FileItem GetFileItem(string fileName) => fileItemDict[fileName];
 
-        public IEnumerable<FileItem> AddFileItems(IEnumerable<string> filePaths)
+        public void AddFileItems(IEnumerable<string> filePaths)
         {
             foreach (var filePath in filePaths)
             {
@@ -48,7 +48,6 @@ namespace AvocadoDownloader.BusinessLayer
                 var fileItem = new FileItem(filePath);
                 fileItem.Removed += onFileItemRemoved;
                 fileItemDict.Add(filePath, fileItem);
-                yield return fileItem;
             }
         }
 
