@@ -167,7 +167,7 @@
                                         <DoubleAnimation
                                             Storyboard.TargetName="Pane"
                                             Storyboard.TargetProperty="Opacity"
-                                            From="0" To="0.9"
+                                            From="0" To="0.85"
                                             Duration="{StaticResource WindowFadeDuration}" />
                                     </Storyboard>
                                 </BeginStoryboard>
