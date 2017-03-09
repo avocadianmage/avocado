@@ -28,11 +28,10 @@ namespace AvocadoUtilities.Cmdlet
             // Return null if nothing was entered.
             if (string.IsNullOrWhiteSpace(input)) return default(T);
 
-            int selection;
             if (!validateSingleSelection(
                 input,
                 options.Length,
-                out selection))
+                out var selection))
             {
                 cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                 return OptionPrompt(cmdlet, options);
@@ -73,11 +72,10 @@ namespace AvocadoUtilities.Cmdlet
                     return MultiOptionPrompt(cmdlet, options);
                 }
 
-                int lowerBound;
                 if (!validateSingleSelection(
                     bounds[0],
                     options.Length,
-                    out lowerBound))
+                    out var lowerBound))
                 {
                     cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);
@@ -90,11 +88,10 @@ namespace AvocadoUtilities.Cmdlet
                     continue;
                 }
 
-                int upperBound;
                 if (!validateSingleSelection(
                     bounds[1],
                     options.Length,
-                    out upperBound))
+                    out var upperBound))
                 {
                     cmdlet.Host.UI.WriteErrorLine("Invalid input.");
                     return MultiOptionPrompt(cmdlet, options);

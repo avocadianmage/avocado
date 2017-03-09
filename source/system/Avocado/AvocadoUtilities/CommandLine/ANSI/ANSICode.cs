@@ -99,9 +99,8 @@ namespace AvocadoUtilities.CommandLine.ANSI
                 if (codeIdx + 4 >= codes.Length) return null;
                 
                 // Only extended set foreground color is supported (code '38').
-                byte n;
                 var foregroundRule = new Predicate<byte>(x => x == 38);
-                if (!tryParsePiece(codes[codeIdx], out n, foregroundRule))
+                if (!tryParsePiece(codes[codeIdx], out var n, foregroundRule))
                 { continue; }
 
                 // Only RGB is supported (the next piece must be '2').

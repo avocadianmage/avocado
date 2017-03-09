@@ -15,10 +15,7 @@ namespace AvocadoShell.PowerShellService.Host
         readonly List<ProgressRecord> actionsInProgress
             = new List<ProgressRecord>();
 
-        public CustomHostUI(IShellUI shellUI)
-        {
-            this.shellUI = shellUI;
-        }
+        public CustomHostUI(IShellUI shellUI) => this.shellUI = shellUI;
 
         void writeOutputUnlessWhitespace(string text)
         {

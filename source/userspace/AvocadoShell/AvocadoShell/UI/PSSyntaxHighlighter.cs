@@ -17,10 +17,7 @@ namespace AvocadoShell.UI
     {
         Collection<PSToken> cachedTokens;
 
-        public PSSyntaxHighlighter()
-        {
-            Reset();
-        }
+        public PSSyntaxHighlighter() => Reset();
 
         public void Reset()
         {
@@ -31,11 +28,10 @@ namespace AvocadoShell.UI
 
         IDictionary<PSToken, Brush> getChangedTokens(string text)
         {
-            Collection<PSParseError> errors;
-            var newTokens = PSParser.Tokenize(text, out errors);
+            var newTokens = PSParser.Tokenize(text, out var errors);
 
             var deltaTokens = new LinkedList<PSToken>(newTokens);
-            Action<GetIndex<PSToken>> loopTokens = (iterator) =>
+            void loopTokens(GetIndex<PSToken> iterator)
             {
                 var loopCount = Math.Min(
                     cachedTokens.Count, deltaTokens.Count);
