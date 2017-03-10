@@ -5,10 +5,7 @@
         string whitespaceBuffer;
         bool hitNonWhitespace;
 
-        public OutputBuffer()
-        {
-            Reset();
-        }
+        public OutputBuffer() => Reset();
 
         public bool ProcessNewOutput(ref string text, bool newline)
         {

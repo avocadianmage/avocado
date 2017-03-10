@@ -5,7 +5,7 @@
 $buildFunc = 
 {
     param($path, $outputPath, $buildAsApp = $FALSE)
-    $msbuild = "C:\Program Files (x86)\MSBuild\14.0\Bin\MSBuild.exe"
+    $msbuild = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
 
     # Build the project as a reference.
     & $msbuild $path /t:Rebuild /p:Configuration=Release
