@@ -7,8 +7,5 @@ function edit
     $Path = `
         $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath( `
         $Path)
-    $nativeCommand = New-Object `
-        -TypeName AvocadoShell.PowerShellService.Host.NativeCommand `
-        -ArgumentList "EditFile", $Path
-    Write-Information -MessageData $nativeCommand
+    runNativeCommand "EditFile" $Path
 }

@@ -107,7 +107,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="PowerShellService\Host\Choice.cs" />
-    <Compile Include="PowerShellService\Host\NativeCommand.cs" />
     <Compile Include="PowerShellService\PowerShellEngine.cs" />
     <Compile Include="UI\Editor\EditorTextArea.cs" />
     <Compile Include="UI\Interfaces\IShellController.cs" />
@@ -158,6 +157,8 @@
     <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rsh.ps1" />
     <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rdl.ps1" />
     <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\edit.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Scripts\core.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rstr.ps1" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -268,9 +268,14 @@ namespace AvocadoShell.PowerShellService.Host
         /// Writes a verbose message to the output display of the host.
         /// </summary>
         /// <param name="message">The verbose message that is displayed.</param>
-        public override void WriteVerboseLine(string message) =>
+        public override void WriteVerboseLine(string message)
+        {
+            // Check for and execute any native commands.
+            if (executeNativeCommand(message)) return;
+
             shellUI.WriteCustom(
                 $"[Verbose] {message}", Config.VerboseBrush, true);
+        }
 
         /// <summary>
         /// Writes a warning message to the output display of the host.
@@ -280,17 +285,20 @@ namespace AvocadoShell.PowerShellService.Host
             shellUI.WriteCustom(
                 $"[Warning] {message}", Config.WarningBrush, true);
 
-        public override void WriteInformation(InformationRecord record)
+        bool executeNativeCommand(string message)
         {
-            // Check for and execute native commands.
-            if (record.MessageData is PSObject psObject
-                && psObject.BaseObject is NativeCommand command)
+            const string PROTOCOL = "avocado:";
+            if (message.StartsWith(PROTOCOL))
             {
-                command.Invoke((IShellController)shellUI);
-                return;
+                var commandArgumentSplit = message.IndexOf(' ');
+                var command = message.Substring(0, commandArgumentSplit)
+                    .Substring(PROTOCOL.Length);
+                var argument = message.Substring(commandArgumentSplit + 1);
+                typeof(IShellController).GetMethod(command).Invoke(
+                    (IShellController)shellUI, new object[] { argument });
+                return true;
             }
-
-            base.WriteInformation(record);
+            return false;
         }
     }
 }
