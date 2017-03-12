@@ -192,8 +192,15 @@ namespace AvocadoShell.PowerShellService.Host
         /// Writes characters to the output display of the host.
         /// </summary>
         /// <param name="value">The characters to be written.</param>
-        public override void Write(string value) =>
-            Write(Config.SystemConsoleForeground, default(ConsoleColor), value);
+        public override void Write(string value) => baseWrite(value, false);
+
+        /// <summary>
+        /// Writes a line of characters to the output display of the host and
+        /// appends a newline character(carriage return). 
+        /// </summary>
+        /// <param name="value">The line to be written.</param>
+        public override void WriteLine(string value) => baseWrite(value, true);
+        public override void WriteLine() => WriteLine(string.Empty);
 
         /// <summary>
         /// Writes characters to the output display of the host with possible 
@@ -207,8 +214,34 @@ namespace AvocadoShell.PowerShellService.Host
             ConsoleColor backgroundColor,
             string value)
         {
+            baseWriteColor(foregroundColor, backgroundColor, value, false);
+        }
+
+        public override void WriteLine(
+            ConsoleColor foregroundColor, 
+            ConsoleColor backgroundColor, 
+            string value)
+        {
+            baseWriteColor(foregroundColor, backgroundColor, value, true);
+        }
+
+        void baseWrite(string value, bool newline)
+        {
+            baseWriteColor(
+                Config.SystemConsoleForeground, 
+                default(ConsoleColor), 
+                value,
+                newline);
+        }
+
+        void baseWriteColor(
+            ConsoleColor foregroundColor,
+            ConsoleColor backgroundColor,
+            string value,
+            bool newline)
+        {
             var brush = consoleColorToBrush(foregroundColor);
-            shellUI.WriteCustom(value, brush, false);
+            shellUI.WriteCustom(value, brush, newline);
         }
 
         static Brush consoleColorToBrush(ConsoleColor consoleColor)
@@ -230,17 +263,9 @@ namespace AvocadoShell.PowerShellService.Host
         /// Writes an error message to the output display of the host.
         /// </summary>
         /// <param name="value">The error message that is displayed.</param>
-        public override void WriteErrorLine(string value) => 
-            shellUI.WriteErrorLine(value);
-
-        /// <summary>
-        /// Writes a line of characters to the output display of the host and
-        /// appends a newline character(carriage return). 
-        /// </summary>
-        /// <param name="value">The line to be written.</param>
-        public override void WriteLine(string value) =>
-            shellUI.WriteOutputLine(value);
-
+        public override void WriteErrorLine(string value)
+            => shellUI.WriteErrorLine(value);
+        
         /// <summary>
         /// Writes a progress report to the output display of the host.
         /// </summary>

@@ -354,15 +354,8 @@ namespace AvocadoShell.UI.Terminal
         public void WriteCustom(string text, Brush foreground, bool newline)
             => safeWrite(text, foreground, newline);
 
-        public void WriteOutputLine(string text)
-        {
-            // Check if the line contains any ANSI codes that we should process.
-            if (ANSICode.ContainsANSICodes(text))
-            {
-                writeOutputLineWithANSICodes(text);
-            }
-            else safeWrite(text, OutputBrush, true);
-        }
+        public void WriteOutputLine(string text) 
+            => safeWrite(text, OutputBrush, true);
 
         public void WriteErrorLine(string text)
             => safeWrite(text, ErrorBrush, true);
@@ -376,6 +369,13 @@ namespace AvocadoShell.UI.Terminal
             // Run the data through the output buffer to determine if 
             // anything should be printed right now.
             if (!outputBuffer.ProcessNewOutput(ref text, newline)) return;
+
+            // Check if the line contains any ANSI codes that we should process.
+            if (ANSICode.ContainsANSICodes(text))
+            {
+                writeOutputLineWithANSICodes(text);
+                return;
+            }
 
             if (newline) WriteLine(text, foreground);
             else Write(text, foreground);
@@ -393,13 +393,9 @@ namespace AvocadoShell.UI.Terminal
 
         void writeANSISegment(ANSISegment segment, bool newline)
         {
-            Dispatcher.InvokeAsync(() =>
-            {
-                var brush = segment.Color.HasValue
-                    ? new SolidColorBrush(segment.Color.Value) : OutputBrush;
-                write(segment.Text, brush, newline);
-            },
-            TEXT_PRIORITY);
+            var brush = segment.Color.HasValue
+                ? new SolidColorBrush(segment.Color.Value) : OutputBrush;
+            write(segment.Text, brush, newline);
         }
 
         void setInputFromHistory(bool forward)
