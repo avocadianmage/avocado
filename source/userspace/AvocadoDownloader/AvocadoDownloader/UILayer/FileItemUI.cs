@@ -48,8 +48,8 @@ namespace AvocadoDownloader.UILayer
 
         void remove(FileItem fileItem, bool deleteFromDisk)
         {
-            this.MoveNextFocus();
             fileItem.Remove(deleteFromDisk);
+            this.MoveNextFocus();
         }
     }
 }

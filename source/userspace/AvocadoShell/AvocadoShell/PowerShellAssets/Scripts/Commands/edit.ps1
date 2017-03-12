@@ -4,5 +4,11 @@ function edit
     Param([Parameter(Mandatory=$true)][string]$Path)
     
     # Invoke the host to open the native editor.
-    $Host.PrivateData.ShellUI.EditFile($Path)
+    $Path = `
+        $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath( `
+        $Path)
+    $nativeCommand = New-Object `
+        -TypeName AvocadoShell.PowerShellService.Host.NativeCommand `
+        -ArgumentList "EditFile", $Path
+    Write-Information -MessageData $nativeCommand
 }

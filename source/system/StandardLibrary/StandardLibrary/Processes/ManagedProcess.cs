@@ -29,6 +29,7 @@ namespace StandardLibrary.Processes
         public void RunForeground()
         {
             proc.Start();
+            proc.WaitForExit();
         }
 
         public Task<string> RunBackground()

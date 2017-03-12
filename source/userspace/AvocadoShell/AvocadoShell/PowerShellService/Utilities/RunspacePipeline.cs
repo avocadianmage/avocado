@@ -7,7 +7,7 @@ using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 
-namespace AvocadoShell.PowerShellService.Modules
+namespace AvocadoShell.PowerShellService.Utilities
 {
     sealed class RunspacePipeline
     {

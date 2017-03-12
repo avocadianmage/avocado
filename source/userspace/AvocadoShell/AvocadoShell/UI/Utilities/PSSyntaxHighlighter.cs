@@ -11,7 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Threading;
 
-namespace AvocadoShell.UI
+namespace AvocadoShell.UI.Utilities
 {
     sealed class PSSyntaxHighlighter
     {

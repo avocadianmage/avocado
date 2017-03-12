@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using AvocadoShell.UI.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System.IO;

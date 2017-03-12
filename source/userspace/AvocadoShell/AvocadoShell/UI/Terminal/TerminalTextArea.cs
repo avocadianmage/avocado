@@ -1,11 +1,13 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using AvocadoShell.Interfaces;
 using AvocadoShell.PowerShellService;
+using AvocadoShell.UI.Utilities;
 using AvocadoUtilities.CommandLine.ANSI;
+using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System;
-using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
@@ -20,7 +22,7 @@ using static StandardLibrary.WPF.WPFUtils;
 
 namespace AvocadoShell.UI.Terminal
 {
-    sealed class TerminalTextArea : InputTextArea, IShellUI
+    sealed class TerminalTextArea : InputTextArea, IShellUI, IShellController
     {
         const DispatcherPriority TEXT_PRIORITY = DispatcherPriority.ContextIdle;
 
@@ -41,7 +43,7 @@ namespace AvocadoShell.UI.Terminal
         void startCommandline()
         {
             engine.Initialize(this);
-            setNewShellPrompt();
+            writeShellPrompt();
         }
 
         void subscribeToEvents()
@@ -250,7 +252,7 @@ namespace AvocadoShell.UI.Terminal
             // Check if exit was requested.
             if (engine.MyHost.ShouldExit) exit();
             // Otherwise, show the next shell prompt.
-            else setNewShellPrompt();
+            else writeShellPrompt();
         }
 
         void exit() 
@@ -313,13 +315,11 @@ namespace AvocadoShell.UI.Terminal
             return nonShellPromptDone.Block();
         }
 
-        void setNewShellPrompt()
+        void writeShellPrompt()
         {
-            var workingDirectory = engine.GetWorkingDirectory();
             var promptStr = Prompt.GetShellPromptString(
-                workingDirectory, engine.RemoteComputerName);
+                engine.GetWorkingDirectory(), engine.RemoteComputerName);
             safeWritePromptCore(promptStr, true, false);
-            Directory.SetCurrentDirectory(workingDirectory);
         }
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
@@ -454,6 +454,11 @@ namespace AvocadoShell.UI.Terminal
         {
             Dispatcher.InvokeAsync(
                 () => ((MainWindow)Window.GetWindow(this)).OpenEditor(path));
+        }
+
+        public void RunForeground(string path)
+        {
+            new ManagedProcess(path).RunForeground();
         }
     }
 }

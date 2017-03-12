@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvocadoShell.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -278,5 +279,18 @@ namespace AvocadoShell.PowerShellService.Host
         public override void WriteWarningLine(string message) => 
             shellUI.WriteCustom(
                 $"[Warning] {message}", Config.WarningBrush, true);
+
+        public override void WriteInformation(InformationRecord record)
+        {
+            // Check for and execute native commands.
+            if (record.MessageData is PSObject psObject
+                && psObject.BaseObject is NativeCommand command)
+            {
+                command.Invoke((IShellController)shellUI);
+                return;
+            }
+
+            base.WriteInformation(record);
+        }
     }
 }

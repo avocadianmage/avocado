@@ -1,7 +1,7 @@
 ﻿using System.Security;
 using System.Windows.Media;
 
-namespace AvocadoShell.PowerShellService
+namespace AvocadoShell.Interfaces
 {
     interface IShellUI
     {
@@ -10,7 +10,5 @@ namespace AvocadoShell.PowerShellService
         void WriteCustom(string text, Brush foreground, bool newline);
         string WritePrompt(string prompt);
         SecureString WriteSecurePrompt(string prompt);
-
-        void EditFile(string path);
     }
 }

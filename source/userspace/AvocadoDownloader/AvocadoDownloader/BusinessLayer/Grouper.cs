@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace AvocadoDownloader.BusinessLayer
 {
@@ -30,11 +31,11 @@ namespace AvocadoDownloader.BusinessLayer
 
         public void Open()
         {
-            new ManagedProcess("Shell", "Get-ChildItem")
+            var process = new ManagedProcess("Shell", "Get-ChildItem")
             {
                 WorkingDirectory = DirectoryPath
-            }
-            .RunForeground();
+            };
+            Task.Run(() => process.RunForeground());
         }
 
         public FileItem GetFileItem(string fileName) => fileItemDict[fileName];

@@ -29,8 +29,8 @@ namespace AvocadoDownloader.UILayer
 
         void remove(Grouper grouper, bool deleteFromDisk)
         {
-            this.MoveNextFocus();
             grouper.Remove(deleteFromDisk);
+            this.MoveNextFocus();
         }
     }
 }

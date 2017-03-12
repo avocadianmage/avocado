@@ -1,4 +1,5 @@
-﻿using AvocadoShell.PowerShellService.Modules;
+﻿using AvocadoShell.Interfaces;
+using AvocadoShell.PowerShellService.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,7 +7,6 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
-using System.Management.Automation;
 
 namespace AvocadoShell.PowerShellService.Host
 {
@@ -24,11 +24,6 @@ namespace AvocadoShell.PowerShellService.Host
             ShellUI = shellUI;
             UI = new CustomHostUI(shellUI);
         }
-
-        /// <summary>
-        /// Allow scripts to access the custom host.
-        /// </summary>
-        public override PSObject PrivateData => new PSObject(this);
 
         /// <summary>
         /// Gets the culture information to use. This implementation returns a
