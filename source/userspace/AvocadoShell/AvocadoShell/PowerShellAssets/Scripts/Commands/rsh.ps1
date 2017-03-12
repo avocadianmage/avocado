@@ -8,7 +8,7 @@ function rsh
 
     # Save a reference in the new session to the root computer name.
     Invoke-Command -Session $sess -ArgumentList $env:COMPUTERNAME { 
-        Param([string]$RootComputerName)
+        Param($RootComputerName)
         $env:RootComputerName = $RootComputerName 
     }
 

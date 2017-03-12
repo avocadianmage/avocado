@@ -3,7 +3,6 @@ using AvocadoShell.Interfaces;
 using AvocadoShell.PowerShellService;
 using AvocadoShell.UI.Utilities;
 using AvocadoUtilities.CommandLine.ANSI;
-using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
@@ -22,7 +21,7 @@ using static StandardLibrary.WPF.WPFUtils;
 
 namespace AvocadoShell.UI.Terminal
 {
-    sealed class TerminalTextArea : InputTextArea, IShellUI, IShellController
+    sealed class TerminalTextArea : InputTextArea, IShellUI
     {
         const DispatcherPriority TEXT_PRIORITY = DispatcherPriority.ContextIdle;
 
@@ -454,11 +453,6 @@ namespace AvocadoShell.UI.Terminal
         {
             Dispatcher.InvokeAsync(
                 () => ((MainWindow)Window.GetWindow(this)).OpenEditor(path));
-        }
-
-        public void RunForeground(string path)
-        {
-            new ManagedProcess(path).RunForeground();
         }
     }
 }

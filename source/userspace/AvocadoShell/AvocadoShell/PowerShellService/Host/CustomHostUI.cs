@@ -261,44 +261,24 @@ namespace AvocadoShell.PowerShellService.Host
         /// Writes a debug message to the output display of the host.
         /// </summary>
         /// <param name="message">The debug message that is displayed.</param>
-        public override void WriteDebugLine(string message) =>
-            shellUI.WriteCustom($"[Debug] {message}", Config.DebugBrush, true);
+        public override void WriteDebugLine(string message)
+            => shellUI.WriteCustom(
+                $"[Debug] {message}", Config.DebugBrush, true);
 
         /// <summary>
         /// Writes a verbose message to the output display of the host.
         /// </summary>
         /// <param name="message">The verbose message that is displayed.</param>
         public override void WriteVerboseLine(string message)
-        {
-            // Check for and execute any native commands.
-            if (executeNativeCommand(message)) return;
-
-            shellUI.WriteCustom(
+            => shellUI.WriteCustom(
                 $"[Verbose] {message}", Config.VerboseBrush, true);
-        }
 
         /// <summary>
         /// Writes a warning message to the output display of the host.
         /// </summary>
         /// <param name="message">The warning message that is displayed.</param>
-        public override void WriteWarningLine(string message) => 
-            shellUI.WriteCustom(
+        public override void WriteWarningLine(string message)
+            => shellUI.WriteCustom(
                 $"[Warning] {message}", Config.WarningBrush, true);
-
-        bool executeNativeCommand(string message)
-        {
-            const string PROTOCOL = "avocado:";
-            if (message.StartsWith(PROTOCOL))
-            {
-                var commandArgumentSplit = message.IndexOf(' ');
-                var command = message.Substring(0, commandArgumentSplit)
-                    .Substring(PROTOCOL.Length);
-                var argument = message.Substring(commandArgumentSplit + 1);
-                typeof(IShellController).GetMethod(command).Invoke(
-                    (IShellController)shellUI, new object[] { argument });
-                return true;
-            }
-            return false;
-        }
     }
 }

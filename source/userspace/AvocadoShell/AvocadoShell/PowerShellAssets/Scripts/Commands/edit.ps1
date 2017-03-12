@@ -7,5 +7,5 @@ function edit
     $Path = `
         $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath( `
         $Path)
-    runNativeCommand "EditFile" $Path
+    $Host.PrivateData.ShellUI.EditFile($Path)
 }
