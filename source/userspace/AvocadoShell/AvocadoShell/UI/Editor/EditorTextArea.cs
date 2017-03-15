@@ -38,18 +38,19 @@ namespace AvocadoShell.UI.Editor
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            base.OnPreviewKeyDown(e);
-
             switch (e.Key)
             {
                 case Key.Escape:
-                    closeEditor();
+                    // If no text was selected, close the editor.
+                    if (Selection.IsEmpty) closeEditor();
                     break;
                     
                 case Key.S:
                     if (WPFUtils.IsControlKeyDown) saveFile();
                     break;
             }
+
+            base.OnPreviewKeyDown(e);
         }
 
         void closeEditor()

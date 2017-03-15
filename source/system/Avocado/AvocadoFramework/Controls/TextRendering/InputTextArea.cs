@@ -77,5 +77,18 @@ namespace AvocadoFramework.Controls.TextRendering
             Selection.Text = Clipboard.GetText(TextDataFormat.Text);
             ClearSelection();
         }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            switch (e.Key)
+            {
+                // Esc: clear the currently selected text.
+                case Key.Escape:
+                    ClearSelection();
+                    break;
+            }
+        }
     }
 }

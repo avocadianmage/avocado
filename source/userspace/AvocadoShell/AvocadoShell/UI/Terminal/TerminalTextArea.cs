@@ -180,10 +180,12 @@ namespace AvocadoShell.UI.Terminal
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
-            if (Selection.IsEmpty) setInput(string.Empty);
-            // Otherwise, cancel the selected text.
-            else ClearSelection();
-            return true;
+            if (Selection.IsEmpty)
+            {
+                setInput(string.Empty);
+                return true;
+            }
+            return false;
         }
 
         bool handleTabKey()
