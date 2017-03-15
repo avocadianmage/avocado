@@ -15,10 +15,7 @@ namespace AvocadoShell.UI.Editor
 
         string path;
 
-        public EditorTextArea()
-        {
-            TextChanged += onTextChanged;
-        }
+        public EditorTextArea() => TextChanged += onTextChanged;
 
         async void onTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -32,7 +29,7 @@ namespace AvocadoShell.UI.Editor
 
             highlighter.Reset();
             ClearAllText();
-            Write(File.ReadAllText(path), Foreground);
+            if (File.Exists(path)) Write(File.ReadAllText(path), Foreground);
             CaretPosition = Document.ContentStart;
         }
 
@@ -56,12 +53,6 @@ namespace AvocadoShell.UI.Editor
         void closeEditor()
             => ((MainWindow)Window.GetWindow(this)).CloseEditor();
 
-        void saveFile()
-        {
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                GetFullTextRange().Save(stream, DataFormats.Text);
-            }
-        }
+        void saveFile() => File.WriteAllText(path, GetFullTextRange().Text);
     }
 }

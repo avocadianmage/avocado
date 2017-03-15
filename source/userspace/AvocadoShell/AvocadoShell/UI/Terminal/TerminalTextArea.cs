@@ -190,9 +190,11 @@ namespace AvocadoShell.UI.Terminal
 
         bool handleTabKey()
         {
-            // Handle normally if not at the shell prompt.
-            if (!currentPrompt.FromShell) return false;
-            performAutocomplete(!IsShiftKeyDown).RunAsync();
+            // Perform autocomplete if at the shell prompt.
+            if (currentPrompt.FromShell)
+            {
+                performAutocomplete(!IsShiftKeyDown).RunAsync();
+            }
             return true;
         }
 

@@ -46,8 +46,8 @@ namespace AvocadoFramework.Engine
             e.Handled = true;
             base.OnPreviewMouseDown(e);
 
-            // Drag the window around.
-            DragMove();
+            // Drag the window around when the left mouse button is pressed.
+            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
         }
 
         protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
