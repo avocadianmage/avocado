@@ -92,13 +92,7 @@ namespace AvocadoShell.UI.Terminal
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            // Always detect Ctrl+B break.
-            if (IsControlKeyDown && e.Key == Key.B)
-            {
-                terminateExec();
-                return;
-            }
-            
+            if (e.Handled) return;
             handleSpecialKeys(e);
             base.OnPreviewKeyDown(e);
         }
@@ -107,6 +101,15 @@ namespace AvocadoShell.UI.Terminal
         {
             switch (e.Key)
             {
+                // Break out of the current execution.
+                case Key.B:
+                    if (IsControlKeyDown)
+                    {
+                        terminateExec();
+                        e.Handled = true;
+                    }
+                    break;
+
                 // Prevent overwriting the prompt.
                 case Key.Back:
                 case Key.Left:

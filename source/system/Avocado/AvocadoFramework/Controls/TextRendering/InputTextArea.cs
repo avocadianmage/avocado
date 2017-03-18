@@ -83,8 +83,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            base.OnPreviewKeyDown(e);
-
+            if (e.Handled) return;
+            
             switch (e.Key)
             {
                 // Esc: clear the currently selected text.
@@ -96,6 +96,8 @@ namespace AvocadoFramework.Controls.TextRendering
                     e.Handled = processTabKey();
                     break;
             }
+
+            base.OnPreviewKeyDown(e);
         }
 
         bool processTabKey()
