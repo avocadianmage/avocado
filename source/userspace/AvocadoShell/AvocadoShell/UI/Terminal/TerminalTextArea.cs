@@ -194,8 +194,9 @@ namespace AvocadoShell.UI.Terminal
             if (currentPrompt.FromShell)
             {
                 performAutocomplete(!IsShiftKeyDown).RunAsync();
+                return true;
             }
-            return true;
+            return false;
         }
 
         bool handleEnterKey()

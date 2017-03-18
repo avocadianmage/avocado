@@ -14,6 +14,18 @@ namespace StandardLibrary.Web
             return dom?.documentElement?.innerHTML;
         }
 
+        public static object RunJavascript(
+            this WebBrowser browser, string javascript)
+        {
+            var doc = browser.Document;
+            var head = doc.GetElementsByTagName("head")[0];
+            var script = doc.CreateElement("script");
+            script.SetAttribute(
+                "text", $"function injection() {{ {javascript} }}");
+            head.AppendChild(script);
+            return browser.Document.InvokeScript("injection");
+        }
+
         public static void Post(
             this WebBrowser browser, 
             string url, 

@@ -1,5 +1,6 @@
 ﻿using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -9,6 +10,8 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class InputTextArea : TextArea
     {
+        const int TAB_SPACING = 4;
+
         protected Border StylizedCaret { get; private set; }
 
         public InputTextArea() : base()
@@ -88,7 +91,47 @@ namespace AvocadoFramework.Controls.TextRendering
                 case Key.Escape:
                     ClearSelection();
                     break;
+
+                case Key.Tab:
+                    e.Handled = processTabKey();
+                    break;
             }
         }
+
+        bool processTabKey()
+        {
+            if (Selection.IsEmpty) insertTab();
+            else
+            {
+                var end = getNextLine(Selection.End);
+                var pointer = Selection.Start.GetLineStartPosition(0);
+                do
+                {
+                    tabSelectedLine(pointer);
+                    pointer = getNextLine(pointer);
+                }
+                while (pointer.GetOffsetToPosition(end) > 0);
+            }
+            return true;
+        }
+
+        void insertTab()
+        {
+            var range = new TextRange(LineStartPointer, CaretPosition);
+            Write(getTabSpaces(range.Text.Length), Foreground);
+        }
+
+        void tabSelectedLine(TextPointer lineStart)
+        {
+            var range = new TextRange(lineStart, getNextLine(lineStart));
+            var caretPosX = range.Text.TakeWhile(c => c == ' ').Count();
+            lineStart.InsertTextInRun(getTabSpaces(caretPosX));
+        }
+
+        string getTabSpaces(int x) 
+            => new string(' ', TAB_SPACING - x % TAB_SPACING);
+
+        TextPointer getNextLine(TextPointer pointer)
+            => pointer.GetLineStartPosition(1) ?? Document.ContentEnd;
     }
 }
