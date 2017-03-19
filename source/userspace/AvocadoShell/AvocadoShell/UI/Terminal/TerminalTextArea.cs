@@ -1,4 +1,4 @@
-﻿using AvocadoFramework.Controls.TextRendering;
+﻿using AvocadoFramework.Controls.TextRendering.Input;
 using AvocadoShell.Interfaces;
 using AvocadoShell.PowerShellService;
 using AvocadoShell.UI.Utilities;

@@ -1,17 +1,14 @@
 ﻿using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 
-namespace AvocadoFramework.Controls.TextRendering
+namespace AvocadoFramework.Controls.TextRendering.Input
 {
     public abstract class InputTextArea : TextArea
     {
-        const int TAB_SPACING = 4;
-
         protected Border StylizedCaret { get; private set; }
 
         public InputTextArea() : base()
@@ -105,77 +102,11 @@ namespace AvocadoFramework.Controls.TextRendering
             var forward = !WPFUtils.IsShiftKeyDown;
 
             BeginChange();
-            if (Selection.IsEmpty) tab(forward);
-            else tabSelection(forward);
+            var pos = new TabSpacer(CaretPosition, Selection).Run(forward);
+            if (pos != null) CaretPosition = pos;
             EndChange();
 
             return true;
         }
-
-        void tab(bool forward)
-        {
-            var range = new TextRange(LineStartPointer, CaretPosition);
-            var offsetX = range.Text.Length;
-            if (forward) range.Text += getTabSpaces(offsetX);
-            else range = deleteSpaces(offsetX, CaretPosition, false);
-            CaretPosition = range.End;
-        }
-
-        void tabSelection(bool forward)
-        {
-            var end = Selection.End;
-            end = end.IsAtLineStartPosition
-                ? Selection.End : getNextLine(Selection.End);
-
-            var pointer = Selection.Start.GetLineStartPosition(0);
-            do
-            {
-                tabSelectedLine(pointer, forward);
-                pointer = getNextLine(pointer);
-            }
-            while (new TextRange(pointer, end).Text.Length > 0);
-        }
-
-        void tabSelectedLine(TextPointer lineStart, bool forward)
-        {
-            var range = new TextRange(lineStart, getNextLine(lineStart));
-            var offsetX = range.Text.TakeWhile(c => c == ' ').Count();
-
-            if (forward) lineStart.InsertTextInRun(getTabSpaces(offsetX));
-            else deleteSpaces(offsetX, lineStart, true);
-        }
-
-        TextRange deleteSpaces(
-            int offsetX, TextPointer pointer, bool lookForward)
-        {
-            var maxSpacesToRemove = getMaxSpacesToRemove(offsetX);
-            var range = new TextRange(pointer, pointer);
-            while (range.Text.Length < maxSpacesToRemove)
-            {
-                var curPointer = lookForward ? range.End : range.Start;
-                var direction = lookForward
-                    ? LogicalDirection.Forward : LogicalDirection.Backward;
-                var nextPos = curPointer.GetNextInsertionPosition(direction);
-                if (nextPos == null) break;
-                range = lookForward
-                    ? new TextRange(range.Start, nextPos)
-                    : new TextRange(nextPos, range.End);
-            }
-            range.Text = lookForward
-                ? range.Text.TrimStart(' ') : range.Text.TrimEnd(' ');
-            return range;
-        }
-
-        string getTabSpaces(int offsetX) 
-            => new string(' ', TAB_SPACING - offsetX % TAB_SPACING);
-
-        int getMaxSpacesToRemove(int offsetX)
-        {
-            var spaces = offsetX % TAB_SPACING;
-            return spaces == 0 ? TAB_SPACING : spaces;
-        }
-
-        TextPointer getNextLine(TextPointer pointer)
-            => pointer.GetLineStartPosition(1) ?? Document.ContentEnd;
     }
 }

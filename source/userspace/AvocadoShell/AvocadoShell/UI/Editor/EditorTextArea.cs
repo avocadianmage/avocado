@@ -1,12 +1,10 @@
-﻿using AvocadoFramework.Controls.TextRendering;
+﻿using AvocadoFramework.Controls.TextRendering.Input;
 using AvocadoShell.UI.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace AvocadoShell.UI.Editor

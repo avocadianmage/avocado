@@ -78,7 +78,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Controls\Progress\Progressor.cs" />
-    <Compile Include="Controls\TextRendering\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\Input\InputTextArea.cs" />
+    <Compile Include="Controls\TextRendering\Input\TabSpacer.cs" />
     <Compile Include="Controls\TextRendering\TextConfig.cs" />
     <Compile Include="Controls\TextRendering\TextLabel.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
@@ -117,6 +118,7 @@
   <ItemGroup>
     <Resource Include="Assets\error.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
