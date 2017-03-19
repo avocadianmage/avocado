@@ -33,8 +33,10 @@ namespace AvocadoShell.UI.Editor
             CaretPosition = Document.ContentStart;
         }
 
-        protected override void HandleSpecialKeys(KeyEventArgs e)
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
+            if (e.Handled) return;
+
             switch (e.Key)
             {
                 case Key.Escape:
@@ -47,7 +49,7 @@ namespace AvocadoShell.UI.Editor
                     break;
             }
 
-            if (!e.Handled) base.HandleSpecialKeys(e);
+            base.OnPreviewKeyDown(e);
         }
 
         void closeEditor()
