@@ -33,7 +33,7 @@ namespace AvocadoShell.UI.Editor
             CaretPosition = Document.ContentStart;
         }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        protected override void HandleSpecialKeys(KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -41,13 +41,13 @@ namespace AvocadoShell.UI.Editor
                     // If no text was selected, close the editor.
                     if (Selection.IsEmpty) closeEditor();
                     break;
-                    
+
                 case Key.S:
                     if (WPFUtils.IsControlKeyDown) saveFile();
                     break;
             }
 
-            base.OnPreviewKeyDown(e);
+            if (!e.Handled) base.HandleSpecialKeys(e);
         }
 
         void closeEditor()
