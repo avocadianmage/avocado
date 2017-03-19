@@ -102,22 +102,30 @@ namespace AvocadoFramework.Controls.TextRendering
 
         bool processTabKey()
         {
+            var isShiftKeyDown = WPFUtils.IsShiftKeyDown;
+
+            BeginChange();
             if (Selection.IsEmpty)
             {
-                if (WPFUtils.IsShiftKeyDown) removeTab();
+                if (isShiftKeyDown) removeTab();
                 else insertTab();
             }
             else
             {
-                var end = getNextLine(Selection.End);
+                var end = Selection.End;
+                end = end.IsAtLineStartPosition
+                    ? Selection.End : getNextLine(Selection.End);
+
                 var pointer = Selection.Start.GetLineStartPosition(0);
                 do
                 {
-                    tabSelectedLine(pointer);
+                    tabSelectedLine(pointer, !isShiftKeyDown);
                     pointer = getNextLine(pointer);
                 }
-                while (pointer.GetOffsetToPosition(end) > 0);
+                while (new TextRange(pointer, end).Text.Length > 0);
             }
+            EndChange();
+
             return true;
         }
 
@@ -131,22 +139,40 @@ namespace AvocadoFramework.Controls.TextRendering
         void removeTab()
         {
             var range = new TextRange(LineStartPointer, CaretPosition);
-            var caretPosX = getMaxSpacesToRemove(range.Text.Length);
-            for (var i = 0; i < caretPosX; i++)
+
+            var maxSpacesToRemove = getMaxSpacesToRemove(range.Text.Length);
+            var rangeToRemove = new TextRange(CaretPosition, CaretPosition);
+            while (rangeToRemove.Text.Length < maxSpacesToRemove)
             {
-                var prevPos = CaretPosition.GetNextInsertionPosition(
+                var prevPos = rangeToRemove.Start.GetNextInsertionPosition(
                     LogicalDirection.Backward);
-                var rangeToRemove = new TextRange(prevPos, CaretPosition);
-                if (rangeToRemove.Text != " ") break;
-                rangeToRemove.Text = string.Empty;
+                if (prevPos == null) break;
+                rangeToRemove = new TextRange(prevPos, rangeToRemove.End);
             }
+            rangeToRemove.Text = rangeToRemove.Text.TrimEnd(' ');
+
+            CaretPosition = rangeToRemove.End;
         }
 
-        void tabSelectedLine(TextPointer lineStart)
+        void tabSelectedLine(TextPointer lineStart, bool forward)
         {
             var range = new TextRange(lineStart, getNextLine(lineStart));
             var caretPosX = range.Text.TakeWhile(c => c == ' ').Count();
-            lineStart.InsertTextInRun(getTabSpaces(caretPosX));
+
+            if (forward) lineStart.InsertTextInRun(getTabSpaces(caretPosX));
+            else
+            {
+                var maxSpacesToRemove = getMaxSpacesToRemove(caretPosX);
+                var rangeToRemove = new TextRange(lineStart, lineStart);
+                while (rangeToRemove.Text.Length < maxSpacesToRemove)
+                {
+                    var nextPos = rangeToRemove.End.GetNextInsertionPosition(
+                        LogicalDirection.Forward);
+                    if (nextPos == null) break;
+                    rangeToRemove = new TextRange(rangeToRemove.Start, nextPos);
+                }
+                rangeToRemove.Text = rangeToRemove.Text.TrimStart(' ');
+            }
         }
 
         string getTabSpaces(int x) 
