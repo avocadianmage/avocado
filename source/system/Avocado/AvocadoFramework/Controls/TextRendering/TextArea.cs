@@ -55,8 +55,13 @@ namespace AvocadoFramework.Controls.TextRendering
         protected Run WriteLine(string text, Brush foreground) =>
             Write($"{text}\r", foreground);
 
+        // Get all text in the textarea, omitting the automatically inserted
+        // newline at the end.
         protected TextRange GetFullTextRange() 
-            => new TextRange(Document.ContentStart, Document.ContentEnd);
+            => new TextRange(
+                Document.ContentStart, 
+                Document.ContentEnd.GetNextInsertionPosition(
+                    LogicalDirection.Backward) ?? Document.ContentEnd);
 
         protected void ClearAllText() => Document.Blocks.Clear();
 
