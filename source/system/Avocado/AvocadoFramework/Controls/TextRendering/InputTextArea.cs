@@ -55,14 +55,14 @@ namespace AvocadoFramework.Controls.TextRendering
             SelectionChanged += (s, e) => updateCaretLocation();
             TextChanged += (s, e) => updateCaretLocation();
             AddHandler(
-                ScrollViewer.ScrollChangedEvent, 
+                ScrollViewer.ScrollChangedEvent,
                 new ScrollChangedEventHandler((s, e) => updateCaretLocation()));
 
             // Window events.
             var window = Window.GetWindow(this);
-            window.Activated += 
+            window.Activated +=
                 (s, e) => StylizedCaret.Visibility = Visibility.Visible;
-            window.Deactivated += 
+            window.Deactivated +=
                 (s, e) => StylizedCaret.Visibility = Visibility.Collapsed;
         }
 
@@ -102,7 +102,11 @@ namespace AvocadoFramework.Controls.TextRendering
 
         bool processTabKey()
         {
-            if (Selection.IsEmpty) insertTab();
+            if (Selection.IsEmpty)
+            {
+                if (WPFUtils.IsShiftKeyDown) removeTab();
+                else insertTab();
+            }
             else
             {
                 var end = getNextLine(Selection.End);
@@ -120,7 +124,22 @@ namespace AvocadoFramework.Controls.TextRendering
         void insertTab()
         {
             var range = new TextRange(LineStartPointer, CaretPosition);
-            Write(getTabSpaces(range.Text.Length), Foreground);
+            range.Text += getTabSpaces(range.Text.Length);
+            CaretPosition = range.End;
+        }
+
+        void removeTab()
+        {
+            var range = new TextRange(LineStartPointer, CaretPosition);
+            var caretPosX = getMaxSpacesToRemove(range.Text.Length);
+            for (var i = 0; i < caretPosX; i++)
+            {
+                var prevPos = CaretPosition.GetNextInsertionPosition(
+                    LogicalDirection.Backward);
+                var rangeToRemove = new TextRange(prevPos, CaretPosition);
+                if (rangeToRemove.Text != " ") break;
+                rangeToRemove.Text = string.Empty;
+            }
         }
 
         void tabSelectedLine(TextPointer lineStart)
@@ -132,6 +151,12 @@ namespace AvocadoFramework.Controls.TextRendering
 
         string getTabSpaces(int x) 
             => new string(' ', TAB_SPACING - x % TAB_SPACING);
+
+        int getMaxSpacesToRemove(int x)
+        {
+            var spaces = x % TAB_SPACING;
+            return spaces == 0 ? TAB_SPACING : spaces;
+        }
 
         TextPointer getNextLine(TextPointer pointer)
             => pointer.GetLineStartPosition(1) ?? Document.ContentEnd;
