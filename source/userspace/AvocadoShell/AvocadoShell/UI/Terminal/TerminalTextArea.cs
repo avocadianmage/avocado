@@ -90,14 +90,7 @@ namespace AvocadoShell.UI.Terminal
             if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
         }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            if (e.Handled) return;
-            handleSpecialKeys(e);
-            base.OnPreviewKeyDown(e);
-        }
-
-        void handleSpecialKeys(KeyEventArgs e)
+        protected override void HandleSpecialKeys(KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -146,6 +139,8 @@ namespace AvocadoShell.UI.Terminal
                     e.Handled = handlePageUpDown(e.Key);
                     break;
             }
+
+            if (!e.Handled) base.HandleSpecialKeys(e);
         }
 
         bool handleBackAndLeftKeys(Key key)
