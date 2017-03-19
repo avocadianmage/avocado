@@ -102,45 +102,38 @@ namespace AvocadoFramework.Controls.TextRendering
 
         bool processTabKey()
         {
-            var isShiftKeyDown = WPFUtils.IsShiftKeyDown;
+            var forward = !WPFUtils.IsShiftKeyDown;
 
             BeginChange();
-            if (Selection.IsEmpty)
-            {
-                if (isShiftKeyDown) removeTab();
-                else insertTab();
-            }
-            else
-            {
-                var end = Selection.End;
-                end = end.IsAtLineStartPosition
-                    ? Selection.End : getNextLine(Selection.End);
-
-                var pointer = Selection.Start.GetLineStartPosition(0);
-                do
-                {
-                    tabSelectedLine(pointer, !isShiftKeyDown);
-                    pointer = getNextLine(pointer);
-                }
-                while (new TextRange(pointer, end).Text.Length > 0);
-            }
+            if (Selection.IsEmpty) tab(forward);
+            else tabSelection(forward);
             EndChange();
 
             return true;
         }
 
-        void insertTab()
+        void tab(bool forward)
         {
             var range = new TextRange(LineStartPointer, CaretPosition);
-            range.Text += getTabSpaces(range.Text.Length);
+            var offsetX = range.Text.Length;
+            if (forward) range.Text += getTabSpaces(offsetX);
+            else range = deleteSpaces(offsetX, CaretPosition, false);
             CaretPosition = range.End;
         }
 
-        void removeTab()
+        void tabSelection(bool forward)
         {
-            var range = new TextRange(LineStartPointer, CaretPosition);
-            range = deleteSpaces(range.Text.Length, CaretPosition, false);
-            CaretPosition = range.End;
+            var end = Selection.End;
+            end = end.IsAtLineStartPosition
+                ? Selection.End : getNextLine(Selection.End);
+
+            var pointer = Selection.Start.GetLineStartPosition(0);
+            do
+            {
+                tabSelectedLine(pointer, forward);
+                pointer = getNextLine(pointer);
+            }
+            while (new TextRange(pointer, end).Text.Length > 0);
         }
 
         void tabSelectedLine(TextPointer lineStart, bool forward)
