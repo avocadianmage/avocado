@@ -1,4 +1,4 @@
-﻿using AvocadoShell.Interfaces;
+﻿using AvocadoShell.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

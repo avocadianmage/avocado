@@ -1,4 +1,4 @@
-﻿using AvocadoShell.Interfaces;
+﻿using AvocadoShell.Terminal;
 using AvocadoShell.PowerShellService.Utilities;
 using System;
 using System.Collections.Generic;

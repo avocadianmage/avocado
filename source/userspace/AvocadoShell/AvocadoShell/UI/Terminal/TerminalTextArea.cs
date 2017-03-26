@@ -1,5 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering.Input;
-using AvocadoShell.Interfaces;
+using AvocadoShell.Terminal;
 using AvocadoShell.PowerShellService;
 using AvocadoShell.UI.Utilities;
 using AvocadoUtilities.CommandLine.ANSI;

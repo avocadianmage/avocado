@@ -111,7 +111,7 @@
     <Compile Include="UI\Editor\EditorTextArea.cs" />
     <Compile Include="UI\Terminal\OutputBuffer.cs" />
     <Compile Include="UI\Terminal\Prompt.cs" />
-    <Compile Include="UI\Interfaces\IShellUI.cs" />
+    <Compile Include="UI\Terminal\IShellUI.cs" />
     <Compile Include="UI\Utilities\PSSyntaxHighlighter.cs" />
     <Compile Include="UI\Terminal\TerminalTextArea.cs" />
     <Compile Include="PowerShellService\Utilities\RunspacePipeline.cs" />
