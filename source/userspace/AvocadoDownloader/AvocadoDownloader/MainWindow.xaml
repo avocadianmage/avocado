@@ -28,8 +28,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl Name="GrouperList"
                           ItemsSource="{Binding Groupers}" 
-                          Focusable="False"
-                          Margin="0 -2 0 0">
+                          Focusable="False">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Margin="4">

@@ -18,6 +18,8 @@ namespace StandardLibrary.Processes
             remainingArgs = args;
         }
 
+        public Arguments() : this(EnvUtils.GetArgs()) { }
+
         public string PopArg()
         {
             var arg = remainingArgs.FirstOrDefault();
