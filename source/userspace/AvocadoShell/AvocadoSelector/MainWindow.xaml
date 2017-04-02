@@ -6,16 +6,20 @@
                   ResizeMode="NoResize"
                   Width="300" SizeToContent="Height"
                   MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}">
-    <ItemsControl Name="OptionsUI"
-                  ItemsSource="{Binding options}" 
-                  Focusable="False">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <selection:OptionItem Content="{Binding Description}" 
-                                      IsChecked="{Binding IsChecked}"
-                                      Margin="1" 
-                                      SingleSelect="{StaticResource SingleSelect}" />
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ItemsControl Name="OptionsUI"
+                      ItemsSource="{Binding options}" 
+                      Focusable="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <selection:OptionItem 
+                        FocusVisualStyle="{x:Null}"
+                        Content="{Binding Description}" 
+                        IsChecked="{Binding IsChecked}"
+                        Margin="1" 
+                        SingleSelect="{StaticResource SingleSelect}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 </engine:GlassPane>
