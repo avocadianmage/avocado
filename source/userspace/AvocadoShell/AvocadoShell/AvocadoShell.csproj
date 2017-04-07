@@ -106,7 +106,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="PowerShellService\Host\Choice.cs" />
+    <Compile Include="PowerShellService\Host\ChoicePrompt\Choice.cs" />
+    <Compile Include="PowerShellService\Host\ChoicePrompt\InputParser.cs" />
     <Compile Include="PowerShellService\PowerShellEngine.cs" />
     <Compile Include="UI\Editor\EditorTextArea.cs" />
     <Compile Include="UI\Terminal\OutputBuffer.cs" />

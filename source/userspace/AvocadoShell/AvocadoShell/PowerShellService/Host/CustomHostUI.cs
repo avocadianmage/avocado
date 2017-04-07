@@ -1,4 +1,6 @@
-﻿using AvocadoShell.Terminal;
+﻿using AvocadoShell.PowerShellService.Host.ChoicePrompt;
+using AvocadoShell.Terminal;
+using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,6 +31,25 @@ namespace AvocadoShell.PowerShellService.Host
         {
             writeLineUnlessWhitespace(caption, Config.OutputBrush);
             writeLineUnlessWhitespace(message, Config.VerboseBrush);
+        }
+
+        Choice[] writeChoicePromptPreamble(
+            string caption,
+            string message,
+            Collection<ChoiceDescription> choices,
+            IEnumerable<int> defaultChoices)
+        {
+            writePromptPreamble(caption, message);
+
+            // Output list of choices.
+            var choiceList = choices.Select(c => new Choice(c)).ToArray();
+            for (var i = 0; i < choiceList.Length; i++)
+            {
+                var brush = defaultChoices.Contains(i)
+                    ? Config.SelectedBrush : Config.OutputBrush;
+                shellUI.WriteCustom(choiceList[i].ToString(), brush, true);
+            }
+            return choiceList;
         }
 
         /// <summary>
@@ -75,7 +96,7 @@ namespace AvocadoShell.PowerShellService.Host
         }
 
         /// <summary>
-        /// Provides a set of choices that enable the user to choose a single
+        /// Provides a set of choices that enables the user to choose a single
         /// option.
         /// </summary>
         /// <param name="caption">Text that precedes the choices.</param>
@@ -93,50 +114,43 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            writePromptPreamble(caption, message);
-
-            // Output list of choices.
-            var choiceList = choices.Select(c => new Choice(c)).ToArray();
-            for (var i = 0; i < choiceList.Length; i++)
-            {
-                var brush = i == defaultChoice 
-                    ? Config.SelectedBrush : Config.OutputBrush;
-                shellUI.WriteCustom(choiceList[i].ToString(), brush, true);
-            }
-
-            // Read prompts until a match is made or the default is chosen.
-            while (true)
-            {
-                var input = shellUI.WritePrompt("Input selection: ")
-                    .Trim().ToUpper();
-
-                // If the choice string was empty, use the default selection.
-                if (string.IsNullOrEmpty(input) && defaultChoice != -1)
-                {
-                    return defaultChoice;
-                }
-
-                // See if the selection matched and return the corresponding
-                // index if it did.
-                for (var i = 0; i < choiceList.Length; i++)
-                {
-                    var choice = choiceList[i];
-                    if (choice.Hotkey == input
-                        || choice.Text.ToUpper() == input)
-                    {
-                        return i;
-                    }
-                }
-            }
+            var choiceList = writeChoicePromptPreamble(
+                caption, message, choices, defaultChoice.Yield());
+            return InputParser.SingleChoicePrompt(
+                () => shellUI.WritePrompt("Input selection: "), 
+                choiceList, 
+                defaultChoice);
         }
 
+        /// <summary>
+        /// Provides a set of choices that enables the user to choose a multiple
+        /// options.
+        /// </summary>
+        /// <param name="caption">Text that precedes the choices.</param>
+        /// <param name="message">A message that describes the choices.</param>
+        /// <param name="choices">A collection of ChoiceDescription objects that 
+        /// describe each choice.</param>
+        /// <param name="defaultChoice">A list of indexes of the labels in the 
+        /// choices parameter collection. To indicate no default choices, set to 
+        /// null.
+        /// </param>
+        /// <returns>The indexes of the choices parameter collection element 
+        /// that corresponds to the options that are selected by the user.
+        /// </returns>
         public Collection<int> PromptForChoice(
             string caption,
             string message,
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            throw new NotImplementedException();
+            var choiceList = writeChoicePromptPreamble(
+                caption, message, choices, defaultChoices);
+            return new Collection<int>(
+                InputParser.MultiChoiceNumericPrompt(
+                    () => shellUI.WritePrompt("Input selection(s): "), 
+                    choiceList.Length, 
+                    defaultChoices)
+                .ToList());
         }
 
         /// <summary>

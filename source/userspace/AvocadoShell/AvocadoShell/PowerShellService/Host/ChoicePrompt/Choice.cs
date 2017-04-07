@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Management.Automation.Host;
 
-namespace AvocadoShell.PowerShellService.Host
+namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
 {
     sealed class Choice
     {
