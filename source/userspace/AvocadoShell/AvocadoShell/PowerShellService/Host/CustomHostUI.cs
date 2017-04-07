@@ -112,7 +112,7 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            var choiceObjects = InputParser.GetChoiceObjects(choices);
+            var choiceObjects = Choice.CreateAll(choices);
             writeChoicePromptPreamble(
                 caption, message, choiceObjects, defaultChoice.Yield());
             return InputParser.SingleChoicePrompt(
@@ -142,7 +142,7 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            var choiceObjects = InputParser.GetChoiceObjects(choices);
+            var choiceObjects = Choice.CreateAll(choices);
             writeChoicePromptPreamble(
                 caption, message, choiceObjects, defaultChoices);
             return new Collection<int>(
