@@ -5,8 +5,6 @@
         <ResourceDictionary 
             Source="/AvocadoFramework;component/themes/GlassPane.Generic.xaml" />
         <ResourceDictionary 
-            Source="/AvocadoFramework;component/themes/OptionItem.Generic.xaml" />
-        <ResourceDictionary 
             Source="/AvocadoFramework;component/themes/Progressor.Generic.xaml" />
         <ResourceDictionary 
             Source="/AvocadoFramework;component/themes/TextArea.Generic.xaml" />
