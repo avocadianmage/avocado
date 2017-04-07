@@ -38,8 +38,6 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Cmdlet\Extensions.cs" />
-    <Compile Include="Cmdlet\Prompts.cs" />
     <Compile Include="CommandLine\ANSI\ANSISegment.cs" />
     <Compile Include="CommandLine\ANSI\ANSICode.cs" />
     <Compile Include="CommandLine\Subcommand.cs" />
