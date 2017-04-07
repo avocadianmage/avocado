@@ -10,10 +10,10 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
         public string Text { get; }
         public string Hotkey { get; }
 
-        public Choice(ChoiceDescription desc) : this(
-            desc.Label, 
-            desc.Label.Split('&')[1].First().ToString().ToUpper(),
-            desc.HelpMessage)
+        public Choice(string text, string helpMessage) : this(
+            text,
+            text.Split('&')[1].First().ToString().ToUpper(),
+            helpMessage)
         { }
 
         public Choice(string text, string hotkey, string helpMessage)
@@ -35,7 +35,9 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             // If each choice description already specifies a hotkey, use those.
             if (choices.All(c => c.Label.Contains('&')))
             {
-                return choices.Select(c => new Choice(c)).ToArray();
+                return choices
+                    .Select(c => new Choice(c.Label, c.HelpMessage))
+                    .ToArray();
             }
 
             // Otherwise, create ordinal hotkeys.
