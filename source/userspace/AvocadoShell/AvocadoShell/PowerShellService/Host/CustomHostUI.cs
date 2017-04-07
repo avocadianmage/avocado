@@ -142,13 +142,14 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            var choiceList = new Choice[choices.Count];
-            for (var i = 0; i < choices.Count; i++)
+            var choiceCount = choices.Count;
+            var choiceList = new Choice[choiceCount];
+            for (var i = 0; i < choiceCount; i++)
             {
                 var choice = choices[i];
                 choiceList[i] = new Choice(
                     choice.Label, 
-                    (i + 1).ToString(), 
+                    (i + 1).ToString().PadLeft(choiceCount.ToString().Length), 
                     choice.HelpMessage);
             }
 

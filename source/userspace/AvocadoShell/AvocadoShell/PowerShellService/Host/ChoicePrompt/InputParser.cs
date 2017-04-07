@@ -43,10 +43,7 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             var input = getSanitizedInput(getInput);
 
             // Return the default options if nothing was entered.
-            if (string.IsNullOrEmpty(input) && defaultOptions.Any())
-            {
-                return defaultOptions;
-            }
+            if (string.IsNullOrEmpty(input)) return defaultOptions;
 
             var rangeList = input.Split(
                 new char[] { ',' },
