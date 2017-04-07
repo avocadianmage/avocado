@@ -29,7 +29,7 @@ namespace AvocadoShell.PowerShellService.Host
 
         void writePromptPreamble(string caption, string message)
         {
-            writeLineUnlessWhitespace(caption, Config.PromptBrush);
+            writeLineUnlessWhitespace(caption, Config.OutputBrush);
             writeLineUnlessWhitespace(message, Config.VerboseBrush);
         }
 
