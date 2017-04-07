@@ -10,7 +10,8 @@ using System.Windows.Media;
 
 namespace AvocadoShell.PowerShellService.Host
 {
-    sealed class CustomHostUI : PSHostUserInterface
+    sealed class CustomHostUI 
+        : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
     {
         readonly IShellUI shellUI;
         readonly List<ProgressRecord> actionsInProgress
@@ -18,10 +19,16 @@ namespace AvocadoShell.PowerShellService.Host
 
         public CustomHostUI(IShellUI shellUI) => this.shellUI = shellUI;
 
-        void writeOutputUnlessWhitespace(string text)
+        void writeLineUnlessWhitespace(string line, Brush foreground)
         {
-            if (string.IsNullOrWhiteSpace(text)) return;
-            shellUI.WriteOutputLine(text);
+            if (string.IsNullOrWhiteSpace(line)) return;
+            shellUI.WriteCustom(line, foreground, true);
+        }
+
+        void writePromptPreamble(string caption, string message)
+        {
+            writeLineUnlessWhitespace(caption, Config.OutputBrush);
+            writeLineUnlessWhitespace(message, Config.VerboseBrush);
         }
 
         /// <summary>
@@ -44,8 +51,7 @@ namespace AvocadoShell.PowerShellService.Host
             string message,
             Collection<FieldDescription> descriptions)
         {
-            writeOutputUnlessWhitespace(caption);
-            writeOutputUnlessWhitespace(message);
+            writePromptPreamble(caption, message);
 
             var results = new Dictionary<string, PSObject>();
             foreach (var desc in descriptions)
@@ -87,35 +93,50 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            writeOutputUnlessWhitespace(caption);
-            writeOutputUnlessWhitespace(message);
+            writePromptPreamble(caption, message);
 
+            // Output list of choices.
             var choiceList = choices.Select(c => new Choice(c)).ToArray();
-            var choicePrompt = Choice.GetPromptText(
-                choiceList, choiceList[defaultChoice].Hotkey);
+            for (var i = 0; i < choiceList.Length; i++)
+            {
+                var brush = i == defaultChoice 
+                    ? Config.SelectedBrush : Config.OutputBrush;
+                shellUI.WriteCustom(choiceList[i].ToString(), brush, true);
+            }
 
             // Read prompts until a match is made or the default is chosen.
             while (true)
             {
-                var input = shellUI.WritePrompt(choicePrompt);
+                var input = shellUI.WritePrompt("Input selection: ")
+                    .Trim().ToUpper();
 
                 // If the choice string was empty, use the default selection.
-                if (string.IsNullOrWhiteSpace(input)) return defaultChoice;
-
-                input = input.Trim().ToUpper();
-
-                // Check for help selection.
-                if (input == "?")
+                if (string.IsNullOrEmpty(input) && defaultChoice != -1)
                 {
-                    shellUI.WriteOutputLine(Choice.GetHelpText(choiceList));
-                    continue;
+                    return defaultChoice;
                 }
 
                 // See if the selection matched and return the corresponding
                 // index if it did.
                 for (var i = 0; i < choiceList.Length; i++)
-                    if (choiceList[i].Hotkey == input) return i;
+                {
+                    var choice = choiceList[i];
+                    if (choice.Hotkey == input
+                        || choice.Text.ToUpper() == input)
+                    {
+                        return i;
+                    }
+                }
             }
+        }
+
+        public Collection<int> PromptForChoice(
+            string caption,
+            string message,
+            Collection<ChoiceDescription> choices,
+            IEnumerable<int> defaultChoices)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

@@ -16,6 +16,7 @@ namespace AvocadoShell
         public static Brush DebugBrush => TextPalette.LightBlue;
         public static Brush VerboseBrush => TextPalette.DarkGray;
         public static Brush WarningBrush => TextPalette.Orange;
+        public static Brush SelectedBrush => TextPalette.Orange;
 
         public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
 
