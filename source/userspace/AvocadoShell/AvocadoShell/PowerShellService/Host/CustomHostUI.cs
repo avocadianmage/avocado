@@ -33,23 +33,21 @@ namespace AvocadoShell.PowerShellService.Host
             writeLineUnlessWhitespace(message, Config.VerboseBrush);
         }
 
-        Choice[] writeChoicePromptPreamble(
+        void writeChoicePromptPreamble(
             string caption,
             string message,
-            Collection<ChoiceDescription> choices,
+            Choice[] choiceList,
             IEnumerable<int> defaultChoices)
         {
             writePromptPreamble(caption, message);
 
             // Output list of choices.
-            var choiceList = choices.Select(c => new Choice(c)).ToArray();
             for (var i = 0; i < choiceList.Length; i++)
             {
                 var brush = defaultChoices.Contains(i)
                     ? Config.SelectedBrush : Config.OutputBrush;
                 shellUI.WriteCustom(choiceList[i].ToString(), brush, true);
             }
-            return choiceList;
         }
 
         /// <summary>
@@ -114,8 +112,9 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             int defaultChoice)
         {
-            var choiceList = writeChoicePromptPreamble(
-                caption, message, choices, defaultChoice.Yield());
+            var choiceList = choices.Select(c => new Choice(c)).ToArray();
+            writeChoicePromptPreamble(
+                caption, message, choiceList, defaultChoice.Yield());
             return InputParser.SingleChoicePrompt(
                 () => shellUI.WritePrompt("Input selection: "), 
                 choiceList, 
@@ -143,8 +142,18 @@ namespace AvocadoShell.PowerShellService.Host
             Collection<ChoiceDescription> choices,
             IEnumerable<int> defaultChoices)
         {
-            var choiceList = writeChoicePromptPreamble(
-                caption, message, choices, defaultChoices);
+            var choiceList = new Choice[choices.Count];
+            for (var i = 0; i < choices.Count; i++)
+            {
+                var choice = choices[i];
+                choiceList[i] = new Choice(
+                    choice.Label, 
+                    (i + 1).ToString(), 
+                    choice.HelpMessage);
+            }
+
+            writeChoicePromptPreamble(
+                caption, message, choiceList, defaultChoices);
             return new Collection<int>(
                 InputParser.MultiChoiceNumericPrompt(
                     () => shellUI.WritePrompt("Input selection(s): "), 

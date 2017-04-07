@@ -9,11 +9,17 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
         public string Text { get; }
         public string Hotkey { get; }
 
-        public Choice(ChoiceDescription desc)
+        public Choice(ChoiceDescription desc) : this(
+            desc.Label, 
+            desc.Label.Split('&')[1].First().ToString().ToUpper(),
+            desc.HelpMessage)
+        { }
+
+        public Choice(string text, string hotkey, string helpMessage)
         {
-            Text = desc.Label.Replace("&", string.Empty);
-            Hotkey = desc.Label.Split('&')[1].First().ToString().ToUpper();
-            HelpMessage = desc.HelpMessage;
+            Text = text.Replace("&", string.Empty);
+            Hotkey = hotkey;
+            HelpMessage = helpMessage;
         }
 
         public override string ToString()
