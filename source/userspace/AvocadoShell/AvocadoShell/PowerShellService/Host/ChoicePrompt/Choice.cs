@@ -16,7 +16,11 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             HelpMessage = desc.HelpMessage;
         }
 
-        public override string ToString() 
-            => $" [{Hotkey}] {Text} - {HelpMessage}";
+        public override string ToString()
+        {
+            var str = $" [{Hotkey}] {Text}";
+            return string.IsNullOrWhiteSpace(HelpMessage)
+                ? str : $"{str} - {HelpMessage}";
+        }
     }
 }
