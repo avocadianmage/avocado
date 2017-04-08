@@ -14,16 +14,16 @@ namespace StandardLibrary.Web
         public IEnumerable<(
             string inner, 
             Dictionary<string, string> attributes)> 
-        GetLinks(params string[] attributeKeys)
+        GetTags(string tag, params string[] attributeKeys)
         {
             var body = (IHTMLElement2)document.body;
-            var links = body.getElementsByTagName("a");
-            foreach (IHTMLElement link in links)
+            var elements = body.getElementsByTagName(tag);
+            foreach (IHTMLElement elem in elements)
             {
                 var dict = attributeKeys.ToDictionary(
                     attr => attr, 
-                    attr => (string)Convert.ToString(link.getAttribute(attr)));
-                yield return (link.innerText, dict);
+                    attr => (string)Convert.ToString(elem.getAttribute(attr)));
+                yield return (elem.innerText, dict);
             }
         }
     }

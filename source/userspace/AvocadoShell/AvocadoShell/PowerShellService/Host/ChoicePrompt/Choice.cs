@@ -23,9 +23,9 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             HelpMessage = helpMessage;
         }
 
-        public override string ToString()
+        public string ToDisplayLine(int hotkeyTotalPadding)
         {
-            var str = $" [{Hotkey}] {Text}";
+            var str = $" [{Hotkey.PadLeft(hotkeyTotalPadding)}] {Text}";
             return string.IsNullOrWhiteSpace(HelpMessage)
                 ? str : $"{str} - {HelpMessage}";
         }
@@ -47,9 +47,7 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             {
                 var choice = choices[i];
                 choiceObjects[i] = new Choice(
-                    choice.Label,
-                    (i + 1).ToString().PadLeft(choiceCount.ToString().Length),
-                    choice.HelpMessage);
+                    choice.Label, (i + 1).ToString(), choice.HelpMessage);
             }
             return choiceObjects;
         }

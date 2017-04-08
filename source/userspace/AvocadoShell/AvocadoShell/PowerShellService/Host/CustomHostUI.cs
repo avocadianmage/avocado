@@ -42,11 +42,14 @@ namespace AvocadoShell.PowerShellService.Host
             writePromptPreamble(caption, message);
 
             // Output list of choices.
-            for (var i = 0; i < choiceList.Length; i++)
+            var choiceCount = choiceList.Length;
+            var hotkeyTotalPadding = choiceList.Max(c => c.Hotkey.Length);
+            for (var i = 0; i < choiceCount; i++)
             {
                 var brush = defaultChoices.Contains(i)
                     ? Config.SelectedBrush : Config.OutputBrush;
-                shellUI.WriteCustom(choiceList[i].ToString(), brush, true);
+                var text = choiceList[i].ToDisplayLine(hotkeyTotalPadding);
+                shellUI.WriteCustom(text, brush, true);
             }
         }
 
