@@ -287,8 +287,7 @@ namespace AvocadoShell.PowerShellService.Host
 
             // Handle 'DarkYellow' which does not have a brush with a matching
             // name.
-            if (consoleColor == ConsoleColor.DarkYellow)
-                return Brushes.DarkGoldenrod;
+            if (consoleColor == ConsoleColor.DarkYellow) return Brushes.Orange;
             
             var colorStr = consoleColor.ToString();
             return new BrushConverter().ConvertFromString(colorStr) as Brush;

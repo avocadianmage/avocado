@@ -15,10 +15,7 @@ namespace AvocadoShell.PowerShellService.Host.ChoicePrompt
             var input = getSanitizedInput(getInput);
 
             // If the choice string was empty, use the default selection.
-            if (string.IsNullOrEmpty(input) && defaultChoice != -1)
-            {
-                return defaultChoice;
-            }
+            if (string.IsNullOrEmpty(input)) return defaultChoice;
 
             // See if the selection matched and return the corresponding
             // index if it did.
