@@ -71,6 +71,7 @@ namespace AvocadoDownloader.BusinessLayer
             webDownload.ProgressUpdated += onProgressUpdated;
 
             FilePath = filePath;
+            Status = "Queued";
         }
 
         public async Task DownloadFromUrl(string url)
