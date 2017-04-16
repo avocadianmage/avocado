@@ -53,6 +53,21 @@ namespace AvocadoShell.PowerShellService.Host
             }
         }
 
+        string writeChoicePrompt(bool isMultiOption, bool hasDefault)
+        {
+            var basePromptStr = isMultiOption ? "Multiselect" : "Select";
+            shellUI.WriteCustom(
+                basePromptStr, Config.PromptBrush, false);
+            if (hasDefault)
+            {
+                shellUI.WriteCustom(
+                    " (leave blank for ", Config.PromptBrush, false);
+                shellUI.WriteCustom("default", Config.SelectedBrush, false);
+                shellUI.WriteCustom(")", Config.PromptBrush, false);
+            }
+            return shellUI.WritePrompt(": ");
+        }
+
         /// <summary>
         /// Gets an instance of the PSRawUserInterface object for this host
         /// application.
@@ -119,7 +134,7 @@ namespace AvocadoShell.PowerShellService.Host
             writeChoicePromptPreamble(
                 caption, message, choiceObjects, defaultChoice.Yield());
             return InputParser.SingleChoicePrompt(
-                () => shellUI.WritePrompt("Input selection: "),
+                () => writeChoicePrompt(false, defaultChoice != -1),
                 choiceObjects, 
                 defaultChoice);
         }
@@ -150,7 +165,7 @@ namespace AvocadoShell.PowerShellService.Host
                 caption, message, choiceObjects, defaultChoices);
             return new Collection<int>(
                 InputParser.MultiChoiceNumericPrompt(
-                    () => shellUI.WritePrompt("Input selection(s): "), 
+                    () => writeChoicePrompt(true, defaultChoices.Any()), 
                     choiceObjects.Length, 
                     defaultChoices)
                 .ToList());
