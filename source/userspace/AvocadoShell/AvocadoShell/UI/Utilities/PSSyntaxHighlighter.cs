@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Threading.Tasks;
 using System.Windows.Documents;
-using System.Windows.Media;
 
 namespace AvocadoShell.UI.Utilities
 {
@@ -26,10 +25,8 @@ namespace AvocadoShell.UI.Utilities
         IEnumerable<Token> getChangedTokens(string text)
         {
             Parser.ParseInput(text, out var newTokens, out var errors);
-
-            var deltaTokens = new LinkedList<Token>();
-            includeNestedTokens(deltaTokens, newTokens);
-
+            
+            var deltaTokens = new LinkedList<Token>(newTokens);
             void loopTokens(GetIndex<Token> iterator)
             {
                 var loopCount = Math.Min(
@@ -53,19 +50,6 @@ namespace AvocadoShell.UI.Utilities
             return deltaTokens;
         }
 
-        void includeNestedTokens(
-            LinkedList<Token> allTokens, IEnumerable<Token> tokensToProcess)
-        {
-            tokensToProcess?.ForEach(t =>
-            {
-                allTokens.AddLast(t);
-                if (t is StringExpandableToken stringToken)
-                {
-                    includeNestedTokens(allTokens, stringToken.NestedTokens);
-                }
-            });
-        }
-
         bool compareTokens(Token token1, Token token2)
             => token1.Kind == token2.Kind 
             && token1.TokenFlags == token2.TokenFlags 
@@ -78,23 +62,28 @@ namespace AvocadoShell.UI.Utilities
             tokenization.ForEach(t =>
             {
                 textArea.Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(
-                        textArea, range, t, Config.GetTokenBrush(t)),
+                    () => applyTokenColoring(textArea, range, t),
                     Config.TextPriority);
             });
         }
 
-        void applyTokenColoring(
-            TextArea textArea, TextRange range, Token token, Brush foreground)
+        void applyTokenColoring(TextArea textArea, TextRange range, Token token)
         {
-            var start = range.Start.GetPointerFromCharOffset(token.Extent.StartOffset);
+            var start = range.Start.GetPointerFromCharOffset(
+                token.Extent.StartOffset);
             if (start == null) return;
             var end = start.GetPointerFromCharOffset(token.Text.Length);
             if (end == null) return;
 
             new TextRange(start, end).ApplyPropertyValue(
-                TextElement.ForegroundProperty, 
-                foreground ?? textArea.Foreground);
+                TextElement.ForegroundProperty,
+                Config.GetTokenBrush(token) ?? textArea.Foreground);
+
+            if (token is StringExpandableToken stringToken)
+            {
+                stringToken.NestedTokens?.ForEach(
+                    t => applyTokenColoring(textArea, range, t));
+            }
         }
     }
 }
