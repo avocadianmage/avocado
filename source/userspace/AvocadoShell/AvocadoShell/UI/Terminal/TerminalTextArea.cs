@@ -23,8 +23,6 @@ namespace AvocadoShell.UI.Terminal
 {
     sealed class TerminalTextArea : InputTextArea, IShellUI
     {
-        const DispatcherPriority TEXT_PRIORITY = DispatcherPriority.ContextIdle;
-
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly Prompt currentPrompt = new Prompt();
@@ -327,8 +325,7 @@ namespace AvocadoShell.UI.Terminal
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
             => Dispatcher.InvokeAsync(
-                () => writePromptCore(prompt, fromShell, secure),
-                TEXT_PRIORITY);
+                () => writePromptCore(prompt, fromShell, secure), TextPriority);
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
@@ -366,7 +363,7 @@ namespace AvocadoShell.UI.Terminal
 
         void safeWrite(string text, Brush foreground, bool newline)
             => Dispatcher.InvokeAsync(
-                () => write(text, foreground, newline), TEXT_PRIORITY);
+                () => write(text, foreground, newline), TextPriority);
         
         void write(string text, Brush foreground, bool newline)
         {

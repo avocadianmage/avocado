@@ -1,13 +1,18 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using System;
-using System.Collections.Generic;
-using System.Management.Automation;
+using System.Management.Automation.Language;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace AvocadoShell
 {
     sealed class Config
     {
+        public static DispatcherPriority TextPriority 
+            => DispatcherPriority.ContextIdle;
+
+        public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
+
         public static Brush PromptBrush => TextPalette.LightGreen;
         public static Brush ElevatedBrush => TextPalette.Yellow;
         public static Brush ErrorBrush => TextPalette.LightRed;
@@ -18,29 +23,33 @@ namespace AvocadoShell
         public static Brush WarningBrush => TextPalette.Orange;
         public static Brush SelectedBrush => TextPalette.Orange;
 
-        public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
-
-        public static Dictionary<PSTokenType, Brush> PSSyntaxColorLookup
-            { get; } = new Dictionary<PSTokenType, Brush>
+        public static Brush GetTokenBrush(Token token)
+        {
+            switch (token.Kind)
             {
-                { PSTokenType.Attribute, TextPalette.Teal },
-                { PSTokenType.Command, TextPalette.LightBlue },
-                { PSTokenType.CommandArgument, null },
-                { PSTokenType.CommandParameter, TextPalette.Purple },
-                { PSTokenType.Comment, TextPalette.DarkGray},
-                { PSTokenType.GroupStart, null },
-                { PSTokenType.GroupEnd, null },
-                { PSTokenType.Keyword, TextPalette.Blue },
-                { PSTokenType.LineContinuation, TextPalette.Orange },
-                { PSTokenType.Member, null },
-                { PSTokenType.NewLine, null },
-                { PSTokenType.Number, TextPalette.OliveGreen },
-                { PSTokenType.Operator, null },
-                { PSTokenType.StatementSeparator, TextPalette.Orange },
-                { PSTokenType.String, TextPalette.Yellow },
-                { PSTokenType.Type, TextPalette.Teal },
-                { PSTokenType.Variable, TextPalette.OliveGreen },
-                { PSTokenType.Unknown, null }
-            };
+                case TokenKind.Comment: return TextPalette.DarkGray;
+                case TokenKind.LineContinuation: return TextPalette.Orange;
+                case TokenKind.Number: return TextPalette.OliveGreen;
+                case TokenKind.Parameter: return TextPalette.Purple;
+                case TokenKind.Semi: return TextPalette.Orange;
+                case TokenKind.StringExpandable: return TextPalette.Yellow;
+                case TokenKind.Variable: return TextPalette.OliveGreen;
+            }
+
+            if (token.TokenFlags.HasFlag(TokenFlags.CommandName))
+            {
+                return TextPalette.LightBlue;
+            }
+            if (token.TokenFlags.HasFlag(TokenFlags.Keyword))
+            {
+                return TextPalette.Blue;
+            }
+            if (token.TokenFlags.HasFlag(TokenFlags.TypeName))
+            {
+                return TextPalette.Teal;
+            }
+
+            return null;
+        }
     }
 }
