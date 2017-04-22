@@ -4,7 +4,6 @@ using StandardLibrary.WPF;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Management.Automation;
 using System.Threading.Tasks;
 using System.Windows.Documents;
@@ -26,7 +25,7 @@ namespace AvocadoShell.UI.Utilities
 
         delegate T GetIndex<T>(Collection<T> array, int seed);
 
-        IDictionary<PSToken, Brush> getChangedTokens(string text)
+        IEnumerable<PSToken> getChangedTokens(string text)
         {
             var newTokens = PSParser.Tokenize(text, out var errors);
 
@@ -51,8 +50,7 @@ namespace AvocadoShell.UI.Utilities
                 cachedTokens = newTokens;
             }
 
-            return deltaTokens.ToDictionary(
-                t => t, t => Config.PSSyntaxColorLookup[t.Type]);
+            return deltaTokens;
         }
 
         bool compareTokens(PSToken token1, PSToken token2)
@@ -64,7 +62,9 @@ namespace AvocadoShell.UI.Utilities
         {
             var tokenContent = token.Content;
             if (token.Type == PSTokenType.Variable)
+            {
                 tokenContent = $"${tokenContent}";
+            }
             return tokenContent.Trim('"', '\'') == content.Trim('"', '\'');
         }
 
@@ -72,10 +72,11 @@ namespace AvocadoShell.UI.Utilities
         {
             var text = range.Text;
             var tokenization = await Task.Run(() => getChangedTokens(text));
-            tokenization.ForEach(p =>
+            tokenization.ForEach(t =>
             {
+                var foreground = Config.PSSyntaxColorLookup[t.Type];
                 textArea.Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(textArea, range, p.Key, p.Value),
+                    () => applyTokenColoring(textArea, range, t, foreground),
                     DispatcherPriority.ContextIdle);
             });
         }
