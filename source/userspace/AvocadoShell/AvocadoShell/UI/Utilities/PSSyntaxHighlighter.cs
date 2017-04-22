@@ -7,7 +7,6 @@ using System.Management.Automation.Language;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace AvocadoShell.UI.Utilities
 {
@@ -28,7 +27,9 @@ namespace AvocadoShell.UI.Utilities
         {
             Parser.ParseInput(text, out var newTokens, out var errors);
 
-            var deltaTokens = new LinkedList<Token>(newTokens);
+            var deltaTokens = new LinkedList<Token>();
+            includeNestedTokens(deltaTokens, newTokens);
+
             void loopTokens(GetIndex<Token> iterator)
             {
                 var loopCount = Math.Min(
@@ -52,8 +53,23 @@ namespace AvocadoShell.UI.Utilities
             return deltaTokens;
         }
 
+        void includeNestedTokens(
+            LinkedList<Token> allTokens, IEnumerable<Token> tokensToProcess)
+        {
+            tokensToProcess?.ForEach(t =>
+            {
+                allTokens.AddLast(t);
+                if (t is StringExpandableToken stringToken)
+                {
+                    includeNestedTokens(allTokens, stringToken.NestedTokens);
+                }
+            });
+        }
+
         bool compareTokens(Token token1, Token token2)
-            => token1.Kind == token2.Kind && token1.Text == token2.Text;
+            => token1.Kind == token2.Kind 
+            && token1.TokenFlags == token2.TokenFlags 
+            && token1.Text == token2.Text;
 
         public async Task Highlight(TextArea textArea, TextRange range)
         {
