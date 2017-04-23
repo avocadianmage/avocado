@@ -62,27 +62,27 @@ namespace AvocadoShell.UI.Utilities
             tokenization.ForEach(t =>
             {
                 textArea.Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(textArea, range, t),
+                    () => applyTokenColoring(textArea, range.Start, t),
                     Config.TextPriority);
             });
         }
 
         void applyTokenColoring(
-            TextArea textArea, TextRange fullRange, Token token)
+            TextArea textArea, TextPointer baseStart, Token token)
         {
-            var tokenStart = fullRange.Start.GetPointerFromCharOffset(
+            var tokenStart = baseStart.GetPointerFromCharOffset(
                 token.Extent.StartOffset);
             if (tokenStart == null) return;
             var tokenEnd = tokenStart.GetPointerFromCharOffset(
                 token.Text.Length);
             if (tokenEnd == null) return;
 
-            textArea.BeginChange();
-
             var tokenRange = new TextRange(tokenStart, tokenEnd);
             var tokenText = tokenRange.Text;
             var caretIndexInRange 
                 = textArea.CaretPosition.GetOffsetInRange(tokenRange);
+
+            textArea.BeginChange();
 
             // Delete previous text and insert a stylized run. This is done 
             // instead of TextRange.ApplyPropertyValue due to performance 
@@ -106,7 +106,7 @@ namespace AvocadoShell.UI.Utilities
             if (token is StringExpandableToken stringToken)
             {
                 stringToken.NestedTokens?.ForEach(
-                    t => applyTokenColoring(textArea, fullRange, t));
+                    t => applyTokenColoring(textArea, baseStart, t));
             }
 
             textArea.EndChange();
