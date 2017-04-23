@@ -103,7 +103,7 @@ namespace AvocadoShell.UI.Utilities
                         .GetPointerFromCharOffset(caretIndexInRange);
                 }
 
-                // If replacing the first run in the sequence, make sure the 
+                // If replacing the first token in the sequence, make sure the 
                 // original position of baseStart is preserved.
                 if (tokenStartOffset == 0) baseStart = run.ContentStart;
 
