@@ -63,10 +63,10 @@ namespace AvocadoShell.UI.Utilities
             var text = range.Text;
             var changedTokens = await Task.Run(() => getChangedTokens(text));
             if (!changedTokens.Any()) return;
-            var start = range.Start;
 
             cancelTokenSource?.Cancel();
             cancelTokenSource = new CancellationTokenSource();
+            var start = range.Start;
             await Task.Run(() =>
             {
                 var cancelToken = cancelTokenSource.Token;
