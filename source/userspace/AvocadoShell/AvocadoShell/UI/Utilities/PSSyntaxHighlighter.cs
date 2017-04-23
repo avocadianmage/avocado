@@ -75,6 +75,8 @@ namespace AvocadoShell.UI.Utilities
             var end = start.GetPointerFromCharOffset(token.Text.Length);
             if (end == null) return;
 
+            textArea.BeginChange();
+
             new TextRange(start, end).ApplyPropertyValue(
                 TextElement.ForegroundProperty,
                 Config.GetTokenBrush(token) ?? textArea.Foreground);
@@ -84,6 +86,8 @@ namespace AvocadoShell.UI.Utilities
                 stringToken.NestedTokens?.ForEach(
                     t => applyTokenColoring(textArea, range, t));
             }
+
+            textArea.EndChange();
         }
     }
 }
