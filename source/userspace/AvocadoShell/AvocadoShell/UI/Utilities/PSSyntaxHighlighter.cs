@@ -77,9 +77,20 @@ namespace AvocadoShell.UI.Utilities
 
             textArea.BeginChange();
 
-            new TextRange(start, end).ApplyPropertyValue(
-                TextElement.ForegroundProperty,
-                Config.GetTokenBrush(token) ?? textArea.Foreground);
+            var tokenRange = new TextRange(start, end);
+            var tokenText = tokenRange.Text;
+            var caretIndexInRange = getOffsetInRange(
+                textArea.CaretPosition, tokenRange);
+            tokenRange.Text = string.Empty;
+
+            var foreground = Config.GetTokenBrush(token) ?? textArea.Foreground;
+            var run = new Run(tokenText, start) { Foreground = foreground };
+
+            if (caretIndexInRange >= 0)
+            {
+                textArea.CaretPosition = run.ContentStart
+                    .GetPointerFromCharOffset(caretIndexInRange);
+            }
 
             if (token is StringExpandableToken stringToken)
             {
@@ -88,6 +99,16 @@ namespace AvocadoShell.UI.Utilities
             }
 
             textArea.EndChange();
+        }
+
+        int getOffsetInRange(TextPointer pointer, TextRange range)
+        {
+            if (range.Start.GetOffsetToPosition(pointer) >= 0
+                && range.End.GetOffsetToPosition(pointer) <= 0)
+            {
+                return new TextRange(range.Start, pointer).Text.Length;
+            }
+            return -1;
         }
     }
 }
