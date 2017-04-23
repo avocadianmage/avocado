@@ -101,10 +101,12 @@ namespace AvocadoFramework.Controls.TextRendering.Input
         {
             var forward = !WPFUtils.IsShiftKeyDown;
 
-            BeginChange();
-            var pos = new TabSpacer(CaretPosition, Selection).Run(forward);
-            if (pos != null) CaretPosition = pos;
-            EndChange();
+            BeginChange(); try
+            {
+                var pos = new TabSpacer(CaretPosition, Selection).Run(forward);
+                if (pos != null) CaretPosition = pos;
+            }
+            finally { EndChange(); }
 
             return true;
         }

@@ -59,19 +59,21 @@ namespace AvocadoShell.UI.Utilities
         {
             var text = range.Text;
             var tokenization = await Task.Run(() => getChangedTokens(text));
+            var start = range.Start;
             tokenization.ForEach(t =>
             {
                 textArea.Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(textArea, range.Start, t),
+                    () => applyTokenColoring(textArea, ref start, t),
                     Config.TextPriority);
             });
         }
 
         void applyTokenColoring(
-            TextArea textArea, TextPointer baseStart, Token token)
+            TextArea textArea, ref TextPointer baseStart, Token token)
         {
+            var tokenStartOffset = token.Extent.StartOffset;
             var tokenStart = baseStart.GetPointerFromCharOffset(
-                token.Extent.StartOffset);
+                tokenStartOffset);
             if (tokenStart == null) return;
             var tokenEnd = tokenStart.GetPointerFromCharOffset(
                 token.Text.Length);
@@ -79,37 +81,46 @@ namespace AvocadoShell.UI.Utilities
 
             var tokenRange = new TextRange(tokenStart, tokenEnd);
             var tokenText = tokenRange.Text;
-            var caretIndexInRange 
+            var caretIndexInRange
                 = textArea.CaretPosition.GetOffsetInRange(tokenRange);
 
-            textArea.BeginChange();
-
-            // Delete previous text and insert a stylized run. This is done 
-            // instead of TextRange.ApplyPropertyValue due to performance 
-            // reasons.
-            tokenRange.Text = string.Empty;
-            var run = new Run(tokenText, tokenStart)
+            textArea.BeginChange(); try
             {
-                Foreground = Config.GetTokenBrush(token) ?? textArea.Foreground
-            };
+                // Delete previous text and insert a stylized run. This is done 
+                // instead of TextRange.ApplyPropertyValue due to performance.
+                tokenRange.Text = string.Empty;
+                var run = new Run(tokenText, tokenStart)
+                {
+                    Foreground = Config.GetTokenBrush(token)
+                        ?? textArea.Foreground
+                };
 
-            // If the caret was within the original range of the token, 
-            // reposition within the next text.
-            if (caretIndexInRange >= 0)
-            {
-                textArea.CaretPosition = run.ContentStart
-                    .GetPointerFromCharOffset(caretIndexInRange);
+                // If the caret was within the original range of the token, 
+                // reposition within the next text.
+                if (caretIndexInRange >= 0)
+                {
+                    textArea.CaretPosition = run.ContentStart
+                        .GetPointerFromCharOffset(caretIndexInRange);
+                }
+
+                // If replacing the first run in the sequence, make sure the 
+                // original position of baseStart is preserved.
+                if (tokenStartOffset == 0) baseStart = run.ContentStart;
+
+                // If the token is an expandable string, highlight any nested
+                // tokens (ex: embedded variables).
+                if (token is StringExpandableToken stringToken)
+                {
+                    var nestedTokens = stringToken.NestedTokens;
+                    if (nestedTokens == null) return;
+                    foreach (var nestedToken in nestedTokens)
+                    {
+                        applyTokenColoring(
+                            textArea, ref baseStart, nestedToken);
+                    }
+                }
             }
-
-            // If the token is an expandable string, highlight any nested tokens
-            // (ex: embedded variables).
-            if (token is StringExpandableToken stringToken)
-            {
-                stringToken.NestedTokens?.ForEach(
-                    t => applyTokenColoring(textArea, baseStart, t));
-            }
-
-            textArea.EndChange();
+            finally { textArea.EndChange(); }
         }
     }
 }
