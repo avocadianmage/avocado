@@ -3,7 +3,9 @@ using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation.Language;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 
@@ -11,6 +13,7 @@ namespace AvocadoShell.UI.Utilities
 {
     sealed class PSSyntaxHighlighter
     {
+        CancellationTokenSource cancelTokenSource;
         Token[] cachedTokens;
 
         public PSSyntaxHighlighter() => Reset();
@@ -58,14 +61,24 @@ namespace AvocadoShell.UI.Utilities
         public async Task Highlight(TextArea textArea, TextRange range)
         {
             var text = range.Text;
-            var tokenization = await Task.Run(() => getChangedTokens(text));
+            var changedTokens = await Task.Run(() => getChangedTokens(text));
+            if (!changedTokens.Any()) return;
             var start = range.Start;
-            tokenization.ForEach(t =>
+
+            cancelTokenSource?.Cancel();
+            cancelTokenSource = new CancellationTokenSource();
+            await Task.Run(() =>
             {
-                textArea.Dispatcher.InvokeAsync(
-                    () => applyTokenColoring(textArea, ref start, t),
-                    Config.TextPriority);
-            });
+                var cancelToken = cancelTokenSource.Token;
+                changedTokens.ForEach(t =>
+                {
+                    textArea.Dispatcher.InvokeAsync(() => 
+                    {
+                        if (cancelToken.IsCancellationRequested) return;
+                        applyTokenColoring(textArea, ref start, t);
+                    }, Config.TextPriority);
+                });
+            }, cancelTokenSource.Token);
         }
 
         void applyTokenColoring(
