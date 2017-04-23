@@ -44,6 +44,17 @@ namespace StandardLibrary.WPF
                 .AddValueChanged(target, handler);
         }
 
+        public static int GetOffsetInRange(
+            this TextPointer pointer, TextRange range)
+        {
+            if (range.Start.GetOffsetToPosition(pointer) >= 0
+                && range.End.GetOffsetToPosition(pointer) <= 0)
+            {
+                return new TextRange(range.Start, pointer).Text.Length;
+            }
+            return -1;
+        }
+
         public static TextPointer GetPointerFromCharOffset(
             this TextPointer pointer, int offset)
         {

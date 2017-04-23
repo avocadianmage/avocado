@@ -67,48 +67,49 @@ namespace AvocadoShell.UI.Utilities
             });
         }
 
-        void applyTokenColoring(TextArea textArea, TextRange range, Token token)
+        void applyTokenColoring(
+            TextArea textArea, TextRange fullRange, Token token)
         {
-            var start = range.Start.GetPointerFromCharOffset(
+            var tokenStart = fullRange.Start.GetPointerFromCharOffset(
                 token.Extent.StartOffset);
-            if (start == null) return;
-            var end = start.GetPointerFromCharOffset(token.Text.Length);
-            if (end == null) return;
+            if (tokenStart == null) return;
+            var tokenEnd = tokenStart.GetPointerFromCharOffset(
+                token.Text.Length);
+            if (tokenEnd == null) return;
 
             textArea.BeginChange();
 
-            var tokenRange = new TextRange(start, end);
+            var tokenRange = new TextRange(tokenStart, tokenEnd);
             var tokenText = tokenRange.Text;
-            var caretIndexInRange = getOffsetInRange(
-                textArea.CaretPosition, tokenRange);
+            var caretIndexInRange 
+                = textArea.CaretPosition.GetOffsetInRange(tokenRange);
+
+            // Delete previous text and insert a stylized run. This is done 
+            // instead of TextRange.ApplyPropertyValue due to performance 
+            // reasons.
             tokenRange.Text = string.Empty;
+            var run = new Run(tokenText, tokenStart)
+            {
+                Foreground = Config.GetTokenBrush(token) ?? textArea.Foreground
+            };
 
-            var foreground = Config.GetTokenBrush(token) ?? textArea.Foreground;
-            var run = new Run(tokenText, start) { Foreground = foreground };
-
+            // If the caret was within the original range of the token, 
+            // reposition within the next text.
             if (caretIndexInRange >= 0)
             {
                 textArea.CaretPosition = run.ContentStart
                     .GetPointerFromCharOffset(caretIndexInRange);
             }
 
+            // If the token is an expandable string, highlight any nested tokens
+            // (ex: embedded variables).
             if (token is StringExpandableToken stringToken)
             {
                 stringToken.NestedTokens?.ForEach(
-                    t => applyTokenColoring(textArea, range, t));
+                    t => applyTokenColoring(textArea, fullRange, t));
             }
 
             textArea.EndChange();
-        }
-
-        int getOffsetInRange(TextPointer pointer, TextRange range)
-        {
-            if (range.Start.GetOffsetToPosition(pointer) >= 0
-                && range.End.GetOffsetToPosition(pointer) <= 0)
-            {
-                return new TextRange(range.Start, pointer).Text.Length;
-            }
-            return -1;
         }
     }
 }
