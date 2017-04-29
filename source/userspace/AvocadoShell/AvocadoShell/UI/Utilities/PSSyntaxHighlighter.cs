@@ -13,14 +13,13 @@ namespace AvocadoShell.UI.Utilities
 {
     sealed class PSSyntaxHighlighter
     {
-        CancellationTokenSource cancelTokenSource;
-        Token[] cachedTokens;
-
-        public PSSyntaxHighlighter() => Reset();
+        CancellationTokenSource cancelTokenSource 
+            = new CancellationTokenSource();
+        Token[] cachedTokens = new Token[0];
 
         public void Reset()
         {
-            lock (this) cachedTokens = new Token[0];
+            lock (cachedTokens) cachedTokens = new Token[0];
         }
 
         delegate T GetIndex<T>(T[] array, int seed);
@@ -43,7 +42,7 @@ namespace AvocadoShell.UI.Utilities
                 }
             };
 
-            lock (this)
+            lock (cachedTokens)
             {
                 loopTokens((array, seed) => array[seed]);
                 loopTokens((array, seed) => array[array.Length - seed - 1]);
@@ -64,21 +63,26 @@ namespace AvocadoShell.UI.Utilities
             var changedTokens = await Task.Run(() => getChangedTokens(text));
             if (!changedTokens.Any()) return;
 
-            cancelTokenSource?.Cancel();
-            cancelTokenSource = new CancellationTokenSource();
-            var start = range.Start;
-            await Task.Run(() =>
+            CancellationToken cancelToken;
+            lock (cancelTokenSource)
             {
-                var cancelToken = cancelTokenSource.Token;
+                cancelTokenSource?.Cancel();
+                cancelTokenSource = new CancellationTokenSource();
+                cancelToken = cancelTokenSource.Token;
+            }
+
+            var start = range.Start;
+            Task.Run(() =>
+            {
                 changedTokens.ForEach(t =>
                 {
-                    textArea.Dispatcher.InvokeAsync(() => 
+                    textArea.Dispatcher.InvokeAsync(() =>
                     {
                         if (cancelToken.IsCancellationRequested) return;
                         applyTokenColoring(textArea, ref start, t);
                     }, Config.TextPriority);
                 });
-            }, cancelTokenSource.Token);
+            }, cancelToken).RunAsync();
         }
 
         void applyTokenColoring(
