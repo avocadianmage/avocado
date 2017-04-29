@@ -5,7 +5,10 @@
 $buildFunc = 
 {
     param($path, $outputPath, $buildAsApp = $FALSE)
-    $msbuild = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+    $msbuild = (Get-ChildItem `
+        -Path "C:\Program Files (x86)\Microsoft Visual Studio\2017" `
+        -Filter "MSBuild.exe" `
+        -Recurse)[0].FullName
 
     # Build the project as a reference.
     & $msbuild $path /t:Rebuild /p:Configuration=Release

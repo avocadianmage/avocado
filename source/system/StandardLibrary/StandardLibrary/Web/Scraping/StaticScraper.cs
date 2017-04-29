@@ -28,8 +28,8 @@ namespace StandardLibrary.Web.Scraping
             }
         }
 
-        HttpClientHandler clientHandler =>
-            new HttpClientHandler { CookieContainer = cookies };
+        HttpClientHandler clientHandler 
+            => new HttpClientHandler { CookieContainer = cookies };
 
         HttpClient getClient(HttpMessageHandler handler)
         {
