@@ -1,8 +1,9 @@
 ﻿using AvocadoFramework.Controls.TextRendering.Input;
-using AvocadoShell.Terminal;
 using AvocadoShell.PowerShellService;
+using AvocadoShell.Terminal;
 using AvocadoShell.UI.Utilities;
 using AvocadoUtilities.CommandLine.ANSI;
+using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
@@ -18,7 +19,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using static AvocadoShell.Config;
 using static StandardLibrary.WPF.WPFUtils;
-using StandardLibrary.Processes;
 
 namespace AvocadoShell.UI.Terminal
 {
@@ -325,18 +325,23 @@ namespace AvocadoShell.UI.Terminal
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
+            currentPrompt.FromShell = fromShell;
+
             if (fromShell) writeShellTitle();
             
             // Write prompt text.
-            Write(
-                prompt.TrimEnd(), EnvUtils.IsAdmin ? ElevatedBrush : PromptBrush);
+            var promptRun = Write(
+                prompt.TrimEnd(), 
+                EnvUtils.IsAdmin ? ElevatedBrush : PromptBrush);
+            if (fromShell) currentPrompt.ShellRun = promptRun;
+
+            // Write the last space of the prompt in the input color so that the 
+            // color it cannot be changed by the user.
             Write(" ", secure ? Brushes.Transparent : Foreground);
-            
-            // Update prompt object.
-            currentPrompt.Update(
-                fromShell, StartPointer.GetOffsetToPosition(CaretPosition));
 
             // Enable user input.
+            currentPrompt.LengthInSymbols 
+                = StartPointer.GetOffsetToPosition(CaretPosition);
             IsReadOnly = false;
         }
 
@@ -352,8 +357,7 @@ namespace AvocadoShell.UI.Terminal
             currentPrompt.ShellTitle = title;
 
             // Update the window title to the shell title text.
-            Window.GetWindow(this).Title =
-                $"{Prompt.ElevatedPrefix}{title}";
+            Window.GetWindow(this).Title = title;
 
             WriteLine(title, PromptBrush);
         }

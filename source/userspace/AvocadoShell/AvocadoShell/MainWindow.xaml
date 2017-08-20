@@ -8,12 +8,11 @@
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
     <Grid>
-
         <terminal:TerminalTextArea 
             x:Name="Terminal" 
             Foreground="{x:Static text:TextPalette.LightGray}"
             IsReadOnly="True"
-            IsUndoEnabled="False" />
-
+            IsUndoEnabled="False">
+        </terminal:TerminalTextArea>
     </Grid>
 </engine:GlassPane>
