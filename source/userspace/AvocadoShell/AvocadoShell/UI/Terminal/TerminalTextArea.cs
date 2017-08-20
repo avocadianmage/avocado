@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using static AvocadoShell.Config;
 using static StandardLibrary.WPF.WPFUtils;
+using StandardLibrary.Processes;
 
 namespace AvocadoShell.UI.Terminal
 {
@@ -316,12 +317,7 @@ namespace AvocadoShell.UI.Terminal
             return nonShellPromptDone.Block();
         }
 
-        void writeShellPrompt()
-        {
-            var promptStr = Prompt.GetShellPromptString(
-                engine.GetWorkingDirectory(), engine.RemoteComputerName);
-            safeWritePromptCore(promptStr, true, false);
-        }
+        void writeShellPrompt() => safeWritePromptCore(">", true, false);
 
         void safeWritePromptCore(string prompt, bool fromShell, bool secure)
             => Dispatcher.InvokeAsync(
@@ -329,27 +325,37 @@ namespace AvocadoShell.UI.Terminal
 
         void writePromptCore(string prompt, bool fromShell, bool secure)
         {
-            if (fromShell)
-            {
-                // Update the window title to the shell prompt text.
-                Window.GetWindow(this).Title =
-                    $"{Prompt.ElevatedPrefix}{prompt}";
-
-                // Write elevated prefix at shell prompt.
-                if (!string.IsNullOrWhiteSpace(Prompt.ElevatedPrefix))
-                    Write(Prompt.ElevatedPrefix, ElevatedBrush);
-            }
+            if (fromShell) writeShellTitle();
             
             // Write prompt text.
-            Write(prompt.TrimEnd(), PromptBrush);
+            Write(
+                prompt.TrimEnd(), EnvUtils.IsAdmin ? ElevatedBrush : PromptBrush);
             Write(" ", secure ? Brushes.Transparent : Foreground);
             
-            // Update the current prompt object.
+            // Update prompt object.
             currentPrompt.Update(
                 fromShell, StartPointer.GetOffsetToPosition(CaretPosition));
 
             // Enable user input.
             IsReadOnly = false;
+        }
+
+        void writeShellTitle()
+        {
+            var title = Prompt.GetShellTitleString(
+                engine.GetWorkingDirectory(), engine.RemoteComputerName);
+
+            // Only write shell title if it has changed.
+            if (title == currentPrompt.ShellTitle) return;
+
+            // Update prompt object with new shell title.
+            currentPrompt.ShellTitle = title;
+
+            // Update the window title to the shell title text.
+            Window.GetWindow(this).Title =
+                $"{Prompt.ElevatedPrefix}{title}";
+
+            WriteLine(title, PromptBrush);
         }
 
         public void WriteCustom(string text, Brush foreground, bool newline)

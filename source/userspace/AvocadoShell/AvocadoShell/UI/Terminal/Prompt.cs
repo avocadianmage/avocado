@@ -8,6 +8,7 @@ namespace AvocadoShell.UI.Terminal
     {
         public bool FromShell { get; private set; }
         public int LengthInSymbols { get; private set; }
+        public string ShellTitle { get; set; }
 
         public void Update(bool fromShell, int lengthInSymbols)
         {
@@ -18,7 +19,7 @@ namespace AvocadoShell.UI.Terminal
         public static string ElevatedPrefix
             => EnvUtils.IsAdmin ? "root " : string.Empty;
 
-        public static string GetShellPromptString(
+        public static string GetShellTitleString(
             string workingDirectory, string remoteComputerName)
         {
             var sb = new StringBuilder();

@@ -14,13 +14,13 @@ namespace AvocadoShell
         public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
 
         public static Brush PromptBrush => TextPalette.LightGreen;
-        public static Brush ElevatedBrush => TextPalette.Yellow;
+        public static Brush ElevatedBrush => TextPalette.Orange;
         public static Brush ErrorBrush => TextPalette.LightRed;
         public static Brush OutputBrush => TextPalette.LightGray;
         public static Brush ProgressBrush => TextPalette.LightBlue;
         public static Brush DebugBrush => TextPalette.LightBlue;
         public static Brush VerboseBrush => TextPalette.DarkGray;
-        public static Brush WarningBrush => TextPalette.Orange;
+        public static Brush WarningBrush => TextPalette.Yellow;
         public static Brush SelectedBrush => TextPalette.Orange;
 
         public static Brush GetTokenBrush(Token token)
@@ -28,10 +28,8 @@ namespace AvocadoShell
             switch (token.Kind)
             {
                 case TokenKind.Comment: return TextPalette.DarkGray;
-                case TokenKind.LineContinuation: return TextPalette.Orange;
                 case TokenKind.Number: return TextPalette.OliveGreen;
                 case TokenKind.Parameter: return TextPalette.Purple;
-                case TokenKind.Semi: return TextPalette.Orange;
                 case TokenKind.StringExpandable: return TextPalette.Yellow;
                 case TokenKind.Variable: return TextPalette.OliveGreen;
             }
