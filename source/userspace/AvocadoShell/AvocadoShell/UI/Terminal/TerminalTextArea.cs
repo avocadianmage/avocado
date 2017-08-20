@@ -445,11 +445,5 @@ namespace AvocadoShell.UI.Terminal
             if (IsReadOnly) return;
             Selection.Select(getPromptPointer(), EndPointer);
         }
-
-        public void EditFile(string path)
-        {
-            Dispatcher.InvokeAsync(
-                () => ((MainWindow)Window.GetWindow(this)).OpenEditor(path));
-        }
     }
 }
