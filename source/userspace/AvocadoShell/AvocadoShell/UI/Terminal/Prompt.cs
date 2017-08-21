@@ -56,7 +56,7 @@ namespace AvocadoShell.UI.Terminal
             Source = new NotifyingDateTime(),
             Path = new PropertyPath(nameof(NotifyingDateTime.Now)),
             Mode = BindingMode.OneWay,
-            StringFormat = "MM.dd.yyyy-HH:mm:ss>"
+            StringFormat = "yyyy.MM.dd-HH:mm:ss"
         };
     }
 }
