@@ -1,5 +1,6 @@
 ﻿using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -55,12 +56,15 @@ namespace AvocadoFramework.Controls.TextRendering.Input
                 ScrollViewer.ScrollChangedEvent,
                 new ScrollChangedEventHandler((s, e) => updateCaretLocation()));
 
-            // Window events.
-            var window = Window.GetWindow(this);
-            window.Activated +=
-                (s, e) => StylizedCaret.Visibility = Visibility.Visible;
-            window.Deactivated +=
-                (s, e) => StylizedCaret.Visibility = Visibility.Collapsed;
+            // Window events (Window.GetWindow returns null in design mode).
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                var window = Window.GetWindow(this);
+                window.Activated +=
+                    (s, e) => StylizedCaret.Visibility = Visibility.Visible;
+                window.Deactivated +=
+                    (s, e) => StylizedCaret.Visibility = Visibility.Collapsed;
+            }
         }
 
         void updateCaretLocation()
