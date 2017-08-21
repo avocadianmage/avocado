@@ -327,13 +327,15 @@ namespace AvocadoShell.UI.Terminal
         {
             currentPrompt.FromShell = fromShell;
 
-            if (fromShell) writeShellTitle();
-            
             // Write prompt text.
-            var promptRun = Write(
-                prompt.TrimEnd(), 
-                EnvUtils.IsAdmin ? ElevatedBrush : PromptBrush);
-            if (fromShell) currentPrompt.ShellRun = promptRun;
+            var promptBrush 
+                = EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush;
+            if (fromShell)
+            {
+                setShellTitle();
+                currentPrompt.ShellTimestampRun = Write(prompt, promptBrush);
+            }
+            else Write(prompt.TrimEnd(), promptBrush);
 
             // Write the last space of the prompt in the input color so that the 
             // color it cannot be changed by the user.
@@ -345,7 +347,7 @@ namespace AvocadoShell.UI.Terminal
             IsReadOnly = false;
         }
 
-        void writeShellTitle()
+        void setShellTitle()
         {
             var title = Prompt.GetShellTitleString(
                 engine.GetWorkingDirectory(), engine.RemoteComputerName);

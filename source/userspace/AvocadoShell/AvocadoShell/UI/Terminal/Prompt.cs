@@ -29,24 +29,25 @@ namespace AvocadoShell.UI.Terminal
         public int LengthInSymbols { get; set; }
         public string ShellTitle { get; set; }
 
-        Run _shellRun;
-        public Run ShellRun
+        Run _shellTimestampRun;
+        public Run ShellTimestampRun
         {
-            get { return _shellRun; }
+            get { return _shellTimestampRun; }
             set
             {
-                if (_shellRun != null)
+                if (_shellTimestampRun != null)
                 {
-                    BindingOperations.ClearBinding(_shellRun, Run.TextProperty);
+                    BindingOperations.ClearBinding(
+                        _shellTimestampRun, Run.TextProperty);
                     var notifyingDateTime 
                         = (NotifyingDateTime)bindableDateTime.Source;
-                    _shellRun.Text = notifyingDateTime.Now.ToString(
+                    _shellTimestampRun.Text = notifyingDateTime.Now.ToString(
                         bindableDateTime.StringFormat);
                 }
 
                 BindingOperations.SetBinding(
                     value, Run.TextProperty, bindableDateTime);
-                _shellRun = value;
+                _shellTimestampRun = value;
             }
         }
 
@@ -55,7 +56,7 @@ namespace AvocadoShell.UI.Terminal
             Source = new NotifyingDateTime(),
             Path = new PropertyPath(nameof(NotifyingDateTime.Now)),
             Mode = BindingMode.OneWay,
-            StringFormat = "MM.dd.yyyy HH:mm:ss"
+            StringFormat = "MM.dd.yyyy-HH:mm:ss>"
         };
     }
 }
