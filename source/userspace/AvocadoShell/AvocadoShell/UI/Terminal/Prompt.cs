@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -14,22 +13,13 @@ namespace AvocadoShell.UI.Terminal
             var sb = new StringBuilder();
             if (remoteComputerName != null)
                 sb.Append($"[{remoteComputerName}] ");
-            sb.Append(formatPathForDisplay(workingDirectory));
-            return sb.ToString();
-        }
-
-        static string formatPathForDisplay(string path)
-        {
-            var homeDir = Environment.GetFolderPath(
-               Environment.SpecialFolder.UserProfile);
-            return path.Replace(homeDir, "~");
+            return sb.Append(workingDirectory).ToString();
         }
 
         public bool FromShell { get; set; }
         public int LengthInSymbols { get; set; }
         public string ShellTitle { get; set; }
 
-        Run _shellTimestampRun;
         public Run ShellTimestampRun
         {
             get { return _shellTimestampRun; }
@@ -50,6 +40,7 @@ namespace AvocadoShell.UI.Terminal
                 _shellTimestampRun = value;
             }
         }
+        Run _shellTimestampRun;
 
         readonly Binding bindableDateTime = new Binding
         {

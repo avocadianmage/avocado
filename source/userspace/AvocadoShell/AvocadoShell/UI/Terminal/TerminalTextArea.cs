@@ -361,7 +361,7 @@ namespace AvocadoShell.UI.Terminal
             // Update the window title to the shell title text.
             Window.GetWindow(this).Title = title;
 
-            WriteLine(title, PromptBrush);
+            WriteLine(title, VerboseBrush);
         }
 
         public void WriteCustom(string text, Brush foreground, bool newline)
