@@ -361,6 +361,8 @@ namespace AvocadoShell.UI.Terminal
             // Update the window title to the shell title text.
             Window.GetWindow(this).Title = title;
 
+            // Separate title from other output with a newline beforehand.
+            if (!string.IsNullOrEmpty(GetFullTextRange().Text)) WriteLine();
             WriteLine(title, VerboseBrush);
         }
 
