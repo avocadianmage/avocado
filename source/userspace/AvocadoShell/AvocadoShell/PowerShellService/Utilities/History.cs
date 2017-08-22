@@ -68,8 +68,6 @@ namespace AvocadoShell.PowerShellService.Utilities
 
         public void Add(string input)
         {
-            if (input == null) return;
-
             try
             {
                 // Check if the input should be added.

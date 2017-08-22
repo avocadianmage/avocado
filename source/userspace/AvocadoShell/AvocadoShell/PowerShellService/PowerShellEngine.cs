@@ -16,6 +16,9 @@ namespace AvocadoShell.PowerShellService
 
         public string ExecuteCommand(string command)
         {
+            // Ignore empty commands.
+            if (string.IsNullOrWhiteSpace(command)) return null;
+
             MyHistory.Add(command);
             return MyHost.CurrentPipeline.ExecuteCommand(command);
         }
