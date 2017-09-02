@@ -17,7 +17,7 @@ namespace AvocadoShell.UI.Terminal
         }
 
         public bool FromShell { get; set; }
-        public int LengthInSymbols { get; set; }
+        public int EndOffset { get; set; }
         public string ShellTitle { get; set; }
 
         public Run ShellTimestampRun
@@ -47,7 +47,7 @@ namespace AvocadoShell.UI.Terminal
             Source = new NotifyingDateTime(),
             Path = new PropertyPath(nameof(NotifyingDateTime.Now)),
             Mode = BindingMode.OneWay,
-            StringFormat = "yyyy.MM.dd-HH:mm:ss"
+            StringFormat = "yyyy.MM.dd-HH:mm:ss "
         };
     }
 }

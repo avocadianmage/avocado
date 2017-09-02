@@ -85,6 +85,9 @@
     <Reference Include="AvocadoUtilities">
       <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="StandardLibrary">
       <HintPath>..\..\..\system\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>
     </Reference>
@@ -97,6 +100,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -113,8 +117,7 @@
     <Compile Include="UI\Terminal\Prompt.cs" />
     <Compile Include="UI\Terminal\IShellUI.cs" />
     <Compile Include="UI\Terminal\NotifyingDateTime.cs" />
-    <Compile Include="UI\Utilities\PSSyntaxHighlighter.cs" />
-    <Compile Include="UI\Terminal\TerminalTextArea.cs" />
+    <Compile Include="UI\Terminal\TerminalEditor.cs" />
     <Compile Include="PowerShellService\Utilities\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
     <Compile Include="PowerShellService\Host\CustomHostUI.cs" />
@@ -156,6 +159,10 @@
     <EmbeddedResource Include="PowerShellAssets\Scripts\startup.ps1" />
     <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rsh.ps1" />
     <EmbeddedResource Include="PowerShellAssets\Scripts\Commands\rdl.ps1" />
+    <EmbeddedResource Include="PowerShellAssets\Formatting\AvocadoPowerShell.xshd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

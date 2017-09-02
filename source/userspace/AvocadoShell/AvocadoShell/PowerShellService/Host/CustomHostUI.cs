@@ -1,5 +1,5 @@
 ﻿using AvocadoShell.PowerShellService.Host.ChoicePrompt;
-using AvocadoShell.Terminal;
+using AvocadoShell.UI.Terminal;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -72,7 +72,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// Gets an instance of the PSRawUserInterface object for this host
         /// application.
         /// </summary>
-        public override PSHostRawUserInterface RawUI { get; } 
+        public override PSHostRawUserInterface RawUI { get; }
             = new CustomRawHostUI();
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace AvocadoShell.PowerShellService.Host
         /// (carriage return) is encountered.
         /// </summary>
         /// <returns>The characters that are entered by the user.</returns>
-        public override string ReadLine() => shellUI.WritePrompt("Prompt: ");
+        public override string ReadLine() => shellUI.WritePrompt(string.Empty);
 
         /// <summary>
         /// Reads characters entered by the user until a newline (carriage 
@@ -238,8 +238,8 @@ namespace AvocadoShell.PowerShellService.Host
         /// </summary>
         /// <returns>A secure string containing the input entered by the user.
         /// </returns>
-        public override SecureString ReadLineAsSecureString() =>
-            shellUI.WriteSecurePrompt("Secure prompt: ");
+        public override SecureString ReadLineAsSecureString() 
+            => shellUI.WriteSecurePrompt(string.Empty);
 
         /// <summary>
         /// Writes characters to the output display of the host.

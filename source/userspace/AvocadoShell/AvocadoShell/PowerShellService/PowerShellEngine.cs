@@ -1,6 +1,6 @@
-﻿using AvocadoShell.Terminal;
-using AvocadoShell.PowerShellService.Host;
+﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Utilities;
+using AvocadoShell.UI.Terminal;
 using System.Management.Automation.Runspaces;
 
 namespace AvocadoShell.PowerShellService
@@ -23,9 +23,9 @@ namespace AvocadoShell.PowerShellService
             return MyHost.CurrentPipeline.ExecuteCommand(command);
         }
 
-        public void Initialize(IShellUI shellUI)
+        public void Initialize(IShellUI shellUI, int hostBufferWidth)
         {
-            MyHost = new CustomHost(shellUI);
+            MyHost = new CustomHost(shellUI, hostBufferWidth);
             createInitialHostRunspace();
 
             MyHistory = createHistory();

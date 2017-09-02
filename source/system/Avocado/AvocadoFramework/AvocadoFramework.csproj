@@ -40,14 +40,21 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="StandardLibrary">
       <HintPath>..\..\StandardLibrary\StandardLibrary\bin\Release\StandardLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -78,8 +85,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Controls\Progress\Progressor.cs" />
+    <Compile Include="Controls\TextRendering\StaticColorizer.cs" />
     <Compile Include="Controls\TextRendering\Input\InputTextArea.cs" />
-    <Compile Include="Controls\TextRendering\Input\TabSpacer.cs" />
     <Compile Include="Controls\TextRendering\TextConfig.cs" />
     <Compile Include="Controls\TextRendering\TextLabel.cs" />
     <Compile Include="Controls\TextRendering\TextArea.cs" />
@@ -109,6 +116,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -118,7 +127,9 @@
   <ItemGroup>
     <Resource Include="Assets\error.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="Controls\TextRendering\AvocadoTextEditor.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

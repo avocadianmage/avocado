@@ -1,13 +1,13 @@
-﻿using AvocadoShell.Terminal;
-using AvocadoShell.PowerShellService.Utilities;
+﻿using AvocadoShell.PowerShellService.Utilities;
+using AvocadoShell.UI.Terminal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
-using System.Management.Automation;
 
 namespace AvocadoShell.PowerShellService.Host
 {
@@ -20,10 +20,16 @@ namespace AvocadoShell.PowerShellService.Host
         readonly Stack<RunspacePipeline> pipelines
             = new Stack<RunspacePipeline>();
 
-        public CustomHost(IShellUI shellUI)
+        public CustomHost(IShellUI shellUI, int bufferWidth)
         {
             ShellUI = shellUI;
             UI = new CustomHostUI(shellUI);
+            UpdateBufferWidth(bufferWidth);
+        }
+
+        public void UpdateBufferWidth(int width)
+        {
+            UI.RawUI.BufferSize = new Size(width, 1);
         }
 
         /// <summary>

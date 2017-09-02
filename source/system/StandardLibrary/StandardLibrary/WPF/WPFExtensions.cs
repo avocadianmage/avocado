@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace StandardLibrary.WPF
@@ -23,11 +23,19 @@ namespace StandardLibrary.WPF
             return (T)element.FindResource(name);
         }
 
-        public static void BindCommand(
-            this UIElement element, ICommand command, Action action)
+        public static void AddNewBinding(
+            this ICollection<CommandBinding> bindings,
+            ICommand command,
+            Action action)
         {
-            element.CommandBindings.Add(
-                new CommandBinding(command, (s, e) => action()));
+            foreach (var binding in bindings)
+            {
+                if (binding.Command != command) continue;
+                bindings.Remove(binding);
+                break;
+            }
+
+            bindings.Add(new CommandBinding(command, (s, e) => action()));
         }
 
         public static void MoveNextFocus(this FrameworkElement element)
@@ -42,54 +50,6 @@ namespace StandardLibrary.WPF
             DependencyPropertyDescriptor
                 .FromProperty(property, target.GetType())
                 .AddValueChanged(target, handler);
-        }
-
-        public static int GetOffsetInRange(
-            this TextPointer pointer, TextRange range)
-        {
-            if (range.Start.GetOffsetToPosition(pointer) >= 0
-                && range.End.GetOffsetToPosition(pointer) <= 0)
-            {
-                return new TextRange(range.Start, pointer).Text.Length;
-            }
-            return -1;
-        }
-
-        public static TextPointer GetPointerFromCharOffset(
-            this TextPointer pointer, int offset)
-        {
-            var count = 0;
-            while (pointer != null)
-            {
-                var nextPointerContext = pointer.GetPointerContext(
-                    LogicalDirection.Forward);
-                if (nextPointerContext == TextPointerContext.Text)
-                {
-                    var runLength = pointer.GetTextRunLength(
-                        LogicalDirection.Forward);
-                    if (runLength > 0 && runLength + count < offset)
-                    {
-                        count += runLength;
-                        pointer = pointer.GetPositionAtOffset(runLength);
-
-                        if (count <= offset) continue;
-                    }
-                    else count++;
-                }
-                else if (nextPointerContext == TextPointerContext.ElementEnd)
-                {
-                    var element = pointer.GetAdjacentElement(
-                        LogicalDirection.Forward);
-                    if (element is LineBreak || element is Paragraph)
-                        count += Environment.NewLine.Length;
-                }
-
-                if (count > offset) break;
-
-                pointer = pointer.GetPositionAtOffset(
-                    1, LogicalDirection.Forward);
-            }
-            return pointer;
         }
     }
 }
