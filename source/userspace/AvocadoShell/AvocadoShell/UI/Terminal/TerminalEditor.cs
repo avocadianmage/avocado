@@ -40,7 +40,9 @@ namespace AvocadoShell.UI.Terminal
 
         void onLoaded(object sender, RoutedEventArgs e)
         {
-            startCommandline();
+            var lineBufferLength = getLineBufferLength();
+            Task.Run(() => startCommandline(lineBufferLength));
+
             SizeChanged += onSizeChanged;
         }
 
@@ -145,9 +147,9 @@ namespace AvocadoShell.UI.Terminal
             SetSyntaxHighlighting(XHSD);
         }
 
-        void startCommandline()
+        void startCommandline(int lineBufferLength)
         {
-            engine.Initialize(this, getLineBufferLength());
+            engine.Initialize(this, lineBufferLength);
             writeShellPrompt();
         }
 

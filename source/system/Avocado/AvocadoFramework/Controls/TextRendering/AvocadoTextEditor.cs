@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Xml;
 
 namespace AvocadoFramework.Controls.TextRendering
@@ -51,6 +52,18 @@ namespace AvocadoFramework.Controls.TextRendering
             }
         }
 
+        Brush createFadingBrush(Brush baseBrush, double duration)
+        {
+            var brush = baseBrush.Clone();
+            brush.BeginAnimation(Brush.OpacityProperty, new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromMilliseconds(duration)
+            });
+            return brush;
+        }
+
         protected void Write(string text, Brush foreground)
         {
             var start = CaretOffset;
@@ -59,14 +72,16 @@ namespace AvocadoFramework.Controls.TextRendering
 
             // Add each line to the static colorizer with the specified 
             // foreground.
+            var fadingBrush = createFadingBrush(
+                foreground, Config.TextFadeDuration);
             for (; line <= TextArea.Caret.Line; line++)
             {
                 var lineObject = Document.GetLineByNumber(line);
                 staticColorizer.AddColoredLinePart(
                     line, 
                     Math.Max(lineObject.Offset, start), 
-                    Math.Min(lineObject.EndOffset, CaretOffset), 
-                    foreground);
+                    Math.Min(lineObject.EndOffset, CaretOffset),
+                    fadingBrush);
             }
         }
 

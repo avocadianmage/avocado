@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Config.cs" />
     <Compile Include="Controls\Progress\Progressor.cs" />
     <Compile Include="Controls\TextRendering\StaticColorizer.cs" />
     <Compile Include="Controls\TextRendering\Input\InputTextArea.cs" />
