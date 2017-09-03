@@ -132,6 +132,8 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void Write(string text, Brush foreground)
         {
+            Document.BeginUpdate();
+
             var start = CaretOffset;
             var line = TextArea.Caret.Line;
             Document.Insert(start, text);
@@ -149,6 +151,8 @@ namespace AvocadoFramework.Controls.TextRendering
                     Math.Min(lineObject.EndOffset, CaretOffset),
                     fadingBrush);
             }
+
+            Document.EndUpdate();
         }
 
         protected void WriteLine()
@@ -158,8 +162,7 @@ namespace AvocadoFramework.Controls.TextRendering
 
         protected void WriteLine(string text, Brush foreground)
         {
-            Write(text, foreground);
-            WriteLine();
+            Write(text + Environment.NewLine, foreground);
         }
 
         protected new void Select(
