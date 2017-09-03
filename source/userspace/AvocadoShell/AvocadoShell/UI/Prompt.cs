@@ -13,7 +13,7 @@ namespace AvocadoShell.UI
             return sb.Append(workingDirectory).ToString();
         }
 
-        public static string GetShellPromptString => "avocado ";
+        public static string GetShellPromptString => "avocado~$ ";
 
         public bool FromShell { get; set; }
         public string ShellTitle { get; set; }
