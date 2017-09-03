@@ -1,22 +1,9 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace AvocadoShell.UI
 {
     sealed class Prompt
     {
-        public event EventHandler<string> PromptUpdated;
-
-        public Prompt()
-        {
-            var notifyingDateTime = new NotifyingDateTime();
-            notifyingDateTime.PropertyChanged += (s, e) =>
-            {
-                var promptText = notifyingDateTime.Now.ToString(Format);
-                PromptUpdated?.Invoke(s, promptText);
-            };
-        }
-
         public static string GetShellTitleString(
             string workingDirectory, string remoteComputerName)
         {
@@ -26,9 +13,9 @@ namespace AvocadoShell.UI
             return sb.Append(workingDirectory).ToString();
         }
 
-        public string Format => "yyyy.MM.dd-HH:mm:ss ";
+        public static string GetShellPromptString => "avocado ";
+
         public bool FromShell { get; set; }
         public string ShellTitle { get; set; }
-        public int StartOffset { get; set; }
     }
 }

@@ -24,29 +24,32 @@ namespace AvocadoShell.UI
             = new ResetEventWithData<string>();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
         readonly TerminalReadOnlySectionProvider readOnlyProvider
-            = new TerminalReadOnlySectionProvider { IsReadOnly = true };
+            = new TerminalReadOnlySectionProvider();
 
         public TerminalEditor()
         {
-            // Set up readonly handling for prompts.
-            TextArea.ReadOnlySectionProvider = readOnlyProvider;
-
-            // Disable undo.
-            Document.UndoStack.SizeLimit = 0;
-
             // Subscribe to events.
             Loaded += onLoaded;
             Unloaded += (s, e) => terminateExec();
-            prompt.PromptUpdated += onPromptUpdated;
 
+            // Set up readonly handling for prompts.
+            TextArea.ReadOnlySectionProvider = readOnlyProvider;
+
+            disableChangingText();
             loadSyntaxHighlighting();
             addCommandBindings();
         }
 
-        void onPromptUpdated(object sender, string text)
+        void enableChangingText()
         {
-            if (readOnlyProvider.IsReadOnly) return;
-            Document.Replace(prompt.StartOffset, prompt.Format.Length, text);
+            readOnlyProvider.IsReadOnly = false;
+            Document.UndoStack.SizeLimit = int.MaxValue;
+        }
+
+        void disableChangingText()
+        {
+            readOnlyProvider.IsReadOnly = true;
+            Document.UndoStack.SizeLimit = 0;
         }
 
         void onLoaded(object sender, RoutedEventArgs e)
@@ -136,7 +139,7 @@ namespace AvocadoShell.UI
 
         void writeShellPrompt()
         {
-            safeWritePromptCore(prompt.Format, true, false);
+            safeWritePromptCore(Prompt.GetShellPromptString, true, false);
         }
 
         void safeWritePromptCore(string text, bool fromShell, bool secure)
@@ -150,14 +153,10 @@ namespace AvocadoShell.UI
             // Write prompt text.
             if (fromShell) setShellTitle();
             Append(text, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
-            if (fromShell)
-            {
-                prompt.StartOffset = Document.TextLength - text.Length;
-            }
 
             // Enable user input.
             readOnlyProvider.EndOffset = Document.TextLength;
-            readOnlyProvider.IsReadOnly = false;
+            enableChangingText();
         }
 
         void setShellTitle()
@@ -204,7 +203,7 @@ namespace AvocadoShell.UI
                 writeOutputLineWithANSICodes(text);
                 return;
             }
-
+            
             if (newline) AppendLine(text, foreground);
             else Append(text, foreground);
         }
@@ -308,14 +307,12 @@ namespace AvocadoShell.UI
             var replacementIndex = default(int);
             var replacementLength = default(int);
             var completionText = default(string);
-            readOnlyProvider.IsReadOnly = true;
             var hasCompletion = await Task.Run(
                 () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
                     input, index, forward,
                     out replacementIndex,
                     out replacementLength,
                     out completionText));
-            readOnlyProvider.IsReadOnly = false;
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
@@ -344,7 +341,9 @@ namespace AvocadoShell.UI
 
         void execute()
         {
-            readOnlyProvider.IsReadOnly = true;
+            if (readOnlyProvider.IsReadOnly) return;
+
+            disableChangingText();
             var input = getInput();
             AppendLine();
 

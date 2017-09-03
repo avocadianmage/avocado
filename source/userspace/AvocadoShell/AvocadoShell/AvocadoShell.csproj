@@ -117,7 +117,6 @@
     <Compile Include="UI\OutputBuffer.cs" />
     <Compile Include="UI\Prompt.cs" />
     <Compile Include="UI\IShellUI.cs" />
-    <Compile Include="UI\NotifyingDateTime.cs" />
     <Compile Include="UI\TerminalEditor.cs" />
     <Compile Include="PowerShellService\Utilities\RunspacePipeline.cs" />
     <Compile Include="PowerShellService\Host\CustomHost.cs" />
