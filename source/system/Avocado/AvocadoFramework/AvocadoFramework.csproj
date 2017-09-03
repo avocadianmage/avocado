@@ -72,7 +72,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\TextArea.Generic.xaml">
+    <Page Include="Themes\AvocadoTextEditor.Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -84,13 +84,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Config.cs" />
     <Compile Include="Controls\Progress\Progressor.cs" />
     <Compile Include="Controls\TextRendering\StaticColorizer.cs" />
-    <Compile Include="Controls\TextRendering\Input\InputTextArea.cs" />
     <Compile Include="Controls\TextRendering\TextConfig.cs" />
     <Compile Include="Controls\TextRendering\TextLabel.cs" />
-    <Compile Include="Controls\TextRendering\TextArea.cs" />
     <Compile Include="Controls\TextRendering\TextPalette.cs" />
     <Compile Include="Engine\GlassPane.cs">
       <SubType>Code</SubType>

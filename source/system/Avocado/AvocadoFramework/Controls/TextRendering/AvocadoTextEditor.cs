@@ -2,9 +2,13 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Rendering;
+using StandardLibrary.WPF;
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -14,17 +18,38 @@ namespace AvocadoFramework.Controls.TextRendering
 {
     public abstract class AvocadoTextEditor : TextEditor
     {
+        static AvocadoTextEditor()
+        {
+            // Associate this control with the default theme.
+            var type = typeof(AvocadoTextEditor);
+            DefaultStyleKeyProperty.OverrideMetadata(
+                type, new FrameworkPropertyMetadata(type));
+        }
+
         readonly StaticColorizer staticColorizer = new StaticColorizer();
         bool shouldAutoScroll;
+        Border visualCaret;
 
         public AvocadoTextEditor()
         {
+            // Hide native caret.
+            TextArea.Caret.CaretBrush = Brushes.Transparent;
+
             Document.Changing += onDocumentChanging;
             Document.Changed += onDocumentChanged;
 
             TextArea.TextView.LineTransformers.Add(staticColorizer);
         }
-        
+
+        void updateVisualCaretPosition()
+        {
+            var caretVisualPosition = TextArea.TextView.GetVisualPosition(
+                TextArea.Caret.Position, VisualYPosition.LineTop)
+                - TextArea.TextView.ScrollOffset;
+            Canvas.SetLeft(visualCaret, caretVisualPosition.X);
+            Canvas.SetTop(visualCaret, caretVisualPosition.Y);
+        }
+
         void onDocumentChanged(object sender, DocumentChangeEventArgs e)
         {
             if (shouldAutoScroll) ScrollToEnd();
@@ -38,11 +63,52 @@ namespace AvocadoFramework.Controls.TextRendering
 
         bool isScrolledToEnd => VerticalOffset + ViewportHeight >= ExtentHeight;
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            initializeVisualCaret();
+        }
+
+        void initializeVisualCaret()
+        {
+            visualCaret = this.GetTemplateElement<Border>("Caret");
+
+            // Determine size.
+            Document.Insert(0, " ");
+            EventHandler onVisualLinesChanged = null;
+            onVisualLinesChanged = (s, e) =>
+            {
+                var textLine
+                    = TextArea.TextView.GetVisualLine(1).GetTextLine(0);
+                TextArea.TextView.VisualLinesChanged -= onVisualLinesChanged;
+                Document.Remove(0, 1);
+                visualCaret.Width = textLine.WidthIncludingTrailingWhitespace
+                    - textLine.OverhangLeading;
+                visualCaret.Height = textLine.Height - textLine.OverhangAfter;
+            };
+            TextArea.TextView.VisualLinesChanged += onVisualLinesChanged;
+
+            // Add positioning events.
+            TextArea.Caret.PositionChanged +=
+                (s, e) => updateVisualCaretPosition();
+            AddHandler(
+                ScrollViewer.ScrollChangedEvent,
+                new ScrollChangedEventHandler(
+                    (s, e) => updateVisualCaretPosition()));
+
+            // Window events (Window.GetWindow returns null in design mode).
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                var window = Window.GetWindow(this);
+                window.Activated +=
+                    (s, e) => visualCaret.Visibility = Visibility.Visible;
+                window.Deactivated +=
+                    (s, e) => visualCaret.Visibility = Visibility.Collapsed;
+            }
+        }
+
         protected void SetSyntaxHighlighting(string manifestResourceStreamPath)
         {
-            // Does not work in design mode.
-            if (DesignerProperties.GetIsInDesignMode(this)) return;
-
             using (var stream = Assembly.GetEntryAssembly()
                 .GetManifestResourceStream(manifestResourceStreamPath))
             using (var reader = new XmlTextReader(stream))
@@ -73,7 +139,7 @@ namespace AvocadoFramework.Controls.TextRendering
             // Add each line to the static colorizer with the specified 
             // foreground.
             var fadingBrush = createFadingBrush(
-                foreground, Config.TextFadeDuration);
+                foreground, TextConfig.TextFadeDuration);
             for (; line <= TextArea.Caret.Line; line++)
             {
                 var lineObject = Document.GetLineByNumber(line);

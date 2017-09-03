@@ -6,13 +6,7 @@
     xmlns:terminal="clr-namespace:AvocadoShell.UI.Terminal"
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
-    <terminal:TerminalEditor x:Name="Terminal"
-                             HorizontalScrollBarVisibility="Disabled"
-                             Background="Transparent"
+    <terminal:TerminalEditor x:Name="Terminal" 
                              Foreground="#dcdcdc"
-                             FontFamily="Consolas" 
-                             FontSize="10"
-                             FontWeight="Bold"
-                             TextOptions.TextFormattingMode="Display"
                              IsReadOnly="True" />
 </engine:GlassPane>

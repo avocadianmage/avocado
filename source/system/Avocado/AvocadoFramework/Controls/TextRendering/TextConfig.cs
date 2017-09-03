@@ -12,6 +12,6 @@ namespace AvocadoFramework.Controls.TextRendering
         public static TextFormattingMode TextFormattingMode 
             => TextFormattingMode.Display;
 
-        public static int TabSpacing => 4;
+        public static double TextFadeDuration => 200;
     }
 }
