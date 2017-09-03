@@ -59,10 +59,20 @@ namespace AvocadoShell.UI
 
         void addCommandBindings()
         {
+            // Select input.
             TextArea.DefaultInputHandler.CaretNavigation.CommandBindings
                 .AddNewBinding(ApplicationCommands.SelectAll, selectInput);
+
+            // Execute input.
             TextArea.DefaultInputHandler.Editing.CommandBindings
                 .AddNewBinding(EditingCommands.EnterParagraphBreak, execute);
+
+            // Execution break.
+            TextArea.DefaultInputHandler.AddBinding(
+                new RoutedCommand(), 
+                ModifierKeys.Control, 
+                Key.B, 
+                (s, e) => terminateExec());
         }
 
         void selectInput()
@@ -222,15 +232,6 @@ namespace AvocadoShell.UI
 
             switch (e.Key)
             {
-                // Break out of the current execution.
-                case Key.B:
-                    if (WPFUtils.IsControlKeyDown)
-                    {
-                        terminateExec();
-                        e.Handled = true;
-                    }
-                    break;
-
                 // Clear input or selection.
                 case Key.Escape:
                     e.Handled = handleEscKey();
@@ -344,10 +345,7 @@ namespace AvocadoShell.UI
         void execute()
         {
             readOnlyProvider.IsReadOnly = true;
-
-            // Get user input.
             var input = getInput();
-
             AppendLine();
 
             // If this is the shell prompt, execute the input.
