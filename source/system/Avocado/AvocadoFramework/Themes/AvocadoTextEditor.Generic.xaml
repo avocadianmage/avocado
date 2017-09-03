@@ -7,7 +7,6 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FlowDirection" Value="LeftToRight" />
         <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
-        <Setter Property="Cursor" Value="Arrow" />
         <Setter Property="FontFamily" 
                 Value="{x:Static text:TextConfig.FontFamily}" />
         <Setter Property="FontSize" 

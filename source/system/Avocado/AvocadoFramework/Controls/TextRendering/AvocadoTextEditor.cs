@@ -130,39 +130,39 @@ namespace AvocadoFramework.Controls.TextRendering
             return brush;
         }
 
-        protected void Write(string text, Brush foreground)
+        protected void Append(string text, Brush foreground)
         {
             Document.BeginUpdate();
 
-            var start = CaretOffset;
-            var line = TextArea.Caret.Line;
+            var start = Document.TextLength;
+            var line = Document.LineCount;
             Document.Insert(start, text);
 
             // Add each line to the static colorizer with the specified 
             // foreground.
             var fadingBrush = createFadingBrush(
                 foreground, TextConfig.TextFadeDuration);
-            for (; line <= TextArea.Caret.Line; line++)
+            for (; line <= Document.LineCount; line++)
             {
                 var lineObject = Document.GetLineByNumber(line);
                 staticColorizer.AddColoredLinePart(
                     line, 
                     Math.Max(lineObject.Offset, start), 
-                    Math.Min(lineObject.EndOffset, CaretOffset),
+                    Math.Min(lineObject.EndOffset, Document.TextLength),
                     fadingBrush);
             }
 
             Document.EndUpdate();
         }
 
-        protected void WriteLine()
+        protected void AppendLine()
         {
-            Document.Insert(CaretOffset, Environment.NewLine);
+            Document.Insert(Document.TextLength, Environment.NewLine);
         }
 
-        protected void WriteLine(string text, Brush foreground)
+        protected void AppendLine(string text, Brush foreground)
         {
-            Write(text + Environment.NewLine, foreground);
+            Append(text + Environment.NewLine, foreground);
         }
 
         protected new void Select(

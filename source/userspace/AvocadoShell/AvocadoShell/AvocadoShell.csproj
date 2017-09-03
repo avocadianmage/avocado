@@ -113,6 +113,7 @@
     <Compile Include="PowerShellService\Host\ChoicePrompt\Choice.cs" />
     <Compile Include="PowerShellService\Host\ChoicePrompt\InputParser.cs" />
     <Compile Include="PowerShellService\PowerShellEngine.cs" />
+    <Compile Include="UI\Terminal\TerminalReadOnlySectionProvider.cs" />
     <Compile Include="UI\Terminal\OutputBuffer.cs" />
     <Compile Include="UI\Terminal\Prompt.cs" />
     <Compile Include="UI\Terminal\IShellUI.cs" />

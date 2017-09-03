@@ -17,7 +17,6 @@ namespace AvocadoShell.UI.Terminal
         }
 
         public bool FromShell { get; set; }
-        public int EndOffset { get; set; }
         public string ShellTitle { get; set; }
 
         public Run ShellTimestampRun

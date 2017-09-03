@@ -9,7 +9,6 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using static AvocadoShell.Config;
@@ -23,13 +22,20 @@ namespace AvocadoShell.UI.Terminal
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
+        readonly TerminalReadOnlySectionProvider readOnlyProvider
+            = new TerminalReadOnlySectionProvider { IsReadOnly = true };
 
         public TerminalEditor()
         {
+            // Set up readonly handling for prompts.
+            TextArea.ReadOnlySectionProvider = readOnlyProvider;
+
+            // Disable undo.
+            Document.UndoStack.SizeLimit = 0;
+
             subscribeToEvents();
             loadSyntaxHighlighting();
             addCommandBindings();
-            disableUndo();
         }
 
         void subscribeToEvents()
@@ -46,74 +52,16 @@ namespace AvocadoShell.UI.Terminal
             SizeChanged += onSizeChanged;
         }
 
-        void disableUndo() => Document.UndoStack.SizeLimit = 0;
-
         void addCommandBindings()
         {
-            var caretNavigationCommandBindings
-                = TextArea.DefaultInputHandler.CaretNavigation.CommandBindings;
-            caretNavigationCommandBindings.AddNewBinding(
-                ApplicationCommands.SelectAll, selectInput);
-
-            // 'Home' commands.
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveToDocumentStart, 
-                () => moveCaretToPromptStart(false));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.SelectToDocumentStart,
-                () => moveCaretToPromptStart(true));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveToLineStart, 
-                () => moveCaretToLineStart(false));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.SelectToLineStart, 
-                () => moveCaretToLineStart(true));
-
-            TextArea.DefaultInputHandler.Editing.CommandBindings
-                .AddNewBinding(ApplicationCommands.Cut, cut);
+            TextArea.DefaultInputHandler.CaretNavigation.CommandBindings
+                .AddNewBinding(ApplicationCommands.SelectAll, selectInput);
         }
 
         void selectInput()
         {
-            if (IsReadOnly) return;
-            Select(currentPrompt.EndOffset, Document.TextLength);
-        }
-
-        void moveCaretToPromptStart(bool select)
-        {
-            moveCaretAsInput(currentPrompt.EndOffset, select);
-        }
-
-        void moveCaretToLineStart(bool select)
-        {
-            var endOffset = isCaretOnPromptLine
-                ? currentPrompt.EndOffset
-                : Document.GetLineByOffset(CaretOffset).Offset;
-            moveCaretAsInput(endOffset, select);
-        }
-
-        void moveCaretAsInput(int endOffset, bool select)
-        {
-            if (IsReadOnly) return;
-
-            if (select) Select(SelectionStart, endOffset);
-            else CaretOffset = endOffset;
-        }
-
-        void cut()
-        {
-            if (IsReadOnly) return;
-
-            if (TextArea.Selection.IsEmpty)
-            {
-                var line = Document.GetLineByOffset(CaretOffset);
-                var offset = isCaretOnPromptLine
-                    ? currentPrompt.EndOffset : line.Offset;
-                Select(offset, line.EndOffset);
-            }
-
-            Clipboard.SetText(SelectedText);
-            SelectedText = string.Empty;
+            if (readOnlyProvider.IsReadOnly) return;
+            Select(readOnlyProvider.EndOffset, Document.TextLength);
         }
 
         void terminateExec()
@@ -181,12 +129,13 @@ namespace AvocadoShell.UI.Terminal
 
             // Write prompt text.
             if (fromShell) setShellTitle();
-            Write(prompt, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush); 
+            Append(
+                prompt, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
             //TODO: turn prompt into timestamp
 
             // Enable user input.
-            currentPrompt.EndOffset = CaretOffset;
-            IsReadOnly = false;
+            readOnlyProvider.EndOffset = Document.TextLength;
+            readOnlyProvider.IsReadOnly = false;
         }
 
         void setShellTitle()
@@ -204,18 +153,18 @@ namespace AvocadoShell.UI.Terminal
             Window.GetWindow(this).Title = title;
 
             // Separate title from other output with a newline beforehand.
-            if (CaretOffset > 0) WriteLine();
-            WriteLine(title, VerboseBrush);
+            if (Document.TextLength > 0) AppendLine();
+            AppendLine(title, VerboseBrush);
         }
+
+        public void WriteOutputLine(string text)
+            => WriteCustom(text, OutputBrush, true);
+
+        public void WriteErrorLine(string text)
+            => WriteCustom(text, ErrorBrush, true);
 
         public void WriteCustom(string text, Brush foreground, bool newline)
             => safeWrite(text, foreground, newline);
-
-        public void WriteOutputLine(string text)
-            => safeWrite(text, OutputBrush, true);
-
-        public void WriteErrorLine(string text)
-            => safeWrite(text, ErrorBrush, true);
 
         void safeWrite(string text, Brush foreground, bool newline)
             => Dispatcher.InvokeAsync(
@@ -234,8 +183,8 @@ namespace AvocadoShell.UI.Terminal
                 return;
             }
 
-            if (newline) WriteLine(text, foreground);
-            else Write(text, foreground);
+            if (newline) AppendLine(text, foreground);
+            else Append(text, foreground);
         }
 
         void writeOutputLineWithANSICodes(string text)
@@ -270,58 +219,35 @@ namespace AvocadoShell.UI.Terminal
                     }
                     break;
 
-                // Prevent overwriting the prompt.
-                case Key.Back:
-                case Key.Left:
-                    e.Handled = IsReadOnly || handleBackAndLeftKeys(e.Key);
-                    break;
-
                 // Clear input or selection.
                 case Key.Escape:
-                    e.Handled = IsReadOnly || handleEscKey();
+                    e.Handled = handleEscKey();
                     break;
 
                 // Autocompletion.
                 case Key.Tab:
-                    e.Handled = IsReadOnly || handleTabKey();
+                    e.Handled = readOnlyProvider.IsReadOnly || handleTabKey();
                     break;
 
                 // History.
                 case Key.Up:
                 case Key.Down:
-                    e.Handled = IsReadOnly || handleUpDown(e.Key);
-                    break;
-
-                // Scroll page up/down (can be used while readonly).
-                case Key.PageUp:
-                case Key.PageDown:
-                    e.Handled = handlePageUpDown(e.Key);
+                    e.Handled = handleUpDown(e.Key);
                     break;
 
                 // Command execution.
                 case Key.Enter:
-                    e.Handled = IsReadOnly || handleEnterKey();
+                    e.Handled = readOnlyProvider.IsReadOnly || handleEnterKey();
                     break;
             }
 
             base.OnPreviewKeyDown(e);
         }
 
-        bool handleBackAndLeftKeys(Key key)
-        {
-            if (!isCaretAtOrBeforePromptEnd()) return false;
-
-            // The caret position does not change if text is selected
-            // (unless Shift+Left is pressed) so we should not 
-            // suppress that case.
-            return TextArea.Selection.IsEmpty 
-                || (key == Key.Left && WPFUtils.IsShiftKeyDown);
-        }
-
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
-            if (TextArea.Selection.IsEmpty)
+            if (!readOnlyProvider.IsReadOnly && TextArea.Selection.IsEmpty)
             {
                 setInput(string.Empty);
                 return true;
@@ -341,71 +267,63 @@ namespace AvocadoShell.UI.Terminal
 
         bool handleUpDown(Key key)
         {
-            setInputFromHistory(key == Key.Down);
-            return true;
-        }
-
-        bool handlePageUpDown(Key key)
-        {
-            scrollPage(key == Key.PageDown);
-            return true;
+            // Perform history lookup if the caret is after the prompt and 
+            // input is allowed. Otherwise, navigate standardly.
+            if (!readOnlyProvider.IsReadOnly
+                && CaretOffset >= readOnlyProvider.EndOffset)
+            {
+                setInputFromHistory(key == Key.Down);
+                return true;
+            }
+            return false;
         }
 
         bool handleEnterKey()
         {
-            // Go to new line if shift is pressed at shell prompt.
+            // Handle natively if shift is pressed at prompt.
             if (WPFUtils.IsShiftKeyDown) return false;
 
             // Otherwise, execute the input.
-            IsReadOnly = true;
+            readOnlyProvider.IsReadOnly = true;
             execute();
             return true;
         }
 
-        bool isCaretOnPromptLine
+        int inputLength => Document.TextLength - readOnlyProvider.EndOffset;
+
+        string getInput()
         {
-            get
-            {
-                var promptLine = Document
-                    .GetLineByOffset(currentPrompt.EndOffset).LineNumber;
-                return TextArea.Caret.Line == promptLine;
-            }
+            return Document.GetText(readOnlyProvider.EndOffset, inputLength);
         }
 
-        bool isCaretAtOrBeforePromptEnd() 
-            => CaretOffset <= currentPrompt.EndOffset;
-
-        int inputLength => Document.TextLength - currentPrompt.EndOffset;
-
-        string getInput() 
-            => Document.GetText(currentPrompt.EndOffset, inputLength);
-
         void setInput(string text)
-            => Document.Replace(currentPrompt.EndOffset, inputLength, text);
+        {
+            Document.Replace(readOnlyProvider.EndOffset, inputLength, text);
+        }
         
         async Task performAutocomplete(bool forward)
         {
             // Get data needed for the completion lookup.
             var input = getInput();
-            var index = CaretOffset - currentPrompt.EndOffset;
+            var index = CaretOffset - readOnlyProvider.EndOffset;
 
             // Retrieve the completion text.
             var replacementIndex = default(int);
             var replacementLength = default(int);
             var completionText = default(string);
-            IsReadOnly = true;
+            readOnlyProvider.IsReadOnly = true;
             var hasCompletion = await Task.Run(
                 () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
                     input, index, forward,
                     out replacementIndex,
                     out replacementLength,
                     out completionText));
-            IsReadOnly = false;
+            readOnlyProvider.IsReadOnly = false;
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
             Document.Replace(
-                replacementIndex + currentPrompt.EndOffset,
+                replacementIndex + readOnlyProvider.EndOffset,
                 replacementLength,
                 completionText);
         }
@@ -427,21 +345,12 @@ namespace AvocadoShell.UI.Terminal
             CaretOffset = Document.TextLength;
         }
 
-        void scrollPage(bool down)
-        {
-            ScrollToVerticalOffset(
-                VerticalOffset + ViewportHeight * (down ? 1 : -1));
-        }
-
         void execute()
         {
             // Get user input.
             var input = getInput();
 
-            // Position caret for writing command output.
-            TextArea.ClearSelection();
-            CaretOffset = Document.TextLength;
-            WriteLine();
+            AppendLine();
 
             // If this is the shell prompt, execute the input.
             if (currentPrompt.FromShell) Task.Run(() => executeInput(input));
@@ -464,6 +373,8 @@ namespace AvocadoShell.UI.Terminal
         }
 
         void exit()
-            => Dispatcher.InvokeAsync(() => Window.GetWindow(this).Close());
+        {
+            Dispatcher.InvokeAsync(() => Window.GetWindow(this).Close());
+        }
     }
 }
