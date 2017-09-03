@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using static AvocadoShell.Config;
@@ -60,6 +61,8 @@ namespace AvocadoShell.UI
         {
             TextArea.DefaultInputHandler.CaretNavigation.CommandBindings
                 .AddNewBinding(ApplicationCommands.SelectAll, selectInput);
+            TextArea.DefaultInputHandler.Editing.CommandBindings
+                .AddNewBinding(EditingCommands.EnterParagraphBreak, execute);
         }
 
         void selectInput()
@@ -243,11 +246,6 @@ namespace AvocadoShell.UI
                 case Key.Down:
                     e.Handled = handleUpDown(e.Key);
                     break;
-
-                // Command execution.
-                case Key.Enter:
-                    e.Handled = readOnlyProvider.IsReadOnly || handleEnterKey();
-                    break;
             }
 
             base.OnPreviewKeyDown(e);
@@ -285,17 +283,6 @@ namespace AvocadoShell.UI
                 return true;
             }
             return false;
-        }
-
-        bool handleEnterKey()
-        {
-            // Handle natively if shift is pressed at prompt.
-            if (WPFUtils.IsShiftKeyDown) return false;
-
-            // Otherwise, execute the input.
-            readOnlyProvider.IsReadOnly = true;
-            execute();
-            return true;
         }
 
         int inputLength => Document.TextLength - readOnlyProvider.EndOffset;
@@ -356,6 +343,8 @@ namespace AvocadoShell.UI
 
         void execute()
         {
+            readOnlyProvider.IsReadOnly = true;
+
             // Get user input.
             var input = getInput();
 
