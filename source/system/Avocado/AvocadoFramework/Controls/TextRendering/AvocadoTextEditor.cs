@@ -33,6 +33,7 @@ namespace AvocadoFramework.Controls.TextRendering
         public AvocadoTextEditor()
         {
             // Hide native caret.
+            TextArea.Cursor = Cursors.Arrow;
             TextArea.Caret.CaretBrush = Brushes.Transparent;
 
             Document.Changing += onDocumentChanging;
