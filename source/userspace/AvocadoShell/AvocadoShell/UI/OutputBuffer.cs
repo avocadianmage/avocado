@@ -1,4 +1,4 @@
-﻿namespace AvocadoShell.UI.Terminal
+﻿namespace AvocadoShell.UI
 {
     sealed class OutputBuffer
     {

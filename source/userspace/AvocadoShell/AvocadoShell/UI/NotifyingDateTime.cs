@@ -2,13 +2,11 @@
 using System.ComponentModel;
 using System.Windows.Threading;
 
-namespace AvocadoShell.UI.Terminal
+namespace AvocadoShell.UI
 {
     class NotifyingDateTime : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
-        DateTime _now;
 
         public NotifyingDateTime()
         {
@@ -30,5 +28,6 @@ namespace AvocadoShell.UI.Terminal
                     this, new PropertyChangedEventArgs(nameof(Now)));
             }
         }
+        DateTime _now;
     }
 }

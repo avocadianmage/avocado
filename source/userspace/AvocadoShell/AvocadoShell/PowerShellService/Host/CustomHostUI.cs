@@ -1,5 +1,5 @@
 ﻿using AvocadoShell.PowerShellService.Host.ChoicePrompt;
-using AvocadoShell.UI.Terminal;
+using AvocadoShell.UI;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;

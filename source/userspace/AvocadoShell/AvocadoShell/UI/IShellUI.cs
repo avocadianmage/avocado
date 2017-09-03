@@ -1,7 +1,7 @@
 ﻿using System.Security;
 using System.Windows.Media;
 
-namespace AvocadoShell.UI.Terminal
+namespace AvocadoShell.UI
 {
     interface IShellUI
     {

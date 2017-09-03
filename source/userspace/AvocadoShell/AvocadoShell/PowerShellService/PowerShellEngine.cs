@@ -1,6 +1,6 @@
 ﻿using AvocadoShell.PowerShellService.Host;
 using AvocadoShell.PowerShellService.Utilities;
-using AvocadoShell.UI.Terminal;
+using AvocadoShell.UI;
 using System.Management.Automation.Runspaces;
 
 namespace AvocadoShell.PowerShellService

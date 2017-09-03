@@ -13,12 +13,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static AvocadoShell.Config;
 
-namespace AvocadoShell.UI.Terminal
+namespace AvocadoShell.UI
 {
     sealed class TerminalEditor : AvocadoTextEditor, IShellUI
     {
         readonly PowerShellEngine engine = new PowerShellEngine();
-        readonly Prompt currentPrompt = new Prompt();
+        readonly Prompt prompt = new Prompt();
         readonly ResetEventWithData<string> nonShellPromptDone
             = new ResetEventWithData<string>();
         readonly OutputBuffer outputBuffer = new OutputBuffer();
@@ -33,15 +33,19 @@ namespace AvocadoShell.UI.Terminal
             // Disable undo.
             Document.UndoStack.SizeLimit = 0;
 
-            subscribeToEvents();
+            // Subscribe to events.
+            Loaded += onLoaded;
+            Unloaded += (s, e) => terminateExec();
+            prompt.PromptUpdated += onPromptUpdated;
+
             loadSyntaxHighlighting();
             addCommandBindings();
         }
 
-        void subscribeToEvents()
+        void onPromptUpdated(object sender, string text)
         {
-            Loaded += onLoaded;
-            Unloaded += (s, e) => terminateExec();
+            if (readOnlyProvider.IsReadOnly) return;
+            Document.Replace(prompt.StartOffset, prompt.Format.Length, text);
         }
 
         void onLoaded(object sender, RoutedEventArgs e)
@@ -70,7 +74,7 @@ namespace AvocadoShell.UI.Terminal
             if (!engine.MyHost.CurrentPipeline.Stop()) return;
 
             // Ensure the powershell thread is unblocked.
-            if (!currentPrompt.FromShell) nonShellPromptDone.Signal(null);
+            if (!prompt.FromShell) nonShellPromptDone.Signal(null);
         }
 
         void onSizeChanged(object sender, SizeChangedEventArgs e)
@@ -101,37 +105,42 @@ namespace AvocadoShell.UI.Terminal
             writeShellPrompt();
         }
 
-        public string WritePrompt(string prompt) => writePrompt(prompt, false);
+        public string WritePrompt(string text) => writePrompt(text, false);
 
-        public SecureString WriteSecurePrompt(string prompt)
+        public SecureString WriteSecurePrompt(string text)
         {
             var secureStr = new SecureString();
-            writePrompt(prompt, true).ForEach(secureStr.AppendChar);
+            writePrompt(text, true).ForEach(secureStr.AppendChar);
             secureStr.MakeReadOnly();
             return secureStr;
         }
 
-        string writePrompt(string prompt, bool secure)
+        string writePrompt(string text, bool secure)
         {
-            safeWritePromptCore(prompt, false, secure);
+            safeWritePromptCore(text, false, secure);
             return nonShellPromptDone.Block();
         }
 
-        void writeShellPrompt() => safeWritePromptCore("> ", true, false);
-
-        void safeWritePromptCore(string prompt, bool fromShell, bool secure)
-            => Dispatcher.InvokeAsync(
-                () => writePromptCore(prompt, fromShell, secure), TextPriority);
-
-        void writePromptCore(string prompt, bool fromShell, bool secure)
+        void writeShellPrompt()
         {
-            currentPrompt.FromShell = fromShell;
+            safeWritePromptCore(prompt.Format, true, false);
+        }
+
+        void safeWritePromptCore(string text, bool fromShell, bool secure)
+            => Dispatcher.InvokeAsync(
+                () => writePromptCore(text, fromShell, secure), TextPriority);
+
+        void writePromptCore(string text, bool fromShell, bool secure)
+        {
+            prompt.FromShell = fromShell;
 
             // Write prompt text.
             if (fromShell) setShellTitle();
-            Append(
-                prompt, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
-            //TODO: turn prompt into timestamp
+            Append(text, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
+            if (fromShell)
+            {
+                prompt.StartOffset = Document.TextLength - text.Length;
+            }
 
             // Enable user input.
             readOnlyProvider.EndOffset = Document.TextLength;
@@ -144,10 +153,10 @@ namespace AvocadoShell.UI.Terminal
                 engine.GetWorkingDirectory(), engine.RemoteComputerName);
 
             // Only write shell title if it has changed.
-            if (title == currentPrompt.ShellTitle) return;
+            if (title == prompt.ShellTitle) return;
 
             // Update prompt object with new shell title.
-            currentPrompt.ShellTitle = title;
+            prompt.ShellTitle = title;
 
             // Update the window title to the shell title text.
             Window.GetWindow(this).Title = title;
@@ -258,7 +267,7 @@ namespace AvocadoShell.UI.Terminal
         bool handleTabKey()
         {
             // Perform autocomplete if at the shell prompt.
-            if (currentPrompt.FromShell)
+            if (prompt.FromShell)
             {
                 performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
             }
@@ -331,7 +340,7 @@ namespace AvocadoShell.UI.Terminal
         void setInputFromHistory(bool forward)
         {
             // Disallow lookup when not at the shell prompt.
-            if (!currentPrompt.FromShell) return;
+            if (!prompt.FromShell) return;
 
             // Cache the current user input to the buffer and look up the stored 
             // input to display from the buffer.
@@ -353,7 +362,7 @@ namespace AvocadoShell.UI.Terminal
             AppendLine();
 
             // If this is the shell prompt, execute the input.
-            if (currentPrompt.FromShell) Task.Run(() => executeInput(input));
+            if (prompt.FromShell) Task.Run(() => executeInput(input));
             // Otherwise, signal that the we are done entering input.
             else nonShellPromptDone.Signal(input);
         }
