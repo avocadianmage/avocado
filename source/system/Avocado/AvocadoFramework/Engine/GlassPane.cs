@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Input;
 
 namespace AvocadoFramework.Engine
 {
@@ -37,6 +38,14 @@ namespace AvocadoFramework.Engine
         {
             base.OnDeactivated(e);
             paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            // Allow the left mouse button to draw the window.
+            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
         }
 
         void applyCloseAnimation()

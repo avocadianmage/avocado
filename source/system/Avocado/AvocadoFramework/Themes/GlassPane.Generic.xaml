@@ -8,6 +8,7 @@
 
         <!-- Resources. -->
         <Style.Resources>
+            <Thickness x:Key="ResizeMargin">4</Thickness>
             <Thickness x:Key="WindowMargin">10</Thickness>
         </Style.Resources>
 
@@ -16,7 +17,7 @@
             <Setter.Value>
                 <WindowChrome 
                     CaptionHeight="0"
-                    ResizeBorderThickness="{StaticResource WindowMargin}" />
+                    ResizeBorderThickness="{StaticResource ResizeMargin}" />
             </Setter.Value>
         </Setter>
         
