@@ -44,7 +44,7 @@ namespace AvocadoFramework.Controls.TextRendering
         void updateVisualCaretPosition()
         {
             var caretVisualPosition = TextArea.TextView.GetVisualPosition(
-                TextArea.Caret.Position, VisualYPosition.LineTop)
+                TextArea.Caret.Position, VisualYPosition.LineBottom)
                 - TextArea.TextView.ScrollOffset;
             Canvas.SetLeft(visualCaret, caretVisualPosition.X);
             Canvas.SetTop(visualCaret, caretVisualPosition.Y);
@@ -72,21 +72,6 @@ namespace AvocadoFramework.Controls.TextRendering
         void initializeVisualCaret()
         {
             visualCaret = this.GetTemplateElement<Border>("Caret");
-
-            // Determine size.
-            Document.Insert(0, " ");
-            EventHandler onVisualLinesChanged = null;
-            onVisualLinesChanged = (s, e) =>
-            {
-                var textLine
-                    = TextArea.TextView.GetVisualLine(1).GetTextLine(0);
-                TextArea.TextView.VisualLinesChanged -= onVisualLinesChanged;
-                Document.Remove(0, 1);
-                visualCaret.Width = textLine.WidthIncludingTrailingWhitespace
-                    - textLine.OverhangLeading;
-                visualCaret.Height = textLine.Height - textLine.OverhangAfter;
-            };
-            TextArea.TextView.VisualLinesChanged += onVisualLinesChanged;
 
             // Add positioning events.
             TextArea.Caret.PositionChanged +=
