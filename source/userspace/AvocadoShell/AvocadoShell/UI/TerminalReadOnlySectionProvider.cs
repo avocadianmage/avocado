@@ -6,23 +6,29 @@ using System.Linq;
 
 namespace AvocadoShell.UI
 {
-    public class TerminalReadOnlySectionProvider : IReadOnlySectionProvider
+    sealed class TerminalReadOnlySectionProvider : IReadOnlySectionProvider
     {
-        public int EndOffset { get; set; }
+        public int PromptEndOffset { get; set; }
         public bool IsReadOnly { get; set; }
 
-        public bool CanInsert(int offset) => !IsReadOnly && offset >= EndOffset;
+        public bool CanInsert(int offset)
+        {
+            return !IsReadOnly && offset >= PromptEndOffset;
+        }
 
         public IEnumerable<ISegment> GetDeletableSegments(ISegment segment)
         {
-            if (segment.EndOffset <= EndOffset) return Enumerable.Empty<ISegment>();
+            if (segment.EndOffset <= PromptEndOffset)
+            {
+                return Enumerable.Empty<ISegment>();
+            }
 
             return new[] {
-            new TextSegment() {
-                StartOffset = Math.Max(EndOffset, segment.Offset),
-                EndOffset = segment.EndOffset
-            }
-        };
+                new TextSegment() {
+                    StartOffset = Math.Max(PromptEndOffset, segment.Offset),
+                    EndOffset = segment.EndOffset
+                }
+            };
         }
     }
 }

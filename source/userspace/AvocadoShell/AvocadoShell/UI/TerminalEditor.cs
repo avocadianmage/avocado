@@ -52,6 +52,26 @@ namespace AvocadoShell.UI
             Document.UndoStack.SizeLimit = 0;
         }
 
+        int readOnlyEndOffset
+        {
+            get
+            {
+                return readOnlyProvider.IsReadOnly
+                    ? Document.TextLength : readOnlyProvider.PromptEndOffset;
+            }
+        }
+
+        bool isCaretOnPromptLine
+        {
+            get
+            {
+                var promptLine = Document
+                    .GetLineByOffset(readOnlyProvider.PromptEndOffset)
+                    .LineNumber;
+                return TextArea.Caret.Line == promptLine;
+            }
+        }
+
         void onLoaded(object sender, RoutedEventArgs e)
         {
             var lineBufferLength = getLineBufferLength();
@@ -62,9 +82,27 @@ namespace AvocadoShell.UI
 
         void addCommandBindings()
         {
+            var caretNavigationCommandBindings
+                = TextArea.DefaultInputHandler.CaretNavigation.CommandBindings;
+
             // Select input.
-            TextArea.DefaultInputHandler.CaretNavigation.CommandBindings
+            caretNavigationCommandBindings
                 .AddNewBinding(ApplicationCommands.SelectAll, selectInput);
+
+            // 'Home' commands.
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.MoveToDocumentStart,
+                () => moveCaretToDocumentStart(false));
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.SelectToDocumentStart,
+                () => moveCaretToDocumentStart(true));
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.MoveToLineStart,
+                () => moveCaretToLineStart(false));
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.SelectToLineStart,
+                () => moveCaretToLineStart(true));
+
 
             // Execute input.
             TextArea.DefaultInputHandler.Editing.CommandBindings
@@ -72,16 +110,43 @@ namespace AvocadoShell.UI
 
             // Execution break.
             TextArea.DefaultInputHandler.AddBinding(
-                new RoutedCommand(), 
-                ModifierKeys.Control, 
-                Key.B, 
+                new RoutedCommand(),
+                ModifierKeys.Control,
+                Key.B,
                 (s, e) => terminateExec());
         }
 
         void selectInput()
         {
             if (readOnlyProvider.IsReadOnly) return;
-            Select(readOnlyProvider.EndOffset, Document.TextLength);
+            Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
+        }
+
+        void moveCaretToDocumentStart(bool select)
+        {
+            var targetOffset 
+                = CaretOffset < readOnlyEndOffset ? 0 : readOnlyEndOffset;
+            moveCaretAsInput(targetOffset, select);
+        }
+
+        void moveCaretToLineStart(bool select)
+        {
+            var caretLineStartOffset 
+                = Document.GetLineByOffset(CaretOffset).Offset;
+            var targetOffset = isCaretOnPromptLine
+                ? (CaretOffset < readOnlyEndOffset 
+                    ? caretLineStartOffset 
+                    : readOnlyEndOffset)
+                : caretLineStartOffset;
+            moveCaretAsInput(targetOffset, select);
+        }
+
+        void moveCaretAsInput(int offset, bool select)
+        {
+            if (IsReadOnly) return;
+
+            if (select) Select(SelectionStart, offset);
+            else CaretOffset = offset;
         }
 
         void terminateExec()
@@ -151,7 +216,7 @@ namespace AvocadoShell.UI
             Append(text, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
 
             // Enable user input.
-            readOnlyProvider.EndOffset = Document.TextLength;
+            readOnlyProvider.PromptEndOffset = Document.TextLength;
             enableChangingText();
         }
 
@@ -175,17 +240,20 @@ namespace AvocadoShell.UI
         }
 
         public void WriteOutputLine(string text)
-            => WriteCustom(text, OutputBrush, true);
+        {
+            WriteCustom(text, OutputBrush, true);
+        }
 
         public void WriteErrorLine(string text)
-            => WriteCustom(text, ErrorBrush, true);
+        {
+            WriteCustom(text, ErrorBrush, true);
+        }
 
         public void WriteCustom(string text, Brush foreground, bool newline)
-            => safeWrite(text, foreground, newline);
-
-        void safeWrite(string text, Brush foreground, bool newline)
-            => Dispatcher.InvokeAsync(
+        {
+            Dispatcher.InvokeAsync(
                 () => write(text, foreground, newline), TextPriority);
+        }
 
         void write(string text, Brush foreground, bool newline)
         {
@@ -199,7 +267,7 @@ namespace AvocadoShell.UI
                 writeOutputLineWithANSICodes(text);
                 return;
             }
-            
+
             if (newline) AppendLine(text, foreground);
             else Append(text, foreground);
         }
@@ -227,20 +295,21 @@ namespace AvocadoShell.UI
 
             switch (e.Key)
             {
-                // Clear input or selection.
                 case Key.Escape:
                     e.Handled = handleEscKey();
                     break;
 
-                // Autocompletion.
                 case Key.Tab:
-                    e.Handled = readOnlyProvider.IsReadOnly || handleTabKey();
+                    e.Handled = handleTabKey();
                     break;
 
-                // History.
+                case Key.Left:
+                    e.Handled = handleLeftKey();
+                    break;
+
                 case Key.Up:
                 case Key.Down:
-                    e.Handled = handleUpDown(e.Key);
+                    e.Handled = handleUpDownKeys(e.Key);
                     break;
             }
 
@@ -261,43 +330,52 @@ namespace AvocadoShell.UI
         bool handleTabKey()
         {
             // Perform autocomplete if at the shell prompt.
-            if (prompt.FromShell)
+            if (!readOnlyProvider.IsReadOnly && prompt.FromShell)
             {
                 performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
             }
             return true;
         }
 
-        bool handleUpDown(Key key)
+        bool handleLeftKey() => CaretOffset == readOnlyEndOffset;
+
+        bool handleUpDownKeys(Key key)
         {
             // Perform history lookup if the caret is after the prompt and 
             // input is allowed. Otherwise, navigate standardly.
-            if (!readOnlyProvider.IsReadOnly
-                && CaretOffset >= readOnlyProvider.EndOffset)
+            if (CaretOffset >= readOnlyEndOffset)
             {
-                setInputFromHistory(key == Key.Down);
+                if (!readOnlyProvider.IsReadOnly)
+                {
+                    setInputFromHistory(key == Key.Down);
+                }
                 return true;
             }
             return false;
         }
 
-        int inputLength => Document.TextLength - readOnlyProvider.EndOffset;
+        int inputLength
+        {
+            get => Document.TextLength - readOnlyProvider.PromptEndOffset;
+        }
 
         string getInput()
         {
-            return Document.GetText(readOnlyProvider.EndOffset, inputLength);
+            return Document.GetText(
+                readOnlyProvider.PromptEndOffset, inputLength);
         }
 
         void setInput(string text)
         {
-            Document.Replace(readOnlyProvider.EndOffset, inputLength, text);
+            Document.Replace(
+                readOnlyProvider.PromptEndOffset, inputLength, text);
         }
-        
+
         async Task performAutocomplete(bool forward)
         {
             // Get data needed for the completion lookup.
             var input = getInput();
-            var index = CaretOffset - readOnlyProvider.EndOffset;
+            var index = CaretOffset - readOnlyProvider.PromptEndOffset;
 
             // Retrieve the completion text.
             var replacementIndex = default(int);
@@ -315,7 +393,7 @@ namespace AvocadoShell.UI
             replacementLength = string.IsNullOrWhiteSpace(input)
                 ? input.Length : replacementLength;
             Document.Replace(
-                replacementIndex + readOnlyProvider.EndOffset,
+                replacementIndex + readOnlyProvider.PromptEndOffset,
                 replacementLength,
                 completionText);
         }
