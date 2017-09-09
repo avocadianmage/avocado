@@ -18,6 +18,7 @@ namespace AvocadoFramework.Engine
         Border paneUI => this.GetTemplateElement<Border>("Pane");
         
         bool closeImmediately = false;
+        Point startDragPosition;
         
         static GlassPane()
         {
@@ -38,14 +39,6 @@ namespace AvocadoFramework.Engine
         {
             base.OnDeactivated(e);
             paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
-        }
-
-        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
-        {
-            base.OnPreviewMouseDown(e);
-
-            // Drag the window around when the left mouse button is pressed.
-            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
         }
 
         void applyCloseAnimation()

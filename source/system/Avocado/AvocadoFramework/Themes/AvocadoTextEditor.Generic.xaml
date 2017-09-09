@@ -15,7 +15,6 @@
                 Value="{x:Static text:TextConfig.FontWeight}" />
         <Setter Property="TextOptions.TextFormattingMode" 
                 Value="{x:Static text:TextConfig.TextFormattingMode}" />
-
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type text:AvocadoTextEditor}">
