@@ -1,4 +1,5 @@
-﻿using StandardLibrary.Processes;
+﻿using AvocadoShell.PowerShellService.Utilities;
+using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 
-namespace AvocadoShell.PowerShellService.Utilities
+namespace AvocadoShell.PowerShellService
 {
     sealed class RunspacePipeline
     {

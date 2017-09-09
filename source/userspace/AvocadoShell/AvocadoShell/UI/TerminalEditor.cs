@@ -312,6 +312,8 @@ namespace AvocadoShell.UI
             if (!hasCompletion) return;
 
             // Update the input (UI) with the result of the completion.
+            replacementLength = string.IsNullOrWhiteSpace(input)
+                ? input.Length : replacementLength;
             Document.Replace(
                 replacementIndex + readOnlyProvider.EndOffset,
                 replacementLength,

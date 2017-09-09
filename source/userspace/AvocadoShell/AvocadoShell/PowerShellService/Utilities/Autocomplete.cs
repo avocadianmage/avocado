@@ -27,7 +27,13 @@ namespace AvocadoShell.PowerShellService.Utilities
             replacementLength = default(int);
             completionText = default(string);
 
-            if (string.IsNullOrWhiteSpace(input)) return false;
+            // If no input, instruct autocomplete to cycle through the file
+            // system entries in the working directory as a default behavior.
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                input = @".\";
+                index = input.Length;
+            }
 
             // Check the user has altered the input and we need to update our
             // completion list.
