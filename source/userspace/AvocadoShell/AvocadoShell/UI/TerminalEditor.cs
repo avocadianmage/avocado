@@ -28,12 +28,16 @@ namespace AvocadoShell.UI
 
         public TerminalEditor()
         {
+            // Set up readonly handling for prompts.
+            TextArea.ReadOnlySectionProvider = readOnlyProvider;
+
+            // Disable hyperlinks.
+            TextArea.Options.EnableEmailHyperlinks = false;
+            TextArea.Options.EnableHyperlinks = false;
+
             // Subscribe to events.
             Loaded += onLoaded;
             Unloaded += (s, e) => terminateExec();
-
-            // Set up readonly handling for prompts.
-            TextArea.ReadOnlySectionProvider = readOnlyProvider;
 
             disableChangingText();
             loadSyntaxHighlighting();
@@ -120,13 +124,14 @@ namespace AvocadoShell.UI
         {
             if (readOnlyProvider.IsReadOnly) return;
             Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
+            TextArea.Caret.BringCaretToView();
         }
 
         void moveCaretToDocumentStart(bool select)
         {
             var targetOffset 
                 = CaretOffset < readOnlyEndOffset ? 0 : readOnlyEndOffset;
-            moveCaretAsInput(targetOffset, select);
+            moveCaret(targetOffset, select);
         }
 
         void moveCaretToLineStart(bool select)
@@ -138,15 +143,17 @@ namespace AvocadoShell.UI
                     ? caretLineStartOffset 
                     : readOnlyEndOffset)
                 : caretLineStartOffset;
-            moveCaretAsInput(targetOffset, select);
+            moveCaret(targetOffset, select);
         }
 
-        void moveCaretAsInput(int offset, bool select)
+        void moveCaret(int offset, bool select)
         {
             if (IsReadOnly) return;
 
             if (select) Select(SelectionStart, offset);
             else CaretOffset = offset;
+
+            TextArea.Caret.BringCaretToView();
         }
 
         void terminateExec()
@@ -332,7 +339,9 @@ namespace AvocadoShell.UI
             // Perform autocomplete if at the shell prompt.
             if (!readOnlyProvider.IsReadOnly && prompt.FromShell)
             {
-                performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
+                performAutocomplete(!WPFUtils.IsShiftKeyDown).ContinueWith(
+                    t => TextArea.Caret.BringCaretToView(),
+                    TaskScheduler.FromCurrentSynchronizationContext());
             }
             return true;
         }
@@ -348,6 +357,7 @@ namespace AvocadoShell.UI
                 if (!readOnlyProvider.IsReadOnly)
                 {
                     setInputFromHistory(key == Key.Down);
+                    TextArea.Caret.BringCaretToView();
                 }
                 return true;
             }
