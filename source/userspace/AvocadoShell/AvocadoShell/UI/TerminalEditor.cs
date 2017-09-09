@@ -101,11 +101,7 @@ namespace AvocadoShell.UI
 
         int getLineBufferLength()
         {
-            var maxBufferLength = (int)ActualWidth;
-            Document.Insert(0, new string(' ', maxBufferLength));
-            var textPosition = GetPositionFromPoint(new Point(ActualWidth, 0));
-            Document.Remove(0, maxBufferLength);
-            return textPosition.Value.Column;
+            return (int)(ActualWidth / TextArea.TextView.WideSpaceWidth);
         }
 
         void loadSyntaxHighlighting()
