@@ -8,7 +8,7 @@
 
         <!-- Resources. -->
         <Style.Resources>
-            <Thickness x:Key="TotalMargin">10</Thickness>
+            <Thickness x:Key="WindowMargin">10</Thickness>
         </Style.Resources>
 
         <!-- Area for resizing. -->
@@ -16,7 +16,7 @@
             <Setter.Value>
                 <WindowChrome 
                     CaptionHeight="0"
-                    ResizeBorderThickness="{StaticResource TotalMargin}" />
+                    ResizeBorderThickness="{StaticResource WindowMargin}" />
             </Setter.Value>
         </Setter>
         
@@ -121,7 +121,7 @@
                             BorderBrush="Transparent" 
                             BorderThickness="1" 
                             Background="Black" 
-                            Padding="{StaticResource TotalMargin}">
+                            Padding="{StaticResource WindowMargin}">
                         <Border.Resources>
                             <Duration x:Key="WindowFadeDuration">
                                 0:0:0.2

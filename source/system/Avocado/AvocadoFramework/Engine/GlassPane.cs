@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -18,7 +17,6 @@ namespace AvocadoFramework.Engine
         Border paneUI => this.GetTemplateElement<Border>("Pane");
         
         bool closeImmediately = false;
-        Point startDragPosition;
         
         static GlassPane()
         {
