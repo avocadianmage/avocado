@@ -6,7 +6,7 @@
   <Color name="Punctuation" exampleText="a(b.c);" />
   <Color name="NumberLiteral" foreground="#ffb8d7a3" exampleText="3.1415f" />
   <Color name="Keywords" foreground="#ff569cd6" exampleText="if (a)" />
-  <Color name="Variable" foreground="#ffb8d7a3" exampleText="$param = 1" />
+  <Color name="Variable" foreground="#ff4ec9b0" exampleText="$param = 1" />
   <Color name="Command" foreground="SkyBlue" exampleText="Get-ChildItem" />
   <Color name="Operators" foreground="#ffb49be6" exampleText="-eq" />
   <Color name="Type" foreground="#ff4ec9b0" exampleText="[System.Math]::Round(1.2)" />

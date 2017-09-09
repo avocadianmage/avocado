@@ -6,5 +6,5 @@
     xmlns:terminal="clr-namespace:AvocadoShell.UI"
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
-    <terminal:TerminalEditor x:Name="Terminal" Foreground="#dcdcdc" />
+    <terminal:TerminalEditor x:Name="Terminal" Foreground="#b8d7a3" />
 </engine:GlassPane>
