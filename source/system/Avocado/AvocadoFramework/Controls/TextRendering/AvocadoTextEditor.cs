@@ -34,16 +34,23 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             TextArea.Caret.CaretBrush = Brushes.Transparent;
 
+            Loaded += onLoaded;
             Document.Changing += onDocumentChanging;
             Document.Changed += onDocumentChanged;
 
             TextArea.TextView.LineTransformers.Add(staticColorizer);
         }
 
+        void onLoaded(object sender, RoutedEventArgs e)
+        {
+            visualCaret.Height 
+                = TextArea.TextView.GetVisualLine(TextArea.Caret.Line).Height;
+        }
+
         void updateVisualCaretPosition()
         {
             var caretVisualPosition = TextArea.TextView.GetVisualPosition(
-                TextArea.Caret.Position, VisualYPosition.LineBottom)
+                TextArea.Caret.Position, VisualYPosition.LineTop)
                 - TextArea.TextView.ScrollOffset;
             Canvas.SetLeft(visualCaret, caretVisualPosition.X);
             Canvas.SetTop(visualCaret, caretVisualPosition.Y);

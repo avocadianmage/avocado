@@ -36,47 +36,33 @@
                         <!-- Caret. -->
                         <Canvas>
                             <Border x:Name="Caret" 
-                                    BorderThickness="0 0 0 1" 
+                                    SnapsToDevicePixels="True"
+                                    BorderThickness="1" 
+                                    BorderBrush="Orange"
                                     Width="{Binding 
                                         RelativeSource={RelativeSource TemplatedParent}, 
-                                        Path=TextArea.TextView.WideSpaceWidth}"
-                                    Height="1">
-                                <Border.Style>
-                                    <Style TargetType="Border">
+                                        Path=TextArea.TextView.WideSpaceWidth}">
+                                <Border.Background>
+                                    <SolidColorBrush Color="Orange" Opacity="0.5" />
+                                </Border.Background>
+                                <Border.Triggers>
 
-                                        <Setter Property="BorderBrush" 
-                                                Value="Orange" />
+                                    <!--Fade animation.-->
+                                    <EventTrigger 
+                                        RoutedEvent="Border.Loaded">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="0" To="1"
+                                                    Duration="0:0:0.6"
+                                                    AutoReverse="True"
+                                                    RepeatBehavior="Forever" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
 
-                                        <Style.Triggers>
-
-                                            <!--Change color based on if the control is readonly.-->
-                                            <DataTrigger 
-                                                Binding="{Binding Path=IsReadOnly, 
-                                                    RelativeSource={RelativeSource TemplatedParent}}"
-                                                Value="True">
-                                                <Setter Property="BorderBrush" 
-                                                        Value="Gray" />
-                                            </DataTrigger>
-
-                                            <!--Fade animation.-->
-                                            <EventTrigger 
-                                                RoutedEvent="Border.Loaded">
-                                                <BeginStoryboard>
-                                                    <Storyboard>
-                                                        <DoubleAnimation
-                                                            Storyboard.TargetProperty="Opacity"
-                                                            From="0" To="1"
-                                                            Duration="0:0:0.75"
-                                                            AutoReverse="True"
-                                                            RepeatBehavior="Forever" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-
-                                        </Style.Triggers>
-
-                                    </Style>
-                                </Border.Style>
+                                </Border.Triggers>
                             </Border>
                         </Canvas>
 
