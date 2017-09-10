@@ -40,12 +40,13 @@ namespace AvocadoFramework.Engine
             paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
         }
 
-        protected override void OnMouseDown(MouseButtonEventArgs e)
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            base.OnMouseDown(e);
+            base.OnPreviewMouseLeftButtonDown(e);
 
-            // Allow the left mouse button to draw the window.
-            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+            // Allow the left mouse button to draw the window when ALT is 
+            // pressed.
+            if (WPFUtils.IsAltKeyDown) DragMove();
         }
 
         void applyCloseAnimation()
