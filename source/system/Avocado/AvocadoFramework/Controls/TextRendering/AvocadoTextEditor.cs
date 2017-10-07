@@ -33,6 +33,7 @@ namespace AvocadoFramework.Controls.TextRendering
         public AvocadoTextEditor()
         {
             TextArea.Caret.CaretBrush = Brushes.Transparent;
+            TextArea.Cursor = Cursors.Arrow;
 
             Loaded += onLoaded;
             Document.Changing += onDocumentChanging;

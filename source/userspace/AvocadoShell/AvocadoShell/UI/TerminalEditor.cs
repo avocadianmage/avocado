@@ -107,6 +107,11 @@ namespace AvocadoShell.UI
                 EditingCommands.SelectToLineStart,
                 () => moveCaretToLineStart(true));
 
+            // Page Up and Page Down commands.
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.MoveDownByPage, () => { });
+            caretNavigationCommandBindings.AddNewBinding(
+                EditingCommands.MoveUpByPage, () => { });
 
             // Execute input.
             TextArea.DefaultInputHandler.Editing.CommandBindings

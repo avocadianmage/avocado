@@ -4,9 +4,9 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Input;
 
 namespace AvocadoFramework.Engine
 {
@@ -44,9 +44,8 @@ namespace AvocadoFramework.Engine
         {
             base.OnPreviewMouseLeftButtonDown(e);
 
-            // Allow the left mouse button to draw the window when ALT is 
-            // pressed.
-            if (WPFUtils.IsAltKeyDown) DragMove();
+            // Drag the window on left click.
+            DragMove();
         }
 
         void applyCloseAnimation()
