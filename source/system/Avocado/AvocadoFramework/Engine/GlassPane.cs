@@ -31,13 +31,13 @@ namespace AvocadoFramework.Engine
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            paneUI.GetResource<Storyboard>("OutlineFadeIn").Begin();
+            paneUI.GetResource<Storyboard>("FocusFadeIn").Begin();
         }
 
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-            paneUI.GetResource<Storyboard>("OutlineFadeOut").Begin();
+            paneUI.GetResource<Storyboard>("FocusFadeOut").Begin();
         }
 
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)

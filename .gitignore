@@ -158,3 +158,5 @@ $RECYCLE.BIN/
 /source/userspace/AvocadoServer/AvocadoServer/App.config
 /source/userspace/AvocadoServer/AvocadoClient/App.config
 /source/userspace/AvocadoServer/AvocadoClient/Service References/ServerAPIReference
+/source/system/Avocado/.vs/Avocado/v15
+/source/userspace/AvocadoShell/.vs/AvocadoShell/v15

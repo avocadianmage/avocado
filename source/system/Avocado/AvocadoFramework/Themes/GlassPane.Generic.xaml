@@ -56,7 +56,7 @@
                         <!-- Scrollbars. -->
                         <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
                             <Setter Property="Stylus.IsFlicksEnabled" Value="false" />
-                            <Setter Property="Foreground" Value="#323232" />
+                            <Setter Property="Foreground" Value="#686868" />
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="Width" Value="2" />
                             <Setter Property="MinWidth" Value="4" />
@@ -121,7 +121,8 @@
                     <Border x:Name="Pane" 
                             BorderBrush="Transparent" 
                             BorderThickness="1" 
-                            Background="Black" 
+                            Background="#1e1e1e" 
+                            Opacity="0"
                             Padding="{StaticResource WindowMargin}">
                         <Border.Resources>
                             <Duration x:Key="WindowFadeDuration">
@@ -137,35 +138,32 @@
                                     To="0"
                                     Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
-                            <Storyboard x:Key="OutlineFadeIn">
+                            <Storyboard x:Key="FocusFadeIn">
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
                                     To="{x:Static engine:GlassPane.ActiveOutlineColor}"
                                     Duration="{StaticResource OutlineFadeDuration}" />
+                                <DoubleAnimation
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="1"
+                                    Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
-                            <Storyboard x:Key="OutlineFadeOut">
+                            <Storyboard x:Key="FocusFadeOut">
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="BorderBrush.Color"
                                     To="DimGray"
                                     Duration="{StaticResource OutlineFadeDuration}" />
+                                <DoubleAnimation
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0.8"
+                                    Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
                         </Border.Resources>
-                        <Border.Triggers>
-                            <EventTrigger RoutedEvent="Border.Loaded">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="Pane"
-                                            Storyboard.TargetProperty="Opacity"
-                                            From="0" To="0.85"
-                                            Duration="{StaticResource WindowFadeDuration}" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Border.Triggers>
-
+                        
                         <ContentPresenter />
 
                     </Border>
