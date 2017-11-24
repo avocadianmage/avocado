@@ -30,7 +30,7 @@ namespace AvocadoShell.PowerShellService.Host
         void writePromptPreamble(string caption, string message)
         {
             writeLineUnlessWhitespace(caption, Config.OutputBrush);
-            writeLineUnlessWhitespace(message, Config.VerboseBrush);
+            writeLineUnlessWhitespace(message, Config.OutputBrush);
         }
 
         void writeChoicePromptPreamble(
@@ -47,7 +47,7 @@ namespace AvocadoShell.PowerShellService.Host
             for (var i = 0; i < choiceCount; i++)
             {
                 var brush = defaultChoices.Contains(i)
-                    ? Config.SelectedBrush : Config.OutputBrush;
+                    ? Config.SelectedBrush : Config.VerboseBrush;
                 var text = choiceList[i].ToDisplayLine(hotkeyTotalPadding);
                 shellUI.WriteCustom(text, brush, true);
             }
