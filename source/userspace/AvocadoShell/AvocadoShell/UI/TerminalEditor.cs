@@ -5,6 +5,7 @@ using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
+using System.IO;
 using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
@@ -223,8 +224,9 @@ namespace AvocadoShell.UI
         {
             prompt.FromShell = fromShell;
 
+            if (fromShell) updateWorkingDirectory();
+
             // Write prompt text.
-            if (fromShell) setShellTitle();
             Append(text, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
 
             // Enable user input.
@@ -232,10 +234,11 @@ namespace AvocadoShell.UI
             enableChangingText();
         }
 
-        void setShellTitle()
+        void updateWorkingDirectory()
         {
+            var workingDirectory = engine.GetWorkingDirectory();
             var title = Prompt.GetShellTitleString(
-                engine.GetWorkingDirectory(), engine.RemoteComputerName);
+                workingDirectory, engine.RemoteComputerName);
 
             // Only write shell title if it has changed.
             if (title == prompt.ShellTitle) return;
@@ -249,6 +252,9 @@ namespace AvocadoShell.UI
             // Separate title from other output with a newline beforehand.
             if (Document.TextLength > 0) AppendLine();
             AppendLine(title, VerboseBrush);
+
+            // Update working directory.
+            Directory.SetCurrentDirectory(workingDirectory);
         }
 
         public void WriteOutputLine(string text)
