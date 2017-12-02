@@ -401,9 +401,7 @@ namespace AvocadoShell.UI
 
         async Task performAutocomplete(bool forward)
         {
-            IsReadOnly = true;
-
-            try
+            IsReadOnly = true; try
             {
                 // Get data needed for the completion lookup.
                 var input = getInput();
