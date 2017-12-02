@@ -12,7 +12,7 @@ namespace AvocadoShell.PowerShellService
 {
     sealed class RunspacePipeline
     {
-        readonly ResetEventWithData<string> executionDone 
+        readonly ResetEventWithData<string> executionDone
             = new ResetEventWithData<string>();
 
         Pipeline pipeline;
@@ -54,7 +54,7 @@ namespace AvocadoShell.PowerShellService
         {
             if (pipeline?.PipelineStateInfo.State == PipelineState.Running)
             {
-                pipeline.StopAsync();
+                pipeline.Stop();
                 return true;
             }
             return false;
@@ -78,28 +78,11 @@ namespace AvocadoShell.PowerShellService
             // Have the our host format the output.
             pipeline.Commands.Add("Out-Default");
 
-            // Subscribe to the pipeline lifetime events.
-            pipeline.StateChanged += onPipelineStateChanged;
-
             // Execute the pipeline.
-            pipeline.InvokeAsync();
+            pipeline.Invoke();
 
             // Wait for the pipeline to finish and return any error output.
-            return executionDone.Block();
-        }
-
-        void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
-        {
-            switch (e.PipelineStateInfo.State)
-            {
-                case PipelineState.Completed:
-                case PipelineState.Failed:
-                case PipelineState.Stopped:
-                    // Fire event indicating execution of the pipeline is 
-                    // finished.
-                    executionDone.Signal(e.PipelineStateInfo.Reason?.Message);
-                    break;
-            }
+            return pipeline.PipelineStateInfo.Reason?.Message;
         }
     }
 }
