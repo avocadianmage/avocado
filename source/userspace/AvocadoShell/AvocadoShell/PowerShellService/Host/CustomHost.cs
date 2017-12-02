@@ -1,5 +1,4 @@
-﻿using AvocadoShell.PowerShellService.Utilities;
-using AvocadoShell.UI;
+﻿using AvocadoShell.UI;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
