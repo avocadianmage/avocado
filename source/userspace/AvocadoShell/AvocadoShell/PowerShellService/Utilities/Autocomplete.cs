@@ -17,16 +17,11 @@ namespace AvocadoShell.PowerShellService.Utilities
             powerShell.Runspace = runspace;
         }
 
-        public bool GetCompletion(
-            string input, int index, bool forward, 
-            out int replacementIndex, 
-            out int replacementLength, 
-            out string completionText)
+        public (int replacementIndex, 
+                int replacementLength, 
+                string completionText)? 
+            GetCompletion(string input, int index, bool forward)
         {
-            replacementIndex = default(int);
-            replacementLength = default(int);
-            completionText = default(string);
-
             // If no input, instruct autocomplete to cycle through the file
             // system entries in the working directory as a default behavior.
             if (string.IsNullOrWhiteSpace(input))
@@ -45,20 +40,20 @@ namespace AvocadoShell.PowerShellService.Utilities
 
             // Determine the length of the text to replace with the new
             // completion.
-            replacementLength = getCurrentReplacementLength(completions);
+            var replacementLength = getCurrentReplacementLength(completions);
 
             // Get the completion data.
             var result = completions.GetNextResult(forward);
-            if (result == null) return false;
+            if (result == null) return null;
             
             // Set input and index of the new completion.
-            replacementIndex = completions.ReplacementIndex;
-            completionText = result.CompletionText;
+            var replacementIndex = completions.ReplacementIndex;
+            var completionText = result.CompletionText;
             expectedInput = input
                 .Remove(replacementIndex, replacementLength)
                 .Insert(replacementIndex, completionText);
             expectedIndex = replacementIndex + completionText.Length;
-            return true;
+            return (replacementIndex, replacementLength, completionText);
         }
 
         int getCurrentReplacementLength(CommandCompletion completions)

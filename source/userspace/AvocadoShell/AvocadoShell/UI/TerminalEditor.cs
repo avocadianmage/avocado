@@ -45,15 +45,21 @@ namespace AvocadoShell.UI
             addCommandBindings();
         }
 
+        public new bool IsReadOnly
+        {
+            get => readOnlyProvider.IsReadOnly;
+            set => readOnlyProvider.IsReadOnly = value;
+        }
+
         void enableChangingText()
         {
-            readOnlyProvider.IsReadOnly = false;
+            IsReadOnly = false;
             Document.UndoStack.SizeLimit = int.MaxValue;
         }
 
         void disableChangingText()
         {
-            readOnlyProvider.IsReadOnly = true;
+            IsReadOnly = true;
             Document.UndoStack.SizeLimit = 0;
         }
 
@@ -61,7 +67,7 @@ namespace AvocadoShell.UI
         {
             get
             {
-                return readOnlyProvider.IsReadOnly
+                return IsReadOnly
                     ? Document.TextLength : readOnlyProvider.PromptEndOffset;
             }
         }
@@ -128,7 +134,7 @@ namespace AvocadoShell.UI
 
         void selectInput()
         {
-            if (readOnlyProvider.IsReadOnly) return;
+            if (IsReadOnly) return;
             Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
             TextArea.Caret.BringCaretToView();
         }
@@ -337,7 +343,7 @@ namespace AvocadoShell.UI
         bool handleEscKey()
         {
             // If no text was selected, delete all text at the prompt.
-            if (!readOnlyProvider.IsReadOnly && TextArea.Selection.IsEmpty)
+            if (!IsReadOnly && TextArea.Selection.IsEmpty)
             {
                 setInput(string.Empty);
                 return true;
@@ -348,11 +354,9 @@ namespace AvocadoShell.UI
         bool handleTabKey()
         {
             // Perform autocomplete if at the shell prompt.
-            if (!readOnlyProvider.IsReadOnly && prompt.FromShell)
+            if (!IsReadOnly && prompt.FromShell)
             {
-                performAutocomplete(!WPFUtils.IsShiftKeyDown).ContinueWith(
-                    t => TextArea.Caret.BringCaretToView(),
-                    TaskScheduler.FromCurrentSynchronizationContext());
+                performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
             }
             return true;
         }
@@ -365,7 +369,7 @@ namespace AvocadoShell.UI
             // input is allowed. Otherwise, navigate standardly.
             if (CaretOffset >= readOnlyEndOffset)
             {
-                if (!readOnlyProvider.IsReadOnly)
+                if (!IsReadOnly)
                 {
                     setInputFromHistory(key == Key.Down);
                     TextArea.Caret.BringCaretToView();
@@ -394,29 +398,32 @@ namespace AvocadoShell.UI
 
         async Task performAutocomplete(bool forward)
         {
-            // Get data needed for the completion lookup.
-            var input = getInput();
-            var index = CaretOffset - readOnlyProvider.PromptEndOffset;
+            IsReadOnly = true;
 
-            // Retrieve the completion text.
-            var replacementIndex = default(int);
-            var replacementLength = default(int);
-            var completionText = default(string);
-            var hasCompletion = await Task.Run(
-                () => engine.MyHost.CurrentPipeline.Autocomplete.GetCompletion(
-                    input, index, forward,
-                    out replacementIndex,
-                    out replacementLength,
-                    out completionText));
-            if (!hasCompletion) return;
+            try
+            {
+                // Get data needed for the completion lookup.
+                var input = getInput();
+                var index = CaretOffset - readOnlyProvider.PromptEndOffset;
 
-            // Update the input (UI) with the result of the completion.
-            replacementLength = string.IsNullOrWhiteSpace(input)
-                ? input.Length : replacementLength;
-            Document.Replace(
-                replacementIndex + readOnlyProvider.PromptEndOffset,
-                replacementLength,
-                completionText);
+                // Retrieve the completion text.
+                var result = await Task.Run(
+                    () => engine.MyHost.CurrentPipeline.Autocomplete
+                        .GetCompletion(input, index, forward));
+                if (!result.HasValue) return;
+
+                // Update the input with the result of the completion.
+                var tuple = result.Value;
+                tuple.replacementLength = string.IsNullOrWhiteSpace(input)
+                    ? input.Length : tuple.replacementLength;
+                Document.Replace(
+                    tuple.replacementIndex + readOnlyProvider.PromptEndOffset,
+                    tuple.replacementLength,
+                    tuple.completionText);
+
+                TextArea.Caret.BringCaretToView();
+            }
+            finally { IsReadOnly = false; }
         }
 
         void setInputFromHistory(bool forward)
@@ -438,7 +445,7 @@ namespace AvocadoShell.UI
 
         void execute()
         {
-            if (readOnlyProvider.IsReadOnly) return;
+            if (IsReadOnly) return;
 
             disableChangingText();
             var input = getInput();
