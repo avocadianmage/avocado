@@ -6,7 +6,6 @@ using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System.IO;
-using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -288,29 +287,19 @@ namespace AvocadoShell.UI
             // Check if the line contains any ANSI codes that we should process.
             if (ANSICode.ContainsANSICodes(text))
             {
-                writeOutputLineWithANSICodes(text);
-                return;
+                ANSICode.GetColorSegments(text)
+                    .ForEach(seg => writeANSISegment(seg));
             }
-
-            if (newline) AppendLine(text, foreground);
             else Append(text, foreground);
+
+            if (newline) AppendLine();
         }
 
-        void writeOutputLineWithANSICodes(string text)
-        {
-            var segments = ANSICode.GetColorSegments(text);
-            if (!segments.Any()) return;
-            segments
-                .Take(segments.Count() - 1)
-                .ForEach(seg => writeANSISegment(seg, false));
-            writeANSISegment(segments.Last(), true);
-        }
-
-        void writeANSISegment(ANSISegment segment, bool newline)
+        void writeANSISegment(ANSISegment segment)
         {
             var brush = segment.Color.HasValue
                 ? new SolidColorBrush(segment.Color.Value) : OutputBrush;
-            write(segment.Text, brush, newline);
+            Append(segment.Text, brush);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)

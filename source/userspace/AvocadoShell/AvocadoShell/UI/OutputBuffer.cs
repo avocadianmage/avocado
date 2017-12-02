@@ -1,4 +1,6 @@
-﻿namespace AvocadoShell.UI
+﻿using System;
+
+namespace AvocadoShell.UI
 {
     sealed class OutputBuffer
     {
@@ -16,7 +18,7 @@
                     if (hitNonWhitespace)
                     {
                         whitespaceBuffer += text;
-                        if (newline) whitespaceBuffer += "\r";
+                        if (newline) whitespaceBuffer += Environment.NewLine;
                     }
                     return false;
                 }
