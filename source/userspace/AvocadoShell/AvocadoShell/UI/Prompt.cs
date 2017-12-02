@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using StandardLibrary.Processes;
+using System;
+using System.Text;
 
 namespace AvocadoShell.UI
 {
@@ -13,7 +15,8 @@ namespace AvocadoShell.UI
             return sb.Append(workingDirectory).ToString();
         }
 
-        public static string GetShellPromptString => "avocado~$ ";
+        public static string GetShellPromptString
+            => $"{(EnvUtils.IsAdmin ? "root" : Environment.UserName)}~$ ";
 
         public bool FromShell { get; set; }
         public string ShellTitle { get; set; }
