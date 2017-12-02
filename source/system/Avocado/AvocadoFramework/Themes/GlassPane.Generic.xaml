@@ -147,7 +147,7 @@
                                 <DoubleAnimation
                                     Storyboard.TargetName="Pane"
                                     Storyboard.TargetProperty="Opacity"
-                                    To="1"
+                                    To="0.95"
                                     Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
                             <Storyboard x:Key="FocusFadeOut">
