@@ -353,12 +353,15 @@ namespace AvocadoShell.UI
 
         bool handleTabKey()
         {
+            if (IsReadOnly) return true;
+
             // Perform autocomplete if at the shell prompt.
-            if (!IsReadOnly && prompt.FromShell)
+            if (prompt.FromShell)
             {
                 performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
+                return true;
             }
-            return true;
+            else return false;
         }
 
         bool handleLeftKey() => CaretOffset == readOnlyEndOffset;
