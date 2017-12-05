@@ -430,7 +430,7 @@ namespace AvocadoShell.UI
 
             // Update the display to show the new input.
             setInput(storedInput);
-            CaretOffset = Document.TextLength;
+            resetCaretToDocumentEnd();
         }
 
         void execute()
@@ -439,6 +439,7 @@ namespace AvocadoShell.UI
 
             disableChangingText();
             var input = getInput();
+            resetCaretToDocumentEnd();
             AppendLine();
 
             // If this is the shell prompt, execute the input.
@@ -464,6 +465,13 @@ namespace AvocadoShell.UI
         void exit()
         {
             Dispatcher.InvokeAsync(() => Window.GetWindow(this).Close());
+        }
+
+        void resetCaretToDocumentEnd()
+        {
+            TextArea.ClearSelection();
+            CaretOffset = Document.TextLength;
+            TextArea.Caret.BringCaretToView();
         }
     }
 }
