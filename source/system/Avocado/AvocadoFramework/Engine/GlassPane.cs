@@ -40,9 +40,9 @@ namespace AvocadoFramework.Engine
             paneUI.GetResource<Storyboard>("FocusFadeOut").Begin();
         }
 
-        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            base.OnPreviewMouseLeftButtonDown(e);
+            base.OnMouseLeftButtonDown(e);
 
             // Drag the window on left click.
             DragMove();

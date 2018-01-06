@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
 
-namespace StandardLibrary.Utilities
+namespace StandardLibrary.Processes.System
 {
-    public static class SystemUtils
+    public static class RegistryUtils
     {
         public static void SetRegistryValue(
             string keyPath, string valueName, object valueData)

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 
-namespace StandardLibrary.Utilities
+namespace StandardLibrary.Processes.System
 {
     public static class IOUtils
     {

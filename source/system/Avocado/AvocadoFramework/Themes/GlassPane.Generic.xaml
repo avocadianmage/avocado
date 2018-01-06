@@ -9,7 +9,7 @@
         <!-- Resources. -->
         <Style.Resources>
             <Thickness x:Key="ResizeMargin">4</Thickness>
-            <Thickness x:Key="WindowMargin">10</Thickness>
+            <Thickness x:Key="WindowMargin">20</Thickness>
         </Style.Resources>
 
         <!-- Area for resizing. -->
