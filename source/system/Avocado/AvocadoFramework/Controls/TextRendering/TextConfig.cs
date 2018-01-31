@@ -11,7 +11,5 @@ namespace AvocadoFramework.Controls.TextRendering
         public static FontWeight FontWeight => FontWeights.Bold;
         public static TextFormattingMode TextFormattingMode 
             => TextFormattingMode.Display;
-
-        public static double TextFadeDuration => 200;
     }
 }

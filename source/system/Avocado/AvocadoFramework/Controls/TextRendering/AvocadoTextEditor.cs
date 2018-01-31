@@ -109,18 +109,6 @@ namespace AvocadoFramework.Controls.TextRendering
             }
         }
 
-        Brush createFadingBrush(Brush baseBrush, double duration)
-        {
-            var brush = baseBrush.Clone();
-            brush.BeginAnimation(Brush.OpacityProperty, new DoubleAnimation
-            {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromMilliseconds(duration)
-            });
-            return brush;
-        }
-
         protected void Append(string text, Brush foreground)
         {
             Document.BeginUpdate();
@@ -131,8 +119,6 @@ namespace AvocadoFramework.Controls.TextRendering
 
             // Add each line to the static colorizer with the specified 
             // foreground.
-            var fadingBrush = createFadingBrush(
-                foreground, TextConfig.TextFadeDuration);
             for (; line <= Document.LineCount; line++)
             {
                 var lineObject = Document.GetLineByNumber(line);
@@ -140,7 +126,7 @@ namespace AvocadoFramework.Controls.TextRendering
                     line, 
                     Math.Max(lineObject.Offset, start), 
                     Math.Min(lineObject.EndOffset, Document.TextLength),
-                    fadingBrush);
+                    foreground);
             }
 
             Document.EndUpdate();
