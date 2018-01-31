@@ -5,19 +5,25 @@ using System.Windows.Media;
 
 sealed class StaticColorizer : DocumentColorizingTransformer
 {
-    readonly Dictionary<int, List<(int offset, int endOffset, Brush foreground)>> coloredLineParts 
-        = new Dictionary<int, List<(int offset, int endOffset, Brush foreground)>>();
+    readonly Dictionary<int, LinkedList<(
+                                int offset, 
+                                int endOffset, 
+                                Brush foreground)>> 
+        coloredLineParts = new Dictionary<int, LinkedList<(
+                                int offset, 
+                                int endOffset, 
+                                Brush foreground)>>();
 
     public void AddColoredLinePart(
         int lineNumber, int offset, int endOffset, Brush foreground)
     {
         if (!coloredLineParts.ContainsKey(lineNumber))
         {
-            coloredLineParts[lineNumber] 
-                = new List<(int offset, int endOffset, Brush foreground)>();
+            coloredLineParts[lineNumber]
+                = new LinkedList<(int offset, int endOffset, Brush foreground)>();
         }
 
-        coloredLineParts[lineNumber].Add((offset, endOffset, foreground));
+        coloredLineParts[lineNumber].AddLast((offset, endOffset, foreground));
     }
 
     protected override void ColorizeLine(DocumentLine line)
@@ -27,12 +33,15 @@ sealed class StaticColorizer : DocumentColorizingTransformer
             return;
         }
 
-        coloredLineParts[line.LineNumber].ForEach(part =>
+        var currentLinePart = coloredLineParts[line.LineNumber].First;
+        while (currentLinePart != null)
         {
-            ChangeLinePart(part.offset, part.endOffset, element =>
+            var val = currentLinePart.Value;
+            ChangeLinePart(val.offset, val.endOffset, element =>
             {
-                element.TextRunProperties.SetForegroundBrush(part.foreground);
+                element.TextRunProperties.SetForegroundBrush(val.foreground);
             });
-        });
+            currentLinePart = currentLinePart.Next;
+        }
     }
 }

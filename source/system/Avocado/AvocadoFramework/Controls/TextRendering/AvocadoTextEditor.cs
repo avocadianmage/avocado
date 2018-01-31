@@ -123,8 +123,8 @@ namespace AvocadoFramework.Controls.TextRendering
             {
                 var lineObject = Document.GetLineByNumber(line);
                 staticColorizer.AddColoredLinePart(
-                    line, 
-                    Math.Max(lineObject.Offset, start), 
+                    line,
+                    Math.Max(lineObject.Offset, start),
                     Math.Min(lineObject.EndOffset, Document.TextLength),
                     foreground);
             }
