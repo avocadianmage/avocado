@@ -108,7 +108,7 @@ namespace AvocadoFramework.Controls.TextRendering
                     line,
                     Math.Max(lineObject.Offset, start),
                     Math.Min(lineObject.EndOffset, Document.TextLength),
-                    foreground );
+                    foreground);
             }
 
             Document.EndUpdate();
