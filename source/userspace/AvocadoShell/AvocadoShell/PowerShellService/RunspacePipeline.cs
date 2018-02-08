@@ -1,6 +1,5 @@
 ﻿using AvocadoShell.PowerShellService.Utilities;
 using StandardLibrary.Processes;
-using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -12,9 +11,6 @@ namespace AvocadoShell.PowerShellService
 {
     sealed class RunspacePipeline
     {
-        readonly ResetEventWithData<string> executionDone
-            = new ResetEventWithData<string>();
-
         Pipeline pipeline;
 
         public Runspace Runspace { get; }

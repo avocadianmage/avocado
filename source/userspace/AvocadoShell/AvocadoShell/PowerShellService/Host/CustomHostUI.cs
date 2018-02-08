@@ -223,7 +223,6 @@ namespace AvocadoShell.PowerShellService.Host
             return PromptForCredential(caption, message, userName, targetName);
         }
 
-
         /// <summary>
         /// Reads characters that are entered by the user until a newline 
         /// (carriage return) is encountered.
