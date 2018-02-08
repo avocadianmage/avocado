@@ -1,5 +1,4 @@
 ﻿using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -11,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Xml;
 
 namespace AvocadoFramework.Controls.TextRendering
@@ -27,7 +25,6 @@ namespace AvocadoFramework.Controls.TextRendering
         }
 
         readonly StaticColorizer staticColorizer = new StaticColorizer();
-        bool shouldAutoScroll;
         Border visualCaret;
 
         public AvocadoTextEditor()
@@ -35,8 +32,6 @@ namespace AvocadoFramework.Controls.TextRendering
             TextArea.Caret.CaretBrush = Brushes.Transparent;
 
             Loaded += onLoaded;
-            Document.Changing += onDocumentChanging;
-            Document.Changed += onDocumentChanged;
 
             TextArea.TextView.LineTransformers.Add(staticColorizer);
         }
@@ -55,19 +50,6 @@ namespace AvocadoFramework.Controls.TextRendering
             Canvas.SetLeft(visualCaret, caretVisualPosition.X);
             Canvas.SetTop(visualCaret, caretVisualPosition.Y);
         }
-
-        void onDocumentChanged(object sender, DocumentChangeEventArgs e)
-        {
-            if (shouldAutoScroll) ScrollToEnd();
-        }
-
-        void onDocumentChanging(object sender, DocumentChangeEventArgs e)
-        {
-            shouldAutoScroll 
-                = isScrolledToEnd && e.Offset == Document.TextLength;
-        }
-
-        bool isScrolledToEnd => VerticalOffset + ViewportHeight >= ExtentHeight;
 
         public override void OnApplyTemplate()
         {
@@ -126,7 +108,7 @@ namespace AvocadoFramework.Controls.TextRendering
                     line,
                     Math.Max(lineObject.Offset, start),
                     Math.Min(lineObject.EndOffset, Document.TextLength),
-                    foreground);
+                    foreground );
             }
 
             Document.EndUpdate();
@@ -135,11 +117,13 @@ namespace AvocadoFramework.Controls.TextRendering
         protected void AppendLine()
         {
             Document.Insert(Document.TextLength, Environment.NewLine);
+            ScrollToVerticalOffset(Document.TextLength);
         }
 
         protected void AppendLine(string text, Brush foreground)
         {
-            Append(text + Environment.NewLine, foreground);
+            Append(text, foreground);
+            AppendLine();
         }
 
         protected new void Select(
