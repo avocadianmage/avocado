@@ -162,3 +162,5 @@ $RECYCLE.BIN/
 /source/userspace/AvocadoShell/.vs/AvocadoShell/v15
 /source/system/StandardLibrary/.vs/StandardLibrary/v15/Server/sqlite3/db.lock
 /source/system/StandardLibrary/.vs/StandardLibrary/v15/sqlite3/db.lock
+*.ide-shm
+*.ide-wal
