@@ -132,6 +132,13 @@
                             <Duration x:Key="OutlineFadeDuration">
                                 0:0:0.3
                             </Duration>
+                            <Storyboard x:Key="WindowFadeIn">
+                                <DoubleAnimation 
+                                    Storyboard.TargetName="Pane"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0.9"
+                                    Duration="{StaticResource WindowFadeDuration}" />
+                            </Storyboard>
                             <Storyboard x:Key="WindowFadeOut">
                                 <DoubleAnimation 
                                     Storyboard.TargetName="Pane"
@@ -145,11 +152,6 @@
                                     Storyboard.TargetProperty="BorderBrush.Color"
                                     To="{x:Static engine:GlassPane.ActiveOutlineColor}"
                                     Duration="{StaticResource OutlineFadeDuration}" />
-                                <DoubleAnimation
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="Opacity"
-                                    To="0.95"
-                                    Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
                             <Storyboard x:Key="FocusFadeOut">
                                 <ColorAnimation 
@@ -157,11 +159,6 @@
                                     Storyboard.TargetProperty="BorderBrush.Color"
                                     To="DimGray"
                                     Duration="{StaticResource OutlineFadeDuration}" />
-                                <DoubleAnimation
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="Opacity"
-                                    To="0.85"
-                                    Duration="{StaticResource WindowFadeDuration}" />
                             </Storyboard>
                         </Border.Resources>
                         

@@ -2,6 +2,7 @@
 using StandardLibrary.WPF;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,6 +27,16 @@ namespace AvocadoFramework.Engine
             DefaultStyleKeyProperty.OverrideMetadata(
                 frameType,
                 new FrameworkPropertyMetadata(frameType));
+        }
+
+        public GlassPane()
+        {
+            Loaded += (s, e) =>
+            {
+                Task.Delay(1).ContinueWith(
+                    t => paneUI.GetResource<Storyboard>("WindowFadeIn").Begin(),
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            };
         }
 
         protected override void OnActivated(EventArgs e)
