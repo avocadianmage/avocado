@@ -23,7 +23,7 @@ namespace AvocadoFramework.Controls.Progress
 
         public string Title
         {
-            get { return GetValue(TitleProperty) as string; }
+            get { return (string)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
 
@@ -36,7 +36,7 @@ namespace AvocadoFramework.Controls.Progress
 
         public string Status
         {
-            get { return GetValue(StatusProperty) as string; }
+            get { return (string)GetValue(StatusProperty); }
             set { SetValue(StatusProperty, value); }
         }
     }

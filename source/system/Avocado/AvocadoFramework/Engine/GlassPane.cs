@@ -15,6 +15,7 @@ namespace AvocadoFramework.Engine
     {
         public static Color ActiveOutlineColor { get; } 
             = EnvUtils.IsAdmin ? Colors.Salmon : Colors.CornflowerBlue;
+        readonly TimeSpan windowFadeDuration = TimeSpan.FromMilliseconds(200);
 
         Border paneUI => this.GetTemplateElement<Border>("Pane");
         
@@ -29,12 +30,27 @@ namespace AvocadoFramework.Engine
                 new FrameworkPropertyMetadata(frameType));
         }
 
+        public static readonly DependencyProperty MaxOpacityProperty
+            = DependencyProperty.Register(
+                "MaxOpacity",
+                typeof(double),
+                typeof(GlassPane),
+                new FrameworkPropertyMetadata());
+
+        public double MaxOpacity
+        {
+            get { return (double)GetValue(MaxOpacityProperty); }
+            set { SetValue(MaxOpacityProperty, value); }
+        }
+
         public GlassPane()
         {
             Loaded += (s, e) =>
             {
+                var animation = new DoubleAnimation(
+                    MaxOpacity, windowFadeDuration);
                 Task.Delay(1).ContinueWith(
-                    t => paneUI.GetResource<Storyboard>("WindowFadeIn").Begin(),
+                    t => BeginAnimation(OpacityProperty, animation),
                     TaskScheduler.FromCurrentSynchronizationContext());
             };
         }
@@ -61,9 +77,9 @@ namespace AvocadoFramework.Engine
 
         void applyCloseAnimation()
         {
-            var storyboard = paneUI.GetResource<Storyboard>("WindowFadeOut");
-            storyboard.Completed += onCloseAnimationComplete;
-            storyboard.Begin();
+            var animation = new DoubleAnimation(0, windowFadeDuration);
+            animation.Completed += onCloseAnimationComplete;
+            BeginAnimation(OpacityProperty, animation);
         }
 
         void onCloseAnimationComplete(object sender, EventArgs e)

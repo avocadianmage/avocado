@@ -26,6 +26,8 @@
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="MinHeight" Value="48" />
         <Setter Property="Cursor" Value="SizeAll" />
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="MaxOpacity" Value="0.9" />
 
         <!-- Template. -->
         <Setter Property="Template">
@@ -123,29 +125,11 @@
                             BorderBrush="Transparent" 
                             BorderThickness="1" 
                             Background="#1e1e1e" 
-                            Opacity="0"
                             Padding="{StaticResource WindowMargin}">
                         <Border.Resources>
-                            <Duration x:Key="WindowFadeDuration">
-                                0:0:0.2
-                            </Duration>
                             <Duration x:Key="OutlineFadeDuration">
                                 0:0:0.3
                             </Duration>
-                            <Storyboard x:Key="WindowFadeIn">
-                                <DoubleAnimation 
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="Opacity"
-                                    To="0.9"
-                                    Duration="{StaticResource WindowFadeDuration}" />
-                            </Storyboard>
-                            <Storyboard x:Key="WindowFadeOut">
-                                <DoubleAnimation 
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="Opacity"
-                                    To="0"
-                                    Duration="{StaticResource WindowFadeDuration}" />
-                            </Storyboard>
                             <Storyboard x:Key="FocusFadeIn">
                                 <ColorAnimation 
                                     Storyboard.TargetName="Pane"
