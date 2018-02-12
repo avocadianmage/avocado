@@ -24,10 +24,11 @@
         <!-- GlassPane properties. -->
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="WindowStyle" Value="None" />
-        <Setter Property="MinHeight" Value="48" />
         <Setter Property="Cursor" Value="SizeAll" />
         <Setter Property="Opacity" Value="0" />
         <Setter Property="MaxOpacity" Value="0.9" />
+        <Setter Property="Background" Value="#1e1e1e" />
+        <Setter Property="BorderThickness" Value="1" />
 
         <!-- Template. -->
         <Setter Property="Template">
@@ -121,33 +122,11 @@
                     </ControlTemplate.Resources>
 
                     <!-- Layout. -->
-                    <Border x:Name="Pane" 
-                            BorderBrush="Transparent" 
-                            BorderThickness="1" 
-                            Background="#1e1e1e" 
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            Background="{TemplateBinding Background}" 
                             Padding="{StaticResource WindowMargin}">
-                        <Border.Resources>
-                            <Duration x:Key="OutlineFadeDuration">
-                                0:0:0.3
-                            </Duration>
-                            <Storyboard x:Key="FocusFadeIn">
-                                <ColorAnimation 
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="BorderBrush.Color"
-                                    To="{x:Static engine:GlassPane.ActiveOutlineColor}"
-                                    Duration="{StaticResource OutlineFadeDuration}" />
-                            </Storyboard>
-                            <Storyboard x:Key="FocusFadeOut">
-                                <ColorAnimation 
-                                    Storyboard.TargetName="Pane"
-                                    Storyboard.TargetProperty="BorderBrush.Color"
-                                    To="DimGray"
-                                    Duration="{StaticResource OutlineFadeDuration}" />
-                            </Storyboard>
-                        </Border.Resources>
-                        
                         <ContentPresenter />
-
                     </Border>
 
                 </ControlTemplate>

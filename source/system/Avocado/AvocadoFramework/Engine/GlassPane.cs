@@ -1,10 +1,9 @@
 ﻿using StandardLibrary.Processes;
-using StandardLibrary.WPF;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -13,12 +12,11 @@ namespace AvocadoFramework.Engine
 {
     public abstract class GlassPane : Window
     {
-        public static Color ActiveOutlineColor { get; } 
+        readonly Color activeBorderColor
             = EnvUtils.IsAdmin ? Colors.Salmon : Colors.CornflowerBlue;
         readonly TimeSpan windowFadeDuration = TimeSpan.FromMilliseconds(200);
+        readonly TimeSpan borderFadeDuration = TimeSpan.FromMilliseconds(300);
 
-        Border paneUI => this.GetTemplateElement<Border>("Pane");
-        
         bool closeImmediately = false;
         
         static GlassPane()
@@ -45,26 +43,46 @@ namespace AvocadoFramework.Engine
 
         public GlassPane()
         {
+            BorderBrush = new SolidColorBrush(Colors.Transparent);
             Loaded += (s, e) =>
             {
-                var animation = new DoubleAnimation(
-                    MaxOpacity, windowFadeDuration);
                 Task.Delay(1).ContinueWith(
-                    t => BeginAnimation(OpacityProperty, animation),
+                    t => fadeWindow(true),
                     TaskScheduler.FromCurrentSynchronizationContext());
             };
+        }
+
+        Task fadeWindow(bool toShow)
+        {
+            var mutex = new AutoResetEvent(false);
+
+            var targetOpacity = toShow ? MaxOpacity : 0;
+            var animation = new DoubleAnimation(
+                targetOpacity, windowFadeDuration);
+            animation.Completed += (s, e) => mutex.Set();
+            BeginAnimation(OpacityProperty, animation);
+
+            return Task.Run(() => mutex.WaitOne());
+        }
+
+        void fadeBorder(bool toActive)
+        {
+            var targetColor = toActive ? activeBorderColor : Colors.DimGray;
+            var animation = new ColorAnimation(targetColor, borderFadeDuration);
+            BorderBrush.BeginAnimation(
+                SolidColorBrush.ColorProperty, animation);
         }
 
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            paneUI.GetResource<Storyboard>("FocusFadeIn").Begin();
+            fadeBorder(true);
         }
 
         protected override void OnDeactivated(EventArgs e)
         {
             base.OnDeactivated(e);
-            paneUI.GetResource<Storyboard>("FocusFadeOut").Begin();
+            fadeBorder(false);
         }
 
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
@@ -75,26 +93,22 @@ namespace AvocadoFramework.Engine
             DragMove();
         }
 
-        void applyCloseAnimation()
-        {
-            var animation = new DoubleAnimation(0, windowFadeDuration);
-            animation.Completed += onCloseAnimationComplete;
-            BeginAnimation(OpacityProperty, animation);
-        }
-
         void onCloseAnimationComplete(object sender, EventArgs e)
         {
             closeImmediately = true;
             Close();
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected async override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
 
             if (closeImmediately) return;
+
             e.Cancel = true;
-            applyCloseAnimation();
+            await fadeWindow(false);
+            closeImmediately = true;
+            Close();
         }
     }
 }
