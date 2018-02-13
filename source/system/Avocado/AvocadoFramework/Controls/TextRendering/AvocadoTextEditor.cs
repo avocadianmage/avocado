@@ -139,7 +139,6 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             get
             {
-
                 return base.SelectionStart == CaretOffset
                     ? base.SelectionStart + SelectionLength
                     : base.SelectionStart;
