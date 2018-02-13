@@ -44,8 +44,14 @@ namespace AvocadoFramework.Engine
         public GlassPane()
         {
             BorderBrush = new SolidColorBrush(Colors.Transparent);
+            
             Loaded += (s, e) =>
             {
+                if (WindowState != WindowState.Maximized)
+                {
+                    Cursor = Cursors.SizeAll;
+                }
+
                 Task.Delay(1).ContinueWith(
                     t => fadeWindow(true),
                     TaskScheduler.FromCurrentSynchronizationContext());
@@ -89,8 +95,8 @@ namespace AvocadoFramework.Engine
         {
             base.OnMouseLeftButtonDown(e);
 
-            // Drag the window on left click.
-            DragMove();
+            // Allow dragging the window on left click, if not maximized.
+            if (WindowState != WindowState.Maximized) DragMove();
         }
 
         void onCloseAnimationComplete(object sender, EventArgs e)
