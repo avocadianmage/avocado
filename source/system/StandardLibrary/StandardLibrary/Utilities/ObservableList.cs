@@ -30,7 +30,7 @@ namespace StandardLibrary.Utilities
 
         public IEnumerable<T> RemoveAll(Predicate<T> match, bool notify = true)
         {
-            var itemsToRemove = data.Where(match.Invoke);
+            var itemsToRemove = data.Where(match.Invoke).ToList();
             data.RemoveAll(match);
             if (notify)
             {
@@ -44,7 +44,7 @@ namespace StandardLibrary.Utilities
         public IEnumerable<T> RemoveRange(
             int index, int count, bool notify = true)
         {
-            var itemsToRemove = data.Take(index + count).Skip(index);
+            var itemsToRemove = data.Take(index + count).Skip(index).ToList();
             data.RemoveRange(index, count);
             if (notify)
             {
