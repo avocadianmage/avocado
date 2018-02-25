@@ -258,8 +258,12 @@ namespace AvocadoShell.UI
             if (Document.TextLength > 0) AppendLine();
             AppendLine(title, VerboseBrush);
 
-            // Update working directory.
-            Directory.SetCurrentDirectory(workingDirectory);
+            // Update working directory of this program, if the directory exists
+            // (i.e. we're not in the registry)
+            if (Directory.Exists(workingDirectory))
+            {
+                Directory.SetCurrentDirectory(workingDirectory);
+            }
         }
 
         public void WriteOutputLine(string text)
