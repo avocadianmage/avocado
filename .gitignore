@@ -164,3 +164,5 @@ $RECYCLE.BIN/
 /source/system/StandardLibrary/.vs/StandardLibrary/v15/sqlite3/db.lock
 *.ide-shm
 *.ide-wal
+*.dtbcache
+*.lock

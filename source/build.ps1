@@ -34,6 +34,5 @@ if (-not $env:PATH.Split(";").Contains($shortcutPath))
 
 # Build userspace solutions.
 Get-ChildItem -Recurse $PSScriptRoot\userspace *.sln | ForEach-Object {
-    Start-Job -ScriptBlock $buildFunc -ArgumentList $_.FullName, $shortcutPath, $TRUE
+    & $buildFunc $_.FullName $shortcutPath $TRUE
 }
-Get-Job | ForEach-Object { Wait-Job $_.Id; Remove-Job $_.Id }
