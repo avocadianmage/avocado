@@ -29,7 +29,7 @@ namespace AvocadoServer.ServerAPI
                 id);
         }
 
-        [AllowedClient(ClientType.ThisMachine)]
+        [AllowedClient(ClientType.LAN)]
         public Pipeline RunJob(
             string workingDirectory, int secInterval, string filename)
         {

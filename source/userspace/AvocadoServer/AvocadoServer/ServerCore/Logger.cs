@@ -17,7 +17,7 @@ namespace AvocadoServer.ServerCore
             = new Dictionary<ClientType, Color>() {
                 { ClientType.ThisMachine, Colors.LightGreen },
                 { ClientType.LAN, Colors.Yellow },
-                { ClientType.Outside, Colors.Orange }
+                { ClientType.External, Colors.Orange }
             };
 
         public static void WriteLine(string msg)

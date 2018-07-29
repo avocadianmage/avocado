@@ -10,7 +10,7 @@ namespace AvocadoServer.ServerCore
     {
         ThisMachine,
         LAN,
-        Outside
+        External
     }
 
     static class ClientIdentifier
@@ -24,11 +24,8 @@ namespace AvocadoServer.ServerCore
 
         public static ClientType GetClientType()
         {
-            var clientIP = GetIP();
-            if (clientIP == Host.InternalIP) return ClientType.ThisMachine;
-
-            var addr = IPAddress.Parse(clientIP);
-            return isLanIP(addr) ? ClientType.LAN : ClientType.Outside;
+            var addr = IPAddress.Parse(GetIP());
+            return isLanIP(addr) ? ClientType.LAN : ClientType.External;
         }
 
         // attribution: 
