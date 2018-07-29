@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.ServiceModel;
@@ -24,8 +26,18 @@ namespace AvocadoServer.ServerCore
 
         public static ClientType GetClientType()
         {
-            var addr = IPAddress.Parse(GetIP());
+            var clientIP = GetIP();
+            if (clientIP == GetLocalIPAddress()) return ClientType.ThisMachine;
+
+            var addr = IPAddress.Parse(clientIP);
             return isLanIP(addr) ? ClientType.LAN : ClientType.External;
+        }
+
+        static string GetLocalIPAddress()
+        {
+            return Dns.GetHostEntry(Dns.GetHostName()).AddressList
+                .Single(ip => ip.AddressFamily == AddressFamily.InterNetwork)
+                .ToString();
         }
 
         // attribution: 
