@@ -335,10 +335,12 @@ namespace AvocadoShell.UI
 
         bool handleEscKey()
         {
-            // If no text was selected, delete all text at the prompt.
+            // If no text was selected, delete all text at the prompt and place
+            // cursor there.
             if (!IsReadOnly && TextArea.Selection.IsEmpty)
             {
                 setInput(string.Empty);
+                resetCaretToDocumentEnd();
                 return true;
             }
             return false;
