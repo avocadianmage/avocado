@@ -18,7 +18,7 @@ namespace AvocadoShell.UI
 
         public IEnumerable<ISegment> GetDeletableSegments(ISegment segment)
         {
-            if (segment.EndOffset <= PromptEndOffset)
+            if (IsReadOnly || segment.EndOffset <= PromptEndOffset)
             {
                 return Enumerable.Empty<ISegment>();
             }
