@@ -82,6 +82,9 @@
     <Reference Include="AvocadoFramework">
       <HintPath>..\..\..\system\Avocado\AvocadoFramework\bin\Release\AvocadoFramework.dll</HintPath>
     </Reference>
+    <Reference Include="AvocadoLib.CommandLine">
+      <HintPath>..\..\..\system\AvocadoLibraries\AvocadoLib.CommandLine\bin\Release\AvocadoLib.CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="AvocadoUtilities">
       <HintPath>..\..\..\system\Avocado\AvocadoUtilities\bin\Release\AvocadoUtilities.dll</HintPath>
     </Reference>

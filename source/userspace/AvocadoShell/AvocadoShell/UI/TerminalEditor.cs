@@ -1,6 +1,6 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using AvocadoLib.CommandLine.ANSI;
 using AvocadoShell.PowerShellService;
-using AvocadoUtilities.CommandLine.ANSI;
 using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
