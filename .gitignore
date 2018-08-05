@@ -166,3 +166,6 @@ $RECYCLE.BIN/
 *.ide-wal
 *.dtbcache
 *.lock
+/source/userspace/AvocadoComm/AvocadoServiceHost/App.config
+/source/userspace/AvocadoComm/AvocadoCommClient/App.config
+/source/userspace/AvocadoComm/AvocadoCommClient/Connected Services/AvocadoServiceReference
