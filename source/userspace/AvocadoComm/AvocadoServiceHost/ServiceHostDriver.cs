@@ -1,4 +1,5 @@
-﻿using AvocadoServiceLib;
+﻿using AvocadoServiceHost.Contract;
+using AvocadoServiceHost.Utilities;
 using System;
 using System.Configuration;
 using System.Linq;
@@ -21,9 +22,9 @@ namespace AvocadoServiceHost
                 Logging.WriteLine("Opening host communication...");
                 host.Open();
 
-                Logging.WriteLine(new(string, Color?)[] {
-                    ("AvocadoService is now running at ", null),
-                    (getHostEndpoint(host).ToString(), Colors.SkyBlue)
+                Logging.WriteLine(new(string, ColorType)[] {
+                    ("AvocadoService is now running at ", ColorType.None),
+                    (getHostEndpoint(host).ToString(), ColorType.KeyPhrase)
                 });
                 Console.ReadLine();
             }

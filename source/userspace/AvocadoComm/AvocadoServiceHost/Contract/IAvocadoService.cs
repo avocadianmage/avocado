@@ -1,6 +1,6 @@
 ﻿using System.ServiceModel;
 
-namespace AvocadoServiceLib
+namespace AvocadoServiceHost.Contract
 {
     [ServiceContract(
         Namespace = "http://AvocadoServiceLib", 

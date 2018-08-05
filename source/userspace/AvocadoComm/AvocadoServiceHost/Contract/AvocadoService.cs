@@ -1,4 +1,4 @@
-﻿namespace AvocadoServiceLib
+﻿namespace AvocadoServiceHost.Contract
 {
     public sealed class AvocadoService : IAvocadoService
     {

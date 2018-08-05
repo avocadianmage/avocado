@@ -38,15 +38,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logging.cs" />
+    <Compile Include="Contract\AvocadoService.cs" />
+    <Compile Include="Contract\IAvocadoService.cs" />
+    <Compile Include="Utilities\ClientIdentifier.cs" />
+    <Compile Include="Utilities\TextColorPalette.cs" />
+    <Compile Include="Utilities\Logging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ServiceHostDriver.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AvocadoServiceLib\AvocadoServiceLib.csproj">
-      <Project>{f8f2852d-4a3b-4f86-938c-abf2a8c40692}</Project>
-      <Name>AvocadoServiceLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AvocadoLib.CommandLine">

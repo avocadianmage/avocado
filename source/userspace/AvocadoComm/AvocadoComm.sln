@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvocadoServiceLib", "AvocadoServiceLib\AvocadoServiceLib.csproj", "{F8F2852D-4A3B-4F86-938C-ABF2A8C40692}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvocadoServiceHost", "AvocadoServiceHost\AvocadoServiceHost.csproj", "{1021BE0B-075D-481D-88AA-CB24E625BD22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvocadoCommClient", "AvocadoCommClient\AvocadoCommClient.csproj", "{AE3D3A6E-3337-4569-B11B-C7209BEB65A0}"
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F8F2852D-4A3B-4F86-938C-ABF2A8C40692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8F2852D-4A3B-4F86-938C-ABF2A8C40692}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8F2852D-4A3B-4F86-938C-ABF2A8C40692}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8F2852D-4A3B-4F86-938C-ABF2A8C40692}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1021BE0B-075D-481D-88AA-CB24E625BD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1021BE0B-075D-481D-88AA-CB24E625BD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1021BE0B-075D-481D-88AA-CB24E625BD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
