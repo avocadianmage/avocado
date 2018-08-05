@@ -1,5 +1,4 @@
-﻿using AvocadoLib.CommandLine.ANSI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,13 +17,7 @@ namespace AvocadoServiceHost.Utilities
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.f ");
             Console.WriteLine(segments
                 .Prepend((text: timestamp, type: ColorType.Timestamp))
-                .Select(s =>
-                {
-                    return s.type == ColorType.None
-                        ? s.text
-                        : ANSICode.GetColoredText(
-                            TextColorPalette.GetColor(s.type), s.text);
-                })
+                .Select(s => TextColorPalette.GetColorString(s.type, s.text))
                 .Aggregate((a, n) => a += n));
         }
     }

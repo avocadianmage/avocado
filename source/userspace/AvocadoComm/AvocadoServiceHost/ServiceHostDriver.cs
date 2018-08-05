@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.Windows.Media;
 
 namespace AvocadoServiceHost
 {
@@ -22,7 +21,7 @@ namespace AvocadoServiceHost
                 Logging.WriteLine("Opening host communication...");
                 host.Open();
 
-                Logging.WriteLine(new(string, ColorType)[] {
+                Logging.WriteLine(new[] {
                     ("AvocadoService is now running at ", ColorType.None),
                     (getHostEndpoint(host).ToString(), ColorType.KeyPhrase)
                 });
