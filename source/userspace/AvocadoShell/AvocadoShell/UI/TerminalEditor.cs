@@ -6,6 +6,7 @@ using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
 using System.IO;
+using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using System.Windows;
@@ -94,6 +95,8 @@ namespace AvocadoShell.UI
         {
             var caretNavigationCommandBindings
                 = TextArea.DefaultInputHandler.CaretNavigation.CommandBindings;
+            var editingCommandBindings
+                = TextArea.DefaultInputHandler.Editing.CommandBindings;
 
             // Select input.
             caretNavigationCommandBindings
@@ -120,8 +123,27 @@ namespace AvocadoShell.UI
                 EditingCommands.MoveUpByPage, () => { });
 
             // Execute input.
-            TextArea.DefaultInputHandler.Editing.CommandBindings
-                .AddNewBinding(EditingCommands.EnterParagraphBreak, execute);
+            editingCommandBindings.AddNewBinding(
+                EditingCommands.EnterParagraphBreak, execute);
+
+            // Disable adding newlines during a secure prompt.
+            editingCommandBindings
+                .Where(b => b.Command == EditingCommands.EnterLineBreak)
+                .ForEach(b => b.CanExecute += (s, e) => 
+                    e.CanExecute = !prompt.IsSecure);
+
+            // Handle pasted text during a secure prompt differently.
+            editingCommandBindings
+                .Where(b => b.Command == ApplicationCommands.Paste)
+                .ForEach(b => b.CanExecute += (s, e) => {
+                    e.CanExecute = !prompt.IsSecure;
+                    if (!e.CanExecute) e.Handled = false;
+                });
+            editingCommandBindings.Add(new CommandBinding(
+                ApplicationCommands.Paste,
+                (s, e) => Clipboard.GetText().ForEach(
+                    prompt.SecureStringInput.AppendChar),
+                (s, e) => e.CanExecute = prompt.IsSecure));
 
             // Execution break.
             TextArea.DefaultInputHandler.AddBinding(
@@ -204,10 +226,9 @@ namespace AvocadoShell.UI
 
         public SecureString WriteSecurePrompt(string text)
         {
-            var secureStr = new SecureString();
-            writePrompt(text, true).ForEach(secureStr.AppendChar);
-            secureStr.MakeReadOnly();
-            return secureStr;
+            writePrompt(text, true);
+            prompt.SecureStringInput.MakeReadOnly();
+            return prompt.SecureStringInput;
         }
 
         string writePrompt(string text, bool secure)
@@ -228,6 +249,8 @@ namespace AvocadoShell.UI
         void writePromptCore(string text, bool fromShell, bool secure)
         {
             prompt.FromShell = fromShell;
+            prompt.IsSecure = secure;
+            prompt.SecureStringInput = new SecureString();
 
             if (fromShell) updateWorkingDirectory();
 
@@ -328,9 +351,26 @@ namespace AvocadoShell.UI
                 case Key.Down:
                     e.Handled = handleUpDownKeys(e.Key);
                     break;
+
+                case Key.Back:
+                    e.Handled = handleBackspaceKey();
+                    break;
             }
 
             base.OnPreviewKeyDown(e);
+        }
+        
+        protected override void OnPreviewTextInput(TextCompositionEventArgs e)
+        {
+            if (e.Handled) return;
+
+            if (!IsReadOnly && prompt.IsSecure)
+            {
+                e.Text.ForEach(prompt.SecureStringInput.AppendChar);
+                e.Handled = true;
+            }
+
+            base.OnPreviewTextInput(e);
         }
 
         bool handleEscKey()
@@ -348,7 +388,7 @@ namespace AvocadoShell.UI
 
         bool handleTabKey()
         {
-            if (IsReadOnly) return true;
+            if (IsReadOnly || prompt.IsSecure) return true;
 
             // Perform autocomplete if at the shell prompt.
             if (prompt.FromShell)
@@ -356,7 +396,7 @@ namespace AvocadoShell.UI
                 performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
                 return true;
             }
-            else return false;
+            return false;
         }
 
         bool handleLeftKey() => CaretOffset == readOnlyEndOffset;
@@ -377,6 +417,15 @@ namespace AvocadoShell.UI
             return false;
         }
 
+        bool handleBackspaceKey()
+        {
+            if (!prompt.IsSecure) return false;
+            var secureString = prompt.SecureStringInput;
+            var indexToRemove = secureString.Length - 1;
+            if (indexToRemove >= 0) secureString.RemoveAt(indexToRemove);
+            return true;
+        }
+
         int inputLength
         {
             get => Document.TextLength - readOnlyProvider.PromptEndOffset;
@@ -390,8 +439,16 @@ namespace AvocadoShell.UI
 
         void setInput(string text)
         {
-            Document.Replace(
-                readOnlyProvider.PromptEndOffset, inputLength, text);
+            if (prompt.IsSecure)
+            {
+                prompt.SecureStringInput.Clear();
+                text.ForEach(prompt.SecureStringInput.AppendChar);
+            }
+            else
+            {
+                Document.Replace(
+                    readOnlyProvider.PromptEndOffset, inputLength, text);
+            }
         }
 
         async Task performAutocomplete(bool forward)
@@ -445,6 +502,8 @@ namespace AvocadoShell.UI
 
             disableChangingText();
             var input = getInput();
+            
+            // Prepare caret for output from the execution.
             resetCaretToDocumentEnd();
             AppendLine();
 

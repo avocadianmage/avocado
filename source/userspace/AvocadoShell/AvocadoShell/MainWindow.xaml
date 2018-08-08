@@ -2,9 +2,11 @@
     x:Class="AvocadoShell.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:shell="clr-namespace:AvocadoShell"
     xmlns:engine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
     xmlns:terminal="clr-namespace:AvocadoShell.UI"
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
-    <terminal:TerminalEditor x:Name="Terminal" Foreground="#dcdcdc" />
+    <terminal:TerminalEditor x:Name="Terminal" 
+                             Foreground="{x:Static shell:Config.OutputBrush}" />
 </engine:GlassPane>
