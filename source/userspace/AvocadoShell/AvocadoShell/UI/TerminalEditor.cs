@@ -5,6 +5,8 @@ using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using StandardLibrary.WPF;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -72,15 +74,11 @@ namespace AvocadoShell.UI
             }
         }
 
-        bool isCaretOnPromptLine
+        bool isCaretOnPromptLine()
         {
-            get
-            {
-                var promptLine = Document
-                    .GetLineByOffset(readOnlyProvider.PromptEndOffset)
-                    .LineNumber;
-                return TextArea.Caret.Line == promptLine;
-            }
+            var promptLine = Document
+                .GetLineByOffset(readOnlyProvider.PromptEndOffset).LineNumber;
+            return TextArea.Caret.Line == promptLine;
         }
 
         void onLoaded(object sender, RoutedEventArgs e)
@@ -91,59 +89,44 @@ namespace AvocadoShell.UI
             SizeChanged += onSizeChanged;
         }
 
+        IEnumerable<CommandBinding> getBindingsByCommand(
+            ICommand command, ICollection<CommandBinding> bindingCollection)
+        {
+            return bindingCollection.Where(b => b.Command == command);
+        }
+
+        void removeCommandBinding(
+            ICommand command, ICollection<CommandBinding> bindingCollection)
+        {
+            // Remove any existing bindings in the collection of the specified 
+            // command.
+            getBindingsByCommand(command, bindingCollection).ToList()
+                .ForEach(b => bindingCollection.Remove(b));
+        }
+
+        void replaceCommandBinding(
+            ICommand command, 
+            ICollection<CommandBinding> bindingCollection,
+            ExecutedRoutedEventHandler execute,
+            CanExecuteRoutedEventHandler canExecute)
+        {
+            removeCommandBinding(command, bindingCollection);
+            bindingCollection.Add(
+                new CommandBinding(command, execute, canExecute));
+        }
+
+        void replaceCommandBinding(
+            ICommand command,
+            ICollection<CommandBinding> bindingCollection,
+            ExecutedRoutedEventHandler execute)
+        {
+            replaceCommandBinding(command, bindingCollection, execute, null);
+        }
+
         void addCommandBindings()
         {
-            var caretNavigationCommandBindings
-                = TextArea.DefaultInputHandler.CaretNavigation.CommandBindings;
-            var editingCommandBindings
-                = TextArea.DefaultInputHandler.Editing.CommandBindings;
-
-            // Select input.
-            caretNavigationCommandBindings
-                .AddNewBinding(ApplicationCommands.SelectAll, selectInput);
-
-            // 'Home' commands.
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveToDocumentStart,
-                () => moveCaretToDocumentStart(false));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.SelectToDocumentStart,
-                () => moveCaretToDocumentStart(true));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveToLineStart,
-                () => moveCaretToLineStart(false));
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.SelectToLineStart,
-                () => moveCaretToLineStart(true));
-
-            // Page Up and Page Down commands.
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveDownByPage, () => { });
-            caretNavigationCommandBindings.AddNewBinding(
-                EditingCommands.MoveUpByPage, () => { });
-
-            // Execute input.
-            editingCommandBindings.AddNewBinding(
-                EditingCommands.EnterParagraphBreak, execute);
-
-            // Disable adding newlines during a secure prompt.
-            editingCommandBindings
-                .Where(b => b.Command == EditingCommands.EnterLineBreak)
-                .ForEach(b => b.CanExecute += (s, e) => 
-                    e.CanExecute = !prompt.IsSecure);
-
-            // Handle pasted text during a secure prompt differently.
-            editingCommandBindings
-                .Where(b => b.Command == ApplicationCommands.Paste)
-                .ForEach(b => b.CanExecute += (s, e) => {
-                    e.CanExecute = !prompt.IsSecure;
-                    if (!e.CanExecute) e.Handled = false;
-                });
-            editingCommandBindings.Add(new CommandBinding(
-                ApplicationCommands.Paste,
-                (s, e) => Clipboard.GetText().ForEach(
-                    prompt.SecureStringInput.AppendChar),
-                (s, e) => e.CanExecute = prompt.IsSecure));
+            setCaretNavigationBindings();
+            setEditingCommandBindings();
 
             // Execution break.
             TextArea.DefaultInputHandler.AddBinding(
@@ -153,39 +136,103 @@ namespace AvocadoShell.UI
                 (s, e) => terminateExec());
         }
 
-        void selectInput()
+        void setEditingCommandBindings()
         {
-            if (IsReadOnly) return;
-            Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
-            TextArea.Caret.BringCaretToView();
+            var editingCommandBindings
+                = TextArea.DefaultInputHandler.Editing.CommandBindings;
+
+            // Rewire paragraph break command to execute the prompt input.
+            replaceCommandBinding(
+                EditingCommands.EnterParagraphBreak,
+                editingCommandBindings,
+                (s, e) => execute(),
+                (s, e) => e.CanExecute = !IsReadOnly);
+
+            // Disable adding newlines during a secure prompt.
+            getBindingsByCommand(
+                EditingCommands.EnterLineBreak, editingCommandBindings)
+                .ForEach(b => b.CanExecute +=
+                    (s, e) => e.CanExecute = !prompt.IsSecure);
+
+            // Handle pasted text during a secure prompt differently.
+            getBindingsByCommand(
+                ApplicationCommands.Paste, editingCommandBindings)
+                .ForEach(b => b.CanExecute += (s, e) => {
+                    e.CanExecute = !prompt.IsSecure;
+                    if (!e.CanExecute) e.Handled = false;
+                });
+            editingCommandBindings.Add(new CommandBinding(
+                ApplicationCommands.Paste,
+                (s, e) => Clipboard.GetText().ForEach(
+                    prompt.SecureStringInput.AppendChar),
+                (s, e) => e.CanExecute = prompt.IsSecure));
         }
 
-        void moveCaretToDocumentStart(bool select)
+        void setCaretNavigationBindings()
         {
-            var targetOffset 
-                = CaretOffset < readOnlyEndOffset ? 0 : readOnlyEndOffset;
-            moveCaret(targetOffset, select);
+            var caretNavigationBindings
+                = TextArea.DefaultInputHandler.CaretNavigation.CommandBindings;
+
+            // Rewire 'Select All' to only select input.
+            replaceCommandBinding(
+                ApplicationCommands.SelectAll,
+                caretNavigationBindings,
+                (s, e) => selectInput(), 
+                (s, e) => e.CanExecute = !IsReadOnly);
+
+            // Rewire 'Home' commands to not take the cursor past the prompt.
+            replaceCommandBinding(
+                EditingCommands.MoveToDocumentStart,
+                caretNavigationBindings,
+                (s, e) => moveCaret(readOnlyProvider.PromptEndOffset, false));
+            replaceCommandBinding(
+                EditingCommands.SelectToDocumentStart,
+                caretNavigationBindings,
+                (s, e) => moveCaret(readOnlyProvider.PromptEndOffset, true));
+            replaceCommandBinding(
+                EditingCommands.MoveToLineStart,
+                caretNavigationBindings,
+                (s, e) => moveCaretToLineStart(false));
+            replaceCommandBinding(
+                EditingCommands.SelectToLineStart,
+                caretNavigationBindings,
+                (s, e) => moveCaretToLineStart(true));
+
+            // Disable 'Page Up' and 'Page Down' commands.
+            removeCommandBinding(
+                EditingCommands.MoveDownByPage, caretNavigationBindings);
+            removeCommandBinding(
+                EditingCommands.MoveUpByPage, caretNavigationBindings);
+            
+            // Prevent caret navigation if in readonly-mode or if the caret is 
+            // not after the prompt.
+            caretNavigationBindings.ForEach(
+                b => b.CanExecute += onCanNavigateCaret);
+        }
+
+        void onCanNavigateCaret(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !IsReadOnly && CaretOffset >= readOnlyEndOffset;
         }
 
         void moveCaretToLineStart(bool select)
         {
-            var caretLineStartOffset 
-                = Document.GetLineByOffset(CaretOffset).Offset;
-            var targetOffset = isCaretOnPromptLine
-                ? (CaretOffset < readOnlyEndOffset 
-                    ? caretLineStartOffset 
-                    : readOnlyEndOffset)
-                : caretLineStartOffset;
+            var targetOffset = isCaretOnPromptLine() 
+                ? readOnlyProvider.PromptEndOffset 
+                : Document.GetLineByOffset(CaretOffset).Offset;
             moveCaret(targetOffset, select);
         }
 
-        void moveCaret(int offset, bool select)
+        void moveCaret(int targetOffset, bool select)
         {
-            if (IsReadOnly) return;
-
-            if (select) Select(SelectionStart, offset);
-            else CaretOffset = offset;
-
+            if (select) Select(SelectionStart, targetOffset);
+            else CaretOffset = targetOffset;
+            TextArea.Caret.BringCaretToView();
+        }
+        
+        void selectInput()
+        {
+            Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
             TextArea.Caret.BringCaretToView();
         }
 
@@ -498,8 +545,6 @@ namespace AvocadoShell.UI
 
         void execute()
         {
-            if (IsReadOnly) return;
-
             disableChangingText();
             var input = getInput();
             

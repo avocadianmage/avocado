@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,21 +20,6 @@ namespace StandardLibrary.WPF
             this FrameworkElement element, string name)
         {
             return (T)element.FindResource(name);
-        }
-
-        public static void AddNewBinding(
-            this ICollection<CommandBinding> bindings,
-            ICommand command,
-            Action action)
-        {
-            foreach (var binding in bindings)
-            {
-                if (binding.Command != command) continue;
-                bindings.Remove(binding);
-                break;
-            }
-
-            bindings.Add(new CommandBinding(command, (s, e) => action()));
         }
 
         public static void MoveNextFocus(this FrameworkElement element)
