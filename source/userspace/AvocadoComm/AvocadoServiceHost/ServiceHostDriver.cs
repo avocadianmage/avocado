@@ -1,4 +1,5 @@
-﻿using AvocadoServiceHost.Contract;
+﻿using AvocadoLib.CommandLine.ANSI;
+using AvocadoServiceHost.Contract;
 using AvocadoServiceHost.Utilities;
 using System;
 using System.Configuration;

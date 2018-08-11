@@ -1,4 +1,5 @@
-﻿using AvocadoServiceHost.Utilities;
+﻿using AvocadoLib.CommandLine.ANSI;
+using AvocadoServiceHost.Utilities;
 
 namespace AvocadoServiceHost.Contract
 {

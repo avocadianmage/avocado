@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientFactory.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Connected Services\AvocadoServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>

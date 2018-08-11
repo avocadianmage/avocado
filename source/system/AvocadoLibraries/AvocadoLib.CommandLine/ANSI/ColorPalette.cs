@@ -1,10 +1,9 @@
-﻿using AvocadoLib.CommandLine.ANSI;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
 
-namespace AvocadoServiceHost.Utilities
+namespace AvocadoLib.CommandLine.ANSI
 {
-    enum ColorType
+    public enum ColorType
     {
         None = 0,
         Timestamp = 1,
@@ -14,7 +13,7 @@ namespace AvocadoServiceHost.Utilities
         AlertHigh = 5
     }
 
-    static class TextColorPalette
+    static class ColorPalette
     {
         static readonly Dictionary<ColorType, Color> colorDict
             = new Dictionary<ColorType, Color>

@@ -41,7 +41,6 @@
     <Compile Include="Contract\AvocadoService.cs" />
     <Compile Include="Contract\IAvocadoService.cs" />
     <Compile Include="Utilities\ClientIdentifier.cs" />
-    <Compile Include="Utilities\TextColorPalette.cs" />
     <Compile Include="Utilities\Logging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ServiceHostDriver.cs" />

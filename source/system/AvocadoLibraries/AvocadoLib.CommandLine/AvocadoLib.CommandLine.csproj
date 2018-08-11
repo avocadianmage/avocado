@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="ANSI\ANSICode.cs" />
     <Compile Include="ANSI\ANSISegment.cs" />
+    <Compile Include="ANSI\ANSIWriter.cs" />
+    <Compile Include="ANSI\ColorPalette.cs" />
     <Compile Include="Arguments\Subcommand.cs" />
     <Compile Include="Arguments\SubcommandAttribute.cs" />
   </ItemGroup>

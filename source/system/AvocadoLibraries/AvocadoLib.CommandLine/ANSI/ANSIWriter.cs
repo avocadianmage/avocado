@@ -1,11 +1,10 @@
-﻿using AvocadoLib.CommandLine.ANSI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AvocadoServiceHost.Utilities
+namespace AvocadoLib.CommandLine.ANSI
 {
-    static class Logging
+    public static class ANSIWriter
     {
         public static void WriteLine(string text)
         {
@@ -15,9 +14,9 @@ namespace AvocadoServiceHost.Utilities
         public static void WriteLine(
             IEnumerable<(string text, ColorType type)> segments)
         {
-            var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.f ");
-            ANSIWriter.WriteLine(
-                segments.Prepend((timestamp, ColorType.Timestamp)));
+            Console.WriteLine(segments
+                .Select(s => ColorPalette.GetColorString(s.type, s.text))
+                .Aggregate((a, n) => a += n));
         }
     }
 }
