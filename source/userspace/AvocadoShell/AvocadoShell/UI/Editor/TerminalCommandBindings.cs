@@ -278,9 +278,9 @@ namespace AvocadoShell.UI.Editor
             if (!editor.IsReadOnly && editor.TextArea.Selection.IsEmpty)
             {
                 editor.SetInput(string.Empty);
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         void bindCaretNavigation()
