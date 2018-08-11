@@ -38,7 +38,7 @@ namespace AvocadoShell.UI
 
             // Subscribe to events.
             Loaded += onLoaded;
-            Unloaded += (s, e) => terminateExec();
+            Unloaded += (s, e) => terminateExecution();
 
             disableChangingText();
             loadSyntaxHighlighting();
@@ -92,7 +92,8 @@ namespace AvocadoShell.UI
             ICollection<CommandBinding> bindingCollection,
             CanExecuteRoutedEventHandler canExecute)
         {
-            bindingCollection.Where(b => b.Command == command)
+            bindingCollection
+                .Where(b => command == null || b.Command == command)
                 .ForEach(b => b.CanExecute += canExecute);
         }
 
@@ -285,6 +286,21 @@ namespace AvocadoShell.UI
             return false;
         }
 
+        void bindCopy(ICollection<CommandBinding> bindingCollection)
+        {
+            modifyCommandBinding(
+                ApplicationCommands.Copy,
+                bindingCollection,
+                (s, e) => e.CanExecute = overrideCopy());
+        }
+
+        bool overrideCopy()
+        {
+            if (!TextArea.Selection.IsEmpty) return true;
+            terminateExecution();
+            return false;
+        }
+
         void setCommandBindings()
         {
             var caretNavigationBindings
@@ -292,8 +308,10 @@ namespace AvocadoShell.UI
 
             // Prevent caret navigation if in readonly-mode or if the caret is 
             // not after the prompt.
-            caretNavigationBindings.ForEach(b => b.CanExecute += (s, e) 
-                => e.CanExecute = isCaretAfterPrompt);
+            modifyCommandBinding(
+                null,
+                caretNavigationBindings,
+                (s, e) => e.CanExecute = isCaretAfterPrompt);
 
             disableNavigationCommands(caretNavigationBindings);
             bindSelectAll(caretNavigationBindings);
@@ -308,13 +326,7 @@ namespace AvocadoShell.UI
             bindBackspace(editingCommandBindings);
             bindPaste(editingCommandBindings);
             bindTab(editingCommandBindings);
-
-            // Execution break.
-            TextArea.DefaultInputHandler.AddBinding(
-                new RoutedCommand(),
-                ModifierKeys.Control,
-                Key.B,
-                (s, e) => terminateExec());
+            bindCopy(editingCommandBindings);
         }
 
         bool isCaretAfterPrompt
@@ -332,7 +344,7 @@ namespace AvocadoShell.UI
             Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
         }
 
-        void terminateExec()
+        void terminateExecution()
         {
             // Terminate the powershell process.
             if (!engine.MyHost.CurrentPipeline.Stop()) return;
