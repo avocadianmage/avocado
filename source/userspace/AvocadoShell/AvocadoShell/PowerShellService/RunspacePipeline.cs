@@ -1,5 +1,6 @@
 ﻿using AvocadoShell.PowerShellService.Utilities;
 using StandardLibrary.Processes;
+using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace AvocadoShell.PowerShellService
 {
     sealed class RunspacePipeline
     {
+        readonly ResetEventWithData<PipelineStateInfo> executionDone 
+            = new ResetEventWithData<PipelineStateInfo>();
         Pipeline pipeline;
 
         public Runspace Runspace { get; }
@@ -42,7 +45,7 @@ namespace AvocadoShell.PowerShellService
             => string.Join(" ", EnvUtils.GetArgs()).Yield();
 
         /// <summary>
-        /// Asynchronous request to stop the running pipeline.
+        /// Request to stop the running pipeline.
         /// </summary>
         /// <returns>True if the pipeline is being stopped. False otherwise
         /// (ex: the pipeline wasn't running).</returns>
@@ -50,35 +53,48 @@ namespace AvocadoShell.PowerShellService
         {
             if (pipeline?.PipelineStateInfo.State == PipelineState.Running)
             {
-                pipeline.Stop();
+                pipeline.StopAsync();
                 return true;
             }
             return false;
         }
 
+        void onPipelineStateChanged(object sender, PipelineStateEventArgs e)
+        {
+            switch (e.PipelineStateInfo.State)
+            {
+                case PipelineState.Completed:
+                case PipelineState.Stopped:
+                    executionDone.Signal(e.PipelineStateInfo);
+                    break;
+            }
+        }
+
         public string ExecuteCommand(string command)
         {
-            pipeline = Runspace.CreatePipeline(command, true);
-            return executePipeline();
+            return executePipeline(command, true);
         }
 
         public string ExecuteScripts(IEnumerable<string> scripts)
         {
             var scriptStr = string.Join(Environment.NewLine, scripts);
-            pipeline = Runspace.CreatePipeline(scriptStr);
-            return executePipeline();
+            return executePipeline(scriptStr, false);
         }
 
-        string executePipeline()
+        string executePipeline(string command, bool addToHistory)
         {
+            // Create the new pipeline.
+            pipeline = Runspace.CreatePipeline(command, addToHistory);
+            pipeline.StateChanged += onPipelineStateChanged;
+
             // Have the our host format the output.
             pipeline.Commands.Add("Out-Default");
 
             // Execute the pipeline.
-            pipeline.Invoke();
+            pipeline.InvokeAsync();
 
             // Wait for the pipeline to finish and return any error output.
-            return pipeline.PipelineStateInfo.Reason?.Message;
+            return executionDone.Block().Reason?.Message;
         }
     }
 }
