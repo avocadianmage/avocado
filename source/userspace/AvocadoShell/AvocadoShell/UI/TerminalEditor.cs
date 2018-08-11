@@ -187,7 +187,7 @@ namespace AvocadoShell.UI
 
         bool canMoveLeftByWord()
         {
-            if (IsReadOnly) return false;
+            if (!isCaretAfterPrompt) return false;
             var promptEnd = readOnlyProvider.PromptEndOffset;
             var stringFromPromptEndToCaret = Document.GetText(
                 promptEnd, CaretOffset - promptEnd);
@@ -272,7 +272,7 @@ namespace AvocadoShell.UI
 
         void onCanTab(CanExecuteRoutedEventArgs e, bool forward)
         {
-            if (IsReadOnly || prompt.IsSecure)
+            if (!isCaretAfterPrompt || prompt.IsSecure)
             {
                 e.CanExecute = false;
                 return;
@@ -527,11 +527,7 @@ namespace AvocadoShell.UI
             // input is allowed. Otherwise, navigate standardly.
             if (CaretOffset >= readOnlyEndOffset)
             {
-                if (!IsReadOnly)
-                {
-                    setInputFromHistory(key == Key.Down);
-                    TextArea.Caret.BringCaretToView();
-                }
+                if (!IsReadOnly) setInputFromHistory(key == Key.Down);
                 return true;
             }
             return false;
