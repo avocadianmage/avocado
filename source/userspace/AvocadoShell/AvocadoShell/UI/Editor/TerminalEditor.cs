@@ -35,7 +35,6 @@ namespace AvocadoShell.UI.Editor
 
             // Subscribe to events.
             Loaded += onLoaded;
-            Unloaded += (s, e) => TerminateExecution();
 
             disableChangingText();
             loadSyntaxHighlighting();
@@ -66,8 +65,9 @@ namespace AvocadoShell.UI.Editor
             Task.Run(() => startCommandline(lineBufferLength));
 
             SizeChanged += onSizeChanged;
+            Window.GetWindow(this).Closing += (s, e2) => TerminateExecution();
         }
-        
+
         public void TerminateExecution()
         {
             // Terminate the powershell process.
