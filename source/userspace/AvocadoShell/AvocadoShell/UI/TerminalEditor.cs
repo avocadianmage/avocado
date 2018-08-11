@@ -112,38 +112,38 @@ namespace AvocadoShell.UI
 
         void bindHome(ICollection<CommandBinding> bindingCollection)
         {
-            void canExecuteHome(
-                CanExecuteRoutedEventArgs e, bool wholeDocument, bool select)
-            {
-                // Only proceed if the caret is after an open prompt.
-                e.CanExecute = isCaretAfterPrompt;
-                if (e.CanExecute)
-                {
-                    // If the directive is to move to the start of the document
-                    // or otherwise if the caret is on the same line as the 
-                    // prompt, move the caret to the end of the prompt and
-                    // disallow further execution.
-                    e.CanExecute = !wholeDocument && !isCaretOnPromptLine();
-                    if (!e.CanExecute) moveCaretToPromptEnd(select);
-                }
-            }
-
             modifyCommandBinding(
                 EditingCommands.MoveToDocumentStart,
                 bindingCollection,
-                (s, e) => canExecuteHome(e, true, false));
+                (s, e) => onCanExecuteHome(e, true, false));
             modifyCommandBinding(
                 EditingCommands.SelectToDocumentStart,
                 bindingCollection,
-                (s, e) => canExecuteHome(e, true, true));
+                (s, e) => onCanExecuteHome(e, true, true));
             modifyCommandBinding(
                 EditingCommands.MoveToLineStart,
                 bindingCollection,
-                (s, e) => canExecuteHome(e, false, false));
+                (s, e) => onCanExecuteHome(e, false, false));
             modifyCommandBinding(
                 EditingCommands.SelectToLineStart,
                 bindingCollection,
-                (s, e) => canExecuteHome(e, false, true));
+                (s, e) => onCanExecuteHome(e, false, true));
+        }
+
+        void onCanExecuteHome(
+            CanExecuteRoutedEventArgs e, bool wholeDocument, bool select)
+        {
+            // Only proceed if the caret is after an open prompt.
+            e.CanExecute = isCaretAfterPrompt;
+            if (e.CanExecute)
+            {
+                // If the directive is to move to the start of the document
+                // or otherwise if the caret is on the same line as the 
+                // prompt, move the caret to the end of the prompt and
+                // disallow further execution.
+                e.CanExecute = !wholeDocument && !isCaretOnPromptLine();
+                if (!e.CanExecute) moveCaretToPromptEnd(select);
+            }
         }
 
         void bindPageUpDown(ICollection<CommandBinding> bindingCollection)
@@ -161,16 +161,49 @@ namespace AvocadoShell.UI
 
         void bindLeft(ICollection<CommandBinding> bindingCollection)
         {
-            void onCanExecute(object sender, CanExecuteRoutedEventArgs e)
-            {
-                e.CanExecute = !IsReadOnly 
-                    && CaretOffset > readOnlyProvider.PromptEndOffset;
-            }
-
             modifyCommandBinding(
                 EditingCommands.MoveLeftByCharacter,
                 bindingCollection,
-                onCanExecute);
+                onCanMoveLeft);
+            modifyCommandBinding(
+                EditingCommands.SelectLeftByCharacter,
+                bindingCollection,
+                onCanMoveLeft);
+            modifyCommandBinding(
+               EditingCommands.MoveLeftByWord,
+               bindingCollection,
+               (s, e) => onCanMoveLeftByWord(e, false));
+            modifyCommandBinding(
+               EditingCommands.SelectLeftByWord,
+               bindingCollection,
+               (s, e) => onCanMoveLeftByWord(e, true));
+        }
+
+        bool canMoveLeft()
+        {
+            return !IsReadOnly
+                && CaretOffset > readOnlyProvider.PromptEndOffset;
+        }
+
+        bool canMoveLeftByWord()
+        {
+            if (IsReadOnly) return false;
+            var promptEnd = readOnlyProvider.PromptEndOffset;
+            var stringFromPromptEndToCaret = Document.GetText(
+                promptEnd, CaretOffset - promptEnd);
+            return !string.IsNullOrWhiteSpace(stringFromPromptEndToCaret);
+        }
+
+        void onCanMoveLeft(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = canMoveLeft();
+        }
+
+        void onCanMoveLeftByWord(CanExecuteRoutedEventArgs e, bool select)
+        {
+            if (canMoveLeftByWord()) return;
+            moveCaretToPromptEnd(select);
+            e.CanExecute = false;
         }
 
         void bindEnter(ICollection<CommandBinding> bindingCollection)
