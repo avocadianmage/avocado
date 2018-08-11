@@ -17,7 +17,7 @@ namespace AvocadoServiceHost.Utilities
         {
             var timestamp = DateTime.Now.ToString("MM.dd.yyyy HH:mm:ss.f ");
             ANSIWriter.WriteLine(
-                segments.Prepend((timestamp, ColorType.Timestamp)));
+                segments.Prepend((timestamp, ColorType.Informational)));
         }
     }
 }
