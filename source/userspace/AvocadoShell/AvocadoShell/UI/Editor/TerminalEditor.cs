@@ -329,7 +329,7 @@ namespace AvocadoShell.UI.Editor
         {
             TextArea.ClearSelection();
             CaretOffset = Document.TextLength;
-            TextArea.Caret.BringCaretToView();
+            ScrollToLine(TextArea.Caret.Line);
         }
     }
 }
