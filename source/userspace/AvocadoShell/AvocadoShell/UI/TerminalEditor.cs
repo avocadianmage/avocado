@@ -251,11 +251,38 @@ namespace AvocadoShell.UI
                 bindingCollection,
                 (s, e) =>
                 {
-                    if (!prompt.IsSecure) return;
+                    e.CanExecute = !prompt.IsSecure;
+                    if (e.CanExecute) return;
                     Clipboard.GetText().ForEach(
                         prompt.SecureStringInput.AppendChar);
-                    e.CanExecute = false;
                 });
+        }
+
+        void bindTab(ICollection<CommandBinding> bindingCollection)
+        {
+            modifyCommandBinding(
+                EditingCommands.TabForward,
+                bindingCollection,
+                (s, e) => onCanTab(e, true));
+            modifyCommandBinding(
+                EditingCommands.TabBackward,
+                bindingCollection,
+                (s, e) => onCanTab(e, false));
+        }
+
+        void onCanTab(CanExecuteRoutedEventArgs e, bool forward)
+        {
+            if (IsReadOnly || prompt.IsSecure)
+            {
+                e.CanExecute = false;
+                return;
+            }
+
+            // At a shell prompt, perform autocomplete. Otherwise, allow 
+            // tabbing.
+            e.CanExecute = !prompt.FromShell;
+            if (e.CanExecute) return;
+            performAutocomplete(forward).RunAsync();
         }
 
         void setCommandBindings()
@@ -279,6 +306,7 @@ namespace AvocadoShell.UI
             bindEnter(editingCommandBindings);
             bindBackspace(editingCommandBindings);
             bindPaste(editingCommandBindings);
+            bindTab(editingCommandBindings);
 
             // Execution break.
             TextArea.DefaultInputHandler.AddBinding(
@@ -458,10 +486,6 @@ namespace AvocadoShell.UI
                     e.Handled = handleEscKey();
                     break;
 
-                case Key.Tab:
-                    e.Handled = handleTabKey();
-                    break;
-
                 case Key.Up:
                 case Key.Down:
                     e.Handled = handleUpDownKeys(e.Key);
@@ -492,19 +516,6 @@ namespace AvocadoShell.UI
             {
                 setInput(string.Empty);
                 resetCaretToDocumentEnd();
-                return true;
-            }
-            return false;
-        }
-
-        bool handleTabKey()
-        {
-            if (IsReadOnly || prompt.IsSecure) return true;
-
-            // Perform autocomplete if at the shell prompt.
-            if (prompt.FromShell)
-            {
-                performAutocomplete(!WPFUtils.IsShiftKeyDown).RunAsync();
                 return true;
             }
             return false;
