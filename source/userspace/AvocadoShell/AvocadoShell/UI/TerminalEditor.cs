@@ -562,6 +562,8 @@ namespace AvocadoShell.UI
                     tuple.replacementIndex + readOnlyProvider.PromptEndOffset,
                     tuple.replacementLength,
                     tuple.completionText);
+
+                resetCaretToDocumentEnd();
             }
             finally { IsReadOnly = false; }
         }
