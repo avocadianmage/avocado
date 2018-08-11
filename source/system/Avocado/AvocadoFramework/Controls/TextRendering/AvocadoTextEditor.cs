@@ -24,6 +24,8 @@ namespace AvocadoFramework.Controls.TextRendering
                 type, new FrameworkPropertyMetadata(type));
         }
 
+        protected RoutedCommand EscapeCommand { get; } = new RoutedCommand();
+
         readonly StaticColorizer staticColorizer = new StaticColorizer();
         Border visualCaret;
 
@@ -34,12 +36,20 @@ namespace AvocadoFramework.Controls.TextRendering
             Loaded += onLoaded;
 
             TextArea.TextView.LineTransformers.Add(staticColorizer);
+            prepareEscapeCommand();
         }
 
         void onLoaded(object sender, RoutedEventArgs e)
         {
             visualCaret.Height 
                 = TextArea.TextView.GetVisualLine(TextArea.Caret.Line).Height;
+        }
+
+        void prepareEscapeCommand()
+        {
+            EscapeCommand.InputGestures.Add(new KeyGesture(Key.Escape));
+            TextArea.DefaultInputHandler.CommandBindings.Add(new CommandBinding(
+                EscapeCommand, (s, e) => TextArea.ClearSelection()));
         }
 
         void updateVisualCaretPosition()
@@ -150,21 +160,6 @@ namespace AvocadoFramework.Controls.TextRendering
         {
             get { return base.SelectionLength; }
             set { throw new NotImplementedException(); }
-        }
-
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            if (e.Handled) return;
-
-            switch (e.Key)
-            {
-                // Esc: clear the currently selected text.
-                case Key.Escape:
-                    TextArea.ClearSelection();
-                    break;
-            }
-            
-            base.OnPreviewKeyDown(e);
         }
     }
 }

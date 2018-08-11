@@ -301,6 +301,22 @@ namespace AvocadoShell.UI
             return false;
         }
 
+        void bindEscape()
+        {
+            modifyCommandBinding(
+                EscapeCommand,
+                TextArea.DefaultInputHandler.CommandBindings,
+                (s, e) => e.CanExecute = overrideEscape());
+        }
+
+        bool overrideEscape()
+        {
+            if (IsReadOnly || !TextArea.Selection.IsEmpty) return true;
+            setInput(string.Empty);
+            resetCaretToDocumentEnd();
+            return false;
+        }
+
         void setCommandBindings()
         {
             var caretNavigationBindings
@@ -327,6 +343,8 @@ namespace AvocadoShell.UI
             bindPaste(editingCommandBindings);
             bindTab(editingCommandBindings);
             bindCopy(editingCommandBindings);
+
+            bindEscape();
         }
 
         bool isCaretAfterPrompt
@@ -483,20 +501,6 @@ namespace AvocadoShell.UI
                 ? new SolidColorBrush(segment.Color.Value) : OutputBrush;
             Append(segment.Text, brush);
         }
-
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            if (e.Handled) return;
-
-            switch (e.Key)
-            {
-                case Key.Escape:
-                    e.Handled = handleEscKey();
-                    break;
-            }
-
-            base.OnPreviewKeyDown(e);
-        }
         
         protected override void OnPreviewTextInput(TextCompositionEventArgs e)
         {
@@ -509,19 +513,6 @@ namespace AvocadoShell.UI
             }
 
             base.OnPreviewTextInput(e);
-        }
-
-        bool handleEscKey()
-        {
-            // If no text was selected, delete all text at the prompt and place
-            // cursor there.
-            if (!IsReadOnly && TextArea.Selection.IsEmpty)
-            {
-                setInput(string.Empty);
-                resetCaretToDocumentEnd();
-                return true;
-            }
-            return false;
         }
 
         int inputLength
