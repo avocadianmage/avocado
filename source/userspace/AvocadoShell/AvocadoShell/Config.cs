@@ -1,4 +1,5 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
+using StandardLibrary.Processes;
 using System;
 using System.Management.Automation.Language;
 using System.Windows.Media;
@@ -13,15 +14,15 @@ namespace AvocadoShell
 
         public static ConsoleColor SystemConsoleForeground => ConsoleColor.Gray;
 
-        public static Brush PromptBrush => TextPalette.LightGreen;
-        public static Brush ElevatedPromptBrush => TextPalette.Orange;
         public static Brush ErrorBrush => TextPalette.LightRed;
         public static Brush OutputBrush => TextPalette.LightGray;
         public static Brush ProgressBrush => TextPalette.LightBlue;
         public static Brush DebugBrush => TextPalette.LightBlue;
         public static Brush VerboseBrush => TextPalette.DarkGray;
         public static Brush WarningBrush => TextPalette.Yellow;
-        public static Brush SelectedBrush => TextPalette.Orange;
+        public static Brush SelectedBrush => TextPalette.Yellow;
+        public static Brush PromptBrush { get; } 
+            = EnvUtils.IsAdmin ? TextPalette.Orange : TextPalette.LightGreen;
 
         public static Brush GetTokenBrush(Token token)
         {

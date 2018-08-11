@@ -1,7 +1,6 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using AvocadoLib.CommandLine.ANSI;
 using AvocadoShell.PowerShellService;
-using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
 using System.IO;
@@ -134,7 +133,7 @@ namespace AvocadoShell.UI.Editor
             if (fromShell) updateWorkingDirectory();
 
             // Write prompt text.
-            Append(text, EnvUtils.IsAdmin ? ElevatedPromptBrush : PromptBrush);
+            Append(text, PromptBrush);
 
             // Enable user input.
             readOnlyProvider.PromptEndOffset = Document.TextLength;
