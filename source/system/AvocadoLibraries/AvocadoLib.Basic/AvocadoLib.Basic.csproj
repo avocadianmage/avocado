@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{47622979-036D-4451-8B64-D0593D22B305}</ProjectGuid>
+    <ProjectGuid>{B9ECC8E4-0ECC-4FF2-AA69-4E3385168E78}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>AvocadoLib.CommandLine</RootNamespace>
-    <AssemblyName>AvocadoLib.CommandLine</AssemblyName>
+    <RootNamespace>AvocadoLib.Basic</RootNamespace>
+    <AssemblyName>AvocadoLib.Basic</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -38,14 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ANSI\ANSICode.cs" />
-    <Compile Include="ANSI\ANSISegment.cs" />
-    <Compile Include="Arguments\Subcommand.cs" />
-    <Compile Include="Arguments\SubcommandAttribute.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
+    <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

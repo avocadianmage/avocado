@@ -1,6 +1,5 @@
-﻿using AvocadoCommClient.AvocadoServiceReference;
+﻿using AvocadoLib.CommandLine.Arguments;
 using System;
-using System.ServiceModel;
 
 namespace AvocadoCommClient
 {
@@ -8,31 +7,8 @@ namespace AvocadoCommClient
     {
         static void Main()
         {
-            AvocadoServiceClient client = null;
-
-            try
-            {
-                client = new AvocadoServiceClient();
-                Console.WriteLine(client.Ping());
-                client.Close();
-            }
-            catch (CommunicationException ex)
-            {
-                client?.Abort();
-                Console.Error.WriteLine(ex.Message);
-            }
-            catch (TimeoutException ex)
-            {
-                client?.Abort();
-                Console.Error.WriteLine(ex.Message);
-            }
-            catch
-            {
-                client?.Abort();
-                throw;
-            }
-
-            Console.ReadLine();
+            var error = Subcommand.Invoke();
+            if (error != null) Console.Error.WriteLine(error);
         }
     }
 }

@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>AvocadoCommClient</RootNamespace>
     <AssemblyName>AvocadoCommClient</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,12 +49,19 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AvocadoLib.Basic">
+      <HintPath>..\..\..\system\AvocadoLibraries\AvocadoLib.Basic\bin\Release\AvocadoLib.Basic.dll</HintPath>
+    </Reference>
+    <Reference Include="AvocadoLib.CommandLine">
+      <HintPath>..\..\..\system\AvocadoLibraries\AvocadoLib.CommandLine\bin\Release\AvocadoLib.CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="Connected Services\AvocadoServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

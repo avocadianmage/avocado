@@ -6,12 +6,12 @@ namespace AvocadoServiceHost.Utilities
 {
     enum ColorType
     {
-        None,
-        Timestamp,
-        KeyPhrase,
-        ThisMachineIdentifier = 3,
-        LANIdentifier = 4,
-        ExternalIdentifier = 5
+        None = 0,
+        Timestamp = 1,
+        KeyPhrase = 2,
+        AlertLow = 3,
+        AlertMed = 4,
+        AlertHigh = 5
     }
 
     static class TextColorPalette
@@ -21,9 +21,9 @@ namespace AvocadoServiceHost.Utilities
             {
                 { ColorType.Timestamp, Colors.DimGray },
                 { ColorType.KeyPhrase, Color.FromRgb(86, 156, 214) },
-                { ColorType.ThisMachineIdentifier, Colors.LightGreen },
-                { ColorType.LANIdentifier, Colors.Yellow },
-                { ColorType.ExternalIdentifier, Colors.Orange}
+                { ColorType.AlertLow, Colors.LightGreen },
+                { ColorType.AlertMed, Colors.Yellow },
+                { ColorType.AlertHigh, Colors.Orange}
             };
 
         public static string GetColorString(ColorType type, string text)
