@@ -62,8 +62,8 @@ namespace AvocadoFramework.Controls.TextRendering
             visualCaret = this.GetTemplateElement<Border>("Caret");
 
             // Add positioning events.
-            TextArea.Caret.PositionChanged +=
-                (s, e) => updateVisualCaretPosition();
+            TextArea.Caret.PositionChanged 
+                += (s, e) => updateVisualCaretPosition();
             AddHandler(
                 ScrollViewer.ScrollChangedEvent,
                 new ScrollChangedEventHandler(

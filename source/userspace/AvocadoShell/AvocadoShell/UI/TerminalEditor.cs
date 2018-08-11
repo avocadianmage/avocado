@@ -4,7 +4,6 @@ using AvocadoShell.PowerShellService;
 using StandardLibrary.Processes;
 using StandardLibrary.Utilities;
 using StandardLibrary.Utilities.Extensions;
-using StandardLibrary.WPF;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -103,11 +102,13 @@ namespace AvocadoShell.UI
             modifyCommandBinding(
                 ApplicationCommands.SelectAll,
                 bindingCollection,
-                (s, e) =>
-                {
-                    if (isCaretAfterPrompt) selectInput();
-                    e.CanExecute = false;
-                });
+                (s, e) => e.CanExecute = overrideSelectAll());
+        }
+
+        bool overrideSelectAll()
+        {
+            if (isCaretAfterPrompt) selectInput();
+            return false;
         }
 
         void bindHome(ICollection<CommandBinding> bindingCollection)
@@ -115,46 +116,43 @@ namespace AvocadoShell.UI
             modifyCommandBinding(
                 EditingCommands.MoveToDocumentStart,
                 bindingCollection,
-                (s, e) => onCanExecuteHome(e, true, false));
+                (s, e) => e.CanExecute = overrideHome(true, false));
             modifyCommandBinding(
                 EditingCommands.SelectToDocumentStart,
                 bindingCollection,
-                (s, e) => onCanExecuteHome(e, true, true));
+                (s, e) => e.CanExecute = overrideHome(true, true));
             modifyCommandBinding(
                 EditingCommands.MoveToLineStart,
                 bindingCollection,
-                (s, e) => onCanExecuteHome(e, false, false));
+                (s, e) => e.CanExecute = overrideHome(false, false));
             modifyCommandBinding(
                 EditingCommands.SelectToLineStart,
                 bindingCollection,
-                (s, e) => onCanExecuteHome(e, false, true));
+                (s, e) => e.CanExecute = overrideHome(false, true));
         }
 
-        void onCanExecuteHome(
-            CanExecuteRoutedEventArgs e, bool wholeDocument, bool select)
+        bool overrideHome(bool wholeDocument, bool select)
         {
-            // Only proceed if the caret is after an open prompt.
-            e.CanExecute = isCaretAfterPrompt;
-            if (e.CanExecute)
-            {
-                // If the directive is to move to the start of the document
-                // or otherwise if the caret is on the same line as the 
-                // prompt, move the caret to the end of the prompt and
-                // disallow further execution.
-                e.CanExecute = !wholeDocument && !isCaretOnPromptLine();
-                if (!e.CanExecute) moveCaretToPromptEnd(select);
-            }
+            if (!isCaretAfterPrompt) return false;
+            // Allow moving the caret to the end of the current line to be 
+            // handled natively, provided the caret is not on the prompt line.
+            if (!wholeDocument && !isCaretOnPromptLine()) return true;
+            // Otherwise, move the caret to the end of the prompt.
+            moveCaretToPromptEnd(select);
+            return false;
         }
 
-        void bindPageUpDown(ICollection<CommandBinding> bindingCollection)
+        void disableNavigationCommands(
+            ICollection<CommandBinding> bindingCollection)
         {
-            // Disable 'Page Up' and 'Page Down' commands.
             new[]
             {
                 EditingCommands.MoveUpByPage,
                 EditingCommands.MoveDownByPage,
                 EditingCommands.SelectUpByPage,
-                EditingCommands.SelectDownByPage
+                EditingCommands.SelectDownByPage,
+                EditingCommands.SelectUpByLine,
+                EditingCommands.SelectDownByLine
             }.ForEach(command => modifyCommandBinding(
                 command, bindingCollection, (s, e) => e.CanExecute = false));
         }
@@ -164,28 +162,28 @@ namespace AvocadoShell.UI
             modifyCommandBinding(
                 EditingCommands.MoveLeftByCharacter,
                 bindingCollection,
-                onCanMoveLeft);
+                (s, e) => e.CanExecute = overrideMoveLeft());
             modifyCommandBinding(
                 EditingCommands.SelectLeftByCharacter,
                 bindingCollection,
-                onCanMoveLeft);
+                (s, e) => e.CanExecute = overrideMoveLeft());
             modifyCommandBinding(
                EditingCommands.MoveLeftByWord,
                bindingCollection,
-               (s, e) => onCanMoveLeftByWord(e, false));
+               (s, e) => e.CanExecute = overrideMoveLeftByWord());
             modifyCommandBinding(
                EditingCommands.SelectLeftByWord,
                bindingCollection,
-               (s, e) => onCanMoveLeftByWord(e, true));
+               (s, e) => e.CanExecute = overrideMoveLeftByWord());
         }
 
-        bool canMoveLeft()
+        bool overrideMoveLeft()
         {
-            return !IsReadOnly
-                && CaretOffset > readOnlyProvider.PromptEndOffset;
+            return isCaretAfterPrompt 
+                && CaretOffset != readOnlyProvider.PromptEndOffset;
         }
 
-        bool canMoveLeftByWord()
+        bool overrideMoveLeftByWord()
         {
             if (!isCaretAfterPrompt) return false;
             var promptEnd = readOnlyProvider.PromptEndOffset;
@@ -194,29 +192,13 @@ namespace AvocadoShell.UI
             return !string.IsNullOrWhiteSpace(stringFromPromptEndToCaret);
         }
 
-        void onCanMoveLeft(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = canMoveLeft();
-        }
-
-        void onCanMoveLeftByWord(CanExecuteRoutedEventArgs e, bool select)
-        {
-            if (canMoveLeftByWord()) return;
-            moveCaretToPromptEnd(select);
-            e.CanExecute = false;
-        }
-
         void bindEnter(ICollection<CommandBinding> bindingCollection)
         {
             // Rewire paragraph break command to execute the prompt input.
             modifyCommandBinding(
                 EditingCommands.EnterParagraphBreak,
                 bindingCollection,
-                (s, e) =>
-                {
-                    if (isCaretAfterPrompt) execute();
-                    e.CanExecute = false;
-                });
+                (s, e) => e.CanExecute = overrideEnterParagraphBreak());
 
             // Disable adding newlines during a secure prompt.
             modifyCommandBinding(
@@ -225,22 +207,27 @@ namespace AvocadoShell.UI
                 (s, e) => e.CanExecute = !prompt.IsSecure);
         }
 
+        bool overrideEnterParagraphBreak()
+        {
+            if (isCaretAfterPrompt) execute();
+            return false;
+        }
+
         void bindBackspace(ICollection<CommandBinding> bindingCollection)
         {
             modifyCommandBinding(
                 EditingCommands.Backspace,
                 bindingCollection,
-                onCanBackspace);
+                (s, e) => e.CanExecute = overrideBackspace());
         }
 
-        void onCanBackspace(object sender, CanExecuteRoutedEventArgs e)
+        bool overrideBackspace()
         {
-            e.CanExecute = !prompt.IsSecure;
-            if (e.CanExecute) return;
-
+            if (!prompt.IsSecure) return true;
             var secureString = prompt.SecureStringInput;
             var indexToRemove = secureString.Length - 1;
             if (indexToRemove >= 0) secureString.RemoveAt(indexToRemove);
+            return false;
         }
 
         void bindPaste(ICollection<CommandBinding> bindingCollection)
@@ -249,13 +236,14 @@ namespace AvocadoShell.UI
             modifyCommandBinding(
                 ApplicationCommands.Paste,
                 bindingCollection,
-                (s, e) =>
-                {
-                    e.CanExecute = !prompt.IsSecure;
-                    if (e.CanExecute) return;
-                    Clipboard.GetText().ForEach(
-                        prompt.SecureStringInput.AppendChar);
-                });
+                (s, e) => e.CanExecute = overridePaste());
+        }
+
+        bool overridePaste()
+        {
+            if (!prompt.IsSecure) return true;
+            Clipboard.GetText().ForEach(prompt.SecureStringInput.AppendChar);
+            return false;
         }
 
         void bindTab(ICollection<CommandBinding> bindingCollection)
@@ -263,26 +251,38 @@ namespace AvocadoShell.UI
             modifyCommandBinding(
                 EditingCommands.TabForward,
                 bindingCollection,
-                (s, e) => onCanTab(e, true));
+                (s, e) => e.CanExecute = overrideTab(true));
             modifyCommandBinding(
                 EditingCommands.TabBackward,
                 bindingCollection,
-                (s, e) => onCanTab(e, false));
+                (s, e) => e.CanExecute = overrideTab(false));
         }
 
-        void onCanTab(CanExecuteRoutedEventArgs e, bool forward)
+        bool overrideTab(bool forward)
         {
-            if (!isCaretAfterPrompt || prompt.IsSecure)
-            {
-                e.CanExecute = false;
-                return;
-            }
-
-            // At a shell prompt, perform autocomplete. Otherwise, allow 
-            // tabbing.
-            e.CanExecute = !prompt.FromShell;
-            if (e.CanExecute) return;
+            if (!isCaretAfterPrompt || prompt.IsSecure) return false;
+            // Allow native tabbing unless at a shell prompt.
+            if (!prompt.FromShell) return true;
             performAutocomplete(forward).RunAsync();
+            return false;
+        }
+
+        void bindUpDown(ICollection<CommandBinding> bindingCollection)
+        {
+            modifyCommandBinding(
+                EditingCommands.MoveUpByLine,
+                bindingCollection,
+                (s, e) => e.CanExecute = overrideUpDown(false));
+            modifyCommandBinding(
+                EditingCommands.MoveDownByLine,
+                bindingCollection,
+                (s, e) => e.CanExecute = overrideUpDown(true));
+        }
+
+        bool overrideUpDown(bool down)
+        {
+            if (isCaretAfterPrompt) setInputFromHistory(down);
+            return false;
         }
 
         void setCommandBindings()
@@ -295,10 +295,11 @@ namespace AvocadoShell.UI
             caretNavigationBindings.ForEach(b => b.CanExecute += (s, e) 
                 => e.CanExecute = isCaretAfterPrompt);
 
+            disableNavigationCommands(caretNavigationBindings);
             bindSelectAll(caretNavigationBindings);
             bindHome(caretNavigationBindings);
-            bindPageUpDown(caretNavigationBindings);
             bindLeft(caretNavigationBindings);
+            bindUpDown(caretNavigationBindings);
 
             var editingCommandBindings
                 = TextArea.DefaultInputHandler.Editing.CommandBindings;
@@ -322,18 +323,13 @@ namespace AvocadoShell.UI
         void moveCaretToPromptEnd(bool select)
         {
             var promptEnd = readOnlyProvider.PromptEndOffset;
-            if (select && CaretOffset != promptEnd)
-            {
-                Select(SelectionStart, promptEnd);
-            }
+            if (select) Select(SelectionStart, promptEnd);
             else CaretOffset = promptEnd;
-            TextArea.Caret.BringCaretToView();
         }
         
         void selectInput()
         {
             Select(readOnlyProvider.PromptEndOffset, Document.TextLength);
-            TextArea.Caret.BringCaretToView();
         }
 
         void terminateExec()
@@ -485,11 +481,6 @@ namespace AvocadoShell.UI
                 case Key.Escape:
                     e.Handled = handleEscKey();
                     break;
-
-                case Key.Up:
-                case Key.Down:
-                    e.Handled = handleUpDownKeys(e.Key);
-                    break;
             }
 
             base.OnPreviewKeyDown(e);
@@ -516,18 +507,6 @@ namespace AvocadoShell.UI
             {
                 setInput(string.Empty);
                 resetCaretToDocumentEnd();
-                return true;
-            }
-            return false;
-        }
-
-        bool handleUpDownKeys(Key key)
-        {
-            // Perform history lookup if the caret is after the prompt and 
-            // input is allowed. Otherwise, navigate standardly.
-            if (CaretOffset >= readOnlyEndOffset)
-            {
-                if (!IsReadOnly) setInputFromHistory(key == Key.Down);
                 return true;
             }
             return false;
@@ -580,8 +559,6 @@ namespace AvocadoShell.UI
                     tuple.replacementIndex + readOnlyProvider.PromptEndOffset,
                     tuple.replacementLength,
                     tuple.completionText);
-
-                TextArea.Caret.BringCaretToView();
             }
             finally { IsReadOnly = false; }
         }
