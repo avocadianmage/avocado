@@ -225,6 +225,24 @@ namespace AvocadoShell.UI
                 (s, e) => e.CanExecute = !prompt.IsSecure);
         }
 
+        void bindBackspace(ICollection<CommandBinding> bindingCollection)
+        {
+            modifyCommandBinding(
+                EditingCommands.Backspace,
+                bindingCollection,
+                onCanBackspace);
+        }
+
+        void onCanBackspace(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = !prompt.IsSecure;
+            if (e.CanExecute) return;
+
+            var secureString = prompt.SecureStringInput;
+            var indexToRemove = secureString.Length - 1;
+            if (indexToRemove >= 0) secureString.RemoveAt(indexToRemove);
+        }
+
         void bindPaste(ICollection<CommandBinding> bindingCollection)
         {
             // Handle pasted text during a secure prompt differently.
@@ -239,7 +257,7 @@ namespace AvocadoShell.UI
                     e.CanExecute = false;
                 });
         }
-        
+
         void setCommandBindings()
         {
             var caretNavigationBindings
@@ -259,6 +277,7 @@ namespace AvocadoShell.UI
                 = TextArea.DefaultInputHandler.Editing.CommandBindings;
 
             bindEnter(editingCommandBindings);
+            bindBackspace(editingCommandBindings);
             bindPaste(editingCommandBindings);
 
             // Execution break.
@@ -275,7 +294,10 @@ namespace AvocadoShell.UI
         void moveCaretToPromptEnd(bool select)
         {
             var promptEnd = readOnlyProvider.PromptEndOffset;
-            if (select) Select(SelectionStart, promptEnd);
+            if (select && CaretOffset != promptEnd)
+            {
+                Select(SelectionStart, promptEnd);
+            }
             else CaretOffset = promptEnd;
             TextArea.Caret.BringCaretToView();
         }
@@ -444,10 +466,6 @@ namespace AvocadoShell.UI
                 case Key.Down:
                     e.Handled = handleUpDownKeys(e.Key);
                     break;
-
-                case Key.Back:
-                    e.Handled = handleBackspaceKey();
-                    break;
             }
 
             base.OnPreviewKeyDown(e);
@@ -506,15 +524,6 @@ namespace AvocadoShell.UI
                 return true;
             }
             return false;
-        }
-
-        bool handleBackspaceKey()
-        {
-            if (!prompt.IsSecure) return false;
-            var secureString = prompt.SecureStringInput;
-            var indexToRemove = secureString.Length - 1;
-            if (indexToRemove >= 0) secureString.RemoveAt(indexToRemove);
-            return true;
         }
 
         int inputLength
