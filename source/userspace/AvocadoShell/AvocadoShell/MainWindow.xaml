@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:shell="clr-namespace:AvocadoShell"
     xmlns:engine="clr-namespace:AvocadoFramework.Engine;assembly=AvocadoFramework"
-    xmlns:terminal="clr-namespace:AvocadoShell.UI"
+    xmlns:terminal="clr-namespace:AvocadoShell.UI.Editor"
     Width="640" Height="460"
     FocusManager.FocusedElement="{Binding ElementName=Terminal}">
     <terminal:TerminalEditor x:Name="Terminal" 

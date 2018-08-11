@@ -24,7 +24,7 @@ namespace AvocadoFramework.Controls.TextRendering
                 type, new FrameworkPropertyMetadata(type));
         }
 
-        protected RoutedCommand EscapeCommand { get; } = new RoutedCommand();
+        public RoutedCommand EscapeCommand { get; } = new RoutedCommand();
 
         readonly StaticColorizer staticColorizer = new StaticColorizer();
         Border visualCaret;
