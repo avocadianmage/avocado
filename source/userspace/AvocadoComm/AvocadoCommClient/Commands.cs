@@ -1,5 +1,4 @@
-﻿using AvocadoLib.Basic;
-using AvocadoLib.CommandLine.ANSI;
+﻿using AvocadoLib.CommandLine.ANSI;
 using AvocadoLib.CommandLine.Arguments;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,10 +19,9 @@ namespace AvocadoCommClient
                 c => c.Ping(), out EndpointAddress endpoint);
 
             stopwatch.Stop();
-            var secs = stopwatch.ElapsedMilliseconds / 1000d;
-            var timestamp = secs.ToRoundedString(3);
 
             // Output result.
+            var msElapsed = stopwatch.ElapsedMilliseconds;
             ANSIWriter.WriteLine(new[]
             {
                 ("Ping to ", ColorType.None),
@@ -31,15 +29,15 @@ namespace AvocadoCommClient
                 (" returned ", ColorType.None),
                 (result.ToString(), ColorType.KeyPhrase),
                 (" in ", ColorType.None),
-                (timestamp, getLatencyColor(secs)),
-                (".", ColorType.None)
+                (msElapsed.ToString(), getLatencyColor(msElapsed)),
+                (" ms.", ColorType.None)
             });
         }
 
-        static ColorType getLatencyColor(double secondsElapsed)
+        static ColorType getLatencyColor(long msElapsed)
         {
-            if (secondsElapsed < 0.1) return ColorType.AlertLow;
-            if (secondsElapsed < 0.3) return ColorType.AlertMed;
+            if (msElapsed < 100) return ColorType.AlertLow;
+            if (msElapsed < 300) return ColorType.AlertMed;
             return ColorType.AlertHigh;
         }
     }
