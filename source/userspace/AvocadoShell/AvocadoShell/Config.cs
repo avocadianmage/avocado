@@ -1,7 +1,6 @@
 ﻿using AvocadoFramework.Controls.TextRendering;
 using StandardLibrary.Processes;
 using System;
-using System.Management.Automation.Language;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -23,32 +22,5 @@ namespace AvocadoShell
         public static Brush SelectedBrush => TextPalette.Yellow;
         public static Brush PromptBrush { get; } 
             = EnvUtils.IsAdmin ? TextPalette.Orange : TextPalette.LightGreen;
-
-        public static Brush GetTokenBrush(Token token)
-        {
-            switch (token.Kind)
-            {
-                case TokenKind.Comment: return TextPalette.DarkGray;
-                case TokenKind.Number: return TextPalette.OliveGreen;
-                case TokenKind.Parameter: return TextPalette.Purple;
-                case TokenKind.StringExpandable: return TextPalette.Yellow;
-                case TokenKind.Variable: return TextPalette.OliveGreen;
-            }
-
-            if (token.TokenFlags.HasFlag(TokenFlags.CommandName))
-            {
-                return TextPalette.LightBlue;
-            }
-            if (token.TokenFlags.HasFlag(TokenFlags.Keyword))
-            {
-                return TextPalette.Blue;
-            }
-            if (token.TokenFlags.HasFlag(TokenFlags.TypeName))
-            {
-                return TextPalette.Teal;
-            }
-
-            return null;
-        }
     }
 }
